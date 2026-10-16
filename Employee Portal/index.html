@@ -20137,6 +20137,13 @@ function TimeLogTab(p) {
   var flt = fs[0], setFlt = fs[1];
   var es = useState(null), editing = es[0], setEditing = es[1];
   var ks = useState(0), formKey = ks[0], bump = ks[1];
+  /* opened from a Taskana task (#/workdesk/time?task=…): the form starts on that task's project */
+  var ps = useState(function () {
+    var m = /[?&]task=([^&]+)/.exec(location.hash || ""), data = taskanaData();
+    var t = m && data ? byId(data.tasks || [], decodeURIComponent(m[1])) : null, pr = t ? byId(db.projects, t.projectId) : null;
+    if (!pr) return null;
+    return Object.assign(blankEntry(user.id), { clientId: pr.clientId, projectId: pr.id, workOrderId: t.workOrderId && byId(db.workOrders, t.workOrderId) ? t.workOrderId : "", taskId: t.id, description: t.title });
+  }), preset = ps[0];
 
   var y = baseYear + Math.floor(month / 12), m = ((month % 12) + 12) % 12;
   var monthStr = y + "-" + pad(m + 1);
@@ -20229,7 +20236,7 @@ function TimeLogTab(p) {
         h("div", { className: "h2 grow" }, editing ? "Edit entry" : "Report time"),
         editing ? h(Chip, { k: "amber" }, "editing ", il(editing.date)) : null),
       h(EntryForm, {
-        db: db, viewer: user, value: editing ? toForm(editing) : null, valueKey: editing ? editing.id + formKey : "new" + formKey,
+        db: db, viewer: user, value: editing ? toForm(editing) : (formKey === 0 ? preset : null), valueKey: editing ? editing.id + formKey : "new" + formKey,
         onSave: saveEntry, onCancel: editing ? function () { setEditing(null); } : null
       }))
       : h("div", { className: "banner mut panel pad" }, "Your role does not carry time-reporting rights."),

@@ -9,27 +9,27 @@
 /* id, full name, company email, job title, department, Taskana role, reports to, employment */
 var TEAM = [
   ["u-tamir",    "Tamir Nisman",     "tamir@galiltc.co.il",         "CEO",                                                   "Management",       "Admin",   null],
-  ["u-yinon",    "Inon Kanner",      "inon.kanner@galiltc.co.il",   "Deputy CEO, Operations · Head of the Defense Division", "Management",       "Admin",   "u-tamir"],
-  ["u-kfir",     "Kfir Hodara",      "kfir@galiltc.co.il",          "Client Manager",                                        "Civil Division",   "Manager", "u-yinon"],
-  ["u-denis",    "Dennis Sablin",    "dennis.sablin@galiltc.co.il", "Technical Writer",                                      "Civil Division",   "Member",  "u-kfir"],
+  ["u-inon",    "Inon Kanner",      "inon.kanner@galiltc.co.il",   "Deputy CEO, Operations · Head of the Defense Division", "Management",       "Admin",   "u-tamir"],
+  ["u-kfir",     "Kfir Hodara",      "kfir@galiltc.co.il",          "Client Manager",                                        "Civil Division",   "Manager", "u-inon"],
+  ["u-dennis",    "Dennis Sablin",    "dennis.sablin@galiltc.co.il", "Technical Writer",                                      "Civil Division",   "Member",  "u-kfir"],
   ["u-shoshana", "Shoshana Axtell",  "shoshana.a@galiltc.co.il",    "Technical Writer",                                      "Civil Division",   "Member",  "u-kfir"],
-  ["u-suzan",    "Suzanne Musin",    "suzanne.m@galiltc.co.il",     "Technical Writer",                                      "Civil Division",   "Member",  "u-kfir"],
-  ["u-ranit",    "Ranit Schnall",    "ranit@galiltc.co.il",         "Client Manager",                                        "Civil Division",   "Manager", "u-yinon"],
+  ["u-suzanne",    "Suzanne Musin",    "suzanne.m@galiltc.co.il",     "Technical Writer",                                      "Civil Division",   "Member",  "u-kfir"],
+  ["u-ranit",    "Ranit Schnall",    "ranit@galiltc.co.il",         "Client Manager",                                        "Civil Division",   "Manager", "u-inon"],
   ["u-inbar",    "Inbar Azulay",     "inbar@galiltc.co.il",         "Technical Writer",                                      "Civil Division",   "Member",  "u-ranit"],
   ["u-paul",     "Paul Schnall",     "paul@galiltc.co.il",          "Technical Writer",                                      "Civil Division",   "Member",  "u-ranit"],
-  ["u-jeremy",   "Jeremie De Bock",  "jeremie@galiltc.co.il",       "Technical Writer",                                      "Civil Division",   "Member",  "u-ranit"],
-  ["u-reuven",   "Reuben Politi",    "reuben@galiltc.co.il",        "Client Manager",                                        "Civil Division",   "Manager", "u-yinon"],
-  ["u-amy",      "Amy di Nardo",     "amy@galiltc.co.il",           "Technical Writer",                                      "Civil Division",   "Member",  "u-reuven"],
-  ["u-niv",      "Niv Passy",        "niv.passy@galiltc.co.il",     "Client Manager",                                        "Civil Division",   "Manager", "u-yinon"],
-  ["u-pnina",    "Penina Smith",     "penina@galiltc.co.il",        "Technical Writer",                                      "Civil Division",   "Member",  "u-niv"],
-  ["u-yossi",    "Yosi Francos",     "yosi.f@galiltc.co.il",        "Technical Writer",                                      "Civil Division",   "Member",  "u-niv"],
-  ["u-danny",    "Danny Gelman",     "danny.gelman@galiltc.co.il",  "Defense Sector Project Manager",                        "Defense Division", "Admin",   "u-yinon"],
+  ["u-jeremie",   "Jeremie De Bock",  "jeremie@galiltc.co.il",       "Technical Writer",                                      "Civil Division",   "Member",  "u-ranit"],
+  ["u-reuben",   "Reuben Politi",    "reuben@galiltc.co.il",        "Client Manager",                                        "Civil Division",   "Manager", "u-inon"],
+  ["u-amy",      "Amy di Nardo",     "amy@galiltc.co.il",           "Technical Writer",                                      "Civil Division",   "Member",  "u-reuben"],
+  ["u-niv",      "Niv Passy",        "niv.passy@galiltc.co.il",     "Client Manager",                                        "Civil Division",   "Manager", "u-inon"],
+  ["u-penina",    "Penina Smith",     "penina@galiltc.co.il",        "Technical Writer",                                      "Civil Division",   "Member",  "u-niv"],
+  ["u-yosi",    "Yosi Francos",     "yosi.f@galiltc.co.il",        "Technical Writer",                                      "Civil Division",   "Member",  "u-niv"],
+  ["u-danny",    "Danny Gelman",     "danny.gelman@galiltc.co.il",  "Defense Sector Project Manager",                        "Defense Division", "Admin",   "u-inon"],
   ["u-eitan",    "Eitan Fisch",      "eitan.f@galiltc.co.il",       "Technical Writer",                                      "Defense Division", "Member",  "u-danny"],
   ["u-daniel",   "Daniel Barak",     "daniel.barak@galiltc.co.il",  "Technical Writer",                                      "Defense Division", "Member",  "u-danny"],
   /* outsourced engineers with a GALIL account, and the company's main mailbox */
-  ["u-gil",      "Gil Hadar",        "gil.hadar@galiltc.co.il",     "Engineer (outsourced)",                                 "Engineering",      "External", "u-yinon", "Outsourced"],
-  ["u-ofir",     "Ofir Abutbul",     "ofir.abutbul@galiltc.co.il",  "Engineer (outsourced)",                                 "Engineering",      "External", "u-yinon", "Outsourced"],
-  ["u-ronen",    "Ronen Nachum",     "ronen.nachum@galiltc.co.il",  "Engineer (outsourced)",                                 "Engineering",      "External", "u-yinon", "Outsourced"],
+  ["u-gil",      "Gil Hadar",        "gil.hadar@galiltc.co.il",     "Engineer (outsourced)",                                 "Engineering",      "External", "u-inon", "Outsourced"],
+  ["u-ofir",     "Ofir Abutbul",     "ofir.abutbul@galiltc.co.il",  "Engineer (outsourced)",                                 "Engineering",      "External", "u-inon", "Outsourced"],
+  ["u-ronen",    "Ronen Nachum",     "ronen.nachum@galiltc.co.il",  "Engineer (outsourced)",                                 "Engineering",      "External", "u-inon", "Outsourced"],
   ["u-office",   "Galil TC Office",  "office@galiltc.co.il",        "Office management, administration & HR",                "Office & HR",      "Member",   "u-tamir"]
 ];
 function emailFor(name) { var r = TEAM.filter(function (x) { return x[1] === name; })[0]; return r ? r[2] : name.toLowerCase().replace(/[^a-z]+/g, ".").replace(/^\.|\.$/g, "") + DOMAIN; }
@@ -84,44 +84,40 @@ function addDemo(d) {
   var idm = {};
   var X = function (id) { if (!(id in idm)) idm[id] = taken[id] ? uid(id.split("-")[0]) : id; return idm[id]; };
 
-  var clients = [
-    { id: "c-iai", name: "IAI", code: "IAI", industry: "Aerospace & Defence", contactName: "Ilan Barak", contactEmail: "ilan@iai.example", notes: "Style guide: IAI-TW-SG rev F. All deliverables in S1000D-lite Word templates." },
-    { id: "c-elb", name: "Elbit Systems", code: "ELB", industry: "Defence Electronics", contactName: "Rita Gold", contactEmail: "rita@elbit.example", notes: "Help authored in DITA, published via the client's CCMS." },
-    { id: "c-mob", name: "Mobileye", code: "MOB", industry: "Automotive", contactName: "Sagi Peer", contactEmail: "sagi@mobileye.example", notes: "Developer docs in Markdown, reviewed through the client's Git." },
-    { id: "c-cmd", name: "Carmel Medical Devices", code: "CMD", industry: "Medical Devices", contactName: "Hila Mor", contactEmail: "hila@carmel-med.example", notes: "IEC 62366 usability wording. Every IFU change goes through the client's regulatory review." },
-    { id: "c-gws", name: "Galilee Water Systems", code: "GWS", industry: "Agritech", contactName: "Omer Tal", contactEmail: "omer@galilee-water.example", notes: "Guides ship in English, Hebrew and Spanish. Screenshots from the field-test controller only." },
-    { id: "c-hft", name: "Haifa FinTech", code: "HFT", industry: "Financial Services", contactName: "Lior Ben-David", contactEmail: "lior@haifa-fintech.example", notes: "Online help in MadCap Flare. Legal review for anything that mentions fees." },
-    { id: "c-gal", name: "GALIL (internal)", code: "GAL", industry: "Internal", contactName: "", contactEmail: "", notes: "Internal templates, style guide, finance, HR and recruiting." }
-  ];
   /* id, client, key, name, deliverable type, status, lead, team, start (days from today), delivery, description, sections */
   var projects = [
     ["p-iai1", "c-iai", "RSOM", "Radar Suite — Operator Manual", "Operator Manual", "Active", "u-danny", ["u-eitan", "u-daniel", "u-ofir"], -120, 90, "Two-volume operator manual for the radar suite (Vol 1 Operation, Vol 2 Maintenance).", ["Vol 1 · Ch 4", "Vol 1 · Ch 5", "Vol 2 · Ch 1", "Vol 2 · Ch 2", "Vol 2 · Ch 6"]],
     ["p-iai2", "c-iai", "MTP", "Maintenance Training Package", "Training Courseware", "Active", "u-danny", ["u-eitan", "u-daniel"], -60, 120, "Instructor guide, student handbook and slides for the level-2 maintenance course.", ["Module 2", "Module 5", "Module 6", "Final exam"]],
-    ["p-elb1", "c-elb", "AVH", "Avionics Help System", "Online Help", "Active", "u-yinon", ["u-eitan", "u-daniel", "u-danny", "u-gil"], -200, 30, "Migration of the legacy CHM help to DITA, then content refresh for release 5.", ["Release 5 · Nav", "Release 5 · Radio", "Release 5 · Alerts"]],
-    ["p-mob1", "c-mob", "SDK", "SDK Documentation Refresh", "API Reference", "Active", "u-kfir", ["u-denis", "u-shoshana", "u-suzan"], -40, 60, "Rewrite the getting-started guide and regenerate the API reference for SDK 4.x.", ["SDK 4.0", "SDK 4.1", "Samples", "Migration guide"]],
-    ["p-cmd1", "c-cmd", "IFU", "Infusion Pump — IFU & Service Manual", "User Manual", "Active", "u-ranit", ["u-inbar", "u-paul", "u-jeremy", "u-ronen"], -90, 75, "Instructions for use (clinical staff) and the field-service manual for the IP-300 pump.", ["IFU · Setup", "IFU · Alarms", "IFU · Cleaning", "Service · Calibration", "Service · Parts"]],
-    ["p-gws1", "c-gws", "IRC", "Irrigation Controller — User Guide", "User Manual", "Active", "u-reuven", ["u-amy"], -50, 45, "User guide and quick start for the IC-8 field controller, in three languages.", ["Quick start", "Ch 2 · Programs", "Ch 3 · Sensors", "Troubleshooting"]],
-    ["p-hft1", "c-hft", "BOH", "Banking App — Online Help", "Online Help", "Active", "u-niv", ["u-pnina", "u-yossi"], -70, 55, "Context-sensitive help for the retail banking app, release 7.", ["Payments", "Cards", "Loans", "Settings"]],
-    ["p-gal1", "c-gal", "STY", "GALIL Style Guide 2027", "Other", "On Hold", "u-yinon", ["u-kfir", "u-ranit", "u-danny"], -20, 150, "Refresh of the house style guide and Word/FrameMaker templates.", ["Word templates", "Terminology"]],
-    ["p-gal2", "c-gal", "OPS", "Finance, HR & recruiting", "Other", "Active", "u-tamir", ["u-tamir", "u-yinon"], -30, 300, "Internal company work: bookkeeping with the outsourced accountant, HR, and hiring the open writer positions.", []]
+    ["p-elb1", "c-elb", "AVH", "Avionics Help System", "Online Help", "Active", "u-inon", ["u-eitan", "u-daniel", "u-danny", "u-gil"], -200, 30, "Migration of the legacy CHM help to DITA, then content refresh for release 5.", ["Release 5 · Nav", "Release 5 · Radio", "Release 5 · Alerts"]],
+    ["p-mob1", "c-mob", "SDK", "SDK Documentation Refresh", "API Reference", "Active", "u-kfir", ["u-dennis", "u-shoshana", "u-suzanne"], -40, 60, "Rewrite the getting-started guide and regenerate the API reference for SDK 4.x.", ["SDK 4.0", "SDK 4.1", "Samples", "Migration guide"]],
+    ["p-cmd1", "c-cmd", "IFU", "Infusion Pump — IFU & Service Manual", "User Manual", "Active", "u-ranit", ["u-inbar", "u-paul", "u-jeremie", "u-ronen"], -90, 75, "Instructions for use (clinical staff) and the field-service manual for the IP-300 pump.", ["IFU · Setup", "IFU · Alarms", "IFU · Cleaning", "Service · Calibration", "Service · Parts"]],
+    ["p-gws1", "c-gws", "IRC", "Irrigation Controller — User Guide", "User Manual", "Active", "u-reuben", ["u-amy"], -50, 45, "User guide and quick start for the IC-8 field controller, in three languages.", ["Quick start", "Ch 2 · Programs", "Ch 3 · Sensors", "Troubleshooting"]],
+    ["p-hft1", "c-hft", "BOH", "Banking App — Online Help", "Online Help", "Active", "u-niv", ["u-penina", "u-yosi"], -70, 55, "Context-sensitive help for the retail banking app, release 7.", ["Payments", "Cards", "Loans", "Settings"]],
+    ["p-gal1", "c-gal", "STY", "GALIL Style Guide 2027", "Other", "On Hold", "u-inon", ["u-kfir", "u-ranit", "u-danny"], -20, 150, "Refresh of the house style guide and Word/FrameMaker templates.", ["Word templates", "Terminology"]],
+    ["p-gal2", "c-gal", "OPS", "Finance, HR & recruiting", "Other", "Active", "u-tamir", ["u-tamir", "u-inon"], -30, 300, "Internal company work: bookkeeping with the outsourced accountant, HR, and hiring the open writer positions.", []]
   ];
-  var used = {}; d.projects.forEach(function (p) { used[p.key] = 1; });
-  var cHave = {}; d.clients.forEach(function (c) { cHave[c.id] = 1; });
-  clients.forEach(function (c) { if (!cHave[c.id]) d.clients.push(Object.assign({ demo: true }, c)); });
+  /* the projects are WorkDesk's: demo work goes onto the ones that exist (WorkDesk's demo projects
+     and GALIL's internal ones); a demo project WorkDesk doesn't have borrows the nearest one */
+  var PMAP = { "p-iai2": "p-iai1", "p-gal1": "p-int2", "p-gal2": "p-int1" };
+  var P = function (id) { if (byId(d.projects, id)) return id; var m = PMAP[id]; return m && byId(d.projects, m) ? m : null; };
   var team = {};
   projects.forEach(function (r) {
-    var key = r[2], i = 2; while (used[key]) key = r[2].slice(0, 4) + i++;
-    used[key] = 1;
-    team[X(r[0])] = r[7].map(who).filter(Boolean);
-    r[0] = X(r[0]);
-    d.projects.push({ id: r[0], demo: true, clientId: r[1], key: key, name: r[3], docType: r[4], status: r[5], leadUserId: who(r[6]), startDate: T(r[8]), dueDate: workday(T(r[9])), description: r[10], nextNum: 1 });
+    var pid = P(r[0]); r[0] = pid; if (!pid) return;
+    var p = byId(d.projects, pid), ppl = (team[pid] || []).concat(r[7].map(who).filter(Boolean));
+    team[pid] = ppl.filter(function (x, i) { return ppl.indexOf(x) === i; });
+    if (!p.description) p.description = r[10];
+    if (!p.docType || p.docType === "Other") p.docType = r[4];
+    if (p.nextNum == null) p.nextNum = 1;
+    if (!p.leadUserId) p.leadUserId = who(r[6]);
   });
+  projects = projects.filter(function (r) { return r[0]; });
   var proj = function (id) { return byId(d.projects, id); };
   var lead = function (pid) { return proj(pid).leadUserId; };
 
   var newTask = function (o) {
     var p = proj(o.projectId);
-    var t = Object.assign({ id: uid("t"), demo: true, num: p.nextNum++, type: "Writing", priority: "Medium", status: "To Do", assigneeId: null, reporterId: lead(o.projectId),
+    var wos = (d.workOrders || []).filter(function (w) { return w.projectId === o.projectId; });
+    var t = Object.assign({ id: uid("t"), demo: true, num: p.nextNum++, workOrderId: wos.length ? wos[Math.floor(rnd() * wos.length)].id : null, type: "Writing", priority: "Medium", status: "To Do", assigneeId: null, reporterId: lead(o.projectId),
       startDate: null, dueDate: null, estimateHours: null, deliverable: "", description: "", labels: [], checklist: [], links: [], aliases: [], parentId: null, recurrence: "",
       startedAt: null, completedAt: null, completedBy: null }, o);
     d.tasks.push(t);
@@ -138,29 +134,30 @@ function addDemo(d) {
     ["t-6", "p-iai2", "Build module 4 slides", "Writing", "Writing", "Medium", "u-eitan", "u-danny", 9, 20, "Module 4", "Slides plus facilitator notes for the hydraulics module.", ["courseware"], [], 12],
     ["t-7", "p-iai2", "Student handbook — module 3 edit", "Editing", "SME Review", "Medium", "u-daniel", "u-danny", -2, 10, "Module 3", "Copy-edit pass done; with the client SME for technical sign-off.", ["courseware"], [], 15],
     ["t-8", "p-iai2", "Translate module 1 to Hebrew", "Translation", "Backlog", "Low", null, "u-danny", 45, 30, "Module 1", "Send to the translation vendor once module 1 is signed off. Glossary attached in the project share.", ["he"], [], 1],
-    ["t-9", "p-elb1", "Help topic migration — batch 2", "Writing", "Peer Review", "Critical", "u-eitan", "u-yinon", -1, 40, "Release 5", "Convert 80 topics to the new DITA map. Keep the old topic IDs as aliases so context-sensitive links keep working.", ["dita", "migration"], [["Topics converted", true], ["Map validated", true], ["Broken links fixed", false]], 21],
-    ["t-10", "p-elb1", "Fix broken cross-references in nav topics", "Doc Defect", "To Do", "High", "u-eitan", "u-yinon", 4, 4, "Release 5", "QA found 14 xrefs pointing at removed topics (see the link report in the CCMS).", ["defect"], [], 4],
-    ["t-11", "p-elb1", "Publish release 5 help to staging", "Publishing", "Backlog", "Medium", "u-danny", "u-yinon", 25, 2, "Release 5", "Run the publish job and send the staging URL to Rita.", ["publish"], [], 1],
-    ["t-12", "p-mob1", "API reference — endpoints A–F", "Writing", "Done", "Medium", "u-denis", "u-kfir", -8, 30, "SDK 4.0", "Generate and hand-edit reference pages.", ["api"], [], 30],
+    ["t-9", "p-elb1", "Help topic migration — batch 2", "Writing", "Peer Review", "Critical", "u-eitan", "u-inon", -1, 40, "Release 5", "Convert 80 topics to the new DITA map. Keep the old topic IDs as aliases so context-sensitive links keep working.", ["dita", "migration"], [["Topics converted", true], ["Map validated", true], ["Broken links fixed", false]], 21],
+    ["t-10", "p-elb1", "Fix broken cross-references in nav topics", "Doc Defect", "To Do", "High", "u-eitan", "u-inon", 4, 4, "Release 5", "QA found 14 xrefs pointing at removed topics (see the link report in the CCMS).", ["defect"], [], 4],
+    ["t-11", "p-elb1", "Publish release 5 help to staging", "Publishing", "Backlog", "Medium", "u-danny", "u-inon", 25, 2, "Release 5", "Run the publish job and send the staging URL to Rita.", ["publish"], [], 1],
+    ["t-12", "p-mob1", "API reference — endpoints A–F", "Writing", "Done", "Medium", "u-dennis", "u-kfir", -8, 30, "SDK 4.0", "Generate and hand-edit reference pages.", ["api"], [], 30],
     ["t-13", "p-mob1", "Getting-started guide rewrite", "Writing", "Writing", "High", "u-shoshana", "u-kfir", 14, 18, "SDK 4.0", "New quick start for SDK 4: install, auth, first call, troubleshooting.", ["guide"], [["Install section", true], ["Auth section", false], ["First call sample", false], ["Troubleshooting", false]], 9],
-    ["t-14", "p-mob1", "API reference — endpoints G–M", "Writing", "To Do", "Medium", "u-suzan", "u-kfir", 28, 30, "SDK 4.0", "Same approach as A–F.", ["api"], [], 2],
-    ["t-15", "p-gal1", "Collect style-guide change requests", "Research", "Backlog", "Low", "u-yinon", "u-tamir", 40, 6, "", "Survey the writers for pain points with the current guide.", [], [], 20],
+    ["t-14", "p-mob1", "API reference — endpoints G–M", "Writing", "To Do", "Medium", "u-suzanne", "u-kfir", 28, 30, "SDK 4.0", "Same approach as A–F.", ["api"], [], 2],
+    ["t-15", "p-gal1", "Collect style-guide change requests", "Research", "Backlog", "Low", "u-inon", "u-tamir", 40, 6, "", "Survey the writers for pain points with the current guide.", [], [], 20],
     ["t-16", "p-gal2", "Recruit a technical writer — Defense Division", "Research", "Writing", "High", "u-danny", "u-tamir", 30, 20, "Open position", "Third writer for Danny's team. Job ad is on the website Careers page; shortlist and first interviews.", ["hiring"], [["Job ad published", true], ["Shortlist of 5", false], ["First interviews", false]], 12],
     ["t-17", "p-gal2", "Recruit a technical writer — Ranit's team", "Research", "To Do", "Medium", "u-ranit", "u-tamir", 45, 16, "Open position", "Fourth writer for the Carmel Medical account.", ["hiring"], [], 6],
-    ["t-18", "p-gal2", "Recruit a technical writer — Reuven's team", "Research", "To Do", "Medium", "u-reuven", "u-tamir", 45, 16, "Open position", "Second writer for the Galilee Water account; Spanish a plus.", ["hiring"], [], 6],
-    ["t-19", "p-gal2", "Monthly hours report to the outsourced accountant", "Publishing", "To Do", "Medium", "u-yinon", "u-tamir", 5, 2, "Finance", "Export the month's billable hours per client and send them with the invoices.", ["finance"], [], 25]
+    ["t-18", "p-gal2", "Recruit a technical writer — Reuven's team", "Research", "To Do", "Medium", "u-reuben", "u-tamir", 45, 16, "Open position", "Second writer for the Galilee Water account; Spanish a plus.", ["hiring"], [], 6],
+    ["t-19", "p-gal2", "Monthly hours report to the outsourced accountant", "Publishing", "To Do", "Medium", "u-inon", "u-tamir", 5, 2, "Finance", "Export the month's billable hours per client and send them with the invoices.", ["finance"], [], 25]
   ];
+  rows = rows.filter(function (r) { return P(r[1]); });
   rows.forEach(function (r) {
     var st = r[4], created = A(r[14], 9), updated = A(Math.max(0, r[14] - 3), 14);
-    newTask({ id: X(r[0]), projectId: X(r[1]), title: r[2], type: r[3], status: st, priority: r[5], assigneeId: who(r[6]), reporterId: who(r[7]),
+    newTask({ id: X(r[0]), projectId: P(r[1]), title: r[2], type: r[3], status: st, priority: r[5], assigneeId: who(r[6]), reporterId: who(r[7]),
       dueDate: workday(T(r[8])), estimateHours: r[9], deliverable: r[10], description: r[11], labels: r[12],
       checklist: r[13].map(function (c) { return { id: uid("ck"), text: c[0], done: c[1] }; }),
       createdAt: created, updatedAt: updated, startedAt: NOT_STARTED[st] ? null : A(Math.max(0, r[14] - 1), 9),
       completedAt: st === "Done" ? updated : null, completedBy: st === "Done" ? who(r[6]) : null });
   });
-  var t = function (id) { return byId(d.tasks, X(id)); };
-  t("t-2").parentId = X("t-1");
-  t("t-1").links = [{ type: "is blocked by", taskId: X("t-4") }]; t("t-4").links = [{ type: "blocks", taskId: X("t-1") }];
+  var t = function (id) { return byId(d.tasks, X(id)) || {}; };
+  if (t("t-2").id && t("t-1").id) t("t-2").parentId = X("t-1");
+  if (t("t-1").id && t("t-4").id) { t("t-1").links = [{ type: "is blocked by", taskId: X("t-4") }]; t("t-4").links = [{ type: "blocks", taskId: X("t-1") }]; }
   t("t-15").recurrence = "Monthly"; t("t-19").recurrence = "Monthly";
 
   /* random open work for every project's team */
@@ -206,6 +203,7 @@ function addDemo(d) {
 
   /* conversations */
   var C = function (id, taskId, author, kind, body, ago, hr, extra) {
+    if (!byId(d.tasks, X(taskId))) return;
     d.comments.push(Object.assign({ id: X(id), demo: true, taskId: X(taskId), authorId: who(author), kind: kind, body: body, createdAt: A(ago, hr), resolved: kind === "question" ? false : undefined }, extra || {}));
   };
   C("cm-1", "t-1", "u-eitan", "question", "@[" + who("u-danny") + "] the SRS lists five track modes but the UI only shows four — is \"Silent track\" still in scope for this release?", 2, 11);
@@ -213,8 +211,8 @@ function addDemo(d) {
   C("cm-3", "t-1", "u-eitan", "comment", "Screenshots are on the share under /RSOM/Vol1/Ch3/img (build 2.3.114).", 1, 10);
   C("cm-4", "t-2", "u-daniel", "question", "Do the callouts need to be in Hebrew as well, or English only?", 3, 9, { resolved: true, resolvedBy: who("u-danny"), resolvedAt: A(3, 12) });
   C("cm-5", "t-2", "u-danny", "comment", "English only for this volume.", 3, 12);
-  C("cm-6", "t-9", "u-yinon", "comment", "Batch looks good overall. 6 topics still have hard-coded product names — please switch them to the keyref.", 1, 16);
-  C("cm-7", "t-9", "u-eitan", "question", "@[" + who("u-yinon") + "] should the alias IDs go in the map or in each topic's prolog?", 0, 9);
+  C("cm-6", "t-9", "u-inon", "comment", "Batch looks good overall. 6 topics still have hard-coded product names — please switch them to the keyref.", 1, 16);
+  C("cm-7", "t-9", "u-eitan", "question", "@[" + who("u-inon") + "] should the alias IDs go in the map or in each topic's prolog?", 0, 9);
   C("cm-8", "t-7", "u-daniel", "comment", "Sent to the SME for sign-off. They asked for 3 working days.", 4, 13);
   C("cm-9", "t-13", "u-shoshana", "question", "Is there a sandbox API key we can use in the code samples?", 1, 11);
   C("cm-10", "t-16", "u-danny", "comment", "Two strong CVs from the Careers page so far. Booking interviews for next week.", 2, 12);
@@ -227,7 +225,7 @@ function addDemo(d) {
   });
   d.comments.forEach(function (c) { c.mentions = mentionIds(c.body); if (c.resolved === undefined) delete c.resolved; });
 
-  d.attachments.push({ id: X("at-1"), demo: true, taskId: X("t-1"), kind: "link", name: "SRS v2.3 (client portal)", url: "https://example.com/iai/srs-2.3", addedBy: who("u-eitan"), at: A(9, 10) });
+  if (byId(d.tasks, X("t-1"))) d.attachments.push({ id: X("at-1"), demo: true, taskId: X("t-1"), kind: "link", name: "SRS v2.3 (client portal)", url: "https://example.com/iai/srs-2.3", addedBy: who("u-eitan"), at: A(9, 10) });
   d.tasks.forEach(function (x) { if (x.demo) d.activity.push({ id: uid("a"), demo: true, taskId: x.id, userId: x.reporterId, at: x.createdAt, kind: "created", to: x.assigneeId }); });
   d.comments.forEach(function (c) {
     if (!c.demo) return;
@@ -240,6 +238,6 @@ function addDemo(d) {
     { id: X("v-1"), demo: true, name: "My overdue work", ownerId: who("u-danny"), shared: true, mode: "tasks", filters: { assigneeId: "me", overdue: "1" }, sort: { k: "dueDate", dir: 1 } },
     { id: X("v-2"), demo: true, name: "Waiting on SME", ownerId: who("u-danny"), shared: true, mode: "tasks", filters: { status: "SME Review" }, sort: { k: "dueDate", dir: 1 } },
     { id: X("v-3"), demo: true, name: "IAI board", ownerId: who("u-danny"), shared: true, mode: "board", filters: { clientId: "c-iai" } },
-    { id: X("v-4"), demo: true, name: "Unanswered questions", ownerId: who("u-yinon"), shared: true, mode: "tasks", filters: { questions: "1" }, sort: { k: "updatedAt", dir: -1 } });
+    { id: X("v-4"), demo: true, name: "Unanswered questions", ownerId: who("u-inon"), shared: true, mode: "tasks", filters: { questions: "1" }, sort: { k: "updatedAt", dir: -1 } });
   return d;
 }

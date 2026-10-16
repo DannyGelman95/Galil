@@ -18,15 +18,15 @@
 "use strict";
 
 var GRAPH = "https://graph.microsoft.com/v1.0", GITHUB_API = "https://api.github.com";
-var CACHE_KEY = "galil-taskana-cache", PREFS_KEY = "galil-taskana-prefs", BACKUP_DAY_KEY = "galil-taskana-backup-day", GH_TOKEN_KEY = "galil-taskana-github-token";
+var CACHE_KEY = "galil-taskana-cache", PREFS_KEY = "galil-taskana-prefs", BACKUP_DAY_KEY = "galil-taskana-backup-day", GH_TOKEN_KEY = (window.GalilPortal && GalilPortal.GITHUB_TOKEN_KEY) || "galil-portal-github-token";
 var MAX_ONEDRIVE_ATTACHMENT = 50 * 1024 * 1024, MAX_GITHUB_ATTACHMENT = 10 * 1024 * 1024;
-var COLLECTIONS = ["users", "clients", "projects", "tasks", "comments", "activity", "views", "notifications", "attachments"];
+var COLLECTIONS = ["users", "clients", "projects", "workOrders", "tasks", "comments", "activity", "views", "notifications", "attachments"];
 
 var Store = {
   remote: false, state: "idle", error: "", lastSync: null, folder: null, etag: null, base: null, baseText: null,
   dirty: false, busy: false, again: false, timer: null, poller: null, retry: null, size: 0, merges: 0, renderWait: null, subs: {},
 
-  changed: function () { savePrefs(true); this.dirty = true; writeCache(); this.schedule(backend().debounce); },
+  changed: function () { this.dirty = true; writeCache(); this.schedule(backend().debounce); },
   schedule: function (ms) { var s = this; clearTimeout(s.timer); s.timer = setTimeout(function () { pushRemote(); }, ms); },
   stop: function () { clearTimeout(this.timer); clearInterval(this.poller); clearTimeout(this.retry); this.remote = false; this.state = "idle"; this.folder = null; this.etag = null; this.base = null; this.baseText = null; this.dirty = false; },
   clearCache: function () { try { [CACHE_KEY, CACHE_KEY + ":data", CACHE_KEY + ":base"].forEach(function (k) { localStorage.removeItem(k); }); } catch (e) {} },
@@ -35,13 +35,10 @@ var Store = {
 function backend() { return BACKENDS[STORAGE] || BACKENDS.onedrive; }
 function whereName() { return backend().label; }
 
-/* ---------- device preferences (theme, language) stay on the device ---------- */
-function readPrefs() { try { return JSON.parse(localStorage.getItem(PREFS_KEY) || "{}") || {}; } catch (e) { return {}; } }
-function applyPrefs() { var p = readPrefs(); if (p.theme !== undefined) db.settings.theme = p.theme; if (p.lang) db.settings.lang = p.lang; LANG = db.settings.lang === "he" ? "he" : "en"; }
-function savePrefs(quiet) {
-  try { localStorage.setItem(PREFS_KEY, JSON.stringify({ theme: db.settings.theme || null, lang: db.settings.lang || "en" })); } catch (e) {}
-  if (!quiet && !Store.remote && db.users.length) save(true);
-}
+/* ---------- device preferences: the Employee Portal's theme and language, the same in every part of the portal ---------- */
+function readPrefs() { return { theme: GalilPortal.theme(), lang: GalilPortal.lang() }; }
+function applyPrefs() { var p = readPrefs(); db.settings.theme = p.theme; db.settings.lang = p.lang; LANG = p.lang; }
+function savePrefs() { GalilPortal.setTheme(db.settings.theme || GalilPortal.theme()); }
 
 /* the shared part of the data, as uploaded (per-device settings left out) */
 function sharedText(d) { return JSON.stringify(Object.assign({}, d, { settings: undefined })); }
@@ -321,7 +318,7 @@ function merge3(base, local, remote) {
 }
 
 /* ---------- this browser's copy ---------- */
-function cacheId() { return STORAGE + "|" + (Auth.account ? Auth.account.username.toLowerCase() : "") + "|" + backend().id(); }
+function cacheId() { return STORAGE + "|" + backend().id(); }
 function writeCache() {
   if (!Store.remote || !db.users.length) return;
   try {
@@ -411,7 +408,8 @@ function syncStatus() {
 function startFresh(d) {
   var keep = db.settings;
   db = d; db.settings = keep;
-  if (ENTRA) bindAccount(true);                            // whoever sets Taskana up is its first Admin
+  syncFromWorkdesk(db);                                    // the people, clients and projects are WorkDesk's
+  if (d.withDemo) { delete d.withDemo; addDemo(db); }
   Store.etag = null; Store.base = null; Store.baseText = null; Store.dirty = true;
   setState("saving"); dataVersion++;
   return pushRemote().then(function () { afterDataLoaded(); parseRoute(); onRouteChange(null); render(); });
@@ -420,10 +418,10 @@ function setupScreen() {
   var f = Store.folder || {};
   return authShell([
     h("h1", { class: "auth-h" }, tr("Set up Taskana")),
-    h("p", null, tr("There's no Taskana data in {f} yet. Start it now:", { f: "“" + (f.name || whereName()) + "”" }) + (ENTRA ? " " + tr("you'll be its first Admin.") : "")),
+    h("p", null, tr("There's no Taskana data in {f} yet. Start it now:", { f: "“" + (f.name || whereName()) + "”" }) + " " + tr("People, clients and projects come from WorkDesk.")),
     h("div", { class: "grid", style: { gap: "8px" } },
-      h("button", { class: "btn primary wide", onclick: function () { startFresh(seed(false)); } }, icon("people"), tr("Start with the GALIL team (no tasks)")),
-      h("button", { class: "btn wide", onclick: function () { startFresh(seed(true)); } }, icon("board"), tr("Start with the team and demo tasks")),
+      h("button", { class: "btn primary wide", onclick: function () { startFresh(seed(false)); } }, icon("people"), tr("Start with no tasks")),
+      h("button", { class: "btn wide", onclick: function () { startFresh(Object.assign(seed(false), { withDemo: true })); } }, icon("board"), tr("Start with demo tasks on WorkDesk's projects")),
       h("label", { class: "btn wide" }, icon("upload"), tr("Start from a Taskana backup file…"), h("input", { type: "file", class: "sr", accept: "application/json,.json", onchange: function (e) {
         var file = e.target.files[0]; if (!file) return;
         var rd = new FileReader();
@@ -434,7 +432,7 @@ function setupScreen() {
         };
         rd.readAsText(file);
       } }))),
-    ENTRA ? h("div", { class: "row", style: { marginTop: "12px" } }, h("button", { class: "btn ghost", onclick: signOut }, tr("Sign out"))) : null
+    h("div", { class: "row", style: { marginTop: "12px" } }, h("button", { class: "btn ghost", onclick: signOut }, tr("Sign out")))
   ]);
 }
 function storeErrorScreen() {
@@ -443,7 +441,7 @@ function storeErrorScreen() {
     h("div", { class: "banner err", role: "alert" }, icon("alert"), " ", Store.error),
     h("div", { class: "row", style: { marginTop: "12px" } },
       h("button", { class: "btn primary", onclick: function () { startRemote(); render(); } }, icon("undo"), tr("Try again")),
-      ENTRA ? h("button", { class: "btn ghost", onclick: signOut }, tr("Sign out")) : null,
+      h("button", { class: "btn ghost", onclick: signOut }, tr("Sign out")),
       STORAGE === "github" ? h("button", { class: "btn ghost", onclick: function () { forgetGithubToken(); } }, tr("Use another token")) : null)
   ]);
 }

@@ -160,10 +160,12 @@ function pageMy() {
     body: h("div", { class: "grid g2" },
       h("section", { class: "card pad" }, h("h2", null, tr("Assigned to me")),
         groups.length ? groups.map(function (g) { return [h("h3", { style: { marginTop: "12px" } }, tr(g.s.k) + " (" + g.ts.length + ")"), g.ts.map(taskRow)]; }) : h("div", { class: "empty" }, tr("Nothing assigned to you."))),
-      h("section", { class: "card pad", style: { alignSelf: "start" } }, h("h2", null, tr("Reported by me")),
-        reported.length ? reported.map(function (t) {
-          return h("div", clickable({ class: "list-item" }, function () { openTask(t); }), h("span", { class: "key" }, taskKey(t)), h("div", { class: "grow" }, t.title), avatar(t.assigneeId));
-        }) : h("div", { class: "empty" }, tr("No open tasks you reported for others."))))
+      h("div", { class: "grid", style: { alignContent: "start" } },
+        myHoursBanks(u),
+        h("section", { class: "card pad", style: { alignSelf: "start" } }, h("h2", null, tr("Reported by me")),
+          reported.length ? reported.map(function (t) {
+            return h("div", clickable({ class: "list-item" }, function () { openTask(t); }), h("span", { class: "key" }, taskKey(t)), h("div", { class: "grow" }, t.title), avatar(t.assigneeId));
+          }) : h("div", { class: "empty" }, tr("No open tasks you reported for others.")))))
   };
 }
 
@@ -303,19 +305,19 @@ function bulkBar(ids) {
 function pageClients() {
   return {
     title: tr("Clients & projects"), crumbs: trn(db.clients.length, "{n} client", "{n} clients") + " · " + trn(db.projects.length, "{n} project", "{n} projects"),
-    actions: can.manageClients() ? h("div", { class: "row" }, h("button", { class: "btn", onclick: function () { openModal({ kind: "project", defaults: {} }); } }, icon("plus"), tr("Project")), h("button", { class: "btn primary", onclick: function () { openModal({ kind: "client" }); } }, icon("plus"), tr("Client"))) : null,
-    body: db.clients.length ? h("div", { class: "grid g3" }, db.clients.map(function (c) {
+    body: [workdeskNote(tr("Clients, projects and work orders are set in WorkDesk (Management). Taskana shows them here and keeps the tasks."), "management"),
+      db.clients.length ? h("div", { class: "grid g3" }, db.clients.map(function (c) {
       var ps = db.projects.filter(function (p) { return p.clientId === c.id; });
       var ts = db.tasks.filter(function (t) { return ps.some(function (p) { return p.id === t.projectId; }); });
       return h("article", clickable({ class: "card pad clientcard", "aria-label": c.name }, function () { go("clients/" + c.id); }),
         h("div", { class: "row", style: { marginBottom: "8px" } }, h("span", { class: "avatar lg sq", style: { background: colorFor(c.id) } }, (c.code || "?").slice(0, 3)),
-          h("div", { style: { flex: 1, minWidth: 0 } }, h("b", null, c.name), h("div", { class: "muted small" }, c.industry || "—"))),
+          h("div", { style: { flex: 1, minWidth: 0 } }, h("b", null, c.name), h("div", { class: "muted small" }, c.industry || (c.fromWorkdesk === false ? tr("Not in WorkDesk") : "—")))),
         h("div", { class: "small muted", style: { marginBottom: "10px" } }, trn(ps.length, "{n} project", "{n} projects") + " · " + trn(ts.filter(function (t) { return t.status !== "Done"; }).length, "{n} open task", "{n} open tasks")),
         progress(ts),
         h("div", { style: { marginTop: "10px" } }, ps.map(function (p) {
           return h("div", { class: "row small", style: { padding: "3px 0", flexWrap: "nowrap" } }, h("span", { class: "key" }, p.key), h("span", { class: "ellipsis", style: { flex: 1 } }, p.name), h("span", { class: "chip" + (p.status === "Active" ? " green" : "") }, tr(p.status)));
         })));
-    })) : h("div", { class: "card empty" }, tr("No clients yet. Add your first client to get started."))
+      })) : h("div", { class: "card empty" }, tr("No clients yet. They appear here once they are added in WorkDesk."))]
   };
 }
 function pageClient(id) {
@@ -324,16 +326,13 @@ function pageClient(id) {
   var ps = db.projects.filter(function (p) { return p.clientId === c.id; });
   return {
     title: c.name, crumbs: h("span", null, h("a", { href: "#/clients" }, tr("Clients")), " / " + c.code),
-    actions: can.manageClients() ? h("div", { class: "row" },
-      h("button", { class: "btn", onclick: function () { openModal({ kind: "client", item: c }); } }, icon("edit"), tr("Edit")),
-      h("button", { class: "btn primary", onclick: function () { openModal({ kind: "project", defaults: { clientId: c.id } }); } }, icon("plus"), tr("Project"))) : null,
-    body: h("div", { class: "grid g2" },
+    body: [workdeskNote(tr("This client's details and projects are managed in WorkDesk."), "management"), h("div", { class: "grid g2" },
       h("section", { class: "card pad", style: { alignSelf: "start" } }, h("h2", null, tr("Projects")),
         ps.length ? ps.map(projectRow) : h("div", { class: "empty" }, tr("No projects for this client yet."))),
       h("section", { class: "card pad", style: { alignSelf: "start" } }, h("h2", null, tr("Client details")),
         kv(tr("Code"), c.code), kv(tr("Industry"), c.industry), kv(tr("Contact"), c.contactName),
         kv(tr("Email"), c.contactEmail ? h("span", { class: "row nowrap" }, h("span", { class: "sel-text" }, c.contactEmail), h("button", { class: "btn ghost sm icon-only", "aria-label": tr("Copy email"), onclick: function () { copy(c.contactEmail); } }, icon("copy"))) : ""),
-        h("h3", { style: { marginTop: "14px" } }, tr("Notes & style requirements")), h("div", { class: "prewrap" }, c.notes || h("span", { class: "muted" }, "—"))))
+        h("h3", { style: { marginTop: "14px" } }, tr("Notes & style requirements")), h("div", { class: "prewrap" }, c.notes || h("span", { class: "muted" }, "—"))))]
   };
 }
 function kv(k, v) { return h("div", { class: "prop" }, h("span", null, k), h("div", null, v || h("span", { class: "muted" }, "—"))); }
@@ -346,11 +345,21 @@ function pageProject(id) {
   var est = ts.reduce(function (s, t) { return s + (+t.estimateHours || 0); }, 0);
   var people = {}; ts.forEach(function (t) { if (t.assigneeId) people[t.assigneeId] = (people[t.assigneeId] || 0) + (t.status !== "Done" ? 1 : 0); });
   var openTs = ts.filter(function (t) { return t.status !== "Done"; });
+  var wos = workOrdersOf(p.id), budgets = canSeeBudgets() ? wdBudgetsOfProject(p.id) : [];
+  var wdOn = !!wdData(), meId = me().id;
+  /* hours banks: everyone with an assignment on this project (managers), or just you */
+  var banks = [];
+  if (wdOn) {
+    var ids = {};
+    (wdData().assignments || []).forEach(function (a) { if (a.projectId === p.id && byId(db.users, a.userId)) ids[a.userId] = 1; });
+    Object.keys(people).forEach(function (pid) { ids[pid] = 1; });
+    Object.keys(ids).forEach(function (uid_) { if (isManager() || uid_ === meId) banks.push({ id: uid_, a: wdAllowance(uid_, p.id, null) }); });
+  }
   return {
     title: p.name, crumbs: h("span", null, h("a", { href: "#/clients" }, tr("Clients")), " / ", h("a", { href: "#/clients/" + c.id }, c.name), " / " + p.key),
     actions: h("div", { class: "row" },
       h("button", { class: "btn", onclick: function () { clearFilters(); ui.filters.projectId = p.id; go("board"); } }, icon("board"), tr("Board")),
-      can.manageProjects() ? h("button", { class: "btn", onclick: function () { openModal({ kind: "project", item: p }); } }, icon("edit"), tr("Edit")) : null,
+      can.manageProjects() ? h("button", { class: "btn", onclick: function () { openModal({ kind: "project", item: p }); } }, icon("edit"), tr("Key & description")) : null,
       newTaskBtn({ projectId: p.id })),
     body: [
       h("div", { class: "grid g4", style: { marginBottom: "16px" } },
@@ -368,8 +377,14 @@ function pageProject(id) {
             })] : null;
           }), ts.length ? null : h("div", { class: "empty" }, tr("No tasks yet."))),
         h("div", { class: "grid", style: { alignContent: "start" } },
+          wdOn && (budgets.length || banks.length) ? h("section", { class: "card pad", id: "wd-hours" }, h("h2", null, tr("Budget & hours")),
+            h("p", { class: "muted small", style: { marginTop: 0 } }, tr("From WorkDesk: registered Yellow and Blue hours against the budget, and each person's hours bank (allowance) on this project.")),
+            budgets.length ? [h("h3", null, tr("Budget")), budgets.map(function (b) { return budgetLine(b, b.scope === "wo" ? b.label : tr("Whole project")); })] : null,
+            banks.length ? [h("h3", { style: { marginTop: "12px" } }, isManager() ? tr("Hours banks") : tr("Your hours bank")), banks.map(function (x) { return allowanceLine(x.a, userName(x.id)); })] : null) : null,
           h("section", { class: "card pad" }, h("h2", null, tr("Details")),
             kv(tr("Client"), c.name), kv(tr("Key"), p.key), kv(tr("Document"), tr(p.docType)), kv(tr("Status"), h("span", { class: "chip" + (p.status === "Active" ? " green" : "") }, tr(p.status))),
+            p.workdeskStatus ? kv(tr("WorkDesk status"), tr(p.workdeskStatus)) : null,
+            wos.length ? kv(tr("Work orders"), h("div", null, wos.map(function (w) { return h("div", { class: "small" }, h("span", { class: "mono" }, w.code), w.title ? " · " + w.title : ""); }))) : null,
             kv(tr("Lead"), p.leadUserId ? h("span", { class: "row" }, avatar(p.leadUserId), userName(p.leadUserId)) : ""), kv(tr("Start"), fmtDate(p.startDate)), kv(tr("Delivery"), fmtDate(p.dueDate)),
             p.description ? h("div", { class: "prewrap", style: { marginTop: "10px" } }, p.description) : null),
           h("section", { class: "card pad" }, h("h2", null, tr("Team on this project")),
@@ -381,33 +396,14 @@ function pageProject(id) {
 }
 
 /* ---------- People ---------- */
-function activate(u, role) {
-  u.role = role || u.role || "Member"; u.isActive = true; u.pendingActivation = false; u.declined = false; u.activatedBy = me().id; u.activatedAt = nowISO();
-  save(); toast(tr("{n} can sign in now, as {r}", { n: u.fullName, r: tr(u.role) })); render();
-}
-function pendingPanel() {
-  var list = db.users.filter(function (u) { return u.pendingActivation && !u.declined; });
-  if (!list.length || !can.managePeople()) return null;
-  return h("section", { class: "card pad pending", style: { marginBottom: "16px" } },
-    h("h2", null, tr("Waiting for activation") + " ", h("span", { class: "chip amber" }, list.length)),
-    h("p", { class: "muted small", style: { marginTop: 0 } }, tr("These {d} accounts signed in for the first time. Pick a role and let them in — External for outsourced finance, HR or contractors who should see only their own tasks.", { d: DOMAIN })),
-    list.map(function (u) {
-      var sid = "act-role-" + u.id;
-      return h("div", { class: "list-item static wrap" }, avatar(u.id),
-        h("div", { class: "grow" }, h("b", null, u.fullName), h("div", { class: "muted small" }, [u.email, u.jobTitle, u.department, u.employment === "Outsourced" ? tr("Outsourced") : "", fmtWhen(u.requestedAt || nowISO())].filter(Boolean).join(" · "))),
-        h("select", { id: sid, class: "f", style: { width: "auto" }, "aria-label": tr("Role for {n}", { n: u.fullName }) }, ROLES.map(function (r) { return h("option", { value: r, selected: r === (u.employment === "Outsourced" ? "External" : "Member") }, tr(r)); })),
-        h("button", { class: "btn sm primary", onclick: function () { activate(u, document.getElementById(sid).value); } }, icon("check"), tr("Activate")),
-        h("button", { class: "btn sm danger", onclick: function () { confirmBox(tr("Decline {n}?", { n: u.fullName }), tr("They stay out of Taskana. You can still activate them later from People."), tr("Decline"), function () { u.pendingActivation = false; u.isActive = false; u.declined = true; save(); render(); }); } }, tr("Decline")));
-    }));
-}
 function pagePeople() {
   return {
     title: tr("People"), crumbs: tr("Anyone in the company can be assigned a task"),
-    actions: can.managePeople() ? h("button", { class: "btn primary", onclick: function () { openModal({ kind: "person" }); } }, icon("plus"), tr("Person")) : null,
-    body: [pendingPanel(), h("div", { class: "tbl-wrap" }, h("table", { class: "t" },
+    body: [workdeskNote(tr("People, and who may use Taskana with which role, are set in WorkDesk: Management → People → Portal access."), "management"),
+      h("div", { class: "tbl-wrap" }, h("table", { class: "t" },
       h("caption", { class: "sr" }, tr("People")),
       h("thead", null, h("tr", null, [["Name"], ["Title"], ["Department"], ["Role"], ["Open", 1], ["In review", 1], ["Overdue", 1], ["Done", 1]].map(function (x) { return h("th", { class: x[1] ? "num" : "" }, tr(x[0])); }))),
-      h("tbody", null, db.users.map(function (u) {
+      h("tbody", null, db.users.filter(function (u) { return u.fromWorkdesk !== false || db.tasks.some(function (t) { return t.assigneeId === u.id; }); }).map(function (u) {
         var ts = db.tasks.filter(function (t) { return t.assigneeId === u.id; });
         var open = ts.filter(function (t) { return t.status !== "Done"; });
         var od = open.filter(isOverdue).length;
@@ -427,7 +423,7 @@ function pagePerson(id) {
   var ts = db.tasks.filter(function (t) { return t.assigneeId === u.id; });
   return {
     title: u.fullName, crumbs: h("span", null, h("a", { href: "#/people" }, tr("People")), " / " + u.jobTitle),
-    actions: h("div", { class: "row" }, can.managePeople() ? h("button", { class: "btn", onclick: function () { openModal({ kind: "person", item: u }); } }, icon("edit"), tr("Edit")) : null, newTaskBtn({ assigneeId: u.isActive ? u.id : "" })),
+    actions: h("div", { class: "row" }, newTaskBtn({ assigneeId: u.isActive ? u.id : "" })),
     body: h("div", { class: "grid g2" },
       h("section", { class: "card pad" }, h("h2", null, tr("Assigned tasks")),
         STATUSES.map(function (s) {
@@ -437,8 +433,8 @@ function pagePerson(id) {
       h("section", { class: "card pad", style: { alignSelf: "start" } }, h("div", { class: "row", style: { marginBottom: "12px" } }, avatar(u.id, true), h("div", null, h("b", null, u.fullName), h("div", { class: "muted small" }, u.jobTitle))),
         kv(tr("Email"), h("span", { class: "sel-text" }, u.email)), kv(tr("Department"), u.department), kv(tr("Reports to"), u.managerId ? userName(u.managerId) : ""),
         kv(tr("Employment"), tr(u.employment || "Employee")), kv(tr("Role"), tr(u.role || "Member")),
-        kv(tr("Status"), u.pendingActivation && !u.declined ? tr("Waiting for activation") : u.isActive ? tr("Active") : tr("Inactive")),
-        kv(tr("Sign-in"), u.lastSignInAt ? (u.authProvider === "microsoft" ? "Microsoft Entra ID" : tr("Email and password")) + " · " + fmtWhen(u.lastSignInAt) : tr("Hasn't signed in yet")),
-        u.pendingActivation && !u.declined && can.managePeople() ? h("button", { class: "btn primary sm", style: { marginTop: "10px" }, onclick: function () { activate(u, u.employment === "Outsourced" ? "External" : "Member"); } }, icon("check"), tr("Activate")) : null))
+        kv(tr("Status"), u.isActive ? tr("Active") : u.fromWorkdesk === false ? tr("Not in WorkDesk") : tr("No Taskana access")),
+        kv(tr("Last opened Taskana"), u.lastSignInAt ? fmtWhen(u.lastSignInAt) : tr("Hasn't opened Taskana yet")),
+        h("p", { class: "muted small", style: { marginTop: "10px" } }, tr("Details and the Taskana role come from WorkDesk."))))
   };
 }

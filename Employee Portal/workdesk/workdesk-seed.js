@@ -48,6 +48,8 @@ function wdTeamUsers() {
     u.email = r[3];
     u.employmentType = r[4] === "EXT" ? "contractor" : "full-time";
     u.startDate = "2024-01-01";
+    /* portal access beyond the role defaults: Danny runs Taskana for the company */
+    if (r[0] === "u-danny") u.access = { taskana: "Admin" };
     return u;
   });
 }

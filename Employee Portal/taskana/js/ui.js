@@ -178,7 +178,6 @@ function sidebar() {
   var r = ui.route[0] === "task" ? ui.bg[0] : ui.route[0], u = me();
   var mine = db.tasks.filter(function (t) { return t.assigneeId === u.id && t.status !== "Done"; }).length;
   var unread = unreadCount(), all = can.seeEverything();
-  var waiting = can.managePeople() ? db.users.filter(function (x) { return x.pendingActivation && !x.declined; }).length : 0;
   var item = function (k, ic, label, count, countLabel) {
     return h("button", { class: r === k ? "on" : "", "aria-current": r === k ? "page" : null, onclick: function () { go(k); } },
       icon(ic), h("span", { class: "lbl" }, label), count ? h("span", { class: "count", "aria-label": countLabel }, count) : null);
@@ -186,6 +185,7 @@ function sidebar() {
   var views = visibleViews();
   return [h("aside", { class: "side" + (ui.sideOpen ? " open" : ""), "aria-label": tr("Main menu") },
     h("div", { class: "brand" }, logo(34), h("div", null, h("b", null, "Taskana"), h("small", null, tr("by GALIL")))),
+    h("a", { class: "portal-link", id: "to-portal", href: "../index.html" }, icon("home"), h("span", { class: "lbl" }, tr("Employee Portal"))),
     h("nav", { class: "nav", "aria-label": tr("Pages") },
       item("home", "home", tr("Overview")),
       item("inbox", "bell", tr("Inbox"), unread, trn(unread, "{n} unread", "{n} unread")),
@@ -194,7 +194,7 @@ function sidebar() {
       item("tasks", "list", tr("All tasks")),
       all ? item("insights", "chart", tr("Insights")) : null,
       all ? item("clients", "folder", tr("Clients & projects")) : null,
-      all ? item("people", "people", tr("People"), waiting, trn(waiting, "{n} waiting for activation", "{n} waiting for activation")) : null),
+      all ? item("people", "people", tr("People")) : null),
     h("div", { class: "nav-h", id: "views-h" }, tr("Saved views"), h("span", { class: "small" }, views.length || "")),
     h("nav", { class: "nav", "aria-labelledby": "views-h" }, views.length ? views.map(function (v) {
       var on = (ui.route[0] === "view" || (ui.route[0] === "task" && ui.bg[0] === "view")) && (ui.route[1] === v.id || ui.bg[1] === v.id);
@@ -209,13 +209,14 @@ function sidebar() {
         h("button", { id: "sign-out", class: "out", title: tr("Sign out"), "aria-label": tr("Sign out"), onclick: signOut }, icon("logout"))),
       syncStatus(),
       h("div", { class: "row" },
-        h("button", { onclick: function () { db.settings.theme = isDark() ? "light" : "dark"; save(); render(); } }, icon(isDark() ? "sun" : "moon"), isDark() ? tr("Light") : tr("Dark")),
+        h("button", { onclick: function () { db.settings.theme = isDark() ? "light" : "dark"; savePrefs(); render(); } }, icon(isDark() ? "sun" : "moon"), isDark() ? tr("Light") : tr("Dark")),
         h("button", { lang: LANG === "he" ? "en" : "he", onclick: function () { setLang(LANG === "he" ? "en" : "he"); } }, icon("globe"), LANG === "he" ? "English" : "עברית"),
         h("button", { onclick: function () { openModal({ kind: "data" }); } }, icon("data"), tr("Data"))))),
     h("div", { class: "scrim-side", onclick: function () { ui.sideOpen = false; render(); } })];
 }
 function isDark() { return db.settings.theme ? db.settings.theme === "dark" : !!(window.matchMedia && matchMedia("(prefers-color-scheme: dark)").matches); }
-function setLang(l) { LANG = l; db.settings.lang = l; save(); render(); }
+/* the language is the Employee Portal's: switching it here switches every part of the portal */
+function setLang(l) { GalilPortal.setLang(l); }
 if (window.matchMedia) try { matchMedia("(prefers-color-scheme: dark)").addEventListener("change", function () { if (!db.settings.theme) render(); }); } catch (e) {}
 
 /* ---------- shared bits ---------- */

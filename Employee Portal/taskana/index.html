@@ -9,22 +9,26 @@
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-<link rel="manifest" href="manifest.webmanifest">
+<link rel="manifest" href="../manifest.webmanifest">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="Taskana">
+<meta name="apple-mobile-web-app-title" content="GALIL Portal">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <link rel="stylesheet" href="../shared/fonts/fonts.css">
 <link rel="stylesheet" href="css/taskana.css">
 </head>
 <body>
 <div id="app"><noscript>Taskana needs JavaScript.</noscript></div>
-<script src="config.js"></script>
+<!-- the Employee Portal's settings, sign-in, language and theme -->
+<script src="../config.js"></script>
+<script src="../shared/portal.js"></script>
+<script>GalilPortal.applyLang(); GalilPortal.setTheme(GalilPortal.theme());</script>
 <script src="js/vendor/msal-browser.min.js"></script>
 <script src="js/i18n.js"></script>
 <script src="js/he.js"></script>
 <script src="js/core.js"></script>
 <script src="js/seed.js"></script>
+<script src="js/portal.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/pages.js"></script>
 <script src="js/insights.js"></script>

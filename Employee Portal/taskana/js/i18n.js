@@ -4,7 +4,7 @@
    language; English is the key. Data the team types stays as typed.
    ===================================================================== */
 "use strict";
-var LANG = "en";
+var LANG = window.GalilPortal ? GalilPortal.lang() : "en";   /* the Employee Portal's language, for every part of the portal */
 var HE = {};   /* filled in by he.js */
 function tr(s, params) {
   var out = LANG === "he" && HE[s] ? HE[s] : s;

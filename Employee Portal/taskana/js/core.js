@@ -93,7 +93,7 @@ var dataVersion = 0;          // bumped on every save; indexes rebuild lazily
 var storageOK = true;
 
 function emptyDB() {
-  return { app: "galil-taskana", version: APP_VERSION, rosterVersion: 1, users: [], clients: [], projects: [], tasks: [], comments: [], activity: [],
+  return { app: "galil-taskana", version: APP_VERSION, rosterVersion: 1, users: [], clients: [], projects: [], workOrders: [], tasks: [], comments: [], activity: [],
     views: [], notifications: [], attachments: [], settings: { currentUserId: null, theme: null, lang: "en" } };
 }
 function isBackup(o) { return !!o && (o.app === "galil-taskana" || o.app === "galil-folio") && Array.isArray(o.tasks); }
@@ -145,7 +145,7 @@ function validateBackup(o) {
   }
   var pids = {}; o.projects.forEach(function (p) { pids[p.id] = 1; });
   for (var n = 0; n < o.tasks.length; n++) if (!pids[o.tasks[n].projectId]) return "Task “" + o.tasks[n].title + "” belongs to a project that is not in the backup.";
-  ["comments", "activity", "views", "notifications", "attachments"].forEach(function (k2) { if (o[k2] != null && !Array.isArray(o[k2])) o[k2] = []; });
+  ["comments", "activity", "views", "notifications", "attachments", "workOrders"].forEach(function (k2) { if (o[k2] != null && !Array.isArray(o[k2])) o[k2] = []; });
   return "";
 }
 
@@ -162,7 +162,10 @@ function readStore() {
 function load() {
   var o = readStore();
   if (o) return o;
-  o = seed(); db = o; save(true);   // save the demo data at once so its dates stay fixed
+  /* first visit in this browser: WorkDesk's people and projects, with demo tasks when WorkDesk has its demo projects */
+  o = seed(false); db = o; syncFromWorkdesk(o);
+  if ((o.projects || []).some(function (p) { return /^p-(iai|elb|mob|cmd|gws|hft)1$/.test(p.id); })) addDemo(o);
+  save(true);   // save the demo data at once so its dates stay fixed
   return o;
 }
 function save(quiet) {
@@ -194,7 +197,7 @@ function index() {
 }
 /* the signed-in person (auth.js keeps db.settings.currentUserId in step with the session) */
 function me() { return byId(db.users, db.settings.currentUserId) || { id: "", fullName: "", role: "Viewer", isActive: false }; }
-function userName(id) { var u = byId(db.users, id); return u ? u.fullName : tr("Unassigned"); }
+function userName(id) { var u = byId(db.users, id); return u ? (LANG === "he" && u.fullNameHe ? u.fullNameHe : u.fullName) : tr("Unassigned"); }
 function projectOf(t) { return byId(db.projects, t.projectId); }
 function clientOf(p) { return p ? byId(db.clients, p.clientId) : null; }
 function taskKey(t) { var p = projectOf(t); return (p ? p.key : "?") + "-" + t.num; }
@@ -291,6 +294,9 @@ function setField(t, k, v) {
     var np = byId(db.projects, v); if (!np) return false;
     t.aliases = (t.aliases || []).concat([taskKey(t)]);
     t.num = np.nextNum++;
+    /* a work order belongs to one project */
+    var wo = t.workOrderId ? byId(db.workOrders || [], t.workOrderId) : null;
+    if (wo && wo.projectId !== v) t.workOrderId = null;
   }
   t[k] = v; t.updatedAt = nowISO();
   if (k === "status") onStatusChange(t, old, v);

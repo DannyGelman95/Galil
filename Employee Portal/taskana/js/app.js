@@ -18,7 +18,7 @@ function boot() {
   root = document.getElementById("app");
   if (!REMOTE) {
     db = load();
-    LANG = db.settings.lang === "he" ? "he" : "en";
+    applyPrefs();
     authInit();
     parseRoute(); lastRoute = ui.route.slice();
     onRouteChange(null);
@@ -28,12 +28,23 @@ function boot() {
   /* shared data file: with Entra, sign in first (OneDrive needs the token); otherwise open the file, then sign in */
   db = emptyDB(); applyPrefs();
   parseRoute(); lastRoute = ui.route.slice();
-  if (!ENTRA) { startRemote().then(function () { onRouteChange(null); render(); }); return; }
+  if (!ENTRA) { if (!signedIn()) { render(); return; } startRemote().then(function () { onRouteChange(null); render(); }); return; }
   Auth.phase = "starting"; render();
   authInit().then(function () {
     parseRoute(); lastRoute = ui.route.slice();
     render();
-    if (Auth.account) return startRemote().then(function () { onRouteChange(null); render(); });
+    if (Auth.account && signedIn()) return startRemote().then(function () { onRouteChange(null); render(); });
   });
 }
+/* WorkDesk (in another tab of the portal) changed people, clients, projects or work orders: bring them in */
+function resyncFromWorkdesk() {
+  if (!db || !db.users || !db.users.length || authGate()) return;
+  if (syncFromWorkdesk(db)) { save(true); dataVersion++; refreshUI(); }
+}
+window.addEventListener("storage", function (e) {
+  if (e.key === "galil-workdesk-v1") resyncFromWorkdesk();
+  if (e.key === "galil-workdesk-session") { if (!signedIn()) render(); else { db.settings.currentUserId = (portalUser() || {}).id || null; render(); } }
+  if (e.key === "galil-portal-lang" || e.key === "galil-workdesk-theme") location.reload();
+});
+window.addEventListener("focus", resyncFromWorkdesk);
 boot();
