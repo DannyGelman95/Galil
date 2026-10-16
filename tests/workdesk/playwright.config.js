@@ -1,14 +1,17 @@
-// Browser tests for WorkDesk (site/app). Run: npm test
+// Browser tests for WorkDesk (Employee Portal: the portal home and WorkDesk). Run: npm test
 const { defineConfig } = require("@playwright/test");
 const path = require("path");
 module.exports = defineConfig({
   testDir: ".",
-  timeout: 30000,
+  timeout: 45000,
+  expect: { timeout: 10000 },
+  workers: 3,
   fullyParallel: true,
   reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
   use: {
-    baseURL: "file://" + path.resolve(__dirname, "../../site/app/index.html"),
+    baseURL: "file://" + path.resolve(__dirname, "../../Employee Portal/index.html"),
     viewport: { width: 1400, height: 900 },
+    screenshot: "only-on-failure",
     launchOptions: process.env.PW_CHROMIUM ? { executablePath: process.env.PW_CHROMIUM } : {}
   }
 });

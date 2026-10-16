@@ -1,8 +1,9 @@
-// WorkDesk: the GALIL team, demo data, and the GitHub / Microsoft 365 data files (APIs mocked).
+// The Employee Portal and WorkDesk: the GALIL team, demo data, the portal home page and
+// per-person access, Hebrew, and the GitHub / Microsoft 365 data files (APIs mocked).
 const { test, expect } = require("@playwright/test");
 const fs = require("fs"), path = require("path");
 
-const SITE = path.resolve(__dirname, "../../site/app");
+const SITE = path.resolve(__dirname, "../../Employee Portal");
 const data = page => page.evaluate(() => JSON.parse(localStorage.getItem("galil-workdesk-v1")).data);
 const local = async page => {
   const errors = [];
@@ -88,7 +89,7 @@ test.describe("GitHub data file", () => {
     });
     await page.addInitScript(tok => {
       localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "github", github: { owner: "o", repo: "r", branch: "workdesk-data", path: "workdesk" } }));
-      if (tok && !sessionStorage.getItem("seen")) { localStorage.setItem("galil-workdesk-github-token", tok); sessionStorage.setItem("seen", "1"); }
+      if (tok && !sessionStorage.getItem("seen")) { localStorage.setItem("galil-portal-github-token", tok); sessionStorage.setItem("seen", "1"); }
     }, token);
     await page.goto(ORIGIN + "/index.html");
     return errors;
@@ -185,5 +186,74 @@ test.describe("Microsoft 365", () => {
   test("accounts outside @galiltc.co.il are refused", async ({ page }) => {
     await connect(page, file(), { username: "someone@gmail.com", name: "Someone", localAccountId: "x" });
     await expect(page.getByText(/Only addresses ending in @galiltc.co.il/).first()).toBeVisible();
+  });
+});
+
+/* ---------- the Employee Portal: home page, access, language ---------- */
+test.describe("Employee Portal", () => {
+  test("signing in lands on the home page; WorkDesk has no Tasks tab and ⌂ goes back", async ({ page }) => {
+    const errors = await local(page);
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await expect(page.locator("#portal-home")).toBeVisible();
+    for (const k of ["workdesk", "taskana", "handbook", "kb"]) await expect(page.locator("#tile-" + k)).toBeVisible();
+    await page.click("#tile-workdesk");
+    await expect(page).toHaveURL(/#\/workdesk/);
+    const tabs = await page.locator('[role="tab"]').allTextContents();
+    expect(tabs.join("|")).toContain("Time Log");
+    expect(tabs.some(t => /^Tasks/.test(t.trim()))).toBe(false);
+    await page.click("#to-portal");
+    await expect(page.locator("#portal-home")).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+
+  test("access follows the role: a contractor has no Knowledge Base and is External in Taskana", async ({ page }) => {
+    await local(page);
+    await signIn(page, "gil.hadar@galiltc.co.il");
+    await expect(page.locator("#tile-kb")).toHaveAttribute("aria-disabled", "true");
+    await expect(page.locator("#tile-taskana")).toContainText("External");
+    const acc = await page.evaluate(() => GalilPortal.access(GalilPortal.sessionUser()));
+    expect(acc).toEqual({ workdesk: true, taskana: "External", handbook: true, kb: false });
+  });
+
+  test("an administrator changes one person's portal access in Management → People", async ({ page }) => {
+    await local(page);
+    await signIn(page, "tamir@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await page.getByRole("tab", { name: /Management/ }).click();
+    await page.getByRole("button", { name: "Change portal access for Eitan Fisch" }).click();
+    await page.selectOption("#acc-taskana", "none");
+    await page.getByRole("button", { name: "Save", exact: true }).click();
+    const d = await data(page);
+    expect(d.users.find(u => u.id === "u-eitan").access).toEqual({ workdesk: true, taskana: "none", handbook: true, kb: true });
+    expect(d.audit.some(a => /Portal access changed for Eitan Fisch/.test(a.action))).toBe(true);
+  });
+
+  test("one click switches the portal and WorkDesk to Hebrew, right to left", async ({ page }) => {
+    const errors = await local(page);
+    await signIn(page, "danny.gelman@galiltc.co.il");
+    await page.getByRole("button", { name: "עב" }).click();
+    await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+    await expect(page.locator("#tile-workdesk")).toContainText("דיווח שעות");
+    await page.click("#tile-workdesk");
+    await expect(page.getByRole("tab", { name: /יומן שעות/ })).toBeVisible();
+    expect(await page.evaluate(() => localStorage.getItem("galil-portal-lang"))).toBe("he");
+    expect(errors).toEqual([]);
+  });
+
+  test("the Handbook and the Knowledge Base open for signed-in people only", async ({ page }) => {
+    /* served at an https address, so the pages share one storage */
+    await serve(page);
+    await page.addInitScript(() => localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" })));
+    const base = ORIGIN + "/";
+    await page.goto(base + "kb/index.html");
+    await expect(page.getByText("Sign in to the Employee Portal first")).toBeVisible();
+    await page.goto(base + "index.html");
+    await signIn(page, "gil.hadar@galiltc.co.il");
+    await expect(page.locator("#portal-home")).toBeVisible();
+    await page.goto(base + "kb/index.html");
+    await expect(page.getByText(/No access to/)).toBeVisible();
+    await page.goto(base + "handbook/index.html");
+    await expect(page.locator("#ch-portal")).toBeVisible();
+    await expect(page.getByText(/No access to/)).toHaveCount(0);
   });
 });

@@ -55,7 +55,7 @@ function remapIds(d, map) {
 /* Returns true when anything in d changed. */
 function syncFromWorkdesk(d) {
   var wd = wdData(); if (!wd || !d) return false;
-  var before = JSON.stringify([d.users, d.clients, d.projects, d.workOrders]);
+  var before = JSON.stringify([d.users, d.clients, d.projects, d.workOrders, d.views]);
   if (!d.workOrders) d.workOrders = [];
 
   /* 1 — same email, different id: adopt WorkDesk's id */
@@ -107,13 +107,25 @@ function syncFromWorkdesk(d) {
       leadUserId: p.ownerUserId || null, startDate: p.startDate || null, dueDate: p.endDate || null, woTracked: !!p.isWoTracked, fromWorkdesk: true });
     if (mine.demo) delete mine.demo;
   });
-  d.projects.forEach(function (p) { if (!pIn[p.id]) p.fromWorkdesk = false; });
+  /* a project WorkDesk no longer has: gone from here too when it holds no tasks (with the saved views that filtered on it),
+     archived when it does, so no task is lost */
+  d.projects = d.projects.filter(function (p) {
+    if (pIn[p.id] || !p.fromWorkdesk) return true;
+    if (d.tasks.some(function (t) { return t.projectId === p.id; })) { p.fromWorkdesk = false; p.status = "Archived"; return true; }
+    d.views = (d.views || []).filter(function (v) {
+      var f = v.filters || {};
+      if (f.projectId !== p.id) return true;
+      delete f.projectId;
+      return Object.keys(f).length > 0;
+    });
+    return false;
+  });
 
   /* 5 — work orders (read-only here) */
   d.workOrders = (wd.workOrders || []).filter(function (w) { return pIn[w.projectId]; }).map(function (w) {
     return { id: w.id, projectId: w.projectId, code: w.code, title: w.title || "", status: w.status || "Active", startDate: w.startDate || null, endDate: w.endDate || null };
   });
-  return JSON.stringify([d.users, d.clients, d.projects, d.workOrders]) !== before;
+  return JSON.stringify([d.users, d.clients, d.projects, d.workOrders, d.views]) !== before;
 }
 function workOrderOf(t) { return t && t.workOrderId ? byId(db.workOrders || [], t.workOrderId) : null; }
 function workOrdersOf(projectId) { return (db.workOrders || []).filter(function (w) { return w.projectId === projectId; }); }

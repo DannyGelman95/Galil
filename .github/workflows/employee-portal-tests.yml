@@ -1,0 +1,57 @@
+name: Employee Portal tests
+
+on:
+  pull_request:
+    paths:
+      - "Employee Portal/**"
+      - "tests/**"
+      - ".github/workflows/employee-portal-tests.yml"
+  push:
+    branches: [main]
+    paths:
+      - "Employee Portal/**"
+      - "tests/**"
+      - ".github/workflows/employee-portal-tests.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: ${{ matrix.suite }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # workdesk: the portal home, sign-in, portal access, Hebrew and WorkDesk
+        # taskana: Taskana inside the portal, and what it shows from WorkDesk
+        suite: [workdesk, taskana]
+    defaults:
+      run:
+        working-directory: tests/${{ matrix.suite }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: tests/${{ matrix.suite }}/package-lock.json
+
+      - name: Syntax-check the portal's scripts
+        working-directory: Employee Portal
+        run: for f in config.js shared/*.js workdesk/*.js taskana/js/*.js kb/*.js handbook/*.js; do node --check "$f"; done
+
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm test
+        env:
+          CI: "1"
+
+      - name: Keep the report when tests fail
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.suite }}-playwright-report
+          path: tests/${{ matrix.suite }}/playwright-report

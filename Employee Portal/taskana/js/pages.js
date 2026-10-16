@@ -362,6 +362,7 @@ function pageProject(id) {
       can.manageProjects() ? h("button", { class: "btn", onclick: function () { openModal({ kind: "project", item: p }); } }, icon("edit"), tr("Key & description")) : null,
       newTaskBtn({ projectId: p.id })),
     body: [
+      p.fromWorkdesk ? workdeskNote(tr("This project's name, client, lead, dates, work orders and budget are managed in WorkDesk."), "management") : null,
       h("div", { class: "grid g4", style: { marginBottom: "16px" } },
         h("div", { class: "card pad stat" }, h("b", null, openTs.length), h("span", null, tr("Open tasks"))),
         h("div", { class: "card pad stat" }, h("b", null, ts.filter(function (t) { return t.status === "Done"; }).length), h("span", null, tr("Done"))),

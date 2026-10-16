@@ -753,6 +753,7 @@ Object.assign(HE, {
 "Not in WorkDesk": "לא קיים ב-WorkDesk",
 "No clients yet. They appear here once they are added in WorkDesk.": "אין עדיין לקוחות. הם יופיעו כאן אחרי שיתווספו ב-WorkDesk.",
 "This client's details and projects are managed in WorkDesk.": "הפרטים והפרויקטים של הלקוח מנוהלים ב-WorkDesk.",
+"This project's name, client, lead, dates, work orders and budget are managed in WorkDesk.": "השם, הלקוח, ראש הפרויקט, התאריכים, הזמנות העבודה והתקציב של הפרויקט מנוהלים ב-WorkDesk.",
 "Key & description": "מפתח ותיאור",
 "Budget & hours": "תקציב ושעות",
 "From WorkDesk: registered Yellow and Blue hours against the budget, and each person's hours bank (allowance) on this project.": "מתוך WorkDesk: שעות צהובות וכחולות שנרשמו מול התקציב, ובנק השעות (המכסה) של כל אחד בפרויקט הזה.",
