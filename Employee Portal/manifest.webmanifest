@@ -1,18 +1,43 @@
 {
-  "name": "GALIL WorkDesk",
-  "short_name": "WorkDesk",
-  "description": "GALIL time, planning, tasks and budgets.",
-  "id": "/galil-workdesk",
+  "name": "GALIL Employee Portal",
+  "short_name": "GALIL Portal",
+  "description": "WorkDesk, Taskana, the Handbook and the Knowledge Base — GALIL's employee portal.",
+  "id": "/galil-employee-portal",
   "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "background_color": "#FBFDF7",
   "theme_color": "#1B2A18",
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icons/icon-maskable-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
-    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icons/icon-maskable-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
   ]
 }

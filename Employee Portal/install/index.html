@@ -5,12 +5,23 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1B2A18">
 <meta name="robots" content="noindex">
-<title>Install GALIL Apps</title>
-<link rel="icon" type="image/svg+xml" href="../app/icons/icon.svg">
+<title>Install the GALIL Employee Portal</title>
+<link rel="icon" type="image/svg+xml" href="../icons/icon.svg">
+<link rel="stylesheet" href="../shared/fonts/fonts.css">
+<script>
+/* the portal's language and theme, before the first paint */
+(function(){try{
+  var l=localStorage.getItem("galil-portal-lang")==="he"?"he":"en";
+  document.documentElement.lang=l; document.documentElement.dir=l==="he"?"rtl":"ltr";
+  var v=localStorage.getItem("galil-workdesk-theme"); if(v==="dark"||v==="light") document.documentElement.setAttribute("data-theme",v);
+}catch(e){}})();
+</script>
 <style>
 :root{
   --bg:#FBFDF7; --card:#FFFFFF; --ink:#1B2A18; --muted:#5B6B57; --line:#DDE7D0;
   --wash:#F1F6E8; --green:#8CC63E; --green-ink:#4E8A1E; --dark:#1B2A18; --on-dark:#FFFFFF;
+  --sans:"Noto Sans","Noto Sans Hebrew",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"Noto Sans Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -24,36 +35,41 @@
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
-body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.6 var(--sans)}
 a{color:var(--green-ink)}
+code{font:13.5px/1.4 var(--mono);background:var(--wash);padding:1px 5px;border-radius:5px;unicode-bidi:plaintext}
 .wrap{max-width:880px;margin:0 auto;padding:0 16px}
-header{background:var(--dark);color:var(--on-dark);padding:28px 0 32px}
-header .brand{font:700 13px/1 system-ui,sans-serif;letter-spacing:.2em;color:var(--green)}
-header h1{margin:10px 0 6px;font-size:clamp(24px,5vw,34px);line-height:1.2}
-header p{margin:0;color:#C9D8B8;max-width:60ch}
+header{background:var(--dark);color:var(--on-dark);padding:20px 0 32px}
+header .bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
+header .brand{font:700 13px/1 var(--sans);letter-spacing:.2em;color:var(--green)}
+header .bar a{color:#DCE8CC;text-decoration:none;font-size:14px}
+header .bar a:hover{color:var(--green)}
+.lang{margin-inline-start:auto;display:inline-flex;border:1px solid #4A5E40;border-radius:999px;overflow:hidden}
+.lang button{appearance:none;border:0;background:none;color:#DCE8CC;font:600 13px var(--sans);padding:6px 12px;min-height:32px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--green);color:#14210F}
+header h1{margin:0 0 6px;font-size:clamp(24px,5vw,34px);line-height:1.2}
+header p{margin:0;color:#C9D8B8;max-width:62ch}
 main{padding:24px 0 48px}
 h2{font-size:21px;margin:36px 0 12px}
-.apps{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:-4px}
-.app{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.app{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
 .app .top{display:flex;gap:14px;align-items:center}
 .app img.icon{width:64px;height:64px;flex:none;border-radius:15px;box-shadow:0 2px 8px rgba(0,0,0,.18)}
 .app h3{margin:0;font-size:19px}
-.app .desc{margin:2px 0 0;color:var(--muted);font-size:14px}
-.app .row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.app .desc{margin:2px 0 10px;color:var(--muted);font-size:14px}
 .btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:10px;background:var(--green);color:#14210F;font-weight:700;text-decoration:none}
 .btn:hover{filter:brightness(1.05)}
-.url{font:13px/1.4 ui-monospace,Menlo,Consolas,monospace;color:var(--muted);word-break:break-all}
-.qr{display:flex;gap:12px;align-items:center}
-.qr .code{width:112px;height:112px;flex:none;background:#fff;border-radius:8px;padding:6px}
+.url{font:13px/1.4 var(--mono);color:var(--muted);word-break:break-all;margin-top:10px;direction:ltr;text-align:start;unicode-bidi:plaintext}
+.qr{display:flex;flex-direction:column;gap:6px;align-items:center;max-width:150px;text-align:center}
+.qr .code{width:120px;height:120px;background:#fff;border-radius:8px;padding:6px}
 .qr .code svg{display:block;width:100%;height:100%}
-.qr span{font-size:13px;color:var(--muted)}
+.qr span{font-size:12.5px;color:var(--muted)}
 .tabs{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);margin-bottom:18px}
-.tabs button{appearance:none;border:0;background:none;color:var(--muted);font:600 15px system-ui,sans-serif;padding:12px 14px;min-height:44px;border-bottom:3px solid transparent;cursor:pointer}
+.tabs button{appearance:none;border:0;background:none;color:var(--muted);font:600 15px var(--sans);padding:12px 14px;min-height:44px;border-bottom:3px solid transparent;cursor:pointer}
 .tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--green)}
 .panel[hidden]{display:none}
 ol.steps{list-style:none;counter-reset:s;margin:0;padding:0;display:grid;gap:10px}
-ol.steps>li{counter-increment:s;position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px 14px 14px 58px}
-ol.steps>li::before{content:counter(s);position:absolute;left:14px;top:13px;width:30px;height:30px;border-radius:50%;background:var(--wash);color:var(--green-ink);font-weight:800;display:grid;place-items:center}
+ol.steps>li{counter-increment:s;position:relative;background:var(--card);border:1px solid var(--line);border-radius:12px;padding-block:14px;padding-inline:58px 14px}
+ol.steps>li::before{content:counter(s);position:absolute;inset-inline-start:14px;top:13px;width:30px;height:30px;border-radius:50%;background:var(--wash);color:var(--green-ink);font-weight:800;display:grid;place-items:center}
 ol.steps b{font-weight:700}
 .glyph{display:inline-flex;align-items:center;justify-content:center;min-width:26px;height:24px;padding:0 5px;margin:0 2px;border:1px solid var(--line);border-radius:6px;background:var(--wash);vertical-align:-5px}
 .glyph svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -62,130 +78,215 @@ ol.steps b{font-weight:700}
 .alt{margin-top:18px}
 .alt h3{font-size:16px;margin:0 0 6px}
 .alt p{margin:0;color:var(--muted);font-size:15px}
+.inside{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:10px}
+.inside div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:14px;color:var(--muted)}
+.inside b{display:block;color:var(--ink);font-size:15px}
 dl.faq{margin:0;display:grid;gap:12px}
 dl.faq div{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
 dl.faq dt{font-weight:700}
 dl.faq dd{margin:4px 0 0;color:var(--muted)}
 footer{padding:0 0 40px;color:var(--muted);font-size:13px}
-@media (max-width:520px){ .qr{display:none} }
-@media print{ .tabs{display:none} .panel[hidden]{display:block} header{background:none;color:#000} header p{color:#333} }
+html:not([lang="he"]) [data-l="he"], html[lang="he"] [data-l="en"]{display:none !important}
+@media (max-width:560px){ .app{grid-template-columns:1fr} .qr{display:none} }
+@media print{ .tabs,.lang{display:none} .panel[hidden]{display:block} header{background:none;color:#000} header p{color:#333} }
 </style>
 </head>
 <body>
 <header>
   <div class="wrap">
-    <div class="brand">GALIL</div>
-    <h1>Install WorkDesk and Taskana on your phone</h1>
-    <p>Both apps install straight from the browser, with no app store. Each app gets its own icon on your home screen, opens full screen and signs in with your GALIL Microsoft account. It takes about a minute per app.</p>
+    <div class="bar">
+      <span class="brand">GALIL</span>
+      <a href="../index.html"><span data-l="en">⌂ Employee Portal</span><span data-l="he">⌂ פורטל העובדים</span></a>
+      <a href="../handbook/index.html"><span data-l="en">Handbook</span><span data-l="he">מדריך למשתמש</span></a>
+      <a href="../kb/index.html"><span data-l="en">Knowledge Base</span><span data-l="he">מאגר ידע</span></a>
+      <div class="lang" role="group" aria-label="Language · שפה">
+        <button type="button" data-set="en" lang="en">EN</button><button type="button" data-set="he" lang="he">עב</button>
+      </div>
+    </div>
+    <h1><span data-l="en">Install the Employee Portal on your phone</span><span data-l="he">התקנת פורטל העובדים בטלפון</span></h1>
+    <p data-l="en">One app for everything: WorkDesk, Taskana, the Handbook and the Knowledge Base. It installs straight from the browser, with no app store — you get one GALIL Portal icon on your home screen that opens full screen. Sign in once inside it and every part of the portal is open to you, as your access allows. It takes about a minute.</p>
+    <p data-l="he">אפליקציה אחת לכל דבר: WorkDesk,‏ Taskana, המדריך למשתמש ומאגר הידע. היא מותקנת ישירות מהדפדפן, בלי חנות אפליקציות — מקבלים סמל GALIL Portal אחד במסך הבית שנפתח במסך מלא. נכנסים פעם אחת בתוכה, וכל חלקי הפורטל פתוחים לכם לפי הגישה שלכם. זה לוקח בערך דקה.</p>
   </div>
 </header>
 
 <main class="wrap">
-  <h2 style="margin-top:8px">1. Open the app you want to install</h2>
-  <div class="apps">
-    <section class="app">
+  <h2 style="margin-top:8px"><span data-l="en">1. Open the Employee Portal</span><span data-l="he">1. פתחו את פורטל העובדים</span></h2>
+  <section class="app">
+    <div>
       <div class="top">
-        <img class="icon" src="../app/icons/icon.svg" alt="">
-        <div><h3>WorkDesk</h3><p class="desc">Hours, plans, tasks, expenses and budgets.</p></div>
+        <img class="icon" src="../icons/icon.svg" alt="">
+        <div>
+          <h3><span data-l="en">GALIL Employee Portal</span><span data-l="he">פורטל העובדים של GALIL</span></h3>
+          <p class="desc"><span data-l="en">Hours, leave, expenses and budgets · tasks · the Handbook · the Knowledge Base.</span><span data-l="he">שעות, היעדרויות, הוצאות ותקציבים · משימות · מדריך למשתמש · מאגר ידע.</span></p>
+        </div>
       </div>
-      <div class="row">
-        <a class="btn" data-app="app/index.html" href="../app/index.html">Open WorkDesk</a>
-      </div>
-      <div class="qr"><div class="code" data-qr="app/index.html"></div><span>On a computer? Scan this with your phone's camera to open WorkDesk there.</span></div>
-      <div class="url" data-url="app/index.html"></div>
-    </section>
-    <section class="app">
-      <div class="top">
-        <img class="icon" src="../taskana/icons/icon.svg" alt="">
-        <div><h3>Taskana</h3><p class="desc">Projects and tasks for the writing teams.</p></div>
-      </div>
-      <div class="row">
-        <a class="btn" data-app="taskana/index.html" href="../taskana/index.html">Open Taskana</a>
-      </div>
-      <div class="qr"><div class="code" data-qr="taskana/index.html"></div><span>On a computer? Scan this with your phone's camera to open Taskana there.</span></div>
-      <div class="url" data-url="taskana/index.html"></div>
-    </section>
-  </div>
+      <a class="btn" href="../index.html"><span data-l="en">Open the Employee Portal</span><span data-l="he">פתיחת פורטל העובדים</span></a>
+      <div class="url" data-url="index.html"></div>
+    </div>
+    <div class="qr"><div class="code" data-qr="index.html"></div><span data-l="en">On a computer? Scan this with your phone's camera.</span><span data-l="he">במחשב? סרקו את הקוד במצלמת הטלפון.</span></div>
+  </section>
 
-  <h2>2. Add it to your home screen</h2>
+  <h2><span data-l="en">2. Add it to your home screen</span><span data-l="he">2. הוסיפו אותו למסך הבית</span></h2>
   <div class="tabs" role="tablist">
     <button role="tab" id="t-ios" aria-controls="p-ios" aria-selected="true">iPhone / iPad</button>
     <button role="tab" id="t-android" aria-controls="p-android" aria-selected="false">Android</button>
-    <button role="tab" id="t-pc" aria-controls="p-pc" aria-selected="false">Computer</button>
+    <button role="tab" id="t-pc" aria-controls="p-pc" aria-selected="false"><span data-l="en">Computer</span><span data-l="he">מחשב</span></button>
   </div>
 
   <section class="panel" id="p-ios" role="tabpanel" aria-labelledby="t-ios">
-    <ol class="steps">
-      <li>Open the app's link in <b>Safari</b>.</li>
+    <ol class="steps" data-l="en">
+      <li>Open the portal's link in <b>Safari</b>.</li>
       <li>Tap the <b>Share</b> button
         <span class="glyph" aria-label="Share"><svg viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg></span>
         at the bottom of the screen (top right on iPad). On iOS 26, tap
         <span class="glyph" aria-label="More">•••</span> first, then <b>Share</b>.</li>
-      <li>Scroll down and tap <b>Add to Home Screen</b>.
-        If you don't see it, tap <b>Edit Actions</b> at the bottom of the list and add it.</li>
-      <li>Leave <b>Open as Web App</b> switched on, keep the name (<b>WorkDesk</b> or <b>Taskana</b>) and tap <b>Add</b>.</li>
-      <li>Open the app from the new icon on your home screen and sign in with your GALIL Microsoft account.</li>
+      <li>Scroll down and tap <b>Add to Home Screen</b>. If you don't see it, tap <b>Edit Actions</b> at the bottom of the list and add it.</li>
+      <li>Leave <b>Open as Web App</b> switched on, keep the name <b>GALIL Portal</b> and tap <b>Add</b>.</li>
+      <li>Open the portal from the new icon and sign in with your GALIL account.</li>
     </ol>
-    <p class="note"><b>Sign in from the icon.</b> On iPhone the home-screen app keeps its own sign-in, separate from Safari, so sign in once more after you open it from the icon.</p>
-    <div class="alt"><h3>Using Chrome or Edge on iPhone?</h3><p>On iOS 16.4 and later, tap <b>Share</b> (in the address bar or the menu) and then <b>Add to Home Screen</b>. If it isn't offered, use Safari.</p></div>
+    <ol class="steps" data-l="he">
+      <li>פתחו את הקישור לפורטל ב-<b>Safari</b>.</li>
+      <li>הקישו על כפתור <b>שיתוף</b>
+        <span class="glyph" aria-label="שיתוף"><svg viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4"/><path d="M6 11H5v10h14V11h-1"/></svg></span>
+        בתחתית המסך (למעלה בצד באייפד). ב-iOS 26 הקישו קודם על
+        <span class="glyph" aria-label="עוד">•••</span> ואז על <b>שיתוף</b>.</li>
+      <li>גללו למטה והקישו <b>הוסף למסך הבית</b>. אם האפשרות לא מופיעה, הקישו <b>ערוך פעולות</b> בתחתית הרשימה והוסיפו אותה.</li>
+      <li>השאירו את <b>פתח כאפליקציית אינטרנט</b> מופעל, השאירו את השם <b>GALIL Portal</b> והקישו <b>הוסף</b>.</li>
+      <li>פתחו את הפורטל מהסמל החדש והיכנסו עם חשבון GALIL שלכם.</li>
+    </ol>
+    <p class="note" data-l="en"><b>Sign in from the icon.</b> On iPhone the home-screen app keeps its own sign-in, separate from Safari, so sign in once more after you open it from the icon.</p>
+    <p class="note" data-l="he"><b>היכנסו מהסמל.</b> באייפון לאפליקציה שבמסך הבית יש התחברות משלה, נפרדת מ-Safari, לכן היכנסו פעם נוספת אחרי שפותחים אותה מהסמל.</p>
+    <div class="alt" data-l="en"><h3>Using Chrome or Edge on iPhone?</h3><p>On iOS 16.4 and later, tap <b>Share</b> (in the address bar or the menu) and then <b>Add to Home Screen</b>. If it isn't offered, use Safari.</p></div>
+    <div class="alt" data-l="he"><h3>משתמשים ב-Chrome או ב-Edge באייפון?</h3><p>מ-iOS 16.4 ואילך, הקישו <b>שיתוף</b> (בשורת הכתובת או בתפריט) ואז <b>הוסף למסך הבית</b>. אם האפשרות לא מוצעת, השתמשו ב-Safari.</p></div>
   </section>
 
   <section class="panel" id="p-android" role="tabpanel" aria-labelledby="t-android" hidden>
-    <ol class="steps">
-      <li>Open the app's link in <b>Chrome</b>.</li>
-      <li>Tap the menu
-        <span class="glyph" aria-label="Menu">⋮</span>
-        in the top-right corner.</li>
+    <ol class="steps" data-l="en">
+      <li>Open the portal's link in <b>Chrome</b>.</li>
+      <li>Tap the menu <span class="glyph" aria-label="Menu">⋮</span> in the top corner.</li>
       <li>Tap <b>Add to Home screen</b>, then <b>Install</b>. (Some phones show <b>Install app</b> directly in the menu, or a banner at the bottom of the page. Either one does the same thing.)</li>
       <li>Confirm with <b>Install</b> (or <b>Add</b>). The icon appears on your home screen and in your app drawer.</li>
-      <li>Open the app from the icon and sign in with your GALIL Microsoft account.</li>
+      <li>Open the portal from the icon and sign in with your GALIL account.</li>
     </ol>
-    <div class="alt"><h3>Samsung Internet</h3><p>Tap the menu <span class="glyph">≡</span>, then <b>Add page to</b> and <b>Home screen</b>.</p></div>
-    <div class="alt"><h3>Microsoft Edge</h3><p>Tap the menu <span class="glyph">•••</span>, then <b>Add to phone</b> and <b>Install</b>.</p></div>
+    <ol class="steps" data-l="he">
+      <li>פתחו את הקישור לפורטל ב-<b>Chrome</b>.</li>
+      <li>הקישו על התפריט <span class="glyph" aria-label="תפריט">⋮</span> בפינה העליונה.</li>
+      <li>הקישו <b>הוספה למסך הבית</b> ואז <b>התקנה</b>. (בחלק מהטלפונים מופיע <b>התקנת האפליקציה</b> ישירות בתפריט, או באנר בתחתית הדף. שניהם עושים אותו דבר.)</li>
+      <li>אשרו עם <b>התקנה</b> (או <b>הוספה</b>). הסמל מופיע במסך הבית ובמגירת האפליקציות.</li>
+      <li>פתחו את הפורטל מהסמל והיכנסו עם חשבון GALIL שלכם.</li>
+    </ol>
+    <div class="alt" data-l="en"><h3>Samsung Internet</h3><p>Tap the menu <span class="glyph">≡</span>, then <b>Add page to</b> and <b>Home screen</b>.</p></div>
+    <div class="alt" data-l="he"><h3>Samsung Internet</h3><p>הקישו על התפריט <span class="glyph">≡</span>, ואז <b>הוסף דף אל</b> ו<b>מסך הבית</b>.</p></div>
+    <div class="alt" data-l="en"><h3>Microsoft Edge</h3><p>Tap the menu <span class="glyph">•••</span>, then <b>Add to phone</b> and <b>Install</b>.</p></div>
+    <div class="alt" data-l="he"><h3>Microsoft Edge</h3><p>הקישו על התפריט <span class="glyph">•••</span>, ואז <b>הוספה לטלפון</b> ו<b>התקנה</b>.</p></div>
   </section>
 
   <section class="panel" id="p-pc" role="tabpanel" aria-labelledby="t-pc" hidden>
-    <ol class="steps">
-      <li>Open the app's link in <b>Microsoft Edge</b> or <b>Google Chrome</b>.</li>
+    <ol class="steps" data-l="en">
+      <li>Open the portal's link in <b>Microsoft Edge</b> or <b>Google Chrome</b>.</li>
       <li>Click the install icon
         <span class="glyph" aria-label="Install"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M12 8v6M9 11l3 3 3-3M8 21h8"/></svg></span>
-        at the right end of the address bar.
-        Or open the menu <span class="glyph">•••</span> / <span class="glyph">⋮</span>:
+        at the end of the address bar. Or open the menu <span class="glyph">•••</span> / <span class="glyph">⋮</span>:
         in Edge choose <b>Apps → Install this site as an app</b>; in Chrome choose <b>Cast, save and share → Install page as app</b>.</li>
-      <li>Click <b>Install</b>. The app opens in its own window.</li>
+      <li>Click <b>Install</b>. The portal opens in its own window.</li>
       <li>To keep it handy, right-click its icon on the taskbar and choose <b>Pin to taskbar</b> (on a Mac, <b>Options → Keep in Dock</b>).</li>
     </ol>
-    <div class="alt"><h3>Safari on a Mac</h3><p>Choose <b>File → Add to Dock</b> (macOS Sonoma or later).</p></div>
+    <ol class="steps" data-l="he">
+      <li>פתחו את הקישור לפורטל ב-<b>Microsoft Edge</b> או ב-<b>Google Chrome</b>.</li>
+      <li>לחצו על סמל ההתקנה
+        <span class="glyph" aria-label="התקנה"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M12 8v6M9 11l3 3 3-3M8 21h8"/></svg></span>
+        בקצה שורת הכתובת. או פתחו את התפריט <span class="glyph">•••</span> / <span class="glyph">⋮</span>:
+        ב-Edge בחרו <b>אפליקציות ← התקן אתר זה כאפליקציה</b>; ב-Chrome בחרו <b>העברה, שמירה ושיתוף ← התקנת הדף כאפליקציה</b>.</li>
+      <li>לחצו <b>התקנה</b>. הפורטל נפתח בחלון משלו.</li>
+      <li>כדי שיהיה בהישג יד, לחצו לחיצה ימנית על הסמל בשורת המשימות ובחרו <b>הצמד לשורת המשימות</b> (ב-Mac: <b>אפשרויות ← השאר ב-Dock</b>).</li>
+    </ol>
+    <div class="alt" data-l="en"><h3>Safari on a Mac</h3><p>Choose <b>File → Add to Dock</b> (macOS Sonoma or later).</p></div>
+    <div class="alt" data-l="he"><h3>Safari ב-Mac</h3><p>בחרו <b>קובץ ← הוסף ל-Dock</b> (macOS Sonoma ואילך).</p></div>
   </section>
 
-  <h2>Then do the same for the other app</h2>
-  <p style="margin:0;color:var(--muted)">Each app installs separately. Go back to step 1 and repeat for the second one. You'll end up with two icons:</p>
-  <div style="display:flex;gap:28px;margin-top:14px">
-    <div style="text-align:center;font-size:13px"><img src="../app/icons/icon.svg" alt="" width="60" height="60" style="display:block;border-radius:14px;margin:0 auto 6px"><span>WorkDesk</span></div>
-    <div style="text-align:center;font-size:13px"><img src="../taskana/icons/icon.svg" alt="" width="60" height="60" style="display:block;border-radius:14px;margin:0 auto 6px"><span>Taskana</span></div>
+  <h2><span data-l="en">What's inside</span><span data-l="he">מה יש בפנים</span></h2>
+  <div class="inside" data-l="en">
+    <div><b>WorkDesk</b>Report work, sick and vacation time and expenses; budgets, clients, projects and approvals for managers.</div>
+    <div><b>Taskana</b>Your tasks and boards, with budget and hours-bank indicators from WorkDesk.</div>
+    <div><b>Handbook</b>How every screen works, role by role.</div>
+    <div><b>Knowledge Base</b>Onboarding, company rules and training.</div>
   </div>
+  <div class="inside" data-l="he">
+    <div><b>WorkDesk</b>דיווח שעות עבודה, ימי מחלה וחופשה והוצאות; תקציבים, לקוחות, פרויקטים ואישורים למנהלים.</div>
+    <div><b>Taskana</b>המשימות והלוחות שלכם, עם מחווני תקציב ובנק שעות מ-WorkDesk.</div>
+    <div><b>מדריך למשתמש</b>איך כל מסך עובד, תפקיד אחרי תפקיד.</div>
+    <div><b>מאגר ידע</b>קליטה, נהלי החברה והדרכות.</div>
+  </div>
+  <p class="note" data-l="en">There is <b>one icon</b> for the whole portal — no separate WorkDesk or Taskana app. If you installed WorkDesk or Taskana on their own before, remove those icons and install the portal instead.</p>
+  <p class="note" data-l="he">יש <b>סמל אחד</b> לכל הפורטל — אין אפליקציה נפרדת ל-WorkDesk או ל-Taskana. אם התקנתם בעבר את WorkDesk או את Taskana בנפרד, הסירו את הסמלים האלה והתקינו את הפורטל במקומם.</p>
 
-  <h2>Questions</h2>
-  <dl class="faq">
+  <h2><span data-l="en">Questions</span><span data-l="he">שאלות</span></h2>
+  <dl class="faq" data-l="en">
     <div><dt>I don't see "Add to Home Screen" or "Install".</dt>
       <dd>You're probably inside another app's built-in browser (Outlook, Teams, WhatsApp…). Tap its menu and choose <b>Open in Safari</b> / <b>Open in Chrome</b>, then try again.</dd></div>
-    <div><dt>Do I need to update the apps?</dt>
-      <dd>No. They update themselves the next time you open them with an internet connection.</dd></div>
-    <div><dt>The icon shows a letter or a screenshot instead of the WorkDesk / Taskana icon.</dt>
+    <div><dt>Can I use the portal in Hebrew?</dt>
+      <dd>Yes. Tap <b>EN / עב</b> on the portal's home page, or in WorkDesk, Taskana, the Handbook or the Knowledge Base. The whole portal switches, right to left.</dd></div>
+    <div><dt>A tile on the home page says my account doesn't include it.</dt>
+      <dd>Your portal access is set per person. Ask an Operations Manager or the CEO to change it in WorkDesk → Management → People.</dd></div>
+    <div><dt>Do I need to update the app?</dt>
+      <dd>No. It updates itself the next time you open it with an internet connection.</dd></div>
+    <div><dt>The icon shows a letter or a screenshot instead of the GALIL icon.</dt>
       <dd>Remove the shortcut, reload the page once in the browser, then add it again.</dd></div>
-    <div><dt>How do I remove an app?</dt>
-      <dd>Touch and hold the icon, then choose <b>Remove App</b> (iPhone) or <b>Uninstall</b> / <b>Remove</b> (Android). On a computer, open the app, click its <b>⋯</b> menu and choose <b>Uninstall</b>.</dd></div>
+    <div><dt>How do I remove it?</dt>
+      <dd>Touch and hold the icon, then choose <b>Remove App</b> (iPhone) or <b>Uninstall</b> / <b>Remove</b> (Android). On a computer, open the portal, click its <b>⋯</b> menu and choose <b>Uninstall</b>.</dd></div>
     <div><dt>Something else isn't working?</dt>
-      <dd>Contact the GALIL WorkDesk administrator and tell them which phone and browser you're using.</dd></div>
+      <dd>Contact the portal administrator and tell them which phone and browser you're using.</dd></div>
   </dl>
+  <dl class="faq" data-l="he">
+    <div><dt>אני לא רואה "הוסף למסך הבית" או "התקנה".</dt>
+      <dd>כנראה שאתם בתוך הדפדפן המובנה של אפליקציה אחרת (Outlook,‏ Teams,‏ WhatsApp…). הקישו על התפריט שלה ובחרו <b>פתיחה ב-Safari</b> / <b>פתיחה ב-Chrome</b>, ונסו שוב.</dd></div>
+    <div><dt>אפשר להשתמש בפורטל בעברית?</dt>
+      <dd>כן. הקישו <b>EN / עב</b> בדף הבית של הפורטל, או ב-WorkDesk,‏ Taskana, במדריך או במאגר הידע. כל הפורטל מתחלף, מימין לשמאל.</dd></div>
+    <div><dt>אריח בדף הבית אומר שהחשבון שלי לא כולל אותו.</dt>
+      <dd>הגישה לפורטל נקבעת לכל אדם. בקשו ממנהל/ת תפעול או מהמנכ"ל לשנות אותה ב-WorkDesk ← ניהול ← אנשים.</dd></div>
+    <div><dt>צריך לעדכן את האפליקציה?</dt>
+      <dd>לא. היא מתעדכנת מעצמה בפעם הבאה שפותחים אותה עם חיבור לאינטרנט.</dd></div>
+    <div><dt>הסמל מציג אות או צילום מסך במקום סמל GALIL.</dt>
+      <dd>הסירו את הקיצור, טענו את הדף פעם אחת בדפדפן והוסיפו אותו שוב.</dd></div>
+    <div><dt>איך מסירים אותה?</dt>
+      <dd>לחצו לחיצה ארוכה על הסמל ובחרו <b>הסר אפליקציה</b> (אייפון) או <b>הסרת התקנה</b> / <b>הסרה</b> (אנדרואיד). במחשב, פתחו את הפורטל, לחצו על תפריט <b>⋯</b> ובחרו <b>הסרת התקנה</b>.</dd></div>
+    <div><dt>משהו אחר לא עובד?</dt>
+      <dd>פנו למנהל/ת הפורטל וציינו באיזה טלפון ובאיזה דפדפן אתם משתמשים.</dd></div>
+  </dl>
+
+  <h2 id="admin"><span data-l="en">For administrators: setting up the portal</span><span data-l="he">למנהלי מערכת: הקמת הפורטל</span></h2>
+  <div data-l="en">
+    <p>The portal is a folder of web pages — <code>Employee Portal/</code> in the Galil repository — with no server of its own. It is published with the website by GitHub Pages; everything it needs is in one settings file, <code>Employee Portal/config.js</code>.</p>
+    <ol class="steps">
+      <li><b>Choose where the data lives</b> — <code>storage</code> in <code>config.js</code>: <code>"github"</code> (data files on branches of a repository; each person pastes a GitHub access token once), <code>"onedrive"</code> (the company OneDrive; needs Microsoft Entra ID) or <code>"local"</code> (this browser only — the demonstration).</li>
+      <li><b>GitHub storage</b> — set <code>github.owner</code> and <code>github.repo</code>. WorkDesk's data goes to the <code>workdesk-data</code> branch and Taskana's to <code>taskana-data</code>; both are created on first use, and every save is a commit. Each person needs a fine-grained token with <em>Contents: read and write</em> on that repository.</li>
+      <li><b>Microsoft sign-in</b> — register one application in Microsoft Entra ID for the whole portal (a single-page application whose redirect URI is the portal's address), and put its <code>clientId</code> and <code>tenantId</code> under <code>entra</code>. Without them, the portal signs in with email and the demonstration password.</li>
+      <li><b>OneDrive storage</b> — create a <em>WorkDesk</em> and a <em>Taskana</em> folder, share each with the company (<em>can edit</em>), and paste the links into <code>workdesk.folderLink</code> and <code>taskana.folderLink</code>.</li>
+      <li><b>First sign-in</b> — the first Operations Manager or CEO signs in, checks the people in WorkDesk → Management → People, and sets the <b>portal access</b> of anyone who should differ from their role.</li>
+      <li><b>Share the address</b> — send employees this page (<code>install/</code>) so they can put the portal on their phones.</li>
+    </ol>
+    <p class="note">Per browser, <b>Connection settings…</b> on the sign-in screen can override <code>config.js</code> for testing. The guides in <code>docs/</code> cover the full Microsoft 365 rollout.</p>
+  </div>
+  <div data-l="he">
+    <p>הפורטל הוא תיקייה של דפי אינטרנט — <code>Employee Portal/</code> במאגר Galil — בלי שרת משלו. הוא מתפרסם יחד עם האתר דרך GitHub Pages; כל מה שהוא צריך נמצא בקובץ הגדרות אחד, <code>Employee Portal/config.js</code>.</p>
+    <ol class="steps">
+      <li><b>בחרו היכן יישמרו הנתונים</b> — <code>storage</code> ב-<code>config.js</code>: <code>"github"</code> (קובצי נתונים בענפים של מאגר; כל אדם מדביק אסימון גישה של GitHub פעם אחת), <code>"onedrive"</code> (ה-OneDrive של החברה; מחייב Microsoft Entra ID) או <code>"local"</code> (רק בדפדפן הזה — להדגמה).</li>
+      <li><b>אחסון ב-GitHub</b> — קבעו <code>github.owner</code> ו-<code>github.repo</code>. הנתונים של WorkDesk נשמרים בענף <code>workdesk-data</code> ושל Taskana ב-<code>taskana-data</code>; שניהם נוצרים בשימוש הראשון, וכל שמירה היא commit. כל אדם צריך אסימון fine-grained עם <em>Contents: read and write</em> על המאגר הזה.</li>
+      <li><b>כניסה עם Microsoft</b> — רשמו יישום אחד ב-Microsoft Entra ID לכל הפורטל (יישום חד־עמודי שכתובת ההפניה שלו היא כתובת הפורטל), והכניסו את ה-<code>clientId</code> וה-<code>tenantId</code> שלו תחת <code>entra</code>. בלעדיהם, הפורטל נכנס עם דוא״ל וסיסמת ההדגמה.</li>
+      <li><b>אחסון ב-OneDrive</b> — צרו תיקיית <em>WorkDesk</em> ותיקיית <em>Taskana</em>, שתפו כל אחת עם החברה (<em>עם הרשאת עריכה</em>), והדביקו את הקישורים ב-<code>workdesk.folderLink</code> וב-<code>taskana.folderLink</code>.</li>
+      <li><b>כניסה ראשונה</b> — מנהל/ת התפעול או המנכ"ל הראשונים נכנסים, בודקים את האנשים ב-WorkDesk ← ניהול ← אנשים, וקובעים <b>גישה לפורטל</b> לכל מי שצריך גישה שונה מהתפקיד שלו.</li>
+      <li><b>שתפו את הכתובת</b> — שלחו לעובדים את הדף הזה (<code>install/</code>) כדי שיתקינו את הפורטל בטלפון.</li>
+    </ol>
+    <p class="note">בכל דפדפן, <b>הגדרות חיבור…</b> במסך הכניסה יכולות לעקוף את <code>config.js</code> לצורכי בדיקה. המדריכים בתיקייה <code>docs/</code> מכסים את ההטמעה המלאה ב-Microsoft 365.</p>
+  </div>
 </main>
 
-<footer class="wrap">GALIL · WorkDesk and Taskana installation guide</footer>
+<footer class="wrap"><span data-l="en">GALIL · Employee Portal installation guide</span><span data-l="he">GALIL · מדריך ההתקנה של פורטל העובדים</span></footer>
 
 <script src="vendor/qrcode.js"></script>
 <script>
 (function () {
-  // full URLs of the apps, worked out from where this page is served
+  // full URL of the portal, worked out from where this page is served
   var base = new URL("../", location.href).href;
   document.querySelectorAll("[data-url]").forEach(function (el) { el.textContent = base + el.getAttribute("data-url"); });
   document.querySelectorAll("[data-qr]").forEach(function (el) {
@@ -197,6 +298,16 @@ footer{padding:0 0 40px;color:var(--muted);font-size:13px}
     } catch (e) { el.parentNode.style.display = "none"; }
   });
   if (location.protocol === "file:") document.querySelectorAll(".qr").forEach(function (el) { el.style.display = "none"; });
+
+  // language — the portal's: switching it here switches the whole portal
+  function setLang(l) {
+    document.documentElement.lang = l; document.documentElement.dir = l === "he" ? "rtl" : "ltr";
+    document.title = l === "he" ? "התקנת פורטל העובדים של GALIL" : "Install the GALIL Employee Portal";
+    document.querySelectorAll("[data-set]").forEach(function (b) { b.setAttribute("aria-pressed", b.getAttribute("data-set") === l ? "true" : "false"); });
+    try { localStorage.setItem("galil-portal-lang", l); } catch (e) {}
+  }
+  document.querySelectorAll("[data-set]").forEach(function (b) { b.addEventListener("click", function () { setLang(b.getAttribute("data-set")); }); });
+  setLang(document.documentElement.lang === "he" ? "he" : "en");
 
   // tabs, opening on the visitor's own platform
   var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
