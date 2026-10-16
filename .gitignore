@@ -1,0 +1,7 @@
+.claude/
+tests/taskana/test-results/
+tests/taskana/playwright-report/
+tests/taskana/node_modules/
+tests/workdesk/test-results/
+tests/workdesk/playwright-report/
+tests/workdesk/node_modules
