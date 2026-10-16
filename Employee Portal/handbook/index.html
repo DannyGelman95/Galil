@@ -1,306 +1,34 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>GALIL WorkDesk Handbook</title>
-<meta name="description" content="Every function in GALIL WorkDesk V7.2 — what it does, how to do it, and which roles are allowed to.">
+<title>GALIL Employee Portal Handbook</title>
+<meta name="description" content="Every function of the GALIL Employee Portal — WorkDesk, Taskana, the Handbook and the Knowledge Base — what it does, how to do it, and which roles may.">
 <script>
-/* set the theme before the first paint, to avoid a light/dark flash */
-(function(){try{var v=localStorage.getItem("galil-handbook-theme");
+/* the portal's language decides which page to show; the portal's theme is set before the first paint */
+(function(){try{var l=localStorage.getItem("galil-portal-lang")==="he"?"he":"en";
+if(l!=="en"){location.replace("he.html"+location.hash);return;}
+var v=localStorage.getItem("galil-workdesk-theme");
 if(v!=="dark"&&v!=="light"){v=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}
 document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 </script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cpath d='M78 34H42a10 10 0 00-10 10v152a10 10 0 0010 10h36' fill='none' stroke='%231F3D24' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M162 34h36a10 10 0 0110 10v152a10 10 0 01-10 10h-36' fill='none' stroke='%231F3D24' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M148 92A44 44 0 10152 148V122H122' fill='none' stroke='%238CC63E' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Sans+Mono:wght@400;500;600&display=swap">
-<style>
-:root{
-  --paper:#FBFDF7; --surface:#FFFFFF; --wash:#F2F8E9; --sunk:#EFF4E6;
-  --ink:#1B2A18; --body:#2C3A28; --muted:#5B6B57; --faint:#8A9686;
-  --line:#D8E7C4; --line-soft:#E7F0DA;
-  --accent:#5C8B22; --accent-bright:#8CC63E; --accent-ink:#3F6116;
-  --red:#E05C4B; --yellow:#E3AC35; --blue:#3B7DD8; --amber:#F0A32C; --teal:#17A3B8;
-  --sick:#9C8CE8; --vacation:#3FA97E; --danger:#C0392B;
-  --chip-on-bg:#E6F2D4; --chip-on-fg:#3F6116;
-  --chip-off-bg:#F0F1EE; --chip-off-fg:#9AA394;
-  --chrome-bg:#1B2A18; --chrome-fg:#EAF3E0; --chrome-fg-soft:#C4D9AE;
-  --row-alt:#F2F8E9;
-  --shadow:0 1px 2px rgba(27,42,24,.05), 0 8px 24px -16px rgba(27,42,24,.28);
-  --sans:"Noto Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --serif:"Noto Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
-  --mono:"Noto Sans Mono",ui-monospace,"SF Mono",Menlo,monospace;
-  color-scheme:light;
-}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]){
-    --paper:#11170E; --surface:#182014; --wash:#1E2818; --sunk:#141B10;
-    --ink:#E9F2DF; --body:#D2DEC6; --muted:#9AAC90; --faint:#6E7F66;
-    --line:#2E3C26; --line-soft:#26331F;
-    --accent:#9FD154; --accent-bright:#B6E072; --accent-ink:#C6E894;
-    --red:#F07E6E; --yellow:#EEC262; --blue:#7FB2F0; --amber:#F5B84F; --teal:#49C2D4;
-    --sick:#B3A6F0; --vacation:#5FC495;
-    --chip-on-bg:#27381A; --chip-on-fg:#B6E072;
-    --chip-off-bg:#20281C; --chip-off-fg:#6B7A63;
-    --chrome-bg:#2B3A22; --chrome-fg:#EAF3E0; --chrome-fg-soft:#BFD4A9;
-    --row-alt:#1B2416;
-    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
-    color-scheme:dark;
-  }
-}
-:root[data-theme="dark"]{
-  --paper:#11170E; --surface:#182014; --wash:#1E2818; --sunk:#141B10;
-  --ink:#E9F2DF; --body:#D2DEC6; --muted:#9AAC90; --faint:#6E7F66;
-  --line:#2E3C26; --line-soft:#26331F;
-  --accent:#9FD154; --accent-bright:#B6E072; --accent-ink:#C6E894;
-  --red:#F07E6E; --yellow:#EEC262; --blue:#7FB2F0; --amber:#F5B84F; --teal:#49C2D4;
-  --sick:#B3A6F0; --vacation:#5FC495;
-  --chip-on-bg:#27381A; --chip-on-fg:#B6E072;
-  --chip-off-bg:#20281C; --chip-off-fg:#6B7A63;
-  --chrome-bg:#2B3A22; --chrome-fg:#EAF3E0; --chrome-fg-soft:#BFD4A9;
-  --row-alt:#1B2416;
-  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
-  color-scheme:dark;
-}
-
-*{box-sizing:border-box}
-body{
-  margin:0; background:var(--paper); color:var(--body);
-  font-family:var(--serif); font-size:16.5px; line-height:1.62;
-  -webkit-font-smoothing:antialiased;
-}
-img{max-width:100%}
-a{color:var(--accent-ink); text-underline-offset:2px; text-decoration-thickness:1px}
-a:hover{color:var(--accent)}
-:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
-
-/* ---------- utility strip ---------- */
-.utility{background:var(--chrome-bg); color:var(--chrome-fg-soft); font-family:var(--sans); font-size:12.5px}
-.utility-in{max-width:1180px; margin:0 auto; padding:8px 20px; display:flex; align-items:center; gap:18px; flex-wrap:wrap}
-.utility a{color:var(--chrome-fg); text-decoration:none; white-space:nowrap; flex-shrink:0}
-.utility a:hover{color:var(--accent-bright)}
-.utility span{color:var(--chrome-fg-soft)}
-.utility .themebtn{
-  margin-inline-start:auto; flex:0 0 auto; width:26px; height:26px; border-radius:999px; cursor:pointer;
-  border:1px solid var(--chrome-fg-soft); background:transparent; color:var(--chrome-fg);
-  display:grid; place-items:center; font-size:13px; line-height:1;
-}
-.utility .themebtn:hover{border-color:var(--accent-bright); color:var(--accent-bright)}
-
-/* ---------- masthead ---------- */
-.masthead{
-  background:#1B2A18; color:#EAF3E0;
-  padding-block:34px 30px; padding-inline:20px;
-  border-bottom:3px solid var(--accent);
-}
-.masthead-in{max-width:1180px; margin:0 auto; display:flex; flex-wrap:wrap; gap:26px; align-items:flex-end}
-.wordmark{display:flex; align-items:center; gap:12px}
-.wordmark svg{width:40px; height:32px; flex:0 0 auto}
-.wordmark b{font-family:var(--sans); font-weight:700; font-size:22px; letter-spacing:.16em; color:#fff; line-height:1}
-.wordmark small{display:block; font-family:var(--sans); font-size:11.5px; letter-spacing:.05em; color:#A9C489; margin-top:3px}
-.masthead h1{
-  font-family:var(--sans); font-weight:600; font-size:clamp(26px,4.2vw,40px);
-  line-height:1.08; margin:0; color:#fff; text-wrap:balance; letter-spacing:-.015em;
-}
-.masthead .standfirst{font-size:15.5px; color:#B7CCA3; margin:9px 0 0; max-width:60ch}
-.masthead .grow{flex:1 1 300px}
-.stamp{
-  font-family:var(--mono); font-size:11.5px; letter-spacing:.04em; color:#8FA87A;
-  border:1px solid #33462C; border-radius:8px; padding:9px 12px; background:#16210F;
-  display:flex; flex-direction:column; gap:3px;
-}
-.stamp b{color:#C9DDB4; font-weight:500}
-
-/* ---------- role bar ---------- */
-.rolebar{
-  position:sticky; top:0; z-index:40;
-  background:var(--paper);
-  background:color-mix(in srgb, var(--paper) 92%, transparent);
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--line);
-  padding-inline:20px;
-}
-.rolebar-in{max-width:1180px; margin:0 auto; display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; padding-block:11px}
-.rolebar .lead{font-family:var(--sans); font-size:11.5px; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); flex:0 0 auto}
-.roleset{display:flex; flex-wrap:wrap; gap:5px}
-.rolebtn{
-  font-family:var(--mono); font-size:12px; font-weight:500;
-  padding:5px 10px; border-radius:999px; cursor:pointer;
-  border:1px solid var(--line); background:var(--surface); color:var(--muted);
-}
-.rolebtn:hover{border-color:var(--accent); color:var(--accent-ink)}
-.rolebtn[aria-pressed="true"]{background:var(--chrome-bg); border-color:var(--chrome-bg); color:var(--chrome-fg)}
-.rolebtn.clear[aria-pressed="true"]{background:var(--accent); border-color:var(--accent); color:#0E1509}
-.rolenote{font-family:var(--sans); font-size:13px; color:var(--muted); flex:1 1 200px; min-width:0}
-.rolenote b{color:var(--ink); font-weight:600}
-
-/* ---------- shell ---------- */
-.shell{
-  max-width:1180px; margin:0 auto; padding-inline:20px; padding-block:0 64px;
-  display:grid; grid-template-columns:224px minmax(0,1fr); gap:44px; align-items:start;
-}
-.toc{position:sticky; top:60px; padding-block:30px; max-height:calc(100vh - 76px); overflow:auto; font-family:var(--sans); font-size:13.5px}
-.toc h2{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); margin:0 0 10px; font-weight:600}
-.toc ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1px}
-.toc a{display:grid; grid-template-columns:22px 1fr; gap:6px; align-items:baseline; padding:4px 7px; border-radius:6px; color:var(--muted); text-decoration:none; line-height:1.35}
-.toc a:hover{background:var(--wash); color:var(--ink)}
-.toc a .n{font-family:var(--mono); font-size:11px; color:var(--faint)}
-.toc a.on{background:var(--wash); color:var(--ink); font-weight:600}
-.toc a.on .n{color:var(--accent)}
-
-main{padding-block:30px; min-width:0}
-
-/* ---------- chapters ---------- */
-.ch{padding-block:0 8px; scroll-margin-top:72px}
-.ch + .ch{margin-top:56px; border-top:1px solid var(--line-soft); padding-top:46px}
-.ch-head{display:flex; gap:16px; align-items:baseline; flex-wrap:wrap; margin-bottom:6px}
-.ch-num{font-family:var(--mono); font-size:13px; font-weight:500; color:var(--accent); border:1px solid var(--line); border-radius:6px; padding:2px 8px; background:var(--wash); flex:0 0 auto}
-.ch h2{font-family:var(--sans); font-weight:600; font-size:clamp(22px,3vw,29px); line-height:1.15; margin:0; color:var(--ink); letter-spacing:-.015em; text-wrap:balance}
-.ch > p, .ch > ul, .ch > ol, .ch > .steps{max-width:68ch}
-.lede{font-size:17.5px; color:var(--muted); max-width:64ch; margin:2px 0 22px}
-
-h3{font-family:var(--sans); font-weight:600; font-size:18px; color:var(--ink); margin:34px 0 8px; letter-spacing:-.005em; text-wrap:balance}
-h4{font-family:var(--sans); font-weight:600; font-size:13px; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:26px 0 8px}
-p{margin:0 0 14px}
-ul,ol{margin:0 0 16px; padding-left:22px}
-li{margin-bottom:6px}
-li::marker{color:var(--accent)}
-strong{font-weight:600; color:var(--ink)}
-code, .mono{font-family:var(--mono); font-size:.87em; background:var(--sunk); padding:1px 5px; border-radius:4px; color:var(--ink)}
-
-.steps{list-style:none; padding:0; counter-reset:s; margin:0 0 18px}
-.steps > li{counter-increment:s; position:relative; padding-left:36px; margin-bottom:10px}
-.steps > li::before{
-  content:counter(s); position:absolute; left:0; top:.15em;
-  font-family:var(--mono); font-size:11.5px; font-weight:500;
-  width:23px; height:23px; display:grid; place-items:center;
-  border-radius:50%; background:var(--chrome-bg); color:var(--chrome-fg);
-}
-
-/* ---------- permission strip ---------- */
-.perm{border:1px solid var(--line); border-left:3px solid var(--accent); border-radius:4px; background:var(--wash); padding:13px 16px; margin:0 0 24px; max-width:68ch}
-.perm h4{margin:0 0 9px}
-.caps{display:flex; flex-direction:column; gap:9px}
-.cap-row{display:flex; flex-wrap:wrap; gap:7px 9px; align-items:baseline}
-.cap-name{font-family:var(--sans); font-size:13.5px; font-weight:600; color:var(--ink); flex:1 1 190px; min-width:150px}
-.cap-chips{display:flex; flex-wrap:wrap; gap:3px}
-.rc{
-  font-family:var(--mono); font-size:10.5px; font-weight:500; letter-spacing:.02em;
-  padding:2px 6px; border-radius:4px; line-height:1.5;
-  background:var(--chip-on-bg); color:var(--chip-on-fg); white-space:nowrap;
-}
-.rc[data-scope="-"]{background:var(--chip-off-bg); color:var(--chip-off-fg); text-decoration:line-through; text-decoration-thickness:1px}
-.rc[data-scope="O"],.rc[data-scope="T"],.rc[data-scope="P"]{background:#DCF0F3; color:#0C6D7C}
-:root[data-theme="dark"] .rc[data-scope="O"],:root[data-theme="dark"] .rc[data-scope="T"],:root[data-theme="dark"] .rc[data-scope="P"]{background:#12333A; color:#68CEDD}
-@media (prefers-color-scheme:dark){
-  :root:not([data-theme="light"]) .rc[data-scope="O"],
-  :root:not([data-theme="light"]) .rc[data-scope="T"],
-  :root:not([data-theme="light"]) .rc[data-scope="P"]{background:#12333A; color:#68CEDD}
-}
-.rc .sc{opacity:.7; margin-left:3px}
-
-[data-role] .rc{opacity:.28}
-[data-role] .rc.hit{opacity:1; box-shadow:0 0 0 1.5px var(--accent)}
-[data-role] .rc.hit[data-scope="-"]{box-shadow:0 0 0 1.5px var(--faint)}
-.ch .locked{display:none}
-.locked-note{
-  display:none; font-family:var(--sans); font-size:13.5px; font-weight:500;
-  border:1px dashed var(--line); border-radius:4px; padding:10px 13px;
-  color:var(--muted); background:var(--sunk); margin:0 0 20px; max-width:68ch;
-}
-.ch.is-locked .locked-note{display:block}
-
-/* ---------- figures ---------- */
-figure{margin:26px 0 30px}
-figure img{display:block; width:100%; height:auto; border:1px solid var(--line); border-radius:6px; background:var(--surface); box-shadow:var(--shadow); cursor:zoom-in}
-figure img:hover{outline:2px solid var(--accent); outline-offset:1px}
-figcaption{
-  font-family:var(--sans); font-size:13px; color:var(--muted); line-height:1.5;
-  margin-top:9px; display:grid; grid-template-columns:auto 1fr; gap:9px; align-items:baseline;
-  max-width:78ch;
-}
-figcaption .fno{
-  font-family:var(--mono); font-size:11px; color:var(--accent-ink);
-  background:var(--wash); border:1px solid var(--line); border-radius:4px; padding:1px 6px;
-  white-space:nowrap;
-}
-figcaption b{color:var(--ink); font-weight:600}
-.fig-narrow{max-width:480px}
-.fig-pair{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; margin:26px 0 30px}
-.fig-pair figure{margin:0}
-
-/* ---------- lightbox ---------- */
-.lightbox{
-  position:fixed; inset:0; z-index:200; display:none; align-items:center; justify-content:center;
-  padding:40px; background:rgba(10,14,8,.86); cursor:zoom-out;
-}
-.lightbox.on{display:flex}
-.lightbox img{max-width:100%; max-height:100%; width:auto; height:auto; border-radius:6px; box-shadow:0 20px 60px rgba(0,0,0,.5); cursor:default}
-.lightbox-close{
-  position:fixed; top:18px; right:22px; z-index:201; font-family:var(--sans); font-size:22px; line-height:1;
-  color:#F2F6ED; background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.3); border-radius:8px;
-  width:38px; height:38px; cursor:pointer;
-}
-.lightbox-close:hover{background:rgba(255,255,255,.22)}
-
-/* ---------- notes ---------- */
-.note{border-left:3px solid var(--teal); background:var(--sunk); padding:12px 15px; border-radius:0 4px 4px 0; margin:0 0 20px; max-width:68ch; font-size:15.5px}
-.note.warn{border-left-color:var(--amber)}
-.note.stop{border-left-color:var(--red)}
-.note .tag{font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:3px}
-.note p:last-child{margin-bottom:0}
-
-/* ---------- tables ---------- */
-.tw{overflow-x:auto; margin:0 0 24px; border:1px solid var(--line); border-radius:6px; background:var(--surface)}
-table{border-collapse:collapse; width:100%; font-family:var(--sans); font-size:13.5px}
-th,td{padding:9px 12px; text-align:left; border-bottom:1px solid var(--line-soft); vertical-align:top}
-thead th{background:var(--chrome-bg); color:var(--chrome-fg); font-weight:600; font-size:12px; letter-spacing:.04em; border-bottom:none}
-tbody tr:nth-child(even){background:var(--row-alt)}
-tbody tr:last-child td{border-bottom:none}
-td.num, th.num{text-align:center; font-family:var(--mono); font-variant-numeric:tabular-nums}
-.matrix td.num{font-weight:600; font-size:12.5px}
-.matrix td.num[data-v="-"]{color:var(--faint); font-weight:400}
-.matrix td.num[data-v="Y"]{color:var(--accent-ink)}
-.matrix td.num[data-v="O"],.matrix td.num[data-v="T"],.matrix td.num[data-v="P"]{color:var(--teal)}
-.matrix th.rolecol{text-align:center; font-family:var(--mono)}
-.matrix col.hl, .matrix td.hl{background:var(--chip-on-bg)}
-table code{background:transparent; padding:0}
-
-.legend{display:flex; flex-wrap:wrap; gap:8px 18px; font-family:var(--sans); font-size:13px; color:var(--muted); margin:0 0 18px}
-.legend span{display:flex; gap:6px; align-items:center}
-.legend b{font-family:var(--mono); color:var(--ink); font-weight:600}
-
-.swatch{display:inline-block; width:10px; height:10px; border-radius:2px; vertical-align:baseline; margin-right:1px}
-
-.kv{display:grid; grid-template-columns:minmax(120px,auto) 1fr; gap:6px 16px; font-family:var(--sans); font-size:14px; margin:0 0 20px; max-width:68ch}
-.kv dt{font-weight:600; color:var(--ink)}
-.kv dd{margin:0; color:var(--body)}
-
-/* ---------- footer ---------- */
-.foot{border-top:1px solid var(--line); margin-top:56px; padding-block:28px 40px; font-family:var(--sans); font-size:13px; color:var(--muted); max-width:1180px; margin-inline:auto; padding-inline:20px}
-.foot h3{margin-top:0; font-size:15px; color:var(--ink)}
-.foot ul{padding-left:20px}
-.foot a{color:var(--accent-ink)}
-
-@media (max-width:900px){
-  .shell{grid-template-columns:minmax(0,1fr); gap:0}
-  .toc{position:static; max-height:none; padding-block:22px 0; border-bottom:1px solid var(--line-soft)}
-  .toc ol{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1px}
-  main{padding-block:22px}
-}
-@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
-</style>
+<link rel="stylesheet" href="../shared/fonts/fonts.css">
+<link rel="stylesheet" href="handbook.css">
 </head>
 <body>
 
 <div class="utility">
   <div class="utility-in">
-    <a href="../index.html">GALIL website</a>
-    <a href="../app/index.html">← Back to WorkDesk</a>
+    <a href="../index.html">⌂ Employee Portal</a>
+    <a href="../index.html#/workdesk/time">WorkDesk</a>
+    <a href="../taskana/index.html">Taskana</a>
+    <a href="../kb/index.html">Knowledge Base</a>
     <span>·</span>
     <span>Handbook</span>
-    <button type="button" class="themebtn" id="themebtn" aria-pressed="false" title="Switch theme" aria-label="Switch to the dark theme">◐</button>
+    <button type="button" class="langbtn" id="langbtn" lang="he" title="עברית — Hebrew" style="margin-inline-start:auto">עברית</button>
+    <button type="button" class="themebtn" id="themebtn" aria-pressed="false" title="Switch theme" aria-label="Switch theme" style="margin-inline-start:0">◐</button>
   </div>
 </div>
 
@@ -311,14 +39,14 @@ table code{background:transparent; padding:0}
         <svg viewBox="0 0 60 46" aria-hidden="true"><path d="M2 30 C10 6, 20 6, 28 24 S46 42, 58 12" fill="none" stroke="#8CC63E" stroke-width="6" stroke-linecap="round"/></svg>
         <div><b>GALIL</b><small>Technical Writing · Training · Implementation</small></div>
       </div>
-      <h1 style="margin-top:22px">WorkDesk Handbook</h1>
-      <p class="standfirst">Every function in GALIL WorkDesk V7.2 — what it does, how to do it, and which roles are allowed to. Pick your role in the bar below and the handbook marks what applies to you.</p>
+      <h1 style="margin-top:22px">Employee Portal Handbook</h1>
+      <p class="standfirst">Every function of the GALIL Employee Portal — signing in, portal access, WorkDesk and Taskana — what it does, how to do it, and which roles may. Pick your role in the bar below and the handbook marks what applies to you.</p>
     </div>
     <div class="stamp">
-      <span>Application <b>GALIL WorkDesk</b></span>
-      <span>Build <b>V7.2 · standalone</b></span>
-      <span>Handbook revised <b>13/09/2026</b></span>
-      <span>Interface language <b>English (Hebrew in V8)</b></span>
+      <span>Application <b>GALIL Employee Portal</b></span>
+      <span>Covers <b>Portal · WorkDesk · Taskana</b></span>
+      <span>Handbook revised <b>16/10/2026</b></span>
+      <span>Language <b>English · עברית</b></span>
     </div>
   </div>
 </header>
@@ -327,7 +55,7 @@ table code{background:transparent; padding:0}
   <div class="rolebar-in">
     <span class="lead">Read as</span>
     <div class="roleset" id="roleset"></div>
-    <p class="rolenote" id="rolenote">Showing every role. Choose one to highlight what it may do and flag the chapters it cannot reach.</p>
+    <p class="rolenote" id="rolenote"></p>
   </div>
 </nav>
 
@@ -339,16 +67,162 @@ table code{background:transparent; padding:0}
 
   <main>
 
-  <!-- ============ 1 ============ -->
-  <section class="ch" id="ch-basics" data-title="What WorkDesk is">
-    <div class="ch-head"><span class="ch-num">01</span><h2>What WorkDesk is</h2></div>
-    <p class="lede">WorkDesk is GALIL's internal desk for reported time, planned weeks, tasks, expenses, budgets and approvals. One person's day goes in at the top; the company's utilisation, budget burn and payroll record come out at the bottom.</p>
+  <!-- ============ Part A · the Employee Portal ============ -->
+  <section class="ch" id="ch-portal" data-part="Employee Portal" data-title="The Employee Portal">
+    <p class="part">Part A · The Employee Portal</p>
+    <div class="ch-head"><span class="ch-num">01</span><h2>The Employee Portal</h2></div>
+    <p class="lede">One address, one sign-in, four products. The Employee Portal is where every GALIL employee starts the day: the home page offers WorkDesk, Taskana, this Handbook and the Knowledge Base, each as its own tile, and opens the ones your access includes.</p>
 
-    <p>Open it in a browser — it is a single page, and V7.2 runs standalone with no server behind it. Everything you enter is stored in your own browser under the key <code>galil-workdesk-v1</code>, and your signed-in session under <code>galil-workdesk-session</code>.</p>
+    <figure>
+      <img src="img/p01-portal-home.png" alt="The Employee Portal home page: a greeting, four tiles for WorkDesk, Taskana, the Handbook and the Knowledge Base, and shortcuts below.">
+      <figcaption><span class="fno">Fig 1.1</span><span>The home page after signing in. Each tile shows a live figure — your hours this week, your open tasks — and opens its product. A tile you have no access to says so instead of opening.</span></figcaption>
+    </figure>
+
+    <h3>The four products</h3>
+    <div class="tiles">
+      <div class="tile"><b>WorkDesk</b>Report work, sick and vacation time and expenses. Managers follow budgets against recorded hours and run people, clients, projects and work orders. <a href="#workdesk">Part B</a>.</div>
+      <div class="tile"><b>Taskana</b>Tasks, boards and reviews for every client project. People, clients, projects and work orders come straight from WorkDesk, with budget and hours-bank indicators. <a href="#taskana">Part C</a>.</div>
+      <div class="tile"><b>Handbook</b>This guide: every function of the portal, WorkDesk and Taskana, and which roles may use it.</div>
+      <div class="tile"><b>Knowledge Base</b>Onboarding, company rules and policies, security and training how-to's. Opens from its own tile and from <a href="../kb/index.html">kb/</a>.</div>
+    </div>
+
+    <h3>Who keeps what</h3>
+    <p>The products share one set of records, and each record has one home:</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:230px">Record</th><th style="width:150px">Kept in</th><th>Seen in</th></tr></thead>
+      <tbody>
+        <tr><td><strong>People, roles, teams, portal access</strong></td><td>WorkDesk</td><td>Taskana (People, assignees), the portal home page</td></tr>
+        <tr><td><strong>Clients, projects, work orders</strong></td><td>WorkDesk</td><td>Taskana (Clients &amp; projects, every task)</td></tr>
+        <tr><td><strong>Budgets, assignments, allowances</strong></td><td>WorkDesk</td><td>Taskana (budget and hours-bank indicators)</td></tr>
+        <tr><td><strong>Time, leave, expenses, approvals</strong></td><td>WorkDesk</td><td>Taskana (hours reported on each task)</td></tr>
+        <tr><td><strong>Tasks, comments, sub-tasks, checklists, saved views</strong></td><td>Taskana</td><td>WorkDesk (the Time Log's <em>Taskana task</em> list and the Week Planner's suggestions)</td></tr>
+        <tr><td><strong>Articles</strong></td><td>Knowledge Base</td><td>—</td></tr>
+      </tbody>
+    </table></div>
+    <p>So a new client, project, work order or person is set up once, in WorkDesk, and appears in Taskana straight away; and time is reported once, in WorkDesk, and counts on the Taskana task it names.</p>
+
+    <h3>English and Hebrew</h3>
+    <p>The <strong>EN / עב</strong> switch — on the home page, in WorkDesk's top bar, in Taskana's sidebar, and at the top of this Handbook and the Knowledge Base — changes the language of the whole portal at once. In Hebrew every screen is laid out right to left; names, codes, dates and numbers keep their own direction. The choice is remembered on this device. Data people type — names, descriptions, comments — stays as typed.</p>
+
+    <h3>Light and dark</h3>
+    <p>The ☾ / ☀ button switches the theme. Like the language, it is one setting for the whole portal on this device.</p>
+
+    <h3>Where the data is kept</h3>
+    <p>The portal has no server. It is a set of web pages, and its data lives in two files — one for WorkDesk, one for Taskana — wherever <code>config.js</code> says:</p>
+    <dl class="kv">
+      <dt>GitHub</dt><dd>The files are kept on a branch of the company's repository. Each person connects once with a GitHub access token (the portal asks for it after sign-in).</dd>
+      <dt>OneDrive</dt><dd>The files are kept in a OneDrive folder, using the same Microsoft sign-in as the portal.</dd>
+      <dt>Local</dt><dd>The files are kept only in this browser — for trying the portal out, with the demonstration data.</dd>
+    </dl>
+    <p>Installing and configuring the portal is covered in the <a href="../install/index.html">install guide</a>.</p>
+  </section>
+
+  <section class="ch" id="ch-signin" data-part="Employee Portal" data-title="Signing in and signing up">
+    <div class="ch-head"><span class="ch-num">02</span><h2>Signing in and signing up</h2></div>
+    <p class="lede">You sign in once, on the portal. WorkDesk, Taskana, the Handbook and the Knowledge Base all use that one session — none of them asks again. Only <code>@galiltc.co.il</code> addresses may sign in; external contractors do not sign themselves up — an administrator provisions them.</p>
+
+    <figure>
+      <img src="img/p02-signin.png" alt="The Employee Portal sign-in card, with a Microsoft button above an email and password form.">
+      <figcaption><span class="fno">Fig 2.1</span><span>The sign-in screen. <b>Sign in with Microsoft</b> is the normal route; the email-and-password form below it is the fallback. The demonstration accounts all use the password <code>GalilWorkdesk1</code>.</span></figcaption>
+    </figure>
+
+    <h3>Sign in with Microsoft</h3>
+    <ol class="steps">
+      <li>Click <strong>Sign in with Microsoft</strong>.</li>
+      <li>Approve the request in Microsoft Authenticator — this is where the company MFA policy is enforced.</li>
+      <li>Choose your account. You land on the portal home page.</li>
+    </ol>
+    <p>Without Microsoft Entra ID configured (the demonstration set-up), the account chooser lists the seeded accounts so you can try any role — see <a href="#ch-ref">Reference</a>.</p>
+
+    <h3>Sign in with email and password</h3>
+    <ol class="steps">
+      <li>Type your company email and password, then press <kbd>Enter</kbd> or click <strong>Sign in</strong>.</li>
+      <li>If the address does not end in <code>@galiltc.co.il</code>, the portal refuses it before checking the password.</li>
+    </ol>
+    <div class="note stop">
+      <span class="tag">Lockout</span>
+      <p>Five consecutive failures lock the account for 15 minutes and count down the minutes remaining.</p>
+    </div>
+
+    <h3>Forgotten password</h3>
+    <p>Click <strong>Forgot password</strong>, enter your company address, and a single-use reset link valid for <strong>30 minutes</strong> is sent.</p>
+
+    <h3>Creating an account — the four-step wizard</h3>
+    <p>Click <strong>Create an account</strong> on the sign-in card. The wizard will not let you past a step with an error on it.</p>
+    <ol class="steps">
+      <li><strong>Identity</strong> — full name in English (Hebrew optional — it is shown when the portal is in Hebrew), company email, mobile number for MFA enrolment, and either a password or a linked Microsoft account. A password needs at least <strong>12 characters</strong> with an upper-case letter, a lower-case letter and a digit.</li>
+      <li><strong>Role</strong> — Employee is the default. You may self-select <strong>Employee</strong>, <strong>Senior Employee</strong> or <strong>Team Lead</strong>; every role above Team Lead is marked <em>needs approval</em>. See <a href="#ch-roles">Roles and permissions</a>.</li>
+      <li><strong>Profile</strong> — job title and department are required. Team, direct manager, start date, contracted hours, employment type and a photo are optional but worth filling in.</li>
+      <li><strong>Confirm</strong> — check the summary, accept the internal usage policy, and click <strong>Submit for activation</strong>.</li>
+    </ol>
+    <figure>
+      <img src="img/p03-signup.png" alt="Step 1 of the sign-up wizard with name, email, password and mobile fields.">
+      <figcaption><span class="fno">Fig 2.2</span><span>The sign-up wizard, step 1 — identity and credentials.</span></figcaption>
+    </figure>
+
+    <h3>Waiting for activation</h3>
+    <p>The account exists immediately but is held. Until an Operations Manager or the CEO activates it in WorkDesk (Management → Pending activation), signing in shows the holding screen and nothing else.</p>
+
+    <h3>Sessions and signing out</h3>
+    <p>A session lasts <strong>12 hours of inactivity</strong>. <strong>Sign out</strong> — on the home page, in WorkDesk's profile, or in Taskana's sidebar — signs you out of the whole portal and returns you to the sign-in screen. Every sign-in and sign-out is written to WorkDesk's audit log.</p>
+    <div class="note">
+      <span class="tag">Opening a product directly</span>
+      <p>A bookmark to Taskana, the Handbook or the Knowledge Base works too. If you are not signed in, the page says so and offers <strong>Go to the Employee Portal</strong>; after signing in, open it again from its tile.</p>
+    </div>
+  </section>
+
+  <section class="ch" id="ch-access" data-part="Employee Portal" data-title="Portal access" data-caps="openWorkdesk">
+    <div class="ch-head"><span class="ch-num">03</span><h2>Portal access</h2></div>
+    <p class="lede">Each person has their own access across the portal: whether they may open WorkDesk, which role they have in Taskana, and whether they may read the Handbook and the Knowledge Base. It starts from their WorkDesk role and can be changed person by person.</p>
+    <div class="locked-note"></div>
+
+    <h3>The defaults</h3>
+    <p>Until someone changes it, a person's access follows their WorkDesk role:</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:190px">WorkDesk role</th><th>WorkDesk</th><th>Taskana role</th><th>Handbook</th><th>Knowledge Base</th></tr></thead>
+      <tbody>
+        <tr><td><code>CEO</code> <code>OPS</code></td><td>Yes</td><td><strong>Admin</strong></td><td>Yes</td><td>Yes</td></tr>
+        <tr><td><code>PM</code> <code>TL</code></td><td>Yes</td><td><strong>Manager</strong></td><td>Yes</td><td>Yes</td></tr>
+        <tr><td><code>SEN</code> <code>EMP</code></td><td>Yes</td><td><strong>Member</strong></td><td>Yes</td><td>Yes</td></tr>
+        <tr><td><code>FIN</code></td><td>Yes</td><td><strong>Viewer</strong></td><td>Yes</td><td>Yes</td></tr>
+        <tr><td><code>EXT</code></td><td>Yes</td><td><strong>External</strong></td><td>Yes</td><td>No</td></tr>
+        <tr><td><code>VIEW</code></td><td>Yes</td><td><strong>Viewer</strong></td><td>Yes</td><td>No</td></tr>
+      </tbody>
+    </table></div>
+    <p>What a person can do <em>inside</em> WorkDesk is still their WorkDesk role (<a href="#ch-roles">Roles and permissions</a>); what they can do inside Taskana is their Taskana role (<a href="#ch-tk-roles">Taskana roles, insights and data</a>). The full set of portal and Taskana defaults, by role:</p>
+    <div class="tw"><table class="matrix" id="portal-matrix"></table></div>
+
+    <h3>Changing a person's access</h3>
+    <div class="perm" data-perm="setPortalAccess"></div>
+    <ol class="steps">
+      <li>Open <strong>WorkDesk → Management → People</strong>. The <strong>Portal access</strong> column shows each person's access as chips.</li>
+      <li>Click <strong>✎</strong> beside the chips.</li>
+      <li>Tick or clear <strong>WorkDesk</strong>, <strong>Handbook</strong> and <strong>Knowledge Base</strong>, and choose the <strong>Taskana role</strong> — or <em>No access</em>.</li>
+      <li><strong>Save</strong>. <strong>Use the role defaults</strong> returns the person to the table above.</li>
+    </ol>
+    <figure class="fig-narrow">
+      <img src="img/p04-access.png" alt="The Portal access dialog with checkboxes for WorkDesk, the Handbook and the Knowledge Base and a Taskana role selector.">
+      <figcaption><span class="fno">Fig 3.1</span><span>Portal access for one person. The change applies the next time they open the home page, and is written to the audit log.</span></figcaption>
+    </figure>
+    <div class="note">
+      <span class="tag">Changing a role changes the defaults</span>
+      <p>A person whose access was never changed follows their role: promoting an Employee to Team Lead makes them a Taskana Manager too. A person whose access was changed by hand keeps it until <strong>Use the role defaults</strong> is chosen.</p>
+    </div>
+    <p>Deactivating a person in WorkDesk closes the whole portal to them — Taskana, the Handbook and the Knowledge Base included.</p>
+  </section>
+
+  <!-- ============ 1 ============ -->
+  <section class="ch" id="ch-basics" data-part="WorkDesk" data-title="What WorkDesk is">
+    <a id="workdesk"></a>
+    <p class="part">Part B · WorkDesk</p>
+    <div class="ch-head"><span class="ch-num">01</span><h2>What WorkDesk is</h2></div>
+    <p class="lede">WorkDesk is the part of the Employee Portal for time, money and the company's records: reported work, sick and vacation time, planned weeks, expenses, budgets, approvals — and the people, clients, projects and work orders every other part of the portal uses. One person's day goes in at the top; the company's utilisation, budget burn and payroll record come out at the bottom.</p>
+
+    <p>Open it from the <strong>WorkDesk</strong> tile on the portal home page. It has no server of its own: the company's records are kept in one data file — in the company's GitHub repository or on OneDrive, as set in <code>config.js</code> (see <a href="#ch-portal">The Employee Portal</a>) — and a copy is cached in your browser under <code>galil-workdesk-v1</code>. Your signed-in session is kept under <code>galil-workdesk-session</code> and is the same session Taskana, the Handbook and the Knowledge Base use.</p>
 
     <div class="note warn">
       <span class="tag">Before you rely on it</span>
-      <p>In the standalone build, clearing your browser data deletes the company's records. Whoever administers WorkDesk should download a backup regularly — see <a href="#ch-data">chapter 16</a>. Microsoft sign-in and the shared database are simulated locally in V7.1; the rules, routing and messages are the real ones.</p>
+      <p>When the portal runs on local storage only (no GitHub or OneDrive in <code>config.js</code>), clearing your browser data deletes the company's records. Whoever administers WorkDesk should download a backup regularly either way — see <a href="#ch-data">Backup and restore</a>.</p>
     </div>
 
     <h3>The three hour colours</h3>
@@ -370,11 +244,11 @@ table code{background:transparent; padding:0}
         <tr><td><strong>Client</strong></td><td>The organisation the work is for. <code>GALIL (internal)</code> is a client too — it is where Red hours sit.</td></tr>
         <tr><td><strong>Project</strong></td><td>A body of work for one client. Carries a status, an owner and optionally a budget.</td></tr>
         <tr><td><strong>Work order</strong></td><td>A contracted slice of a project, coded <code>WO-[client initials]-[6 digits]</code>. A project marked <em>WO tracked</em> requires one on every entry.</td></tr>
-        <tr><td><strong>Task</strong></td><td>A unit of work inside a project, with a status, a priority, assignees and optionally an hour allowance.</td></tr>
+        <tr><td><strong>Task</strong></td><td>Kept in <a href="#ch-tk-basics">Taskana</a>, not in WorkDesk. A time entry may name the Taskana task the hours went to; the hours then show on the task in Taskana.</td></tr>
         <tr><td><strong>Assignment</strong></td><td>The link between a person and a project or work order. It carries that person's <em>allowance</em> in hours. No assignment means Yellow and Blue time goes to approval.</td></tr>
         <tr><td><strong>Allowance</strong></td><td>Hours one person may report on one assignment. Blank means unlimited within the project budget; <code>0</code> means assigned but not yet funded.</td></tr>
         <tr><td><strong>Budget</strong></td><td>Hours (or money, pages, words, custom units) agreed for a project or work order, across everyone.</td></tr>
-        <tr><td><strong>Entitlement engine</strong></td><td>The checks that decide, the moment you save, whether an entry registers or goes to approval. See <a href="#ch-time">chapter 6</a>.</td></tr>
+        <tr><td><strong>Entitlement engine</strong></td><td>The checks that decide, the moment you save, whether an entry registers or goes to approval. See <a href="#ch-time">Time Log</a>.</td></tr>
       </tbody>
     </table></div>
 
@@ -399,10 +273,10 @@ table code{background:transparent; padding:0}
       <dd>The hours the client is paying for, attached to a <strong>work order</strong>, a <strong>project</strong>, or a whole <strong>client</strong>. Money budgets are turned into hours (amount ÷ hourly rate); Pages, Words and Custom budgets also count deliverables.</dd>
       <dt>Assignment</dt>
       <dd>The link between one <strong>person</strong> and a <strong>project</strong> or one of its <strong>work orders</strong>, carrying that person's <strong>allowance</strong> — the hours they may report there before their entries need approval.</dd>
-      <dt>Task</dt>
-      <dd>A unit of work inside a project — and, on a work-order-tracked project, inside one work order. A task has assignees, a status, a due date, dependencies and an optional hour allowance.</dd>
+      <dt>Taskana task</dt>
+      <dd>A unit of work inside a project — and optionally inside one of its work orders. Tasks are created and worked in <a href="#ch-tk-tasks">Taskana</a>, on the projects and work orders WorkDesk defines.</dd>
       <dt>Time entry</dt>
-      <dd>Hours one person reports for one day: Red, Yellow or Blue, against a client, project, work order and optionally a task. Sick and Vacation days are entries too.</dd>
+      <dd>Hours one person reports for one day: Red, Yellow or Blue, against a client, project, work order and optionally a Taskana task. Sick and Vacation days are entries too.</dd>
       <dt>Approval request</dt>
       <dd>Anything that needs someone else's decision: a time entry that failed a check, leave, an expense, an allowance increase, a team loan or transfer, a new account.</dd>
       <dt>Team and direct manager</dt>
@@ -411,7 +285,7 @@ table code{background:transparent; padding:0}
 
     <figure>
       <svg viewBox="0 0 920 470" role="img" aria-labelledby="mdl-t" style="width:100%;height:auto;display:block;background:var(--surface);border:1px solid var(--line);border-radius:10px">
-        <title id="mdl-t">How WorkDesk's records relate: clients contain projects, projects contain work orders, budgets sit on a work order, project or client; assignments link people to projects or work orders; tasks belong to projects or work orders; a time entry draws on an assignment's allowance and on the most specific budget, and goes to approval when a check fails.</title>
+        <title id="mdl-t">How WorkDesk's records relate: clients contain projects, projects contain work orders, budgets sit on a work order, project or client; assignments link people to projects or work orders; Taskana tasks belong to projects or work orders; a time entry draws on an assignment's allowance and on the most specific budget, and goes to approval when a check fails.</title>
         <defs>
           <marker id="mdl-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--accent)"/></marker>
         </defs>
@@ -427,13 +301,14 @@ table code{background:transparent; padding:0}
           <g font-weight="600" text-anchor="middle">
             <text x="95" y="56">Client</text><text x="325" y="56">Project</text><text x="555" y="56">Work order</text>
             <text x="815" y="49">Budget</text>
-            <text x="95" y="232">Person</text><text x="325" y="224">Assignment</text><text x="555" y="232">Task</text>
+            <text x="95" y="232">Person</text><text x="325" y="224">Assignment</text><text x="555" y="224">Taskana task</text>
             <text x="95" y="404">Team</text><text x="440" y="404">Time entry</text><text x="815" y="412">Approval request</text>
           </g>
           <g fill="var(--muted)" font-size="11.5" text-anchor="middle">
             <text x="815" y="66">on a WO, project or client</text>
             <text x="325" y="242">allowance in hours</text>
             <text x="95" y="420">lead · direct manager</text>
+            <text x="555" y="242">kept in Taskana</text>
             <text x="440" y="422">Red · Yellow · Blue · Sick · Vacation</text>
           </g>
           <g stroke="var(--accent)" stroke-width="1.6" fill="none" marker-end="url(#mdl-a)">
@@ -456,48 +331,47 @@ table code{background:transparent; padding:0}
           </g>
         </g>
       </svg>
-      <figcaption><span class="fno">Fig 2.1</span><span>The records and how they point at each other. A time entry is where they all meet: it names a client, project, work order and task, draws on the reporter's assignment and on a budget, and becomes an approval request when a check fails.</span></figcaption>
+      <figcaption><span class="fno">Fig 5.1</span><span>The records and how they point at each other. A time entry is where they all meet: it names a client, project, work order and, optionally, a Taskana task, draws on the reporter's assignment and on a budget, and becomes an approval request when a check fails.</span></figcaption>
     </figure>
 
     <h3>Setting up a piece of client work, in order</h3>
     <ol class="steps">
       <li><strong>Client</strong> — Management → Clients. Usually already there.</li>
       <li><strong>Project</strong> — Management → Projects. Give it an owner; that Project Manager sees its budgets and decides its <em>Budget exceeded</em> requests.</li>
-      <li><strong>Work orders</strong> (if the client issues them) — Management → Work Orders. The first work order on a project marks it <strong>WO tracked</strong>: from then on every Yellow or Blue entry and every task on it must name a work order. Entering budgeted hours when you create the work order also creates its budget.</li>
+      <li><strong>Work orders</strong> (if the client issues them) — Management → Work Orders. The first work order on a project marks it <strong>WO tracked</strong>: from then on every Yellow or Blue entry on it must name a work order. Entering budgeted hours when you create the work order also creates its budget.</li>
       <li><strong>Budget</strong> — Management → Budgets, on the work order (most common), on the project, or on the client.</li>
       <li><strong>Assignments</strong> — Management → Assignments &amp; Allowances. Assign each person to the project or to a specific work order, with an allowance: a number of hours, <code>0</code> (assigned but not yet funded) or blank (unlimited within the budget).</li>
-      <li><strong>Tasks</strong> — Tasks → + New task. Bind each task to the project and, on a WO-tracked project, to a work order; add assignees and an hour allowance.</li>
+      <li><strong>Tasks</strong> — in <a href="#ch-tk-tasks">Taskana</a>. The client, project, its work orders and its people appear there on their own; create the tasks on the project, pick a work order, an assignee and an estimate.</li>
       <li>People report time against it. Everything else — consumption, warnings, approvals, the Dashboard — follows from those entries.</li>
     </ol>
 
     <h3>How work orders work</h3>
     <ul>
       <li>A work order always belongs to <strong>one project</strong>, and through it to one client. Its code is proposed from the client's initials.</li>
-      <li>Creating the first work order on a project switches the project to <strong>WO tracked</strong>. On a tracked project, the Time Log form refuses Yellow or Blue time without a work order, and the task editor refuses a task without one.</li>
+      <li>Creating the first work order on a project switches the project to <strong>WO tracked</strong>. On a tracked project, the Time Log form refuses Yellow or Blue time without a work order.</li>
       <li>A work order normally carries its own <strong>budget</strong>. Hours reported against the work order are deducted from that budget only — not from a sibling work order's.</li>
       <li>An <strong>assignment</strong> can name a work order or just the project. A work-order assignment is checked first; if there is none, a project-level assignment covers every work order in the project.</li>
       <li>Click a work-order code anywhere in a table to copy it.</li>
     </ul>
 
-    <h3>How tasks work with assignments</h3>
-    <p>Tasks and assignments are two different things, and you usually need both:</p>
+    <h3>How Taskana tasks work with assignments</h3>
+    <p>Tasks and assignments are two different things, kept in two different places:</p>
     <div class="tw"><table>
-      <thead><tr><th style="width:170px"></th><th>Assignment</th><th>Task assignee</th></tr></thead>
+      <thead><tr><th style="width:170px"></th><th>Assignment (WorkDesk)</th><th>Task assignee (Taskana)</th></tr></thead>
       <tbody>
         <tr><td><strong>Answers</strong></td><td>May this person book hours on this project or work order, and how many?</td><td>Is this person working on this piece of work?</td></tr>
-        <tr><td><strong>Set in</strong></td><td>Management → Assignments &amp; Allowances</td><td>The task editor's <strong>Assignees</strong></td></tr>
-        <tr><td><strong>Controls</strong></td><td>Whether entries register or go to approval (<em>Not assigned</em>, <em>Allowance exceeded</em>)</td><td>Which tasks a person can pick in the Time Log, and <em>Task not assigned</em></td></tr>
-        <tr><td><strong>Hours</strong></td><td>Allowance — enforced by the entitlement engine</td><td>Task hour allowance — tracked on the task card, not enforced</td></tr>
+        <tr><td><strong>Set in</strong></td><td>WorkDesk → Management → Assignments &amp; Allowances</td><td>The task's <strong>Assignee</strong> in Taskana</td></tr>
+        <tr><td><strong>Controls</strong></td><td>Whether entries register or go to approval (<em>Not assigned</em>, <em>Allowance exceeded</em>)</td><td>Which tasks a person is offered in the Time Log's <strong>Taskana task</strong> list</td></tr>
+        <tr><td><strong>Hours</strong></td><td>Allowance — enforced by the entitlement engine, shown in Taskana as the person's <em>hours bank</em></td><td>Estimate — compared with the hours reported on the task, not enforced</td></tr>
       </tbody>
     </table></div>
-    <p><strong>Binding a task to a project:</strong> open Tasks → <strong>+ New task</strong> (or edit an existing one), choose the <strong>Project</strong>, then the <strong>Work order</strong> if the project is WO tracked. The task now appears in that project's board, in Project view, and in the Time Log's Task dropdown for its assignees whenever they choose that project and work order.</p>
-    <p>When someone reports time with a task selected:</p>
+    <p>When someone reports time with a Taskana task selected:</p>
     <ul>
       <li>They still need an <strong>assignment</strong> on the project or work order — a task on its own does not let anyone book hours. Without one the entry goes to approval as <em>Not assigned</em>; approving it creates the missing assignment.</li>
-      <li>If they are not one of the task's assignees, the entry goes to approval as <em>Task not assigned</em>. If the task is Done or Cancelled, as <em>Task closed</em>.</li>
-      <li>The hours count toward the task's progress bar (Red, Yellow and Blue alike) and toward the person's assignment allowance and the budget (Yellow and Blue only), exactly as an entry without a task would.</li>
+      <li>The task is information only: it never sends an entry to approval. The list offers the person's open tasks on the chosen project and work order.</li>
+      <li>The hours count toward the task's <em>Hours in WorkDesk</em> in Taskana (Red, Yellow and Blue alike) and toward the person's allowance and the budget (Yellow and Blue only), exactly as an entry without a task would.</li>
     </ul>
-    <p>A team loan (see <a href="#h-teams">Teams</a>) does both at once: on approval it creates the assignment — limited to the loan's dates — and adds the person to the task.</p>
+    <p>A team loan (see <a href="#h-teams">Teams</a>) creates the assignment on approval — limited to the loan's dates — so the person can book hours on the project at once.</p>
 
     <h3>How hours are deducted from a budget</h3>
     <p>Only <strong>registered</strong> entries are ever deducted. An entry in approval is shown separately — amber, <em>In approval</em> — and is deducted only if and when it is approved.</p>
@@ -530,108 +404,30 @@ table code{background:transparent; padding:0}
     <ul>
       <li><strong>Week Planner</strong> — planned hours per day against the same clients, projects and work orders; compared with registered actuals as Planned, Actual and Variance. Plans never consume a budget.</li>
       <li><strong>Expenses</strong> — money or hours claimed against a client, project and work order, with evidence. A claim within its expense type's ceiling is approved on saving; above the ceiling it goes to approval. Approvers then mark it Paid or Rejected. Expenses do not reduce an hour budget.</li>
-      <li><strong>Dashboard</strong> — registered entries only, filtered by period, people, client, project, work order and task.</li>
+      <li><strong>Dashboard</strong> — registered entries only, filtered by period, people, client, project and work order.</li>
+      <li><strong>Taskana</strong> — reads people, clients, projects, work orders, budgets, allowances and registered hours from WorkDesk, and shows them beside the tasks. See <a href="#ch-tk-wd">From WorkDesk to Taskana</a>.</li>
       <li><strong>Library</strong> — shared notes, tagged and optionally linked to clients and projects.</li>
       <li><strong>Audit log</strong> — every change above, with who made it and when.</li>
     </ul>
   </section>
 
-  <!-- ============ 3 ============ -->
-  <section class="ch" id="ch-signin" data-title="Signing in and signing up">
-    <div class="ch-head"><span class="ch-num">03</span><h2>Signing in and signing up</h2></div>
-    <p class="lede">Only <code>@galiltc.co.il</code> addresses may sign in. External contractors do not sign themselves up — an administrator provisions them.</p>
-
-    <figure>
-      <img src="img/01-signin.png" alt="The WorkDesk sign-in card, with a Microsoft button above an email and password form.">
-      <figcaption><span class="fno">Fig 3.1</span><span>The sign-in screen. <b>Sign in with Microsoft</b> is the normal route; the email-and-password form below it is the fallback. The demo accounts at the foot of the card all use the password <code>GalilWorkdesk1</code>.</span></figcaption>
-    </figure>
-
-    <h3>Sign in with Microsoft</h3>
-    <ol class="steps">
-      <li>Click <strong>Sign in with Microsoft</strong>.</li>
-      <li>Approve the request in Microsoft Authenticator — this is where the company MFA policy is enforced.</li>
-      <li>Choose your account from the list.</li>
-    </ol>
-    <p>In the standalone build the account chooser lists the seeded demo accounts so you can try any role — see the <a href="#ch-ref">reference chapter</a>.</p>
-    <figure class="fig-narrow">
-      <img src="img/02-signin-microsoft.png" alt="The simulated Microsoft Entra ID account chooser listing staff accounts.">
-      <figcaption><span class="fno">Fig 3.2</span><span>The Entra ID account chooser. In the standalone build it stands in for a real Microsoft prompt.</span></figcaption>
-    </figure>
-
-    <h3>Sign in with email and password</h3>
-    <ol class="steps">
-      <li>Type your company email and password, then press <kbd>Enter</kbd> or click <strong>Sign in</strong>.</li>
-      <li>If the address does not end in <code>@galiltc.co.il</code>, WorkDesk refuses it before checking the password.</li>
-    </ol>
-    <div class="note stop">
-      <span class="tag">Lockout</span>
-      <p>Five consecutive failures lock the account and count down the minutes remaining before you can try again.</p>
-    </div>
-
-    <h3>Forgotten password</h3>
-    <p>Click <strong>Forgot password</strong>, enter your company address, and a single-use reset link valid for <strong>30 minutes</strong> is sent (simulated in the standalone build).</p>
-    <figure class="fig-narrow">
-      <img src="img/03-forgot-password.png" alt="The password reset panel explaining the 30-minute single-use link.">
-      <figcaption><span class="fno">Fig 3.3</span><span>Password reset. The panel returns to sign-in once the link is sent.</span></figcaption>
-    </figure>
-
-    <h3>Creating an account — the four-step wizard</h3>
-    <p>Click <strong>Create an account</strong> on the sign-in card. The wizard will not let you past a step with an error on it.</p>
-
-    <h4>Step 1 · Identity</h4>
-    <p>Full name in English (Hebrew optional), company email, mobile number for MFA enrolment, and either a password or a linked Microsoft account.</p>
-    <p>A password must be at least <strong>12 characters</strong> and contain an upper-case letter, a lower-case letter and a digit.</p>
-    <figure>
-      <img src="img/04-signup-step1.png" alt="Step 1 of the sign-up wizard with name, email, password and mobile fields.">
-      <figcaption><span class="fno">Fig 3.4</span><span>Step 1 of the wizard — identity and credentials.</span></figcaption>
-    </figure>
-
-    <h4>Step 2 · Role</h4>
-    <p>Employee is the default. You may self-select <strong>Employee</strong>, <strong>Senior Employee</strong> or <strong>Team Lead</strong>. Every role above Team Lead is marked <em>needs approval</em> — requesting one creates an extra administrator task on top of the normal activation request.</p>
-    <figure>
-      <img src="img/05-signup-step2-roles.png" alt="Step 2 of the sign-up wizard showing role cards to choose from.">
-      <figcaption><span class="fno">Fig 3.5</span><span>Step 2 — choosing a role. The full set of role descriptions is repeated in <a href="#ch-roles">chapter 4</a>.</span></figcaption>
-    </figure>
-
-    <h4>Step 3 · Profile</h4>
-    <p>Job title and department are required. Team, direct manager, start date, contracted weekly and daily hours, employment type and a profile photo are optional but worth filling in — contracted hours drive the capacity warning in the Week Planner.</p>
-    <figure>
-      <img src="img/06-signup-step3-profile.png" alt="Step 3 of the sign-up wizard with job title, department, team, manager and hours fields.">
-      <figcaption><span class="fno">Fig 3.6</span><span>Step 3 — profile and reporting line.</span></figcaption>
-    </figure>
-
-    <h4>Step 4 · Confirm</h4>
-    <p>Check the summary, accept the internal usage policy, and click <strong>Submit for activation</strong>.</p>
-    <figure>
-      <img src="img/07-signup-step4-confirm.png" alt="Step 4 summary panel and the usage-policy acceptance checkbox.">
-      <figcaption><span class="fno">Fig 3.7</span><span>Step 4 — the final review before submitting for activation.</span></figcaption>
-    </figure>
-
-    <h3>Waiting for activation</h3>
-    <p>The account exists immediately but is held. Until an Operations Manager or the CEO activates it, signing in shows the holding screen and nothing else — see <a href="#ch-admin">chapter 15</a>.</p>
-
-    <h3>Sessions and signing out</h3>
-    <p>A session lasts <strong>12 hours of inactivity</strong>. Concurrent sessions on several devices are permitted and can be revoked. Open your profile from the top-right corner to see your sessions and to sign out.</p>
-    <p>Every sign-in and sign-out is written to the audit log with actor, timestamp and device.</p>
-  </section>
-
   <!-- ============ 4 ============ -->
   <section class="ch" id="ch-roles" data-title="Roles and permissions">
     <div class="ch-head"><span class="ch-num">04</span><h2>Roles and permissions</h2></div>
-    <p class="lede">Nine roles. What you see, what you may change, and whose records you may touch all follow from yours — including which tabs appear at all.</p>
+    <p class="lede">Nine WorkDesk roles. What you see in WorkDesk, what you may change, and whose records you may touch all follow from yours — including which tabs appear at all. Your role also sets your default <a href="#ch-access">portal access</a> and Taskana role.</p>
 
     <h3>The nine roles</h3>
     <div class="tw"><table>
       <thead><tr><th style="width:70px">Code</th><th style="width:170px">Role</th><th>What it carries</th></tr></thead>
       <tbody>
-        <tr><td><code>EMP</code></td><td><strong>Employee</strong></td><td>Reports own time, plans own week, reports own expenses, works assigned tasks, writes to the Library.</td></tr>
-        <tr><td><code>SEN</code></td><td><strong>Senior Employee</strong></td><td>As Employee, plus may create draft tasks within assigned projects and see their full task board.</td></tr>
-        <tr><td><code>TL</code></td><td><strong>Team Lead</strong></td><td>As Senior Employee, plus approves time and expenses for their team and manages task assignment.</td></tr>
+        <tr><td><code>EMP</code></td><td><strong>Employee</strong></td><td>Reports own time, plans own week, reports own expenses, writes to the Library.</td></tr>
+        <tr><td><code>SEN</code></td><td><strong>Senior Employee</strong></td><td>As Employee. The difference is one of seniority and of what the Week Planner and Dashboard show their managers.</td></tr>
+        <tr><td><code>TL</code></td><td><strong>Team Lead</strong></td><td>As Senior Employee, plus approves time and expenses for their team, assigns their team to projects and may report Blue · Management hours.</td></tr>
         <tr><td><code>PM</code></td><td><strong>Project Manager</strong></td><td>As Team Lead, plus owns projects, work orders, budgets and assignments.</td></tr>
         <tr><td><code>OPS</code></td><td><strong>Operations Manager</strong></td><td>As Project Manager across all clients. Manages master lists, employees, roles and settings.</td></tr>
         <tr><td><code>FIN</code></td><td><strong>Finance</strong></td><td>Read-only across budgets, expenses, work orders and exports. Cannot approve time.</td></tr>
         <tr><td><code>CEO</code></td><td><strong>CEO / Owner</strong></td><td>Full access, including role assignment, deletion, audit log and company settings.</td></tr>
-        <tr><td><code>EXT</code></td><td><strong>External Contractor</strong></td><td>Reports time only against explicitly assigned work orders. No budgets, Library or Dashboard.</td></tr>
+        <tr><td><code>EXT</code></td><td><strong>External Contractor</strong></td><td>Reports time only against explicitly assigned work orders. No budgets, Library or Dashboard; in Taskana, only the tasks they work on.</td></tr>
         <tr><td><code>VIEW</code></td><td><strong>Viewer</strong></td><td>Read-only dashboard access for a named stakeholder. No reporting rights.</td></tr>
       </tbody>
     </table></div>
@@ -648,11 +444,11 @@ table code{background:transparent; padding:0}
     <p><strong>T · own team</strong> means: people sharing your team, people who report to you, and everyone in a team you lead. <strong>P · own projects</strong> means: projects you own, plus projects you are assigned to, and everyone who has reported time or holds an assignment on them.</p>
 
     <h3>The full permission matrix</h3>
-    <p>This is the same matrix the application shows under <strong>⚙ → Roles &amp; permissions</strong>.</p>
+    <p>This is the same matrix WorkDesk shows under <strong>⚙ → Roles &amp; permissions</strong>. Tasks are not in it: what a person may do in Taskana is their Taskana role — see <a href="#ch-access">Portal access</a>.</p>
     <div class="tw"><table class="matrix" id="matrix"></table></div>
     <figure>
       <img src="img/58-admin-roles.png" alt="The Roles and permissions section inside the System administration modal, showing the permission matrix.">
-      <figcaption><span class="fno">Fig 4.1</span><span>The same matrix inside the application, under <strong>⚙ → Roles &amp; permissions</strong>.</span></figcaption>
+      <figcaption><span class="fno">Fig 6.1</span><span>The same matrix inside the application, under <strong>⚙ → Roles &amp; permissions</strong>.</span></figcaption>
     </figure>
 
     <h3>Which tabs each role sees</h3>
@@ -660,11 +456,11 @@ table code{background:transparent; padding:0}
     <div class="tw"><table>
       <thead><tr><th>Role</th><th>Tabs shown</th></tr></thead>
       <tbody>
-        <tr><td><code>EMP</code> <code>SEN</code></td><td>Time Log · Week Planner · Tasks · Expenses · Dashboard · Library</td></tr>
-        <tr><td><code>TL</code></td><td>Time Log · Week Planner · Tasks · Expenses · Management (People &amp; Assignments only, own team) · Approvals · Dashboard · Library</td></tr>
-        <tr><td><code>PM</code> <code>OPS</code> <code>CEO</code></td><td>Time Log · Week Planner · Tasks · Expenses · Management (full) · Approvals · Dashboard · Library</td></tr>
-        <tr><td><code>FIN</code></td><td>Time Log (read-only) · Tasks · Management (Budgets, read-only) · Dashboard · Library</td></tr>
-        <tr><td><code>EXT</code></td><td>Time Log · Week Planner · Tasks · Expenses</td></tr>
+        <tr><td><code>EMP</code> <code>SEN</code></td><td>Time Log · Week Planner · Expenses · Dashboard · Library</td></tr>
+        <tr><td><code>TL</code></td><td>Time Log · Week Planner · Expenses · Management (People &amp; Assignments only, own team) · Approvals · Dashboard · Library</td></tr>
+        <tr><td><code>PM</code> <code>OPS</code> <code>CEO</code></td><td>Time Log · Week Planner · Expenses · Management (full) · Approvals · Dashboard · Library</td></tr>
+        <tr><td><code>FIN</code></td><td>Time Log (read-only) · Management (Budgets, read-only) · Dashboard · Library</td></tr>
+        <tr><td><code>EXT</code></td><td>Time Log · Week Planner · Expenses</td></tr>
         <tr><td><code>VIEW</code></td><td>Time Log (read-only) · Dashboard</td></tr>
       </tbody>
     </table></div>
@@ -672,11 +468,11 @@ table code{background:transparent; padding:0}
     <div class="fig-pair">
       <figure>
         <img src="img/91-ext-tabs.png" alt="The tab bar as an external contractor sees it: four tabs only.">
-        <figcaption><span class="fno">Fig 4.2</span><span>External Contractor — four tabs, no Dashboard.</span></figcaption>
+        <figcaption><span class="fno">Fig 6.2</span><span>External Contractor — no Dashboard, Library or Management.</span></figcaption>
       </figure>
       <figure>
         <img src="img/96-view-tabs.png" alt="The tab bar as a viewer sees it: Time Log and Dashboard only.">
-        <figcaption><span class="fno">Fig 4.3</span><span>Viewer — read-only Time Log and Dashboard.</span></figcaption>
+        <figcaption><span class="fno">Fig 6.3</span><span>Viewer — read-only Time Log and Dashboard.</span></figcaption>
       </figure>
     </div>
 
@@ -684,7 +480,7 @@ table code{background:transparent; padding:0}
     <ul>
       <li>At sign-up you <em>request</em> a role. Anything above Team Lead raises a Role change request as well as the activation request.</li>
       <li>An Operations Manager or the CEO confirms the role at activation — they may change it before activating.</li>
-      <li>Afterwards, the role is changed in <strong>⚙ → People</strong> using the dropdown in the Role column. Every change is written to the audit log as <code>Role change EMP → SEN for …</code>.</li>
+      <li>Afterwards, the role is changed in <strong>Management → People</strong> using the dropdown in the Role column. Every change is written to the audit log as <code>Role change EMP → SEN for …</code>.</li>
       <li>Only <code>OPS</code> and <code>CEO</code> may manage employees and roles. Nobody else, at any level, can promote anyone.</li>
     </ul>
   </section>
@@ -692,39 +488,41 @@ table code{background:transparent; padding:0}
   <!-- ============ 5 ============ -->
   <section class="ch" id="ch-screen" data-title="Finding your way around">
     <div class="ch-head"><span class="ch-num">05</span><h2>Finding your way around</h2></div>
-    <p class="lede">One dark top bar, one row of tabs, and a few icon buttons that open everything that is not a tab.</p>
+    <p class="lede">One dark top bar, one row of tabs, and a few icon buttons that open everything that is not a tab. The ⌂ button takes you back to the portal home page.</p>
 
     <figure>
       <img src="img/50-ops-timelog.png" alt="The full WorkDesk window: dark top bar with brand, icon buttons and user chip; tab row; Time Log page beneath.">
-      <figcaption><span class="fno">Fig 5.1</span><span>The shell, seen by an Operations Manager — every tab and both icon buttons are shown.</span></figcaption>
+      <figcaption><span class="fno">Fig 7.1</span><span>The shell, seen by an Operations Manager — every tab and both icon buttons are shown.</span></figcaption>
     </figure>
 
     <div class="tw"><table>
       <thead><tr><th style="width:150px">Element</th><th>What it does</th></tr></thead>
       <tbody>
-        <tr><td><strong>GALIL · WorkDesk V7.2</strong></td><td>Brand and build. The <code>Standalone</code> chip is a reminder that there is no server behind this build.</td></tr>
+        <tr><td><strong>⌂</strong></td><td>Back to the Employee Portal home page, where Taskana, the Handbook and the Knowledge Base are.</td></tr>
+        <tr><td><strong>GALIL · WorkDesk</strong></td><td>Brand. The chip beside it shows where the data is kept and whether the last change has been saved there.</td></tr>
+        <tr><td><strong>EN / עב</strong></td><td>Switches the whole Employee Portal between English and Hebrew. Hebrew lays every screen out right to left. The choice is remembered on this device.</td></tr>
+        <tr><td><strong>KB · ?</strong></td><td>Open the Knowledge Base and this handbook in a new tab.</td></tr>
         <tr><td><strong>Offline chip</strong></td><td>Appears when the browser goes offline. Changes are still written locally.</td></tr>
-        <tr><td><strong>◱ icon</strong></td><td><em>My assignments and allowances</em> — your funded work and the button that requests more hours. See <a href="#ch-mywork">chapter 14</a>.</td></tr>
-        <tr><td><strong>⚙ icon</strong></td><td><em>System administration</em> — Roles &amp; permissions, Company settings, Backup &amp; restore and the Audit log. Shown to anyone who can back up data or read the audit log. Day-to-day record-keeping lives on the <a href="#ch-budgets">Management</a> tab instead — see chapter 10.</td></tr>
-        <tr><td><strong>☾ / ☀ icon</strong></td><td>Switches between the light and dark theme. The choice is remembered on this device and applies everywhere in WorkDesk, including the mobile shell below.</td></tr>
-        <tr><td><strong>? icon</strong></td><td>Opens this handbook in a new tab, from anywhere in the app.</td></tr>
+        <tr><td><strong>◱ icon</strong></td><td><em>My assignments and allowances</em> — your funded work and the button that requests more hours. See <a href="#ch-mywork">My assignments and allowances</a>.</td></tr>
+        <tr><td><strong>⚙ icon</strong></td><td><em>System administration</em> — Roles &amp; permissions, Company settings, Backup &amp; restore and the Audit log. Shown to anyone who can back up data or read the audit log. Day-to-day record-keeping lives on the <a href="#ch-budgets">Management</a> tab instead.</td></tr>
+        <tr><td><strong>☾ / ☀ icon</strong></td><td>Switches between the light and dark theme. The choice is remembered on this device and applies everywhere in the portal, including the mobile shell below.</td></tr>
         <tr><td><strong>Your name chip</strong></td><td>Opens your profile — contracted hours, manager, sign-in method, sessions, and <strong>Sign out</strong>.</td></tr>
-        <tr><td><strong>Tab badges</strong></td><td>Amber on <strong>Approvals</strong> counts outstanding requests waiting on you. Amber on <strong>Tasks</strong> counts your overdue tasks.</td></tr>
+        <tr><td><strong>Tab badges</strong></td><td>Amber on <strong>Approvals</strong> counts outstanding requests waiting on you.</td></tr>
         <tr><td><strong>Toasts</strong></td><td>Confirmations appear bottom-of-screen for a few seconds. Deletions carry an <strong>Undo</strong> button — use it before it fades.</td></tr>
       </tbody>
     </table></div>
 
     <figure class="fig-narrow">
       <img src="img/21-emp-profile.png" alt="The My profile modal showing avatar, role chip, department, team, manager, contracted hours and sessions.">
-      <figcaption><span class="fno">Fig 5.2</span><span>My profile — opened from the name chip in the top-right corner.</span></figcaption>
+      <figcaption><span class="fno">Fig 7.2</span><span>My profile — opened from the name chip in the top-right corner.</span></figcaption>
     </figure>
 
     <h3 id="h-tables">Working with tables</h3>
-    <p>Every table in WorkDesk — the Time Log, the Tasks list and project views, Expenses, every Management section, the Roles matrix and Audit log, and My assignments — works the same way. Each one has a toolbar row directly above it.</p>
+    <p>Every table in WorkDesk — the Time Log, Expenses, every Management section, the Roles matrix and Audit log, and My assignments — works the same way. Each one has a toolbar row directly above it.</p>
 
     <figure>
       <img src="img/22-table-toolbar.png" alt="The toolbar row above the Time Log table: a saved view chosen and marked as the default, the table sorted by Hours from highest to lowest, the Move column picker and the Reset buttons, above the table with an arrow on the Hours heading.">
-      <figcaption><span class="fno">Fig 5.3</span><span>The table toolbar — here a saved view, <b>Biggest days first</b>, sorts the Time Log by Hours Z→A and opens by default (★).</span></figcaption>
+      <figcaption><span class="fno">Fig 7.3</span><span>The table toolbar, above the Time Log table.</span></figcaption>
     </figure>
     <ul>
       <li><strong>Sort</strong> — click a column heading to sort A→Z (lowest first), again for Z→A (highest first), and a third time to clear it. A ▲ or ▼ beside the heading shows the sort in use. The <strong>Sort</strong> picker and its <strong>A→Z</strong>, <strong>Z→A</strong> and <strong>✕</strong> buttons in the toolbar do the same. Dates and numbers sort by value, and empty cells always go last.</li>
@@ -742,19 +540,18 @@ table code{background:transparent; padding:0}
       <tbody>
         <tr><td><strong>Time</strong></td><td>A running <strong>timer</strong> — <strong>▶ Start the timer</strong>, then <strong>■ Stop and report</strong> when you're done, which opens the entry form pre-filled with the start and end times. <strong>Report without the timer</strong> skips straight to that form. Each entry below can be edited, duplicated with <strong>⧉ Duplicate…</strong> (the same choices as on the desktop — see <a href="#ch-time">Duplicating an entry</a>), or deleted, the same as on the desktop Time Log.</td></tr>
         <tr><td><strong>Plan</strong></td><td>The Week Planner, one day at a time.</td></tr>
-        <tr><td><strong>Tasks</strong></td><td><strong>My tasks</strong> / <strong>All I can see</strong> and a status filter above a list of cards; change a task's status from the dropdown on its card.</td></tr>
         <tr><td><strong>Expenses</strong></td><td><strong>+ Report an expense</strong> opens a bottom sheet with the same fields — and the same evidence attachment control — as the desktop form.</td></tr>
-        <tr><td><strong>More</strong></td><td>Library, Approvals (if you approve anything), My assignments and allowances, My profile, and a link back to the desktop layout.</td></tr>
+        <tr><td><strong>More</strong></td><td>Library, Approvals (if you approve anything), My assignments and allowances, My profile, the portal home, Taskana, the Handbook and the Knowledge Base.</td></tr>
       </tbody>
     </table></div>
     <div class="fig-pair">
       <figure>
         <img src="img/98-mobile-timelog.png" alt="WorkDesk's mobile Time tab: a large timer card with Start the timer, followed by a scrollable list of this month's entries as cards.">
-        <figcaption><span class="fno">Fig 5.4</span><span>The Time tab on a phone — the timer is the primary way to report a day's work.</span></figcaption>
+        <figcaption><span class="fno">Fig 7.4</span><span>The Time tab on a phone — the timer is the primary way to report a day's work.</span></figcaption>
       </figure>
       <figure>
         <img src="img/99-mobile-more.png" alt="The More bottom sheet: Library, My assignments and allowances, My profile, and a note about switching to the desktop layout.">
-        <figcaption><span class="fno">Fig 5.5</span><span>The More sheet — everything that doesn't fit in the bottom bar.</span></figcaption>
+        <figcaption><span class="fno">Fig 7.5</span><span>The More sheet — everything that doesn't fit in the bottom bar.</span></figcaption>
       </figure>
     </div>
     <div class="note">
@@ -772,7 +569,7 @@ table code{background:transparent; padding:0}
 
     <figure>
       <img src="img/10-emp-timelog.png" alt="The Time Log tab: Report time form band, month navigator with totals, filter row, and the entry table with the date and weekday shown side by side.">
-      <figcaption><span class="fno">Fig 6.1</span><span>The Time Log as an Employee sees it. Totals sit beside the month navigator: Red, Yellow, Total, Sick and — in amber — anything sitting in approval. The date and weekday sit side by side in each row, and a Work order code can be clicked to copy it.</span></figcaption>
+      <figcaption><span class="fno">Fig 8.1</span><span>The Time Log as an Employee sees it. Totals sit beside the month navigator: Red, Yellow, Total, Sick and — in amber — anything sitting in approval. The date and weekday sit side by side in each row, and a Work order code can be clicked to copy it.</span></figcaption>
     </figure>
 
     <h3>Reporting time</h3>
@@ -781,14 +578,14 @@ table code{background:transparent; padding:0}
       <li>Choose the <strong>Type</strong>: <em>Work</em>, <em>Sick</em> or <em>Vacation</em>. Sick and Vacation hide the time fields — see <a href="#h-leave">Sick and vacation days</a> below.</li>
       <li>Set <strong>Start</strong> and <strong>End</strong> from the hour and minute dropdowns. <strong>Hours</strong> fills itself, rounded to the nearest half hour.</li>
       <li>Pick the <strong>Hour type</strong> — <span class="swatch" style="background:var(--red)"></span> Red · Company, <span class="swatch" style="background:var(--yellow)"></span> Yellow · Client, or — if you manage clients' projects and tasks — <span class="swatch" style="background:var(--blue)"></span> Blue · Management.</li>
-      <li>For Yellow or Blue, choose <strong>Client</strong>, <strong>Project</strong>, and <strong>Work order</strong> if the project is work-order tracked. Optionally pick a <strong>Task</strong>.</li>
+      <li>For Yellow or Blue, choose <strong>Client</strong>, <strong>Project</strong>, and <strong>Work order</strong> if the project is work-order tracked. Optionally pick the <strong>Taskana task</strong> the time went to.</li>
       <li>Write a <strong>Description</strong> — it is required. <strong>Notes</strong> are optional.</li>
       <li>Click <strong>Add entry</strong>.</li>
     </ol>
 
     <figure>
       <img src="img/11-emp-timelog-form.png" alt="Close-up of the Report time form band showing date, type, start, end, derived hours, the Red/Yellow/Blue toggle and the list fields.">
-      <figcaption><span class="fno">Fig 6.2</span><span>The form band, seen by a Team Lead — note the Blue option, only offered to roles that manage clients' projects and tasks. The dropdowns list only what you are assigned to — if a project is missing, you are not assigned to it yet.</span></figcaption>
+      <figcaption><span class="fno">Fig 8.2</span><span>The form band, seen by a Team Lead — note the Blue option, only offered to roles that manage clients' projects. The dropdowns list only what you are assigned to — if a project is missing, you are not assigned to it yet.</span></figcaption>
     </figure>
 
     <div class="note">
@@ -826,15 +623,14 @@ table code{background:transparent; padding:0}
       <thead><tr><th class="num" style="width:44px">#</th><th style="width:210px">Check</th><th>Outcome</th></tr></thead>
       <tbody>
         <tr><td class="num">1</td><td>Sick or Vacation</td><td>Pending — <em>Leave request</em>, routed to your direct manager. Registers directly only when the CEO records it.</td></tr>
-        <tr><td class="num">2</td><td>Red · Company</td><td>Registers directly — never gated by an assignment, allowance or budget. Still counts toward the daily soft and hard limits below. Blue · Management is <strong>not</strong> exempt: it goes through checks 3–9 exactly like Yellow.</td></tr>
+        <tr><td class="num">2</td><td>Red · Company</td><td>Registers directly — never gated by an assignment, allowance or budget. Still counts toward the daily soft and hard limits below. Blue · Management is <strong>not</strong> exempt: it goes through checks 3–8 exactly like Yellow.</td></tr>
         <tr><td class="num">3</td><td>Unlisted client, project or work order</td><td>Pending — <em>Unlisted item</em>.</td></tr>
         <tr><td class="num">4</td><td>Assigned to that project or work order?</td><td>Pending — <em>Not assigned</em>.</td></tr>
-        <tr><td class="num">5</td><td>Task selected but not assigned to you, or already Done / Cancelled</td><td>Pending — <em>Task not assigned</em> or <em>Task closed</em>.</td></tr>
-        <tr><td class="num">6</td><td>Your allowance on that assignment</td><td>Pending — <em>Allowance exceeded</em>.</td></tr>
-        <tr><td class="num">7</td><td>Project or work-order budget</td><td>Pending — <em>Budget exceeded</em>. Escalates to the project owner rather than your team lead.</td></tr>
-        <tr><td class="num">8</td><td>Daily hard limit (default 12 h)</td><td>Pending — <em>Daily limit exceeded</em>.</td></tr>
-        <tr><td class="num">9</td><td>Daily soft limit (default 9 h)</td><td>Registers, flagged amber. No approval needed.</td></tr>
-        <tr><td class="num">10</td><td>Everything else</td><td>Registers.</td></tr>
+        <tr><td class="num">5</td><td>Your allowance on that assignment</td><td>Pending — <em>Allowance exceeded</em>.</td></tr>
+        <tr><td class="num">6</td><td>Project or work-order budget</td><td>Pending — <em>Budget exceeded</em>. Escalates to the project owner rather than your team lead.</td></tr>
+        <tr><td class="num">7</td><td>Daily hard limit (default 12 h)</td><td>Pending — <em>Daily limit exceeded</em>.</td></tr>
+        <tr><td class="num">8</td><td>Daily soft limit (default 9 h)</td><td>Registers, flagged amber. No approval needed.</td></tr>
+        <tr><td class="num">9</td><td>Everything else</td><td>Registers. A Taskana task on the entry never changes the outcome.</td></tr>
       </tbody>
     </table></div>
     <p>Consumption counts <strong>registered Yellow and Blue hours</strong>. Anything pending is never counted against an allowance or a budget, and never appears in an on-screen total — which is why pending hours are shown separately, in amber, as <em>In approval</em>.</p>
@@ -861,6 +657,7 @@ table code{background:transparent; padding:0}
       <li><strong>🗑</strong> deletes it and cancels any pending approval attached. The toast offers <strong>Undo</strong>.</li>
       <li>The <strong>Project status</strong> column shows the project's current status as set under <a href="#ch-budgets">Management → Projects</a>. It is read-only here; the project status filter uses the same value.</li>
       <li>You may always edit your own entries. Editing someone else's needs <code>editOthersTime</code> — Team Lead within their team, Project Manager within their projects, Operations Manager and CEO anywhere.</li>
+      <li>Opening <strong>Report time on this task in WorkDesk</strong> from a task in Taskana brings you here with the form already set to that task's client, project, work order and task.</li>
       <li>Click a <strong>Work order</strong> code anywhere in the table to copy it to the clipboard — useful when pasting it into an email or another system. A small confirmation toast names what was copied.</li>
     </ul>
 
@@ -871,13 +668,13 @@ table code{background:transparent; padding:0}
       <li><strong>Custom</strong> — type a number of days and choose <strong>days back</strong> or <strong>days forward</strong>. On its own this makes one copy that many days away. Tick <strong>Copy to every working day in between</strong> to copy the entry onto every Sunday-to-Thursday in that range instead — for example 5 days back copies it onto each working day of the past five days. The line under the field shows the date, or how many days, before you click <strong>Duplicate</strong>.</li>
       <li><strong>Specific date</strong> — pick any date up to today and click <strong>Duplicate</strong>.</li>
     </ul>
-    <p>Every copy takes the entry's client, project, work order, task, hour type, times and description, and goes through the entitlement engine as a fresh entry — it can land Pending even if the original was Registered, for example if the copy would now exceed an allowance. Dates that can't take a copy are skipped and named in the message: dates after today (plan those in the Week Planner), closed months, and days where the copy would overlap an entry already there or repeat it exactly.</p>
+    <p>Every copy takes the entry's client, project, work order, Taskana task, hour type, times and description, and goes through the entitlement engine as a fresh entry — it can land Pending even if the original was Registered, for example if the copy would now exceed an allowance. Dates that can't take a copy are skipped and named in the message: dates after today (plan those in the Week Planner), closed months, and days where the copy would overlap an entry already there or repeat it exactly.</p>
 
     <h3>Filtering and totals</h3>
-    <p>The month navigator moves one month at a time; <strong>Today</strong> returns to the current one. Below it, filter by employee, client, project, work order, task, entry type, project status and entry status. <strong>Clear</strong> resets every filter at once. Totals always describe the filtered view. To sort the entries, rearrange or resize columns, or save the layout as a view, see <a href="#h-tables">Working with tables</a>.</p>
+    <p>The month navigator moves one month at a time; <strong>Today</strong> returns to the current one. Below it, filter by employee, client, project, work order, Taskana task, entry type, project status and entry status. <strong>Clear</strong> resets every filter at once. Totals always describe the filtered view. To sort the entries, rearrange or resize columns, or save the layout as a view, see <a href="#h-tables">Working with tables</a>.</p>
 
     <h3>Exporting</h3>
-    <p><strong>⬇ This view</strong> exports the filtered month. <strong>⬇ Everything</strong> exports everything within your permission scope — which for an Employee, Senior Employee or External Contractor means their own records only. Pending entries are moved to a second worksheet so they can never be mistaken for reported time. See <a href="#ch-export">chapter 17</a>.</p>
+    <p><strong>⬇ This view</strong> exports the filtered month. <strong>⬇ Everything</strong> exports everything within your permission scope — which for an Employee, Senior Employee or External Contractor means their own records only. Pending entries are moved to a second worksheet so they can never be mistaken for reported time. See <a href="#ch-export">Excel exports</a>.</p>
   </section>
 
   <!-- ============ 7 ============ -->
@@ -889,19 +686,19 @@ table code{background:transparent; padding:0}
 
     <figure>
       <img src="img/12-emp-planner.png" alt="The Week Planner showing seven day columns with planned entries and the view toggle above them.">
-      <figcaption><span class="fno">Fig 7.1</span><span>A week in the planner. Move between Day, Week and Month views with the pills at the top.</span></figcaption>
+      <figcaption><span class="fno">Fig 9.1</span><span>A week in the planner. Move between Day, Week and Month views with the pills at the top.</span></figcaption>
     </figure>
 
     <h3>Planning a block</h3>
     <ol class="steps">
       <li>Choose <strong>Day</strong>, <strong>Week</strong> or <strong>Month</strong> (a four-week grid), and move with <strong>‹ ›</strong> or <strong>This week</strong>.</li>
       <li>Click <strong>+ plan</strong> in a day column.</li>
-      <li>Set start and end — derived hours appear beneath — then hour type, client, project, work order, task and a description.</li>
+      <li>Set start and end — derived hours appear beneath — then hour type, client, project, work order, Taskana task and a description.</li>
       <li><strong>Save</strong>. Drag the card to another day at any time.</li>
     </ol>
 
-    <h3>Suggestions from your tasks</h3>
-    <p>Assigned tasks that have a due date and are not yet Done or Cancelled appear as teal chips above the grid. Drag one onto a day and the planned entry is created pre-filled with that task's project, work order and title.</p>
+    <h3>Suggestions from your Taskana tasks</h3>
+    <p>Your Taskana tasks that have a due date and are not yet Done appear as teal chips above the grid. Drag one onto a day and the planned entry is created pre-filled with that task's project, work order and title.</p>
 
     <h3>Capacity, variance and copying</h3>
     <ul>
@@ -915,78 +712,6 @@ table code{background:transparent; padding:0}
     <p>With <code>planOthersWeek</code> a <strong>Planning for</strong> selector appears. Team Leads see their team, Project Managers their projects' people, Operations Managers and the CEO everyone. Saving a change to someone else's plan notifies them.</p>
   </section>
 
-  <!-- ============ 8 ============ -->
-  <section class="ch" id="ch-tasks" data-title="Tasks" data-caps="updateOwnTaskStatus,createTasks,assignTasks">
-    <div class="ch-head"><span class="ch-num">08</span><h2>Tasks</h2></div>
-    <p class="lede">Four views over the same task list: your own, a drag-and-drop board, a flat table and a per-project roll-up with consumption bars.</p>
-    <div class="locked-note"></div>
-    <div class="perm" data-perm="createTasks,assignTasks,updateOwnTaskStatus"></div>
-
-    <h3>What you can see</h3>
-    <ul>
-      <li><code>OPS</code>, <code>CEO</code> and <code>FIN</code> see every task.</li>
-      <li><code>EXT</code> sees only tasks explicitly assigned to them.</li>
-      <li>Everyone else sees tasks assigned to them, plus every task on a project they own or are assigned to.</li>
-      <li><code>VIEW</code> has no Tasks tab.</li>
-    </ul>
-
-    <h3>The four views</h3>
-    <p><strong>My tasks</strong> — the board, filtered to you; the default view for Employees and contractors. <strong>Board</strong> — six columns: To do, In progress, Blocked, In review, Done, Cancelled. <strong>List</strong> — sorted by due date, with an inline status dropdown on every task whose status you may change. <strong>Project view</strong> — grouped by project, with hours consumed against allowance per task and in total.</p>
-    <div class="fig-pair">
-      <figure>
-        <img src="img/14-emp-tasks-mine.png" alt="My tasks view as a kanban board filtered to the signed-in user's tasks.">
-        <figcaption><span class="fno">Fig 8.1</span><span><b>My tasks</b> — the board, filtered to you.</span></figcaption>
-      </figure>
-      <figure>
-        <img src="img/34-task-board.png" alt="The full board with six status columns and task cards.">
-        <figcaption><span class="fno">Fig 8.2</span><span><b>Board</b> — every task, six columns.</span></figcaption>
-      </figure>
-    </div>
-    <div class="fig-pair">
-      <figure>
-        <img src="img/15-emp-tasks-list.png" alt="List view: a table of tasks with inline status dropdowns, priority chips, assignees, due dates and hours.">
-        <figcaption><span class="fno">Fig 8.3</span><span><b>List</b> — sorted by due date until you sort by another column, with an inline status dropdown on the tasks you may move.</span></figcaption>
-      </figure>
-      <figure>
-        <img src="img/45-pm-tasks-project-view.png" alt="Project view: tasks grouped by project with a consumption bar per project.">
-        <figcaption><span class="fno">Fig 8.4</span><span><b>Project view</b> — grouped by project, with hours consumed against allowance.</span></figcaption>
-      </figure>
-    </div>
-
-    <h3>Creating and editing a task</h3>
-    <p>Click <strong>+ New task</strong>, or click any card to edit. Title, project and description are all required — the description prompt asks <em>what does done look like?</em></p>
-    <figure>
-      <img src="img/35-task-editor.png" alt="The task editor dialog with title, project, work order, description, status, priority, dates, allowance, dependencies, link and comments.">
-      <figcaption><span class="fno">Fig 8.5</span><span>The task editor. <b>Assignees</b> only appears if you may assign tasks; without it you can still create a task, but it lands in the project backlog.</span></figcaption>
-    </figure>
-
-    <div class="tw"><table>
-      <thead><tr><th style="width:160px">Field</th><th>Notes</th></tr></thead>
-      <tbody>
-        <tr><td><strong>Work order</strong></td><td>Required if the project is work-order tracked.</td></tr>
-        <tr><td><strong>Status</strong></td><td>To do · In progress · Blocked · In review · Done · Cancelled.</td></tr>
-        <tr><td><strong>Priority</strong></td><td>Low · Normal · High · Critical. Shown as a coloured chip on the card.</td></tr>
-        <tr><td><strong>Hour allowance</strong></td><td>Budgeted hours for the task. Drives the consumption bar on the card and the prompt when the task is closed.</td></tr>
-        <tr><td><strong>Assignees</strong></td><td>Several people per task. A task with none sits in the project backlog. Finance and Viewer accounts cannot be assigned.</td></tr>
-        <tr><td><strong>Dependencies</strong></td><td>Other tasks on the same project that must reach Done first.</td></tr>
-        <tr><td><strong>Attachment or link</strong></td><td>A URL or a file reference.</td></tr>
-        <tr><td><strong>Comments</strong></td><td>Available once the task is saved.</td></tr>
-      </tbody>
-    </table></div>
-
-    <h3>Who can change or edit a task</h3>
-    <p>Its assignees (<code>updateOwnTaskStatus</code>), and anyone who creates tasks on that task's project (<code>createTasks</code>). Only they can drag its card on the board, change its status in the List view or on the phone, or open it in the task editor with <strong>✎</strong>. Everyone else sees the status as a chip and the task read-only — including a colleague's task on a project you share. Finance sees every task read-only.</p>
-
-    <h3>Blocking and unblocking</h3>
-    <p>A task with an unfinished dependency is forced to <strong>Blocked</strong> and cannot be dragged to another active column — the toast explains why. Completing the dependency releases every task waiting on it back to <strong>To do</strong> automatically.</p>
-
-    <h3>Closing a task</h3>
-    <p>Moving one of your own tasks to <strong>Done</strong> when you have reported less than half its allowance raises a prompt to report the remaining time first, or continue anyway.</p>
-
-    <h3>Overdue tasks</h3>
-    <p>A task past its due date and not Done or Cancelled is marked <strong>overdue</strong> on the card, shown in red in List view, and counted in the amber badge on the Tasks tab and in the manager cockpit.</p>
-  </section>
-
   <!-- ============ 9 ============ -->
   <section class="ch" id="ch-expenses" data-title="Expenses" data-caps="reportExpenses,approveExpenses">
     <div class="ch-head"><span class="ch-num">09</span><h2>Expenses</h2></div>
@@ -996,7 +721,7 @@ table code{background:transparent; padding:0}
 
     <figure>
       <img src="img/16-emp-expenses.png" alt="The Expenses tab: report form band at the top, month navigator with currency totals, and the expense table.">
-      <figcaption><span class="fno">Fig 9.1</span><span>Expenses. Totals are shown per currency, with an extra chip for expenses recorded in hours.</span></figcaption>
+      <figcaption><span class="fno">Fig 10.1</span><span>Expenses. Totals are shown per currency, with an extra chip for expenses recorded in hours.</span></figcaption>
     </figure>
 
     <h3>Recording an expense</h3>
@@ -1027,7 +752,7 @@ table code{background:transparent; padding:0}
     <p>Once a file is attached, it appears as a chip beside the <strong>Choose file</strong> button with its own two controls: a small replace icon that opens the file picker again and swaps the file in place, and an <strong>✕</strong> that removes it — the expense stays otherwise unchanged. The <strong>📎</strong> count in the table is itself a button: click it to reopen that expense's row in the form so you can replace or remove its attachment.</p>
     <figure class="fig-narrow">
       <img src="img/16b-emp-expense-attach.png" alt="The Edit expense form with an attached receipt shown as a chip carrying a replace icon and a remove (×) button.">
-      <figcaption><span class="fno">Fig 9.2</span><span>An attached receipt, ready to be replaced or removed.</span></figcaption>
+      <figcaption><span class="fno">Fig 10.2</span><span>An attached receipt, ready to be replaced or removed.</span></figcaption>
     </figure>
     <div class="note warn">
       <span class="tag">A required attachment cannot be removed down to zero</span>
@@ -1036,11 +761,11 @@ table code{background:transparent; padding:0}
   </section>
 
   <!-- ============ 10 ============ -->
-  <section class="ch" id="ch-budgets" data-title="Management" data-caps="viewBudgets,editBudgets,createWorkOrders,assignTasks,manageClientsProjects,manageEmployeesRoles">
+  <section class="ch" id="ch-budgets" data-title="Management" data-caps="viewBudgets,editBudgets,createWorkOrders,assignPeople,manageClientsProjects,manageEmployeesRoles">
     <div class="ch-head"><span class="ch-num">10</span><h2>Management</h2></div>
-    <p class="lede">The day-to-day operational tab — budgets, work orders and the company's master records — behind one <strong>Management</strong> tab in the top bar. Up to V7, budgets and work orders lived on their own tab while people, assignments, clients, projects, expense types and the verification queue lived behind the ⚙ button; V7.1 brings all of it together here. Its sub-tabs run, left to right: <strong>People · Teams · Clients · Projects · Work Orders · Budgets · Assignments &amp; Allowances · Expense Types · Verification Queue</strong>, with <strong>Pending Activation</strong> last for Operations and the CEO. Which of them you see depends on your role. For how these records relate to each other, see <a href="#ch-model">chapter 2</a>.</p>
+    <p class="lede">The day-to-day operational tab — budgets, work orders and the company's master records — behind one <strong>Management</strong> tab in the top bar. Up to V7, budgets and work orders lived on their own tab while people, assignments, clients, projects, expense types and the verification queue lived behind the ⚙ button; V7.1 brings all of it together here. Its sub-tabs run, left to right: <strong>People · Teams · Clients · Projects · Work Orders · Budgets · Assignments &amp; Allowances · Expense Types · Verification Queue</strong>, with <strong>Pending Activation</strong> last for Operations and the CEO. Which of them you see depends on your role. For how these records relate to each other, see <a href="#ch-model">How WorkDesk fits together</a>. Everything kept here — people, clients, projects and work orders — also appears in Taskana, read-only, as soon as it is saved.</p>
     <div class="locked-note"></div>
-    <div class="perm" data-perm="viewBudgets,editBudgets,createWorkOrders,assignTasks,manageTeams,manageClientsProjects,manageEmployeesRoles"></div>
+    <div class="perm" data-perm="viewBudgets,editBudgets,createWorkOrders,assignPeople,manageTeams,manageClientsProjects,manageEmployeesRoles"></div>
 
     <div class="note">
       <span class="tag">Who sees what</span>
@@ -1049,7 +774,7 @@ table code{background:transparent; padding:0}
 
     <figure>
       <img src="img/40-pm-budgets.png" alt="The Budgets tab: one card per budget with a consumption bar and statistic tiles for budgeted, consumed, in approval, remaining and projected exhaustion.">
-      <figcaption><span class="fno">Fig 10.1</span><span>A budget card. The bar carries consumed hours solid and hours in approval hatched behind them, so a budget that is about to be breached is visible before it is.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.1</span><span>A budget card. The bar carries consumed hours solid and hours in approval hatched behind them, so a budget that is about to be breached is visible before it is.</span></figcaption>
     </figure>
 
     <h3>Creating a budget</h3>
@@ -1069,7 +794,7 @@ table code{background:transparent; padding:0}
     </table></div>
     <figure class="fig-narrow">
       <img src="img/43-pm-new-budget.png" alt="The New budget dialog with client, project, work order, basis, currency, amount, rate and derived hours.">
-      <figcaption><span class="fno">Fig 10.2</span><span>The budget editor on a money basis.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.2</span><span>The budget editor on a money basis.</span></figcaption>
     </figure>
 
     <h3>Reading a budget card</h3>
@@ -1092,7 +817,7 @@ table code{background:transparent; padding:0}
     <h3>Work orders</h3>
     <figure>
       <img src="img/41-pm-work-orders.png" alt="The Work orders view: a table of codes, titles, client and project, status, contract reference, dates, budget and consumption.">
-      <figcaption><span class="fno">Fig 10.3</span><span>The work-order register, with consumption against the work order's own budget.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.3</span><span>The work-order register, with consumption against the work order's own budget.</span></figcaption>
     </figure>
     <ol class="steps">
       <li>Switch to <strong>Work orders</strong> and click <strong>+ New work order</strong>.</li>
@@ -1102,7 +827,7 @@ table code{background:transparent; padding:0}
     </ol>
     <figure class="fig-narrow">
       <img src="img/42-pm-new-work-order.png" alt="The New work order dialog showing the proposed code, title, status, contract reference, dates and budgeted hours.">
-      <figcaption><span class="fno">Fig 10.4</span><span>The work-order editor.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.4</span><span>The work-order editor.</span></figcaption>
     </figure>
     <div class="note warn">
       <span class="tag">Side effect worth knowing</span>
@@ -1110,10 +835,10 @@ table code{background:transparent; padding:0}
     </div>
 
     <h3>People</h3>
-    <p>Everyone, with email, role, team, manager and status. Operations Managers and the CEO change roles from the dropdown here and can <strong>Deactivate</strong> or <strong>Reactivate</strong> an account — except their own, which another administrator changes. Everyone else sees the same list read-only. The <strong>Used by</strong> column counts the records each person is attached to.</p>
+    <p>Everyone, with email, role, team, manager and status. Operations Managers and the CEO change roles from the dropdown here and can <strong>Deactivate</strong> or <strong>Reactivate</strong> an account — except their own, which another administrator changes. Everyone else sees the same list read-only. The <strong>Used by</strong> column counts the records each person is attached to. The <strong>Portal access</strong> column shows which parts of the portal the person can open and their Taskana role; Operations Managers and the CEO change it with <strong>✎</strong> — see <a href="#ch-access">Portal access</a>.</p>
     <figure>
       <img src="img/51-admin-people.png" alt="The Management tab's People section listing staff with role dropdowns, team, manager and active status.">
-      <figcaption><span class="fno">Fig 10.5</span><span>People. Deactivating keeps the person's history intact; it only stops them signing in.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.5</span><span>People. Deactivating keeps the person's history intact; it only stops them signing in.</span></figcaption>
     </figure>
 
     <h3 id="h-teams">Teams</h3>
@@ -1138,12 +863,12 @@ table code{background:transparent; padding:0}
     <h4>Requesting a person from another team</h4>
     <p>Use <strong>Request a member</strong> on another team's card, <strong>Request a team member</strong> at the top, or <strong>Request someone from another team</strong> inside Manage. Choose what you are asking for:</p>
     <div class="tw"><table>
-      <thead><tr><th style="width:190px"></th><th>Temporary — for a client's project or task</th><th>Permanent transfer</th></tr></thead>
+      <thead><tr><th style="width:190px"></th><th>Temporary — for a client's project</th><th>Permanent transfer</th></tr></thead>
       <tbody>
-        <tr><td><strong>You fill in</strong></td><td>The person, your team, the <strong>client</strong>, <strong>project</strong> and optionally <strong>task</strong>, <strong>from</strong> and <strong>to</strong> dates, an optional hour allowance and a reason</td><td>The person, your team and a reason</td></tr>
+        <tr><td><strong>You fill in</strong></td><td>The person, your team, the <strong>client</strong>, <strong>project</strong>, <strong>from</strong> and <strong>to</strong> dates, an optional hour allowance and a reason</td><td>The person, your team and a reason</td></tr>
         <tr><td><strong>Sent to</strong></td><td colspan="2">The person you choose in <strong>Send the request to</strong>: the person's team lead, their direct manager, or the CEO</td></tr>
         <tr><td><strong>Appears as</strong></td><td>A <em>Team loan</em> in Approvals</td><td>A <em>Team transfer</em> in Approvals</td></tr>
-        <tr><td><strong>On approval</strong></td><td>The person keeps their own team and manager, shows in your team as a temporary member for those dates, gets an assignment on the project (with the allowance you set, valid only between the dates) and is added to the task</td><td>The person moves to your team and your team lead becomes their direct manager</td></tr>
+        <tr><td><strong>On approval</strong></td><td>The person keeps their own team and manager, shows in your team as a temporary member for those dates, gets an assignment on the project (with the allowance you set, valid only between the dates)</td><td>The person moves to your team and your team lead becomes their direct manager</td></tr>
       </tbody>
     </table></div>
     <p>The <strong>Team requests</strong> list at the bottom of the sub-tab shows the requests you sent, the ones you were asked to decide, and those involving your teams, with their status.</p>
@@ -1152,7 +877,7 @@ table code{background:transparent; padding:0}
     <p>Team Leads and Project Managers manage only the teams they lead. They can place people who have no team or who are in another of their own teams — but not themselves, an Operations Manager or the CEO; anyone else has to be requested. Nobody changes their own direct manager. Operations Managers and the CEO manage every team and choose each team's lead.</p>
     <div class="note">
       <span class="tag">Why it matters</span>
-      <p>The <strong>direct manager</strong> receives the person's sick and vacation requests. The <strong>team lead</strong> is first in line for the person's other approval requests, with the direct manager next. See <a href="#ch-model">chapter 2</a> for the full routing.</p>
+      <p>The <strong>direct manager</strong> receives the person's sick and vacation requests. The <strong>team lead</strong> is first in line for the person's other approval requests, with the direct manager next. See <a href="#ch-model">How WorkDesk fits together</a> for the full routing.</p>
     </div>
 
     <h3>Pending activation</h3>
@@ -1165,7 +890,7 @@ table code{background:transparent; padding:0}
     </ol>
     <figure>
       <img src="img/52-admin-activation.png" alt="The Pending activation section showing a new sign-up card with role, team, initial project and allowance selectors.">
-      <figcaption><span class="fno">Fig 10.6</span><span>Activation. Doing it here also closes the matching request in the approvals queue.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.6</span><span>Activation. Doing it here also closes the matching request in the approvals queue.</span></figcaption>
     </figure>
 
     <h3>Assignments &amp; allowances</h3>
@@ -1181,7 +906,7 @@ table code{background:transparent; padding:0}
     <p>Allowance is set <em>per assignment</em>, not per person: the same writer can hold 40 hours on one work order and 200 on another. Edit a number in place and it saves when you leave the field. Your own allowance is shown read-only here — raise it through <a href="#ch-mywork">My assignments → Request hours</a>, like anyone else; <strong>🗑</strong> removes the assignment. Blue hours draw on the allowance and the budget just like Yellow hours.</p>
     <figure>
       <img src="img/53-admin-assignments.png" alt="The Assignments and allowances section: a form band to create an assignment above a table of person, project, work order, allowance, consumed, in approval and remaining.">
-      <figcaption><span class="fno">Fig 10.7</span><span>Assignments. Leaving <b>Work order</b> blank creates a project-level assignment that covers every work order on it.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.7</span><span>Assignments. Leaving <b>Work order</b> blank creates a project-level assignment that covers every work order on it.</span></figcaption>
     </figure>
 
     <h3>Clients, Projects and Expense types</h3>
@@ -1193,23 +918,23 @@ table code{background:transparent; padding:0}
     <div class="fig-pair">
       <figure>
         <img src="img/54-admin-clients.png" alt="The Clients section with name, initials, contact and verified columns.">
-        <figcaption><span class="fno">Fig 10.8</span><span>Clients. <b>Initials</b> feed the work-order code, so keep them short and stable.</span></figcaption>
+        <figcaption><span class="fno">Fig 11.8</span><span>Clients. <b>Initials</b> feed the work-order code, so keep them short and stable.</span></figcaption>
       </figure>
       <figure>
         <img src="img/55-admin-projects.png" alt="The Projects section with project, client, status, owner and WO tracked columns.">
-        <figcaption><span class="fno">Fig 10.9</span><span>Projects. The owner list offers Project Managers, Team Leads, Operations Managers and the CEO.</span></figcaption>
+        <figcaption><span class="fno">Fig 11.9</span><span>Projects. The owner list offers Project Managers, Team Leads, Operations Managers and the CEO.</span></figcaption>
       </figure>
     </div>
     <figure class="fig-narrow">
       <img src="img/57-admin-expense-types.png" alt="The Expense types section with an evidence-required checkbox and an auto-approval ceiling per type.">
-      <figcaption><span class="fno">Fig 10.10</span><span>Expense types. The ceiling and the evidence flag are what drive the expense form's behaviour.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.10</span><span>Expense types. The ceiling and the evidence flag are what drive the expense form's behaviour.</span></figcaption>
     </figure>
 
     <h3>Verification queue</h3>
     <p>Clients and projects created by approving an unlisted item wait here until a manager clicks <strong>Confirm</strong>. It is the tidy-up step after a busy week of typed-in names.</p>
     <figure class="fig-narrow">
       <img src="img/59-admin-verify.png" alt="The Verification queue section, empty, with the message Nothing to verify.">
-      <figcaption><span class="fno">Fig 10.11</span><span>An empty verification queue — the state to aim for.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.11</span><span>An empty verification queue — the state to aim for.</span></figcaption>
     </figure>
   </section>
 
@@ -1222,7 +947,7 @@ table code{background:transparent; padding:0}
 
     <figure>
       <img src="img/31-tl-approvals.png" alt="The Approvals queue: filter pills by request type, a status selector, and request cards with context and action buttons.">
-      <figcaption><span class="fno">Fig 11.1</span><span>The queue. Each card carries everything needed to decide without leaving the page — the hours, the assignment allowance, the affected budget, and the requester's own words.</span></figcaption>
+      <figcaption><span class="fno">Fig 12.1</span><span>The queue. Each card carries everything needed to decide without leaving the page — the hours, the assignment allowance, the affected budget, and the requester's own words.</span></figcaption>
     </figure>
 
     <h3>What lands in your queue</h3>
@@ -1236,7 +961,7 @@ table code{background:transparent; padding:0}
     <h3>How a request is routed</h3>
     <p>For most reasons, WorkDesk tries in order: <strong>your team's lead → your direct manager → a Project Manager → the Operations Manager → the CEO</strong>, skipping anyone who is inactive, cannot approve time, or is the requester.</p>
     <p>For a <strong>Leave request</strong> (Sick or Vacation) it tries <strong>your direct manager first</strong>, then falls back to the order above.</p>
-    <p>A <strong>Team loan</strong> or <strong>Team transfer</strong> goes to whoever the requester chose — the person's team lead, their direct manager or the CEO. The card shows the person, the two teams and, for a loan, the client, project, task, dates and hour allowance. Approving a loan creates the person's assignment and task membership; approving a transfer moves them and makes the new team's lead their direct manager. See <a href="#h-teams">Teams</a>.</p>
+    <p>A <strong>Team loan</strong> or <strong>Team transfer</strong> goes to whoever the requester chose — the person's team lead, their direct manager or the CEO. The card shows the person, the two teams and, for a loan, the client, project, dates and hour allowance. Approving a loan creates the person's assignment; approving a transfer moves them and makes the new team's lead their direct manager. See <a href="#h-teams">Teams</a>.</p>
     <p>For <strong>Budget exceeded</strong> it skips the team entirely and goes <strong>Project Manager → Operations Manager → CEO</strong>, because the decision belongs to whoever owns the budget.</p>
 
     <h3>The four actions</h3>
@@ -1252,11 +977,11 @@ table code{background:transparent; padding:0}
     <div class="fig-pair">
       <figure>
         <img src="img/32-tl-decline.png" alt="The Decline request dialog with a mandatory reason field.">
-        <figcaption><span class="fno">Fig 11.2</span><span>Declining. Without a reason the dialog refuses.</span></figcaption>
+        <figcaption><span class="fno">Fig 12.2</span><span>Declining. Without a reason the dialog refuses.</span></figcaption>
       </figure>
       <figure>
         <img src="img/33-tl-request-info.png" alt="The Request information dialog with a question field.">
-        <figcaption><span class="fno">Fig 11.3</span><span>Asking for more. Nothing changes status.</span></figcaption>
+        <figcaption><span class="fno">Fig 12.3</span><span>Asking for more. Nothing changes status.</span></figcaption>
       </figure>
     </div>
 
@@ -1275,7 +1000,7 @@ table code{background:transparent; padding:0}
     <p>Switch the <strong>Status</strong> selector to <em>Approved</em> or <em>Declined</em> to see history. You will see decisions you made, decisions routed to you, and — as <code>OPS</code> or <code>CEO</code> — everything. Each shows who decided, when, and any note.</p>
     <figure>
       <img src="img/63-ops-approvals.png" alt="The Approvals queue as an Operations Manager, showing requests from across the company.">
-      <figcaption><span class="fno">Fig 11.4</span><span>The same queue for an Operations Manager — company-wide, with the type filter pills carrying live counts.</span></figcaption>
+      <figcaption><span class="fno">Fig 12.4</span><span>The same queue for an Operations Manager — company-wide, with the type filter pills carrying live counts.</span></figcaption>
     </figure>
   </section>
 
@@ -1288,7 +1013,7 @@ table code{background:transparent; padding:0}
 
     <figure>
       <img src="img/44-pm-dashboard.png" alt="The Dashboard: range pills, filters, the manager cockpit, statistic tiles, an hours-over-time area chart and hours-by-client bars.">
-      <figcaption><span class="fno">Fig 12.1</span><span>The Dashboard for a Project Manager. Ranges run from this week to all time; the <b>%</b> toggle restates every figure as a share of total hours.</span></figcaption>
+      <figcaption><span class="fno">Fig 13.1</span><span>The Dashboard for a Project Manager. Ranges run from this week to all time; the <b>%</b> toggle restates every figure as a share of total hours.</span></figcaption>
     </figure>
 
     <h3>Scope</h3>
@@ -1300,18 +1025,18 @@ table code{background:transparent; padding:0}
       <li><strong>Outstanding approvals</strong> — requests waiting on you.</li>
       <li><strong>Projects over 90 % of budget</strong> — named in the subtitle.</li>
       <li><strong>People over capacity</strong> — planned beyond contracted hours this week.</li>
-      <li><strong>Overdue tasks</strong>.</li>
+      <li><strong>Hours in approval</strong> — pending hours in your scope that are not counted yet.</li>
     </ul>
 
     <h3>The figures</h3>
     <p>Total hours · Red · Yellow · <strong>Utilisation</strong> (Yellow as a share of total) · Sick days · Vacation days · Expenses per currency · Entries reported. Below them, hours over time as a stacked Red-and-Yellow area chart, hours by client as a ranked bar list, and two comparison bars: the Red/Yellow split and planned against actual with its variance.</p>
     <figure>
       <img src="img/17-emp-dashboard.png" alt="The Dashboard as an Employee: own figures only, no manager cockpit.">
-      <figcaption><span class="fno">Fig 12.2</span><span>The same Dashboard for an Employee — own figures, no cockpit, no employee filter.</span></figcaption>
+      <figcaption><span class="fno">Fig 13.2</span><span>The same Dashboard for an Employee — own figures, no cockpit, no employee filter.</span></figcaption>
     </figure>
 
     <h3>Filters and export</h3>
-    <p>Filter by employee, client, project, work order and task; <strong>Clear</strong> resets them. <strong>⬇ Export</strong> writes the underlying entries — not the chart — so the numbers can be checked.</p>
+    <p>Filter by employee, client, project and work order; <strong>Clear</strong> resets them. <strong>⬇ Export</strong> writes the underlying entries — not the chart — so the numbers can be checked.</p>
   </section>
 
   <!-- ============ 13 ============ -->
@@ -1323,7 +1048,7 @@ table code{background:transparent; padding:0}
 
     <figure>
       <img src="img/18-emp-library.png" alt="The Library as a grid of cards with titles, bodies, tags and author lines, above a search field and tag filter.">
-      <figcaption><span class="fno">Fig 13.1</span><span>The Library. Search is full-text; the tag selector narrows further.</span></figcaption>
+      <figcaption><span class="fno">Fig 14.1</span><span>The Library. Search is full-text; the tag selector narrows further.</span></figcaption>
     </figure>
 
     <h3>Adding an item</h3>
@@ -1331,7 +1056,7 @@ table code{background:transparent; padding:0}
       <li>Click <strong>+ New item</strong>.</li>
       <li>Give it a title — required — and a body.</li>
       <li>Add comma-separated tags and a link if there is one.</li>
-      <li>Optionally attach it to a project and a task, and add an image.</li>
+      <li>Optionally attach it to a client or project, and add an image.</li>
       <li>Tick <strong>Private to me</strong> if it is a personal note rather than house knowledge.</li>
       <li><strong>Save</strong>.</li>
     </ol>
@@ -1340,19 +1065,19 @@ table code{background:transparent; padding:0}
     <ul>
       <li>Private items are visible only to their author.</li>
       <li>You may edit or delete your own items. <code>OPS</code> and <code>CEO</code> may edit anyone's.</li>
-      <li>Finance can read the Library but not write to it. Contractors and Viewers have no Library tab.</li>
+      <li>Finance can read the Library but not write to it. Contractors and Viewers have no Library tab. Company-wide rules and training material belong in the <a href="../kb/index.html">Knowledge Base</a> instead.</li>
     </ul>
   </section>
 
   <!-- ============ 14 ============ -->
   <section class="ch" id="ch-mywork" data-title="My assignments and allowances" data-caps="reportOwnTime">
     <div class="ch-head"><span class="ch-num">14</span><h2>My assignments and allowances</h2></div>
-    <p class="lede">The ◱ button in the top bar. Where your funded work lives, and where you ask for more hours before you run out.</p>
+    <p class="lede">The ◱ button in the top bar. Where your funded work lives, and where you ask for more hours before you run out. Taskana shows the same figures as <em>My hours banks</em> on My work.</p>
     <div class="locked-note"></div>
 
     <figure>
       <img src="img/19-emp-my-assignments.png" alt="The My assignments and allowances dialog: a table of projects, work orders, allowance, consumed, in approval and remaining, with Request hours buttons.">
-      <figcaption><span class="fno">Fig 14.1</span><span>Your assignments. A percentage chip appears from 75 % and turns amber at 90 %, red at 100 % — or past it, as here.</span></figcaption>
+      <figcaption><span class="fno">Fig 15.1</span><span>Your assignments. A percentage chip appears from 75 % and turns amber at 90 %, red at 100 % — or past it, as here.</span></figcaption>
     </figure>
 
     <h3>Requesting additional hours</h3>
@@ -1364,7 +1089,7 @@ table code{background:transparent; padding:0}
     </ol>
     <figure class="fig-narrow">
       <img src="img/20-emp-request-hours.png" alt="The Request additional hours dialog with allowance, consumed, remaining and in-approval tiles above the hours and justification fields.">
-      <figcaption><span class="fno">Fig 14.2</span><span>On approval the allowance is raised automatically — no one has to remember to edit it.</span></figcaption>
+      <figcaption><span class="fno">Fig 15.2</span><span>On approval the allowance is raised automatically — no one has to remember to edit it.</span></figcaption>
     </figure>
     <p>The request appears in the approval queue as an <strong>Allowance increase</strong>, showing the hours asked for and your justification. On approval, the allowance is raised automatically.</p>
     <div class="note">
@@ -1381,7 +1106,7 @@ table code{background:transparent; padding:0}
     <div class="perm" data-perm="backupRestore,viewAuditLog"></div>
 
     <h3>Roles &amp; permissions</h3>
-    <p>A read-only view of the same permission matrix printed in <a href="#ch-roles">chapter 4</a>, for reference while you are signed in as a particular role.</p>
+    <p>A read-only view of the same permission matrix printed in <a href="#ch-roles">Roles and permissions</a>, for reference while you are signed in as a particular role.</p>
 
     <h3>Company settings</h3>
     <p><code>OPS</code> and <code>CEO</code> only.</p>
@@ -1399,30 +1124,30 @@ table code{background:transparent; padding:0}
     </ol>
     <figure>
       <img src="img/60-admin-settings.png" alt="The Company settings section with soft and hard daily limits, default weekly hours and the month-close control.">
-      <figcaption><span class="fno">Fig 15.1</span><span>Company settings.</span></figcaption>
+      <figcaption><span class="fno">Fig 16.1</span><span>Company settings.</span></figcaption>
     </figure>
 
     <h3>Backup &amp; restore</h3>
-    <p>See <a href="#ch-data">chapter 16</a> for the file format and the three restore operations — it has its own chapter because it matters that much.</p>
+    <p>See <a href="#ch-data">Backup and restore</a> for the file format and the three restore operations — it has its own chapter because it matters that much.</p>
 
     <h3>Audit log</h3>
-    <p>Append-only. Every sign-in, sign-out, role change, approval decision, budget edit, allowance change and deletion is recorded with actor, timestamp, entity and device. Visible to <code>OPS</code>, <code>FIN</code> and <code>CEO</code>; the most recent 400 entries are shown, 4,000 retained.</p>
+    <p>Append-only. Every sign-in, sign-out, role change, portal-access change, approval decision, budget edit, allowance change and deletion is recorded with actor, timestamp, entity and device. Visible to <code>OPS</code>, <code>FIN</code> and <code>CEO</code>; the most recent 400 entries are shown, 4,000 retained.</p>
     <figure>
       <img src="img/62-admin-audit.png" alt="The Audit log section: a table of timestamp, actor, action, entity and IP.">
-      <figcaption><span class="fno">Fig 15.2</span><span>The audit log.</span></figcaption>
+      <figcaption><span class="fno">Fig 16.2</span><span>The audit log.</span></figcaption>
     </figure>
   </section>
 
   <!-- ============ 16 ============ -->
   <section class="ch" id="ch-data" data-title="Backup and restore" data-caps="backupRestore">
     <div class="ch-head"><span class="ch-num">16</span><h2>Backup and restore</h2></div>
-    <p class="lede">In a standalone build this is the only safety net there is. <code>OPS</code> and <code>CEO</code> only.</p>
+    <p class="lede">With local storage this is the only safety net there is; with GitHub or OneDrive it is still the way to keep a dated copy. <code>OPS</code> and <code>CEO</code> only. Taskana's tasks have their own backup — see <a href="#ch-tk-roles">Taskana roles, insights and data</a>.</p>
     <div class="locked-note"></div>
     <div class="perm" data-perm="backupRestore"></div>
 
     <figure>
       <img src="img/61-admin-backup.png" alt="The Backup and restore tab showing the download, restore and import lists panels.">
-      <figcaption><span class="fno">Fig 16.1</span><span>Backup &amp; restore, inside System administration.</span></figcaption>
+      <figcaption><span class="fno">Fig 17.1</span><span>Backup &amp; restore, inside System administration.</span></figcaption>
     </figure>
 
     <h3>The file format</h3>
@@ -1433,7 +1158,7 @@ table code{background:transparent; padding:0}
         <tr><td><code>app</code></td><td>Must be exactly <code>"galil-workdesk"</code>. Anything else is refused.</td></tr>
         <tr><td><code>version</code></td><td><code>7</code> for this build.</td></tr>
         <tr><td><code>exported</code></td><td>ISO timestamp.</td></tr>
-        <tr><td><code>data</code></td><td>The object holding every entity: entries, projects, tasks, budgets, expenses, library, approvals, audit and the lists.</td></tr>
+        <tr><td><code>data</code></td><td>The object holding every entity: entries, projects, work orders, budgets, assignments, expenses, library, approvals, audit and the lists. Tasks are not in it — they are in Taskana's file.</td></tr>
       </tbody>
     </table></div>
 
@@ -1455,7 +1180,7 @@ table code{background:transparent; padding:0}
   <!-- ============ 17 ============ -->
   <section class="ch" id="ch-export" data-title="Excel exports" data-caps="excelExport">
     <div class="ch-head"><span class="ch-num">17</span><h2>Excel exports</h2></div>
-    <p class="lede">Five modules export. Every file is a real <code>.xlsx</code> with a branded title band, a line recording the filter and who exported it, a frozen and filtered header row, true Excel dates, and a totals row.</p>
+    <p class="lede">Five modules export. Every file is a real <code>.xlsx</code> with a branded title band, a line recording the filter and who exported it, a frozen and filtered header row, true Excel dates, and a totals row. With the portal in Hebrew, the headings are in Hebrew and the sheet runs right to left.</p>
     <div class="locked-note"></div>
     <div class="perm" data-perm="excelExport"></div>
 
@@ -1475,8 +1200,177 @@ table code{background:transparent; padding:0}
     <p>Date columns carry real Excel dates formatted <code>Sunday, 26/07/2026</code>, so they sort and filter properly. Red and Yellow columns are accent-coloured to match the application.</p>
   </section>
 
+  <!-- ============ Part C · Taskana ============ -->
+  <section class="ch" id="ch-tk-basics" data-part="Taskana" data-title="What Taskana is" data-caps="openTaskana">
+    <a id="taskana"></a>
+    <p class="part">Part C · Taskana</p>
+    <div class="ch-head"><span class="ch-num">19</span><h2>What Taskana is</h2></div>
+    <p class="lede">Taskana is where the work itself is planned and followed: every writing, editing, review, illustration and translation task on every client project, on a board and in lists, with comments, questions and sub-tasks. It holds tasks only — the people, clients, projects and work orders it works on come from WorkDesk.</p>
+    <div class="locked-note"></div>
+
+    <figure>
+      <img src="img/t01-board.png" alt="Taskana's board: the sidebar on the left, and six workflow columns — Backlog, To Do, Writing, Peer Review, SME Review, Done — with task cards.">
+      <figcaption><span class="fno">Fig 19.1</span><span>The board. Each card shows the task key, title, type, priority, due date and assignee; drag it to move it along the workflow.</span></figcaption>
+    </figure>
+
+    <h3>Opening it</h3>
+    <p>Click the <strong>Taskana</strong> tile on the portal home page. You are already signed in — Taskana uses the portal session — and your Taskana role comes from your <a href="#ch-access">portal access</a>. <strong>Employee Portal</strong> at the top of the sidebar takes you back to the home page.</p>
+
+    <h3>The pages</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:160px">Page</th><th>What it shows</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Overview</strong></td><td>Your open tasks, overdue and in-review counts, open questions, active projects and recent activity.</td></tr>
+        <tr><td><strong>Inbox</strong></td><td>Mentions, assignments and replies to your tasks. The count beside it is unread items.</td></tr>
+        <tr><td><strong>My work</strong></td><td>Tasks assigned to you and tasks you reported for others — and <strong>My hours banks</strong>, your allowance on each project from WorkDesk.</td></tr>
+        <tr><td><strong>Board</strong></td><td>Every task in its workflow column, filtered by client, project, assignee, type, priority, status or text.</td></tr>
+        <tr><td><strong>All tasks</strong></td><td>The same tasks as a list, with bulk actions.</td></tr>
+        <tr><td><strong>Insights</strong></td><td>Delivery metrics — see <a href="#ch-tk-roles">Taskana roles, insights and data</a>.</td></tr>
+        <tr><td><strong>Clients &amp; projects</strong></td><td>Every client and project from WorkDesk, with its tasks, work orders, budget and team.</td></tr>
+        <tr><td><strong>People</strong></td><td>Everyone from WorkDesk with their Taskana role and their tasks.</td></tr>
+        <tr><td><strong>Saved views</strong></td><td>Board or list filters you saved, for yourself or shared with everyone.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>The workflow</h3>
+    <dl class="kv">
+      <dt>Backlog</dt><dd>Known, not yet planned.</dd>
+      <dt>To Do</dt><dd>Planned and ready to start.</dd>
+      <dt>Writing</dt><dd>Being written, edited, illustrated or translated.</dd>
+      <dt>Peer Review</dt><dd>With a colleague for review.</dd>
+      <dt>SME Review</dt><dd>With the client's subject-matter expert.</dd>
+      <dt>Done</dt><dd>Delivered. Moving a repeating task to Done creates the next one.</dd>
+    </dl>
+    <p><strong>Types:</strong> Writing · Editing · Review · Illustration · Translation · Localization · SME Interview · Publishing · Doc Defect · Research. <strong>Priorities:</strong> Critical · High · Medium · Low.</p>
+  </section>
+
+  <section class="ch" id="ch-tk-tasks" data-part="Taskana" data-title="Working with tasks" data-caps="tkWorkTasks,tkComment">
+    <div class="ch-head"><span class="ch-num">20</span><h2>Working with tasks</h2></div>
+    <p class="lede">A task belongs to one project — and optionally to one of its work orders — and has one assignee. Everything about it is on its details page: status, dates, estimate, description, sub-tasks, checklist, links, attachments, comments and questions, and the hours reported on it in WorkDesk.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="tkWorkTasks,tkDeleteTasks,tkComment"></div>
+
+    <h3>Creating a task</h3>
+    <ol class="steps">
+      <li>Click <strong>New task</strong> on the board, a list, a project or My work.</li>
+      <li>Give it a <strong>title</strong> and choose the <strong>project</strong>. The project list is WorkDesk's.</li>
+      <li>If the project has work orders, choose the <strong>work order</strong> the task is for. Changing the project clears it.</li>
+      <li>Choose the <strong>type</strong>, <strong>priority</strong>, <strong>assignee</strong>, <strong>start</strong> and <strong>due</strong> dates and an <strong>estimate</strong> in hours.</li>
+      <li>Save. The task gets a key from the project's key and a number — for example <code>RSOM-4</code>.</li>
+    </ol>
+
+    <figure>
+      <img src="img/t02-task.png" alt="A Taskana task's details: status, assignee, dates and work order on the right, the description, sub-tasks and comments in the middle, and the Hours in WorkDesk section.">
+      <figcaption><span class="fno">Fig 20.1</span><span>A task. <b>Hours in WorkDesk</b> shows the time reported on the task against its estimate, the assignee's hours bank and the budget it draws on.</span></figcaption>
+    </figure>
+
+    <h3>On the task</h3>
+    <ul>
+      <li><strong>Click to edit</strong> — any field: title, description, status, type, priority, assignee, dates, estimate, work order, labels, deliverable (e.g. <em>Vol 1 · Ch 3</em>) and repeat.</li>
+      <li><strong>Sub-tasks</strong> and a <strong>checklist</strong> break the work down; a sub-task is a task of its own.</li>
+      <li><strong>Linked tasks</strong> — <em>blocks</em>, <em>is blocked by</em>, <em>relates to</em>. A task blocked by an unfinished task is marked <strong>Blocked</strong>.</li>
+      <li><strong>Attachments &amp; links</strong> — drafts, source documents, SME notes. Files up to 1 MB.</li>
+      <li><strong>Comments</strong> — type <code>@</code> to mention someone; they get it in their Inbox. A <strong>question</strong> stays open until someone marks it answered.</li>
+      <li><strong>History</strong> — every change, with who made it and when.</li>
+      <li><strong>Copy link</strong> — a link that opens this task.</li>
+    </ul>
+
+    <h3>Reporting time on a task</h3>
+    <p>Time is reported in WorkDesk, never in Taskana. On a task assigned to you, <strong>Report time on this task in WorkDesk</strong> opens WorkDesk's Time Log with the client, project, work order and task already chosen. Once the entry registers, its hours appear under <strong>Hours in WorkDesk</strong> on the task; hours still in approval are shown beside them.</p>
+
+    <h3>Boards, lists and saved views</h3>
+    <ul>
+      <li>Drag a card to another column to change its status.</li>
+      <li>Filter by client, project, assignee, type, priority, status, <em>Overdue</em>, <em>Open questions</em> or text. <strong>Save view</strong> keeps the filters — for you, or shared with everyone.</li>
+      <li>In <strong>All tasks</strong>, select several tasks and use <strong>Bulk actions</strong> to change their status, assignee or priority, move them to another project, or delete them.</li>
+    </ul>
+  </section>
+
+  <section class="ch" id="ch-tk-wd" data-part="Taskana" data-title="From WorkDesk to Taskana" data-caps="tkSeeAll">
+    <div class="ch-head"><span class="ch-num">21</span><h2>From WorkDesk to Taskana</h2></div>
+    <p class="lede">People, clients, projects and work orders are set up in WorkDesk and shown in Taskana. Taskana keeps them up to date by itself; nobody types them twice.</p>
+    <div class="locked-note"></div>
+
+    <div class="tw"><table>
+      <thead><tr><th style="width:170px">In WorkDesk</th><th>In Taskana</th></tr></thead>
+      <tbody>
+        <tr><td><strong>People</strong></td><td>Taskana's people, with names in English and Hebrew, job title and department. Their Taskana role is their portal access. A person deactivated in WorkDesk cannot be assigned.</td></tr>
+        <tr><td><strong>Clients</strong></td><td>Clients &amp; projects, with each client's projects and open tasks.</td></tr>
+        <tr><td><strong>Projects</strong></td><td>Taskana's projects — name, client, lead (the WorkDesk owner), status and dates. Each project gets a short <strong>key</strong> for its task numbers.</td></tr>
+        <tr><td><strong>Work orders</strong></td><td>The <strong>Work order</strong> field on every task, and the project's work-order list with each one's open tasks and budget.</td></tr>
+        <tr><td><strong>Budgets, assignments, hours</strong></td><td>The indicators in <a href="#ch-tk-hours">Budget and hours banks</a>.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>When it updates</h3>
+    <p>Whenever WorkDesk saves a change, Taskana picks it up — straight away in another tab, and when you come back to the Taskana window. <strong>Data → Update from WorkDesk now</strong> does it on demand.</p>
+
+    <h3>What stays in Taskana</h3>
+    <p>On a project page, a Manager or Admin can edit the two things that are Taskana's own: the project's <strong>key</strong> and <strong>document type</strong>, and its description. Everything else on clients, projects and people shows a note — <em>managed in WorkDesk</em> — with <strong>Open WorkDesk</strong> for people who can.</p>
+    <div class="perm" data-perm="tkProjectSettings"></div>
+  </section>
+
+  <section class="ch" id="ch-tk-hours" data-part="Taskana" data-title="Budget and hours banks" data-caps="tkOwnBank,tkBudgets">
+    <div class="ch-head"><span class="ch-num">22</span><h2>Budget and hours banks</h2></div>
+    <p class="lede">Taskana shows WorkDesk's figures next to the work: how much of a project's budget is used, how many hours each person has left on it, and how many hours went into each task.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="tkOwnBank,tkBudgets"></div>
+
+    <figure>
+      <img src="img/t03-budget.png" alt="A Taskana project page with the Budget and hours card: a budget bar per work order and an hours-bank bar per person.">
+      <figcaption><span class="fno">Fig 22.1</span><span>The <b>Budget &amp; hours</b> card on a project. The solid part of each bar is registered hours; the hatched part is hours waiting for approval.</span></figcaption>
+    </figure>
+
+    <h3>The indicators</h3>
+    <dl class="kv">
+      <dt>Budget</dt><dd>The project's — or a work order's — budgeted hours against the registered Yellow and Blue hours in WorkDesk, with hours left (or over budget) and hours waiting for approval. Amber from 90 %, red past 100 %. On a project page, on each work order and on every task.</dd>
+      <dt>Hours bank</dt><dd>One person's allowance on the project or work order (their WorkDesk assignment) against what they have registered there: hours left, hours past the allowance, or <em>no limit</em>. <em>Not assigned to this project in WorkDesk</em> means their time there will go to approval.</dd>
+      <dt>Hours on the task</dt><dd>Hours reported in WorkDesk that name the task — all colours — against the task's estimate.</dd>
+    </dl>
+
+    <h3>Who sees them</h3>
+    <ul>
+      <li><strong>Everyone</strong> sees their own hours bank — on My work under <strong>My hours banks</strong>, on the project page as <strong>Your hours bank</strong>, and on their own tasks.</li>
+      <li><strong>Managers and Admins</strong> also see budgets and every team member's hours bank, as WorkDesk's Project Managers, Operations Managers and the CEO see them.</li>
+      <li>The figures are read-only. Budgets, allowances and assignments are changed in WorkDesk — Management → Budgets and Assignments &amp; Allowances; more hours are requested from WorkDesk's ◱ <em>My assignments</em>.</li>
+    </ul>
+  </section>
+
+  <section class="ch" id="ch-tk-roles" data-part="Taskana" data-title="Taskana roles, insights and data" data-caps="tkSeeAll">
+    <div class="ch-head"><span class="ch-num">23</span><h2>Taskana roles, insights and data</h2></div>
+    <p class="lede">Five Taskana roles, set per person in the portal access. Insights measures delivery; Data holds the backup, the CSV export and the demonstration data.</p>
+    <div class="locked-note"></div>
+
+    <h3>The five roles</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:120px">Role</th><th>What it carries</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Admin</strong></td><td>Everything, including the data, backup and restore and anyone's saved views and comments.</td></tr>
+        <tr><td><strong>Manager</strong></td><td>Every task, project settings (key and document type), deleting any task, budgets and the team's hours banks.</td></tr>
+        <tr><td><strong>Member</strong></td><td>Creates and works tasks, comments and asks questions; deletes tasks they reported.</td></tr>
+        <tr><td><strong>External</strong></td><td>Only the tasks they are assigned, reported or are mentioned on. No Insights, Clients or People pages.</td></tr>
+        <tr><td><strong>Viewer</strong></td><td>Reads everything and comments; changes nothing.</td></tr>
+      </tbody>
+    </table></div>
+    <p>The defaults by WorkDesk role are in <a href="#ch-access">Portal access</a>.</p>
+    <div class="perm" data-perm="tkSeeAll,tkWorkTasks,tkDeleteTasks,tkProjectSettings,tkBudgets,tkData"></div>
+
+    <h3>Insights</h3>
+    <p>For a period (30 days to all time), a client and a project: tasks opened against closed per week or month, closing rate, on-time delivery, cycle time, questions answered, where the work is by workflow stage, workload by person and completion per project. <strong>Show as a table</strong> gives the numbers behind each chart.</p>
+
+    <h3>Data</h3>
+    <div class="perm" data-perm="tkData"></div>
+    <ul>
+      <li><strong>Download backup</strong> / <strong>Copy backup</strong> — every task, comment and view in one JSON file. <strong>Export tasks (CSV)</strong> for a spreadsheet.</li>
+      <li><strong>Restore from a backup…</strong> replaces Taskana's data; <strong>Undo last restore</strong> brings back what was there before.</li>
+      <li><strong>Update from WorkDesk now</strong> — see <a href="#ch-tk-wd">From WorkDesk to Taskana</a>.</li>
+      <li><strong>Demo data</strong> — made-up tasks for the real team on WorkDesk's projects. Demo records are marked, so removing them leaves real work alone.</li>
+    </ul>
+    <p>With GitHub storage every save is a commit, so the branch history is a backup too; with OneDrive a dated copy goes to <code>backups/</code> once a day.</p>
+  </section>
+
   <!-- ============ 18 ============ -->
-  <section class="ch" id="ch-ref" data-title="Reference">
+  <section class="ch" id="ch-ref" data-part="Reference" data-title="Reference">
     <div class="ch-head"><span class="ch-num">18</span><h2>Reference</h2></div>
     <p class="lede">The fixed vocabularies, defaults and limits, in one place.</p>
 
@@ -1486,8 +1380,9 @@ table code{background:transparent; padding:0}
       <tbody>
         <tr><td><strong>Entry status</strong></td><td>Registered · Pending · Cancelled · Locked</td></tr>
         <tr><td><strong>Project status</strong></td><td>Active · WIP · Draft A · Draft B · Pending Information · Pending Review · On hold · Done</td></tr>
-        <tr><td><strong>Task status</strong></td><td>To do · In progress · Blocked · In review · Done · Cancelled</td></tr>
-        <tr><td><strong>Task priority</strong></td><td>Low · Normal · High · Critical</td></tr>
+        <tr><td><strong>Taskana task status</strong></td><td>Backlog · To Do · Writing · Peer Review · SME Review · Done</td></tr>
+        <tr><td><strong>Taskana priority</strong></td><td>Critical · High · Medium · Low</td></tr>
+        <tr><td><strong>Taskana role</strong></td><td>Admin · Manager · Member · External · Viewer</td></tr>
         <tr><td><strong>Work-order status</strong></td><td>Active · On hold · Closed</td></tr>
         <tr><td><strong>Reimbursement</strong></td><td>Submitted · Approved · Paid · Rejected</td></tr>
         <tr><td><strong>Request types</strong></td><td>Time entry · Leave request · Team loan · Team transfer · Allowance increase · New list item · Expense · Account activation · Role change · Retroactive edit</td></tr>
@@ -1504,274 +1399,58 @@ table code{background:transparent; padding:0}
         <tr><td>Weekly hours</td><td class="num">42 h</td><td>Company settings, or per person</td></tr>
         <tr><td>Hour rounding</td><td class="num">0.5 h</td><td>Fixed</td></tr>
         <tr><td>Session lifetime</td><td class="num">12 h</td><td>Fixed — inactivity</td></tr>
-        <tr><td>Failed sign-ins before lockout</td><td class="num">5</td><td>Fixed</td></tr>
+        <tr><td>Failed sign-ins before lockout</td><td class="num">5</td><td>Fixed — locked for 15 minutes</td></tr>
         <tr><td>Password reset link validity</td><td class="num">30 min</td><td>Fixed</td></tr>
         <tr><td>Minimum password length</td><td class="num">12</td><td>Fixed — plus upper, lower and a digit</td></tr>
         <tr><td>Burn-rate window</td><td class="num">30 days</td><td>Fixed</td></tr>
         <tr><td>Audit rows shown</td><td class="num">400</td><td>Fixed — 4,000 retained</td></tr>
+        <tr><td>Attachment on a Taskana task</td><td class="num">1 MB</td><td>Fixed</td></tr>
       </tbody>
     </table></div>
 
     <h3>Reserved for a later version</h3>
     <ul>
-      <li><strong>Hebrew and right-to-left layout</strong> — the language toggle on the sign-in card acknowledges the request and stays in English. V8.</li>
       <li><strong>Annual Sick and Vacation balances</strong> — leave is approved by your manager today; no annual balance is checked yet.</li>
     </ul>
 
     <h3>Demonstration accounts</h3>
-    <p>The standalone build seeds one account per role, all with the password <code>GalilWorkdesk1</code>. Sign in as each to see exactly what that role sees.</p>
+    <p>Without Microsoft Entra ID, the demonstration data signs in as the GALIL team, all with the password <code>GalilWorkdesk1</code>. Sign in to the portal as each to see what that role sees in WorkDesk and Taskana.</p>
     <div class="tw"><table>
-      <thead><tr><th style="width:90px">Role</th><th style="width:170px">Name</th><th>Email</th></tr></thead>
+      <thead><tr><th style="width:90px">Role</th><th style="width:170px">Name</th><th style="width:250px">Email</th><th>Taskana role</th></tr></thead>
       <tbody>
-        <tr><td><code>CEO</code></td><td>Dana Galil</td><td><code>dana.galil@galiltc.co.il</code></td></tr>
-        <tr><td><code>OPS</code></td><td>Ronen Shaked</td><td><code>ronen.shaked@galiltc.co.il</code></td></tr>
-        <tr><td><code>PM</code></td><td>Maya Ben Ari</td><td><code>maya.ben.ari@galiltc.co.il</code></td></tr>
-        <tr><td><code>TL</code></td><td>Eitan Levi</td><td><code>eitan.levi@galiltc.co.il</code></td></tr>
-        <tr><td><code>SEN</code></td><td>Noa Katz</td><td><code>noa.katz@galiltc.co.il</code></td></tr>
-        <tr><td><code>EMP</code></td><td>Yossi Mizrahi</td><td><code>yossi.mizrahi@galiltc.co.il</code></td></tr>
-        <tr><td><code>FIN</code></td><td>Orit Hadad</td><td><code>orit.hadad@galiltc.co.il</code></td></tr>
-        <tr><td><code>EXT</code></td><td>Adam Peled</td><td><code>adam.peled@galiltc.co.il</code></td></tr>
-        <tr><td><code>VIEW</code></td><td>Gil Avrahami</td><td><code>gil.avrahami@galiltc.co.il</code></td></tr>
+        <tr><td><code>CEO</code></td><td>Tamir Nisman</td><td><code>tamir@galiltc.co.il</code></td><td>Admin</td></tr>
+        <tr><td><code>OPS</code></td><td>Inon Kanner</td><td><code>inon.kanner@galiltc.co.il</code></td><td>Admin</td></tr>
+        <tr><td><code>PM</code></td><td>Danny Gelman</td><td><code>danny.gelman@galiltc.co.il</code></td><td>Admin (changed in portal access)</td></tr>
+        <tr><td><code>PM</code></td><td>Kfir Hodara</td><td><code>kfir@galiltc.co.il</code></td><td>Manager</td></tr>
+        <tr><td><code>EMP</code></td><td>Eitan Fisch</td><td><code>eitan.f@galiltc.co.il</code></td><td>Member</td></tr>
+        <tr><td><code>EXT</code></td><td>Gil Hadar</td><td><code>gil.hadar@galiltc.co.il</code></td><td>External</td></tr>
       </tbody>
     </table></div>
+    <p>To try the other roles, change someone's role in Management → People.</p>
     <div class="fig-pair">
       <figure>
         <img src="img/71-fin-budgets.png" alt="The Management tab's Budgets section as Finance: same cards, no edit buttons.">
-        <figcaption><span class="fno">Fig 18.1</span><span>Finance sees every budget on the Management tab, with an Export button and no edit rights.</span></figcaption>
+        <figcaption><span class="fno">Fig 24.1</span><span>Finance sees every budget on the Management tab, with an Export button and no edit rights.</span></figcaption>
       </figure>
       <figure>
         <img src="img/95-view-landing.png" alt="The Time Log as a Viewer: read-only, with a message that the role carries no time-reporting rights.">
-        <figcaption><span class="fno">Fig 18.2</span><span>A Viewer's Time Log — read-only, no reporting rights.</span></figcaption>
+        <figcaption><span class="fno">Fig 24.2</span><span>A Viewer's Time Log — read-only, no reporting rights.</span></figcaption>
       </figure>
     </div>
   </section>
+
 
   </main>
 </div>
 
 <footer class="foot">
   <h3>Keeping this handbook current</h3>
-  <p>This handbook describes <strong>GALIL WorkDesk V7.2, standalone build</strong>. The permission matrix in chapter 4 is generated from one table in this page's own script, so a permission change there is a one-line edit that updates the matrix, the chips and the role filter together.</p>
+  <p>This handbook describes the <strong>GALIL Employee Portal</strong>: the portal home page and sign-in, WorkDesk and Taskana. The permission matrices are generated from two tables in <code>handbook.js</code>, so a permission change there is a one-line edit that updates the matrices, the chips and the role filter together — in both languages.</p>
   <p>Questions this handbook doesn't answer: <a href="mailto:info@galiltc.co.il">info@galiltc.co.il</a>.</p>
 </footer>
 
-<script>
-/* ---- permission model — the single source for the matrix, the chips and the role filter ---- */
-var ROLE_ORDER = ["EMP","SEN","TL","PM","OPS","FIN","CEO","EXT","VIEW"];
-var ROLE_NAME = {EMP:"Employee",SEN:"Senior Employee",TL:"Team Lead",PM:"Project Manager",
-  OPS:"Operations Manager",FIN:"Finance",CEO:"CEO / Owner",EXT:"External Contractor",VIEW:"Viewer"};
-var PERM = {
-  reportOwnTime:         ["Y","Y","Y","Y","Y","-","Y","Y","-"],
-  reportBlueTime:        ["-","-","Y","Y","Y","-","Y","-","-"],
-  viewOthersTime:        ["-","-","T","P","Y","Y","Y","-","Y"],
-  editOthersTime:        ["-","-","T","P","Y","-","Y","-","-"],
-  approveTime:           ["-","-","T","P","Y","-","Y","-","-"],
-  planOwnWeek:           ["Y","Y","Y","Y","Y","-","Y","Y","-"],
-  planOthersWeek:        ["-","-","T","P","Y","-","Y","-","-"],
-  reportExpenses:        ["Y","Y","Y","Y","Y","-","Y","Y","-"],
-  approveExpenses:       ["-","-","T","P","Y","-","Y","-","-"],
-  viewBudgets:           ["-","-","-","P","Y","Y","Y","-","-"],
-  editBudgets:           ["-","-","-","P","Y","-","Y","-","-"],
-  createWorkOrders:      ["-","-","-","P","Y","-","Y","-","-"],
-  createTasks:           ["-","P","P","P","Y","-","Y","-","-"],
-  assignTasks:           ["-","-","T","P","Y","-","Y","-","-"],
-  updateOwnTaskStatus:   ["Y","Y","Y","Y","Y","-","Y","Y","-"],
-  manageClientsProjects: ["-","-","-","P","Y","-","Y","-","-"],
-  manageEmployeesRoles:  ["-","-","-","-","Y","-","Y","-","-"],
-  dashboardOwn:          ["Y","Y","Y","Y","Y","Y","Y","-","Y"],
-  dashboardCompany:      ["-","-","T","P","Y","Y","Y","-","Y"],
-  libraryRead:           ["Y","Y","Y","Y","Y","Y","Y","-","-"],
-  libraryWrite:          ["Y","Y","Y","Y","Y","-","Y","-","-"],
-  excelExport:           ["O","O","T","P","Y","Y","Y","O","Y"],
-  backupRestore:         ["-","-","-","-","Y","-","Y","-","-"],
-  viewAuditLog:          ["-","-","-","-","Y","Y","Y","-","-"],
-  knowledgeBase:         ["Y","Y","Y","Y","Y","Y","Y","-","-"],
-  manageTeams:           ["-","-","Y","Y","Y","-","Y","-","-"]
-};
-var LABEL = {
-  reportOwnTime:"Report own time", reportBlueTime:"Report Blue · management hours", viewOthersTime:"View others' time", editOthersTime:"Edit others' time",
-  approveTime:"Approve time requests", planOwnWeek:"Plan own week", planOthersWeek:"Plan others' week",
-  reportExpenses:"Report expenses", approveExpenses:"Approve expenses", viewBudgets:"View budgets",
-  editBudgets:"Create / edit budgets", createWorkOrders:"Create work orders", createTasks:"Create tasks",
-  assignTasks:"Assign tasks to people", updateOwnTaskStatus:"Update own task status",
-  manageClientsProjects:"Manage clients & projects", manageEmployeesRoles:"Manage employees & roles",
-  dashboardOwn:"Dashboard — own figures", dashboardCompany:"Dashboard — company figures",
-  libraryRead:"Library — read", libraryWrite:"Library — write", excelExport:"Excel export",
-  backupRestore:"Backup / restore", viewAuditLog:"View audit log",
-  knowledgeBase:"Knowledge Base", manageTeams:"Set up teams & managers"
-};
-var SCOPE_WORD = {Y:"", O:"own", T:"team", P:"projects"};
-
-function scopeOf(role, cap){
-  var row = PERM[cap]; if(!row) return "-";
-  var i = ROLE_ORDER.indexOf(role); return i < 0 ? "-" : row[i];
-}
-
-/* ---- contents ---- */
-(function(){
-  var list = document.getElementById("toclist");
-  var chs = document.querySelectorAll(".ch");
-  chs.forEach(function(ch, i){
-    var li = document.createElement("li");
-    var a = document.createElement("a");
-    a.href = "#" + ch.id;
-    a.innerHTML = '<span class="n">' + String(i+1).padStart(2,"0") + '</span><span>' + ch.dataset.title + '</span>';
-    li.appendChild(a); list.appendChild(li);
-  });
-  if ("IntersectionObserver" in window) {
-    var links = list.querySelectorAll("a");
-    var io = new IntersectionObserver(function(es){
-      es.forEach(function(e){
-        if(!e.isIntersecting) return;
-        links.forEach(function(l){ l.classList.toggle("on", l.getAttribute("href") === "#" + e.target.id); });
-      });
-    }, {rootMargin:"-70px 0px -70% 0px"});
-    chs.forEach(function(c){ io.observe(c); });
-  }
-})();
-
-/* ---- the matrix ---- */
-(function(){
-  var t = document.getElementById("matrix");
-  var head = "<thead><tr><th>Capability</th>" +
-    ROLE_ORDER.map(function(r){ return '<th class="rolecol" data-role="'+r+'" title="'+ROLE_NAME[r]+'">'+r+"</th>"; }).join("") +
-    "</tr></thead>";
-  var body = "<tbody>" + Object.keys(PERM).map(function(cap){
-    return "<tr><td>" + LABEL[cap] + "</td>" + PERM[cap].map(function(v,i){
-      return '<td class="num" data-v="'+v+'" data-role="'+ROLE_ORDER[i]+'">' + (v === "-" ? "–" : v) + "</td>";
-    }).join("") + "</tr>";
-  }).join("") + "</tbody>";
-  t.innerHTML = head + body;
-})();
-
-/* ---- per-chapter permission strips ---- */
-(function(){
-  document.querySelectorAll("[data-perm]").forEach(function(box){
-    var caps = box.dataset.perm.split(",");
-    var html = '<h4>Who can do this</h4><div class="caps">';
-    caps.forEach(function(cap){
-      html += '<div class="cap-row"><span class="cap-name">' + LABEL[cap] + "</span><span class=\"cap-chips\">";
-      ROLE_ORDER.forEach(function(r){
-        var v = scopeOf(r, cap);
-        var w = SCOPE_WORD[v];
-        html += '<span class="rc" data-scope="' + v + '" data-role="' + r + '" title="' + ROLE_NAME[r] +
-          (v === "-" ? " — not permitted" : w ? " — " + w + " only" : " — permitted") + '">' + r +
-          (w ? '<span class="sc">' + w.charAt(0).toUpperCase() + "</span>" : "") + "</span>";
-      });
-      html += "</span></div>";
-    });
-    box.innerHTML = html + "</div>";
-  });
-})();
-
-/* ---- role filter ---- */
-(function(){
-  var set = document.getElementById("roleset");
-  var note = document.getElementById("rolenote");
-  var current = null;
-
-  var all = document.createElement("button");
-  all.className = "rolebtn clear"; all.type = "button"; all.textContent = "All roles";
-  all.setAttribute("aria-pressed","true"); all.dataset.role = "";
-  set.appendChild(all);
-
-  ROLE_ORDER.forEach(function(r){
-    var b = document.createElement("button");
-    b.className = "rolebtn"; b.type = "button"; b.textContent = r;
-    b.title = ROLE_NAME[r]; b.dataset.role = r; b.setAttribute("aria-pressed","false");
-    set.appendChild(b);
-  });
-
-  function apply(role){
-    current = role || null;
-    if (current) document.documentElement.setAttribute("data-role", current);
-    else document.documentElement.removeAttribute("data-role");
-
-    set.querySelectorAll(".rolebtn").forEach(function(b){
-      b.setAttribute("aria-pressed", (b.dataset.role || "") === (current || "") ? "true" : "false");
-    });
-
-    document.querySelectorAll(".rc").forEach(function(c){
-      c.classList.toggle("hit", !!current && c.dataset.role === current);
-    });
-    document.querySelectorAll("#matrix td.num, #matrix th.rolecol").forEach(function(c){
-      c.classList.toggle("hl", !!current && c.dataset.role === current);
-    });
-
-    document.querySelectorAll(".ch").forEach(function(ch){
-      var caps = ch.dataset.caps;
-      var n = ch.querySelector(".locked-note");
-      if (!caps || !current) { ch.classList.remove("is-locked"); return; }
-      var reach = caps.split(",").some(function(cap){ return scopeOf(current, cap) !== "-"; });
-      ch.classList.toggle("is-locked", !reach);
-      if (!reach && n) n.textContent = "Not available to " + ROLE_NAME[current] + " — this chapter is here for reference.";
-    });
-
-    note.innerHTML = current
-      ? "Reading as <b>" + ROLE_NAME[current] + " (" + current + ")</b>. Your chip is ringed on every capability — struck through where the answer is no. Chapters this role cannot reach are flagged."
-      : "Showing every role. Choose one to highlight what it may do and flag the chapters it cannot reach.";
-
-    try { current ? localStorage.setItem("wd-handbook-role", current) : localStorage.removeItem("wd-handbook-role"); } catch(e){}
-  }
-
-  set.addEventListener("click", function(e){
-    var b = e.target.closest(".rolebtn"); if (!b) return;
-    apply(b.dataset.role);
-  });
-
-  var saved = null;
-  try { saved = localStorage.getItem("wd-handbook-role"); } catch(e){}
-  if (saved && ROLE_ORDER.indexOf(saved) >= 0) apply(saved);
-})();
-
-/* ---- figure lightbox — click any screenshot to view it full size ---- */
-(function(){
-  var box = document.createElement("div");
-  box.className = "lightbox";
-  box.innerHTML = '<button type="button" class="lightbox-close" aria-label="Close" title="Close">×</button><img alt="">';
-  document.body.appendChild(box);
-  var img = box.querySelector("img");
-
-  function open(src, alt){
-    img.src = src; img.alt = alt || "";
-    box.classList.add("on");
-    document.body.style.overflow = "hidden";
-  }
-  function close(){
-    box.classList.remove("on");
-    img.src = "";
-    document.body.style.overflow = "";
-  }
-
-  document.querySelectorAll("figure img").forEach(function(el){
-    el.addEventListener("click", function(){ open(el.getAttribute("src"), el.getAttribute("alt")); });
-  });
-  box.addEventListener("click", close);
-  document.addEventListener("keydown", function(e){ if (e.key === "Escape" && box.classList.contains("on")) close(); });
-})();
-
-/* ---- light / dark theme ---- */
-(function(){
-  var KEY = "galil-handbook-theme";
-  var btn = document.getElementById("themebtn");
-  if (!btn) return;
-  function systemDark(){ try { return window.matchMedia("(prefers-color-scheme: dark)").matches; } catch(e){ return false; } }
-  function current(){ return document.documentElement.getAttribute("data-theme") || (systemDark() ? "dark" : "light"); }
-  function paint(t){
-    document.documentElement.setAttribute("data-theme", t);
-    var dark = t === "dark";
-    btn.textContent = dark ? "☀" : "◐";
-    btn.setAttribute("aria-pressed", String(dark));
-    btn.setAttribute("aria-label", dark ? "Switch to the light theme" : "Switch to the dark theme");
-  }
-  paint(current());
-  btn.addEventListener("click", function(){
-    var next = current() === "dark" ? "light" : "dark";
-    try { localStorage.setItem(KEY, next); } catch(e){}
-    paint(next);
-  });
-})();
-</script>
-
+<script src="../config.js"></script>
+<script src="../shared/portal.js"></script>
+<script src="handbook.js"></script>
 </body>
 </html>

@@ -205,7 +205,7 @@ function sidebar() {
     h("div", { class: "grow" }),
     h("div", { class: "me" },
       h("div", { class: "who-am-i" }, avatar(u.id),
-        h("div", { class: "grow" }, h("b", { class: "ellipsis" }, u.fullName), h("span", { class: "ellipsis" }, tr(u.role || "Member") + (u.employment === "Outsourced" ? " · " + tr("Outsourced") : ""))),
+        h("div", { class: "grow" }, h("b", { class: "ellipsis" }, userName(u.id)), h("span", { class: "ellipsis" }, tr(u.role || "Member") + (u.employment === "Outsourced" ? " · " + tr("Outsourced") : ""))),
         h("button", { id: "sign-out", class: "out", title: tr("Sign out"), "aria-label": tr("Sign out"), onclick: signOut }, icon("logout"))),
       syncStatus(),
       h("div", { class: "row" },
@@ -223,7 +223,7 @@ if (window.matchMedia) try { matchMedia("(prefers-color-scheme: dark)").addEvent
 function avatar(userId, big) {
   var u = userId && byId(db.users, userId);
   if (!u) return h("span", { class: "avatar none" + (big ? " lg" : ""), title: tr("Unassigned"), role: "img", "aria-label": tr("Unassigned") }, "?");
-  return h("span", { class: "avatar" + (big ? " lg" : ""), style: { background: colorFor(u.id) }, title: u.fullName, role: "img", "aria-label": u.fullName }, initials(u.fullName));
+  return h("span", { class: "avatar" + (big ? " lg" : ""), style: { background: colorFor(u.id) }, title: userName(u.id), role: "img", "aria-label": userName(u.id) }, initials(u.fullName));
 }
 function statusChip(s) { return h("span", { class: "chip " + statusOf(s).chip }, h("i", { class: "dot", style: { background: statusOf(s).color } }), tr(s)); }
 function typeChip(ty) { return h("span", { class: "chip " + (TYPE_CHIP[ty] || "") }, tr(ty)); }
@@ -281,7 +281,7 @@ function filterBar(opts) {
     h("div", { class: "filters", role: "group", "aria-label": tr("Filters") },
       opts.noClient || !can.seeEverything() ? null : sel("clientId", tr("All clients"), db.clients.map(function (c) { return { value: c.id, label: c.name }; })),
       opts.noProject ? null : sel("projectId", tr("All projects"), projects.map(function (p) { return { value: p.id, label: p.key + " · " + p.name }; })),
-      sel("assigneeId", tr("Anyone"), [{ value: "me", label: tr("Me (whoever is working)") }, { value: "none", label: tr("Unassigned") }].concat(db.users.map(function (u) { return { value: u.id, label: u.fullName + (u.isActive ? "" : " (" + tr("inactive") + ")") }; }))),
+      sel("assigneeId", tr("Anyone"), [{ value: "me", label: tr("Me (whoever is working)") }, { value: "none", label: tr("Unassigned") }].concat(db.users.map(function (u) { return { value: u.id, label: userName(u.id) + (u.isActive ? "" : " (" + tr("inactive") + ")") }; }))),
       sel("type", tr("All types"), TYPES.map(function (ty) { return { value: ty, label: tr(ty) }; })),
       sel("priority", tr("Any priority"), PRIORITIES.map(function (p) { return { value: p.k, label: tr(p.k) }; })),
       opts.status ? sel("status", tr("Any status"), STATUSES.map(function (s) { return { value: s.k, label: tr(s.k) }; })) : null,

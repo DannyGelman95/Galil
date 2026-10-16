@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>המדריך לפורטל העובדים של GALIL</title>
+<meta name="description" content="כל פונקציה בפורטל העובדים של GALIL — WorkDesk,‏ Taskana, המדריך ומאגר הידע — מה היא עושה, איך משתמשים בה ואילו תפקידים רשאים.">
+<script>
+/* the portal's language decides which page to show; the portal's theme is set before the first paint */
+(function(){try{var l=localStorage.getItem("galil-portal-lang")==="he"?"he":"en";
+if(l!=="he"){location.replace("index.html"+location.hash);return;}
+var v=localStorage.getItem("galil-workdesk-theme");
+if(v!=="dark"&&v!=="light"){v=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}
+document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
+</script>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cpath d='M78 34H42a10 10 0 00-10 10v152a10 10 0 0010 10h36' fill='none' stroke='%231F3D24' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M162 34h36a10 10 0 0110 10v152a10 10 0 01-10 10h-36' fill='none' stroke='%231F3D24' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M148 92A44 44 0 10152 148V122H122' fill='none' stroke='%238CC63E' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="../shared/fonts/fonts.css">
+<link rel="stylesheet" href="handbook.css">
+</head>
+<body>
+
+<div class="utility">
+  <div class="utility-in">
+    <a href="../index.html">⌂ פורטל העובדים</a>
+    <a href="../index.html#/workdesk/time">WorkDesk</a>
+    <a href="../taskana/index.html">Taskana</a>
+    <a href="../kb/index.html">מאגר הידע</a>
+    <span>·</span>
+    <span>המדריך</span>
+    <button type="button" class="langbtn" id="langbtn" lang="en" title="English — אנגלית" style="margin-inline-start:auto">English</button>
+    <button type="button" class="themebtn" id="themebtn" aria-pressed="false" title="החלפת ערכת נושא" aria-label="החלפת ערכת נושא" style="margin-inline-start:0">◐</button>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="masthead-in">
+    <div class="grow">
+      <div class="wordmark">
+        <svg viewBox="0 0 60 46" aria-hidden="true"><path d="M2 30 C10 6, 20 6, 28 24 S46 42, 58 12" fill="none" stroke="#8CC63E" stroke-width="6" stroke-linecap="round"/></svg>
+        <div><b>GALIL</b><small>כתיבה טכנית · הדרכה · הטמעה</small></div>
+      </div>
+      <h1 style="margin-top:22px">המדריך לפורטל העובדים</h1>
+      <p class="standfirst">כל פונקציה בפורטל העובדים של GALIL — כניסה, הרשאות פורטל, WorkDesk ו-Taskana — מה היא עושה, איך עושים אותה ואילו תפקידים רשאים. בחרו את התפקיד שלכם בסרגל שלמטה, והמדריך יסמן את מה שרלוונטי לכם.</p>
+    </div>
+    <div class="stamp">
+      <span>יישום <b>פורטל העובדים של GALIL</b></span>
+      <span>מכסה <b>פורטל · WorkDesk · Taskana</b></span>
+      <span>עדכון אחרון <b>16/10/2026</b></span>
+      <span>שפה <b>עברית · English</b></span>
+    </div>
+  </div>
+</header>
+
+<nav class="rolebar" aria-label="סינון לפי תפקיד">
+  <div class="rolebar-in">
+    <span class="lead">קריאה בתור</span>
+    <div class="roleset" id="roleset"></div>
+    <p class="rolenote" id="rolenote"></p>
+  </div>
+</nav>
+
+<div class="shell">
+  <nav class="toc" aria-label="תוכן העניינים">
+    <h2>תוכן העניינים</h2>
+    <ol id="toclist"></ol>
+  </nav>
+
+  <main>
+
+  <!-- ============ Part A · the Employee Portal ============ -->
+  <section class="ch" id="ch-portal" data-part="פורטל העובדים" data-title="פורטל העובדים">
+    <p class="part">חלק א׳ · פורטל העובדים</p>
+    <div class="ch-head"><span class="ch-num">01</span><h2>פורטל העובדים</h2></div>
+    <p class="lede">כתובת אחת, כניסה אחת, ארבעה מוצרים. פורטל העובדים הוא המקום שבו כל עובד/ת ב-GALIL מתחיל/ה את היום: דף הבית מציע את WorkDesk,‏ Taskana, המדריך הזה ומאגר הידע — כל אחד באריח משלו — ופותח את אלה שהגישה שלכם כוללת.</p>
+
+    <figure>
+      <img src="img/he/p01-portal-home.png" alt="דף הבית של פורטל העובדים: ברכה, ארבעה אריחים ל-WorkDesk,‏ Taskana, המדריך ומאגר הידע, וקיצורי דרך מתחתם.">
+      <figcaption><span class="fno">איור 1.1</span><span>דף הבית אחרי הכניסה. כל אריח מציג נתון עדכני — השעות שלכם השבוע, המשימות הפתוחות שלכם — ופותח את המוצר שלו. אריח שאין לכם גישה אליו אומר זאת במקום להיפתח.</span></figcaption>
+    </figure>
+
+    <h3>ארבעת המוצרים</h3>
+    <div class="tiles">
+      <div class="tile"><b>WorkDesk</b>דיווח שעות עבודה, ימי מחלה וחופשה והוצאות. מנהלים עוקבים אחרי תקציבים מול השעות שנרשמו ומנהלים אנשים, לקוחות, פרויקטים והזמנות עבודה. <a href="#workdesk">חלק ב׳</a>.</div>
+      <div class="tile"><b>Taskana</b>משימות, לוחות וסקירות לכל פרויקט של לקוח. האנשים, הלקוחות, הפרויקטים והזמנות העבודה מגיעים ישירות מ-WorkDesk, עם מחווני תקציב ובנק שעות. <a href="#taskana">חלק ג׳</a>.</div>
+      <div class="tile"><b>המדריך</b>המדריך הזה: כל פונקציה בפורטל, ב-WorkDesk וב-Taskana, ואילו תפקידים רשאים להשתמש בה.</div>
+      <div class="tile"><b>מאגר הידע</b>קליטה, נהלים ומדיניות החברה, אבטחת מידע והדרכות. נפתח מהאריח שלו ומ-<a href="../kb/index.html">kb/</a>.</div>
+    </div>
+
+    <h3>מה נשמר איפה</h3>
+    <p>המוצרים חולקים מערך רשומות אחד, ולכל רשומה יש בית אחד:</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:230px">רשומה</th><th style="width:150px">נשמרת ב-</th><th>מוצגת ב-</th></tr></thead>
+      <tbody>
+        <tr><td><strong>אנשים, תפקידים, צוותים, גישה לפורטל</strong></td><td>WorkDesk</td><td>Taskana (אנשים, אחראים), דף הבית של הפורטל</td></tr>
+        <tr><td><strong>לקוחות, פרויקטים, הזמנות עבודה</strong></td><td>WorkDesk</td><td>Taskana (לקוחות ופרויקטים, כל משימה)</td></tr>
+        <tr><td><strong>תקציבים, שיבוצים, מכסות</strong></td><td>WorkDesk</td><td>Taskana (מחווני תקציב ובנק שעות)</td></tr>
+        <tr><td><strong>שעות, היעדרויות, הוצאות, אישורים</strong></td><td>WorkDesk</td><td>Taskana (השעות שדווחו על כל משימה)</td></tr>
+        <tr><td><strong>משימות, תגובות, תתי־משימות, רשימות בדיקה, תצוגות שמורות</strong></td><td>Taskana</td><td>WorkDesk (רשימת <em>משימה ב-Taskana</em> ביומן השעות, וההצעות במתכנן השבועי)</td></tr>
+        <tr><td><strong>מאמרים</strong></td><td>מאגר הידע</td><td>—</td></tr>
+      </tbody>
+    </table></div>
+    <p>כך לקוח, פרויקט, הזמנת עבודה או אדם חדשים מוגדרים פעם אחת, ב-WorkDesk, ומופיעים ב-Taskana מיד; ושעות מדווחות פעם אחת, ב-WorkDesk, ונספרות על המשימה ב-Taskana שהן מציינות.</p>
+
+    <h3>עברית ואנגלית</h3>
+    <p>המתג <strong>EN / עב</strong> — בדף הבית, בסרגל העליון של WorkDesk, בסרגל הצד של Taskana ובראש המדריך ומאגר הידע — מחליף את השפה של הפורטל כולו בבת אחת. בעברית כל מסך נפרש מימין לשמאל; שמות, קודים, תאריכים ומספרים שומרים על הכיוון שלהם. הבחירה נשמרת במכשיר הזה. נתונים שאנשים מקלידים — שמות, תיאורים, תגובות — נשארים כפי שהוקלדו.</p>
+
+    <h3>בהיר וכהה</h3>
+    <p>הכפתור ☾ / ☀ מחליף את ערכת הנושא. כמו השפה, זו הגדרה אחת לכל הפורטל במכשיר הזה.</p>
+
+    <h3>היכן נשמרים הנתונים</h3>
+    <p>לפורטל אין שרת. הוא אוסף של דפי אינטרנט, והנתונים שלו נמצאים בשני קבצים — אחד ל-WorkDesk ואחד ל-Taskana — במקום שנקבע בקובץ <code>config.js</code>:</p>
+    <dl class="kv">
+      <dt>GitHub</dt><dd>הקבצים נשמרים בענף של מאגר החברה. כל אדם מתחבר פעם אחת עם אסימון גישה של GitHub (הפורטל מבקש אותו אחרי הכניסה).</dd>
+      <dt>OneDrive</dt><dd>הקבצים נשמרים בתיקייה ב-OneDrive, עם אותה כניסת Microsoft של הפורטל.</dd>
+      <dt>מקומי</dt><dd>הקבצים נשמרים רק בדפדפן הזה — לניסיון הפורטל עם נתוני ההדגמה.</dd>
+    </dl>
+    <p>התקנה והגדרה של הפורטל מוסברות ב<a href="../install/index.html">מדריך ההתקנה</a>.</p>
+  </section>
+
+  <section class="ch" id="ch-signin" data-part="פורטל העובדים" data-title="כניסה והרשמה">
+    <div class="ch-head"><span class="ch-num">02</span><h2>כניסה והרשמה</h2></div>
+    <p class="lede">נכנסים פעם אחת, בפורטל. WorkDesk,‏ Taskana, המדריך ומאגר הידע משתמשים כולם באותה התחברות — אף אחד מהם לא מבקש שוב. רק כתובות <code>@galiltc.co.il</code> רשאיות להיכנס; קבלנים חיצוניים אינם נרשמים בעצמם — מנהל/ת מערכת מקים/ה אותם.</p>
+
+    <figure>
+      <img src="img/he/p02-signin.png" alt="כרטיס הכניסה לפורטל העובדים, עם כפתור Microsoft מעל טופס דוא״ל וסיסמה.">
+      <figcaption><span class="fno">איור 2.1</span><span>מסך הכניסה. <b>כניסה עם Microsoft</b> היא הדרך הרגילה; טופס הדוא״ל והסיסמה שמתחתיה הוא הגיבוי. כל חשבונות ההדגמה משתמשים בסיסמה <code>GalilWorkdesk1</code>.</span></figcaption>
+    </figure>
+
+    <h3>כניסה עם Microsoft</h3>
+    <ol class="steps">
+      <li>לחצו <strong>כניסה עם Microsoft</strong>.</li>
+      <li>אשרו את הבקשה ב-Microsoft Authenticator — כאן נאכפת מדיניות האימות הדו־שלבי של החברה.</li>
+      <li>בחרו את החשבון שלכם. תגיעו לדף הבית של הפורטל.</li>
+    </ol>
+    <p>כש-Microsoft Entra ID אינו מוגדר (הגדרת ההדגמה), בוחר החשבונות מציג את החשבונות שנזרעו כדי שתוכלו לנסות כל תפקיד — ראו <a href="#ch-ref">עיון</a>.</p>
+
+    <h3>כניסה עם דוא״ל וסיסמה</h3>
+    <ol class="steps">
+      <li>הקלידו את הדוא״ל והסיסמה של החברה, ואז הקישו <kbd>Enter</kbd> או לחצו <strong>כניסה</strong>.</li>
+      <li>אם הכתובת אינה מסתיימת ב-<code>@galiltc.co.il</code>, הפורטל דוחה אותה עוד לפני בדיקת הסיסמה.</li>
+    </ol>
+    <div class="note stop">
+      <span class="tag">נעילה</span>
+      <p>חמישה כישלונות רצופים נועלים את החשבון ל-15 דקות, עם ספירה לאחור של הדקות שנותרו.</p>
+    </div>
+
+    <h3>שכחתי סיסמה</h3>
+    <p>לחצו <strong>שכחתי סיסמה</strong>, הזינו את כתובת החברה שלכם, ויישלח קישור איפוס חד־פעמי שתקף <strong>30 דקות</strong>.</p>
+
+    <h3>יצירת חשבון — אשף בארבעה שלבים</h3>
+    <p>לחצו <strong>יצירת חשבון</strong> בכרטיס הכניסה. האשף לא יעביר אתכם שלב שיש בו שגיאה.</p>
+    <ol class="steps">
+      <li><strong>זהות</strong> — שם מלא באנגלית (בעברית — רשות; הוא מוצג כשהפורטל בעברית), דוא״ל החברה, מספר נייד לאימות דו־שלבי, וסיסמה או חשבון Microsoft מקושר. סיסמה צריכה לפחות <strong>12 תווים</strong>, עם אות גדולה, אות קטנה וספרה.</li>
+      <li><strong>תפקיד</strong> — ברירת המחדל היא עובד/ת. אפשר לבחור בעצמכם <strong>עובד/ת</strong>, <strong>עובד/ת בכיר/ה</strong> או <strong>ראש צוות</strong>; כל תפקיד מעל ראש צוות מסומן <em>דורש אישור</em>. ראו <a href="#ch-roles">תפקידים והרשאות</a>.</li>
+      <li><strong>פרופיל</strong> — תואר תפקיד ומחלקה הם חובה. צוות, מנהל/ת ישיר/ה, תאריך התחלה, שעות לפי חוזה, סוג העסקה ותמונה הם רשות, אבל כדאי למלא אותם.</li>
+      <li><strong>אישור</strong> — בדקו את הסיכום, אשרו את מדיניות השימוש הפנימית ולחצו <strong>שליחה להפעלה</strong>.</li>
+    </ol>
+    <figure>
+      <img src="img/he/p03-signup.png" alt="שלב 1 באשף ההרשמה, עם שדות שם, דוא״ל, סיסמה ונייד.">
+      <figcaption><span class="fno">איור 2.2</span><span>אשף ההרשמה, שלב 1 — זהות ופרטי כניסה.</span></figcaption>
+    </figure>
+
+    <h3>ממתינים להפעלה</h3>
+    <p>החשבון נוצר מיד אבל מוחזק. עד שמנהל/ת תפעול או המנכ"ל מפעילים אותו ב-WorkDesk (ניהול ← ממתינים להפעלה), הכניסה מציגה מסך המתנה ותו לא.</p>
+
+    <h3>התחברויות והתנתקות</h3>
+    <p>התחברות נמשכת <strong>12 שעות של חוסר פעילות</strong>. <strong>התנתקות</strong> — בדף הבית, בפרופיל ב-WorkDesk או בסרגל הצד של Taskana — מנתקת אתכם מהפורטל כולו ומחזירה למסך הכניסה. כל כניסה והתנתקות נרשמות ביומן הביקורת של WorkDesk.</p>
+    <div class="note">
+      <span class="tag">פתיחת מוצר ישירות</span>
+      <p>גם סימנייה ל-Taskana, למדריך או למאגר הידע עובדת. אם אינכם מחוברים, הדף אומר זאת ומציע <strong>מעבר לפורטל העובדים</strong>; אחרי הכניסה, פתחו אותו שוב מהאריח שלו.</p>
+    </div>
+  </section>
+
+  <section class="ch" id="ch-access" data-part="פורטל העובדים" data-title="גישה לפורטל" data-caps="openWorkdesk">
+    <div class="ch-head"><span class="ch-num">03</span><h2>גישה לפורטל</h2></div>
+    <p class="lede">לכל אדם יש גישה משלו בפורטל: האם מותר לו לפתוח את WorkDesk, איזה תפקיד יש לו ב-Taskana, והאם הוא רשאי לקרוא את המדריך ואת מאגר הידע. הגישה נגזרת מהתפקיד שלו ב-WorkDesk, ואפשר לשנות אותה אדם־אדם.</p>
+    <div class="locked-note"></div>
+
+    <h3>ברירות המחדל</h3>
+    <p>כל עוד איש לא שינה אותה, הגישה של אדם נגזרת מהתפקיד שלו ב-WorkDesk:</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:190px">תפקיד ב-WorkDesk</th><th>WorkDesk</th><th>תפקיד ב-Taskana</th><th>המדריך</th><th>מאגר הידע</th></tr></thead>
+      <tbody>
+        <tr><td><code>CEO</code> <code>OPS</code></td><td>כן</td><td><strong>מנהל מערכת</strong> (Admin)</td><td>כן</td><td>כן</td></tr>
+        <tr><td><code>PM</code> <code>TL</code></td><td>כן</td><td><strong>מנהל</strong> (Manager)</td><td>כן</td><td>כן</td></tr>
+        <tr><td><code>SEN</code> <code>EMP</code></td><td>כן</td><td><strong>חבר צוות</strong> (Member)</td><td>כן</td><td>כן</td></tr>
+        <tr><td><code>FIN</code></td><td>כן</td><td><strong>צופה</strong> (Viewer)</td><td>כן</td><td>כן</td></tr>
+        <tr><td><code>EXT</code></td><td>כן</td><td><strong>חיצוני</strong> (External)</td><td>כן</td><td>לא</td></tr>
+        <tr><td><code>VIEW</code></td><td>כן</td><td><strong>צופה</strong> (Viewer)</td><td>כן</td><td>לא</td></tr>
+      </tbody>
+    </table></div>
+    <p>מה שאדם יכול לעשות <em>בתוך</em> WorkDesk הוא עדיין התפקיד שלו ב-WorkDesk (<a href="#ch-roles">תפקידים והרשאות</a>); מה שהוא יכול לעשות בתוך Taskana הוא התפקיד שלו ב-Taskana (<a href="#ch-tk-roles">תפקידים, תובנות ונתונים ב-Taskana</a>). כל ברירות המחדל של הפורטל ושל Taskana, לפי תפקיד:</p>
+    <div class="tw"><table class="matrix" id="portal-matrix"></table></div>
+
+    <h3>שינוי הגישה של אדם</h3>
+    <div class="perm" data-perm="setPortalAccess"></div>
+    <ol class="steps">
+      <li>פתחו <strong>WorkDesk ← ניהול ← אנשים</strong>. העמודה <strong>גישה לפורטל</strong> מציגה את הגישה של כל אדם כתגים.</li>
+      <li>לחצו <strong>✎</strong> ליד התגים.</li>
+      <li>סמנו או נקו את <strong>WorkDesk</strong>, <strong>מדריך למשתמש</strong> ו<strong>מאגר ידע</strong>, ובחרו <strong>תפקיד ב-Taskana</strong> — או <em>אין גישה</em>.</li>
+      <li><strong>שמירה</strong>. <strong>ברירות המחדל של התפקיד</strong> מחזיר את האדם לטבלה שלמעלה.</li>
+    </ol>
+    <figure class="fig-narrow">
+      <img src="img/he/p04-access.png" alt="חלון הגישה לפורטל, עם תיבות סימון ל-WorkDesk, למדריך ולמאגר הידע ובורר תפקיד ב-Taskana.">
+      <figcaption><span class="fno">איור 3.1</span><span>גישה לפורטל של אדם אחד. השינוי חל בפעם הבאה שהאדם פותח את דף הבית, ונרשם ביומן הביקורת.</span></figcaption>
+    </figure>
+    <div class="note">
+      <span class="tag">שינוי תפקיד משנה את ברירות המחדל</span>
+      <p>אדם שהגישה שלו מעולם לא שונתה נגזר מהתפקיד שלו: קידום עובד/ת לראש צוות הופך אותו/ה גם למנהל ב-Taskana. אדם שהגישה שלו שונתה ידנית שומר עליה עד שבוחרים <strong>ברירות המחדל של התפקיד</strong>.</p>
+    </div>
+    <p>השבתת אדם ב-WorkDesk סוגרת בפניו את הפורטל כולו — כולל Taskana, המדריך ומאגר הידע.</p>
+  </section>
+
+  <!-- ============ 1 ============ -->
+  <section class="ch" id="ch-basics" data-part="WorkDesk" data-title="מה זה WorkDesk">
+    <a id="workdesk"></a>
+    <p class="part">חלק ב׳ · WorkDesk</p>
+    <div class="ch-head"><span class="ch-num">01</span><h2>מה זה WorkDesk</h2></div>
+    <p class="lede">WorkDesk הוא החלק בפורטל העובדים לזמן, לכסף ולרשומות החברה: שעות עבודה מדווחות, ימי מחלה וחופשה, תכנון שבועי, הוצאות, תקציבים, אישורים — והאנשים, הלקוחות, הפרויקטים והזמנות העבודה שכל שאר חלקי הפורטל משתמשים בהם. היום של אדם אחד נכנס למעלה; הניצולת של החברה, קצב שריפת התקציב ורשומת השכר יוצאים למטה.</p>
+
+    <p>פותחים אותו מהאריח <strong>WorkDesk</strong> בדף הבית של הפורטל. אין לו שרת משלו: רשומות החברה נשמרות בקובץ נתונים אחד — במאגר GitHub של החברה או ב-OneDrive, כפי שנקבע ב-<code>config.js</code> (ראו <a href="#ch-portal">פורטל העובדים</a>) — ועותק נשמר במטמון של הדפדפן שלכם תחת <code>galil-workdesk-v1</code>. ההתחברות שלכם נשמרת תחת <code>galil-workdesk-session</code>, והיא אותה התחברות ש-Taskana, המדריך ומאגר הידע משתמשים בה.</p>
+
+    <div class="note warn">
+      <span class="tag">לפני שסומכים עליו</span>
+      <p>כשהפורטל פועל באחסון מקומי בלבד (בלי GitHub או OneDrive ב-<code>config.js</code>), ניקוי נתוני הדפדפן מוחק את רשומות החברה. מי שמנהל את WorkDesk צריך להוריד גיבוי באופן קבוע בכל מקרה — ראו <a href="#ch-data">גיבוי ושחזור</a>.</p>
+    </div>
+
+    <h3>שלושת צבעי השעות</h3>
+    <p>כל שעה שמדווחת היא מאחד משלושה סוגים, וכמעט כל כלל ב-WorkDesk נובע מהסוג שנבחר.</p>
+    <dl class="kv">
+      <dt><span class="swatch" style="background:var(--red)"></span> אדום · חברה</dt>
+      <dd>זמן פנימי. לעולם אינו מחויב ללקוח, לעולם אינו נגרע מתקציב פרויקט, ו<strong>לעולם אינו נחסם</strong> — שעות אדומות נרשמות מיד, יהיה אשר יהיה.</dd>
+      <dt><span class="swatch" style="background:var(--yellow)"></span> צהוב · לקוח</dt>
+      <dd>זמן לחיוב. נגרע מהמכסה שלכם בשיבוץ ומתקציב הפרויקט או הזמנת העבודה. צהוב וכחול הם סוגי השעות שמנוע הזכאות בודק.</dd>
+      <dt><span class="swatch" style="background:var(--blue)"></span> כחול · ניהול</dt>
+      <dd>זמן ניהול של פרויקטים של לקוח. שעות כחולות פועלות <strong>בדיוק כמו שעות צהובות</strong>: הן משויכות ללקוח ולפרויקט, נגרעות מה<strong>מכסה האישית</strong> שלכם בשיבוץ ומ<strong>תקציב הפרויקט או הזמנת העבודה</strong>, ועוברות לאישור באותן בדיקות. רק ראשי צוותים, מנהלי פרויקטים, מנהלי תפעול והמנכ"ל יכולים לדווח אותן; לאחרים האפשרות אינה מופיעה.</dd>
+    </dl>
+    <p>מחלה וחופשה הן סוגי ימים ולא סוגי שעות. בוחרים תאריך התחלה ותאריך סיום, וכל יום עבודה (ראשון עד חמישי) ביניהם נרשם כיום אחד. אלא אם אתם המנכ"ל, הם נשלחים למנהל/ת שלכם כ<em>בקשת היעדרות</em> ונספרים רק אחרי אישור.</p>
+
+    <h3>המונחים של WorkDesk</h3>
+    <div class="tw"><table>
+      <thead><tr><th>מונח</th><th>המשמעות כאן</th></tr></thead>
+      <tbody>
+        <tr><td><strong>לקוח</strong></td><td>הארגון שהעבודה נעשית עבורו. <code>GALIL (internal)</code> הוא גם לקוח — שם יושבות השעות האדומות.</td></tr>
+        <tr><td><strong>פרויקט</strong></td><td>גוף עבודה עבור לקוח אחד. יש לו סטטוס, בעלים ולפעמים תקציב.</td></tr>
+        <tr><td><strong>הזמנת עבודה</strong></td><td>חלק מתוקשר בחוזה של פרויקט, בקוד <code>WO-[ראשי תיבות של הלקוח]-[6 ספרות]</code>. פרויקט שמסומן <em>לפי הזמנות עבודה</em> מחייב הזמנה בכל רישום.</td></tr>
+        <tr><td><strong>משימה</strong></td><td>נשמרת ב-<a href="#ch-tk-basics">Taskana</a>, לא ב-WorkDesk. רישום שעות יכול לציין את המשימה ב-Taskana שהשעות הלכו אליה; השעות מוצגות אז על המשימה ב-Taskana.</td></tr>
+        <tr><td><strong>שיבוץ</strong></td><td>הקישור בין אדם לפרויקט או להזמנת עבודה. הוא נושא את ה<em>מכסה</em> של אותו אדם בשעות. בלי שיבוץ, שעות צהובות וכחולות עוברות לאישור.</td></tr>
+        <tr><td><strong>מכסה</strong></td><td>השעות שאדם אחד רשאי לדווח בשיבוץ אחד. ריק — ללא הגבלה בתוך תקציב הפרויקט; <code>0</code> — משובץ אבל עוד לא ממומן.</td></tr>
+        <tr><td><strong>תקציב</strong></td><td>שעות (או כסף, עמודים, מילים, יחידות מותאמות) שסוכמו לפרויקט או להזמנת עבודה, לכל האנשים יחד.</td></tr>
+        <tr><td><strong>מנוע הזכאות</strong></td><td>הבדיקות שמחליטות, ברגע השמירה, אם רישום נרשם או עובר לאישור. ראו <a href="#ch-time">יומן שעות</a>.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>תאריכים, שעות ומספרים</h3>
+    <p>תאריכים מוצגים בסגנון ישראלי, <code>11/09/2026</code>, ותאריכים ארוכים כמו <code>יום שישי, 11/09/2026</code>. השעות בשעון של 24 שעות. משך מחושב מההתחלה והסיום ומעוגל לחצי השעה הקרובה — לעולם לא מקלידים משך. סכומי כסף מוצגים עם סמל המטבע; <code>₪</code>, <code>$</code> ו-<code>€</code> זמינים.</p>
+  </section>
+
+  <!-- ============ 2 ============ -->
+  <section class="ch" id="ch-model" data-part="WorkDesk" data-title="איך WorkDesk בנוי">
+    <div class="ch-head"><span class="ch-num">02</span><h2>איך WorkDesk בנוי</h2></div>
+    <p class="lede">כל מסך ב-WorkDesk עובד על אותו מערך קטן של רשומות. ברגע שיודעים מה הן ואיך הן מצביעות זו על זו, כל כלל בהמשך המדריך — למה רישום עבר לאישור, לאן הלכו השעות של תקציב, למי נשלחת בקשה — נובע מעצמו.</p>
+
+    <h3>הרשומות</h3>
+    <dl class="kv">
+      <dt>לקוח</dt>
+      <dd>חברה ש-GALIL עובדת עבורה, או <em>GALIL (internal)</em> לעבודה פנימית. כל דבר שמחויב מתחיל בלקוח.</dd>
+      <dt>פרויקט</dt>
+      <dd>עבודה עבור לקוח אחד — מדריך, מערכת עזרה, חבילת הדרכה. לפרויקט יש <strong>בעלים</strong> (בדרך כלל מנהל/ת פרויקט) וסטטוס.</dd>
+      <dt>הזמנת עבודה</dt>
+      <dd>שורת חוזה בתוך פרויקט — הזמנת הרכש של הלקוח לחלק אחד ממנו, עם קוד משלה כמו <code>WO-IAI-004182</code>. לפרויקט יכולות להיות אפס, אחת או הרבה.</dd>
+      <dt>תקציב</dt>
+      <dd>השעות שהלקוח משלם עליהן, מוצמדות ל<strong>הזמנת עבודה</strong>, ל<strong>פרויקט</strong> או ל<strong>לקוח</strong> שלם. תקציבי כסף מומרים לשעות (סכום ÷ תעריף שעתי); תקציבי עמודים, מילים ומותאמים סופרים גם תוצרים.</dd>
+      <dt>שיבוץ</dt>
+      <dd>הקישור בין <strong>אדם</strong> אחד ל<strong>פרויקט</strong> או לאחת מ<strong>הזמנות העבודה</strong> שלו, עם ה<strong>מכסה</strong> של אותו אדם — השעות שהוא רשאי לדווח שם לפני שרישומים שלו צריכים אישור.</dd>
+      <dt>משימה ב-Taskana</dt>
+      <dd>יחידת עבודה בתוך פרויקט — ולפעמים בתוך אחת מהזמנות העבודה שלו. משימות נוצרות ומתנהלות ב-<a href="#ch-tk-tasks">Taskana</a>, על הפרויקטים והזמנות העבודה ש-WorkDesk מגדיר.</dd>
+      <dt>רישום שעות</dt>
+      <dd>שעות שאדם אחד מדווח ליום אחד: אדום, צהוב או כחול, מול לקוח, פרויקט, הזמנת עבודה ולפעמים משימה ב-Taskana. ימי מחלה וחופשה הם גם רישומים.</dd>
+      <dt>בקשת אישור</dt>
+      <dd>כל דבר שמחכה להחלטה של מישהו אחר: רישום שעות שנכשל בבדיקה, היעדרות, הוצאה, הגדלת מכסה, השאלה או העברה בין צוותים, חשבון חדש.</dd>
+      <dt>צוות ומנהל/ת ישיר/ה</dt>
+      <dd>כל אדם יכול להשתייך ל<strong>צוות</strong> שיש לו <strong>ראש צוות</strong>, ויש לו <strong>מנהל/ת ישיר/ה</strong>. יחד הם קובעים מי מקבל את הבקשות שלו.</dd>
+    </dl>
+
+    <figure>
+      <svg viewBox="0 0 920 470" role="img" aria-labelledby="mdl-t" style="width:100%;height:auto;display:block;background:var(--surface);border:1px solid var(--line);border-radius:10px">
+        <title id="mdl-t">איך הרשומות של WorkDesk קשורות: ללקוחות יש פרויקטים, לפרויקטים יש הזמנות עבודה, תקציבים יושבים על הזמנת עבודה, פרויקט או לקוח; שיבוצים מקשרים אנשים לפרויקטים או להזמנות עבודה; משימות Taskana שייכות לפרויקטים או להזמנות עבודה; רישום שעות נשען על המכסה של השיבוץ ועל התקציב הספציפי ביותר, ועובר לאישור כשבדיקה נכשלת.</title>
+        <defs>
+          <marker id="mdl-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="var(--accent)"/></marker>
+        </defs>
+        <g font-family="var(--sans)" font-size="13" fill="var(--ink)">
+          <g stroke="var(--line)" stroke-width="1.5" fill="var(--wash)">
+            <rect x="20" y="24" width="150" height="54" rx="9"/><rect x="250" y="24" width="150" height="54" rx="9"/>
+            <rect x="480" y="24" width="150" height="54" rx="9"/><rect x="730" y="24" width="170" height="54" rx="9"/>
+            <rect x="20" y="200" width="150" height="54" rx="9"/><rect x="250" y="200" width="150" height="54" rx="9"/>
+            <rect x="480" y="200" width="150" height="54" rx="9"/>
+            <rect x="20" y="380" width="150" height="54" rx="9"/><rect x="250" y="380" width="380" height="54" rx="9" fill="var(--surface)" stroke="var(--accent)"/>
+            <rect x="730" y="380" width="170" height="54" rx="9"/>
+          </g>
+          <g font-weight="600" text-anchor="middle">
+            <text x="95" y="56">לקוח</text><text x="325" y="56">פרויקט</text><text x="555" y="56">הזמנת עבודה</text>
+            <text x="815" y="49">תקציב</text>
+            <text x="95" y="232">אדם</text><text x="325" y="224">שיבוץ</text><text x="555" y="224">משימה ב-Taskana</text>
+            <text x="95" y="404">צוות</text><text x="440" y="404">רישום שעות</text><text x="815" y="412">בקשת אישור</text>
+          </g>
+          <g fill="var(--muted)" font-size="11.5" text-anchor="middle">
+            <text x="815" y="66">על הזמנה, פרויקט או לקוח</text>
+            <text x="325" y="242">מכסה בשעות</text>
+            <text x="555" y="242">נשמרת ב-Taskana</text>
+            <text x="95" y="420">ראש צוות · מנהל/ת ישיר/ה</text>
+            <text x="440" y="422">אדום · צהוב · כחול · מחלה · חופשה</text>
+          </g>
+          <g stroke="var(--accent)" stroke-width="1.6" fill="none" marker-end="url(#mdl-a)">
+            <path d="M170 51H246"/><path d="M400 51H476"/>
+            <path d="M630 51H726"/><path d="M400 40C560 0 650 0 726 36"/>
+            <path d="M170 227H246"/><path d="M325 196V82"/><path d="M380 196L520 82"/>
+            <path d="M555 196V82"/><path d="M170 214C300 160 420 170 478 214"/>
+            <path d="M95 258V376"/>
+            <path d="M120 258L300 376"/>
+            <path d="M330 376V258"/><path d="M520 376L548 258"/>
+            <path d="M600 380C700 300 790 200 812 82"/>
+            <path d="M630 407H726"/>
+          </g>
+          <g fill="var(--muted)" font-size="11">
+            <text x="182" y="45">יש לו</text><text x="412" y="45">יש לו</text><text x="646" y="45">ממומנת ע״י</text>
+            <text x="178" y="221">אל</text><text x="222" y="170">אחראי</text>
+            <text x="104" y="320">חבר ב-</text><text x="196" y="330">מדווח</text>
+            <text x="338" y="320">נשען על</text><text x="540" y="320">רשות</text>
+            <text x="690" y="270">נשען על</text><text x="640" y="400">אם בדיקה נכשלת</text>
+          </g>
+        </g>
+      </svg>
+      <figcaption><span class="fno">איור 5.1</span><span>הרשומות ואיך הן מצביעות זו על זו. רישום שעות הוא המקום שבו כולן נפגשות: הוא מציין לקוח, פרויקט, הזמנת עבודה ולפעמים משימה ב-Taskana, נשען על השיבוץ של המדווח ועל תקציב, והופך לבקשת אישור כשבדיקה נכשלת.</span></figcaption>
+    </figure>
+
+    <h3>הקמת עבודה ללקוח, לפי הסדר</h3>
+    <ol class="steps">
+      <li><strong>לקוח</strong> — ניהול ← לקוחות. בדרך כלל כבר קיים.</li>
+      <li><strong>פרויקט</strong> — ניהול ← פרויקטים. הגדירו בעלים; מנהל/ת הפרויקט הזה רואה את התקציבים שלו ומחליט/ה על בקשות <em>חריגה מהתקציב</em> שלו.</li>
+      <li><strong>הזמנות עבודה</strong> (אם הלקוח מוציא כאלה) — ניהול ← הזמנות עבודה. הזמנת העבודה הראשונה בפרויקט מסמנת אותו <strong>לפי הזמנות עבודה</strong>: מעכשיו כל רישום צהוב או כחול עליו חייב לציין הזמנת עבודה. הזנת שעות מתוקצבות ביצירת ההזמנה יוצרת גם את התקציב שלה.</li>
+      <li><strong>תקציב</strong> — ניהול ← תקציבים, על הזמנת העבודה (הנפוץ ביותר), על הפרויקט או על הלקוח.</li>
+      <li><strong>שיבוצים</strong> — ניהול ← שיבוצים ומכסות. שבצו כל אדם לפרויקט או להזמנת עבודה מסוימת, עם מכסה: מספר שעות, <code>0</code> (משובץ אבל עוד לא ממומן) או ריק (ללא הגבלה בתוך התקציב).</li>
+      <li><strong>משימות</strong> — ב-<a href="#ch-tk-tasks">Taskana</a>. הלקוח, הפרויקט, הזמנות העבודה שלו והאנשים שלו מופיעים שם מעצמם; צרו את המשימות על הפרויקט, ובחרו הזמנת עבודה, אחראי והערכת שעות.</li>
+      <li>אנשים מדווחים עליו שעות. כל השאר — ניצול, אזהרות, אישורים, לוח הבקרה — נובע מהרישומים האלה.</li>
+    </ol>
+
+    <h3>איך הזמנות עבודה עובדות</h3>
+    <ul>
+      <li>הזמנת עבודה שייכת תמיד ל<strong>פרויקט אחד</strong>, ודרכו ללקוח אחד. הקוד שלה מוצע מראשי התיבות של הלקוח.</li>
+      <li>יצירת הזמנת העבודה הראשונה בפרויקט מעבירה אותו ל<strong>לפי הזמנות עבודה</strong>. בפרויקט כזה, טופס יומן השעות מסרב לשעות צהובות או כחולות בלי הזמנת עבודה.</li>
+      <li>להזמנת עבודה יש בדרך כלל <strong>תקציב</strong> משלה. שעות שמדווחות על ההזמנה נגרעות רק מהתקציב שלה — לא מתקציב של הזמנה אחרת.</li>
+      <li><strong>שיבוץ</strong> יכול לציין הזמנת עבודה או רק את הפרויקט. שיבוץ להזמנה נבדק קודם; אם אין כזה, שיבוץ ברמת הפרויקט מכסה כל הזמנת עבודה בפרויקט.</li>
+      <li>לחיצה על קוד הזמנת עבודה בכל טבלה מעתיקה אותו.</li>
+    </ul>
+
+    <h3>איך משימות Taskana עובדות עם שיבוצים</h3>
+    <p>משימות ושיבוצים הם שני דברים שונים, שנשמרים בשני מקומות שונים:</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:170px"></th><th>שיבוץ (WorkDesk)</th><th>אחראי על משימה (Taskana)</th></tr></thead>
+      <tbody>
+        <tr><td><strong>עונה על</strong></td><td>האם האדם הזה רשאי לרשום שעות על הפרויקט או ההזמנה הזו, וכמה?</td><td>האם האדם הזה עובד על פיסת העבודה הזו?</td></tr>
+        <tr><td><strong>מוגדר ב-</strong></td><td>WorkDesk ← ניהול ← שיבוצים ומכסות</td><td>שדה ה<strong>אחראי</strong> של המשימה ב-Taskana</td></tr>
+        <tr><td><strong>שולט ב-</strong></td><td>האם רישומים נרשמים או עוברים לאישור (<em>לא משובץ</em>, <em>חריגה מהמכסה</em>)</td><td>אילו משימות מוצעות לאדם ברשימת <strong>משימה ב-Taskana</strong> ביומן השעות</td></tr>
+        <tr><td><strong>שעות</strong></td><td>מכסה — נאכפת במנוע הזכאות, ומוצגת ב-Taskana כ<em>בנק השעות</em> של האדם</td><td>הערכה — מושווית לשעות שדווחו על המשימה, לא נאכפת</td></tr>
+      </tbody>
+    </table></div>
+    <p>כשמישהו מדווח שעות עם משימה ב-Taskana:</p>
+    <ul>
+      <li>הוא עדיין צריך <strong>שיבוץ</strong> על הפרויקט או ההזמנה — משימה לבדה אינה מאפשרת לאיש לרשום שעות. בלי שיבוץ הרישום עובר לאישור כ<em>לא משובץ</em>; האישור יוצר את השיבוץ החסר.</li>
+      <li>המשימה היא מידע בלבד: היא לעולם לא שולחת רישום לאישור. הרשימה מציעה את המשימות הפתוחות של האדם על הפרויקט וההזמנה שנבחרו.</li>
+      <li>השעות נספרות ב<em>שעות ב-WorkDesk</em> של המשימה ב-Taskana (אדום, צהוב וכחול כאחד) ובמכסה של האדם ובתקציב (צהוב וכחול בלבד), בדיוק כמו רישום בלי משימה.</li>
+    </ul>
+    <p>השאלה בין צוותים (ראו <a href="#h-teams">צוותים</a>) יוצרת את השיבוץ עם האישור — מוגבל לתאריכי ההשאלה — כך שהאדם יכול לרשום שעות על הפרויקט מיד.</p>
+
+    <h3>איך שעות נגרעות מתקציב</h3>
+    <p>רק רישומים <strong>שנרשמו</strong> נגרעים. רישום שממתין לאישור מוצג בנפרד — בכתום, <em>באישור</em> — ונגרע רק אם וכאשר הוא מאושר.</p>
+    <ol class="steps">
+      <li><strong>אילו שעות נספרות.</strong> שעות צהוב · לקוח וכחול · ניהול. שעות אדום · חברה, ימי מחלה וחופשה לעולם אינם נגרעים מתקציב או ממכסה.</li>
+      <li><strong>איזה תקציב.</strong> הספציפי ביותר: <strong>תקציב הזמנת העבודה</strong> של הרישום אם יש לה כזה, אחרת <strong>תקציב הפרויקט</strong>. תקציב פרויקט סופר כל שעה צהובה וכחולה בפרויקט, כולל שעות שנרשמו להזמנות העבודה שלו.</li>
+      <li><strong>איזו מכסה.</strong> השיבוץ של האדם על אותה הזמנת עבודה, אחרת השיבוץ שלו ברמת הפרויקט. גם המכסה וגם התקציב קטנים באותן שעות.</li>
+      <li><strong>הבדיקות.</strong> לפני הרישום, WorkDesk מוסיף את השעות החדשות למה שכבר נוצל. מעבר למכסה ← <em>חריגה מהמכסה</em>, לראש הצוות. מעבר לתקציב ← <em>חריגה מהתקציב</em>, למנהל/ת הפרויקט שבבעלותו התקציב.</li>
+      <li><strong>מה כרטיס התקציב מציג.</strong> מתוקצב, נוצל, באישור, נותר, אחוז ניצול (כתום ב-90%, אדום ב-100%) ותאריך מיצוי צפוי לפי קצב 30 הימים האחרונים. תקציבי כסף מציגים גם את הערך שנוצל (שעות שנוצלו × תעריף); תקציבי עמודים, מילים ומותאמים מציגים תוצרים מול היעד.</li>
+    </ol>
+    <div class="note">
+      <span class="tag">דוגמה</span>
+      <p>להזמנת העבודה <code>WO-IAI-004182</code> יש תקציב כסף של ₪180,000 בתעריף ₪300 לשעה — <strong>600 שעות מתוקצבות</strong>. יוסי משובץ אליה עם מכסה של <strong>40 שעות</strong> ויש לו 38 שעות רשומות. הוא מדווח רישום צהוב של 4 שעות: ‎38 + 4 = 42 &gt; 40, ולכן הרישום נשמר כ<em>ממתין — חריגה מהמכסה</em> ונשלח לראש הצוות שלו. עדיין לא נגרע דבר; כרטיס התקציב מציג 4 שעות <em>באישור</em>. כשראש הצוות מאשר — ואם רוצה, מגדיל את המכסה בשעתיים החריגה — הרישום נרשם, ה"נוצל" של התקציב עולה ב-4 שעות והערך שנוצל ב-₪1,200.</p>
+    </div>
+
+    <h3>מי מקבל מה</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:230px">בקשה</th><th>נשלחת אל</th></tr></thead>
+      <tbody>
+        <tr><td>רישום שעות — רוב הסיבות</td><td>ראש הצוות של האדם ← המנהל/ת הישיר/ה ← מנהל/ת פרויקט ← תפעול ← המנכ"ל</td></tr>
+        <tr><td>רישום שעות — <em>חריגה מהתקציב</em></td><td>מנהל/ת פרויקט ← תפעול ← המנכ"ל</td></tr>
+        <tr><td>היעדרות מחלה או חופשה</td><td>קודם ה<strong>מנהל/ת הישיר/ה</strong> של האדם, ואז השרשרת שלמעלה. רישומים של המנכ"ל עצמו נרשמים ישירות.</td></tr>
+        <tr><td>השאלה או העברה בין צוותים</td><td>מי שהמבקש/ת בוחר/ת: ראש הצוות של האדם, המנהל/ת הישיר/ה שלו או המנכ"ל</td></tr>
+        <tr><td>הוצאה מעל התקרה של הסוג שלה</td><td>אותה שרשרת כמו רישום שעות — קודם ראש הצוות</td></tr>
+      </tbody>
+    </table></div>
+    <p>איש לעולם אינו מחליט על בקשה של עצמו, ומנהלי תפעול והמנכ"ל יכולים לטפל בכל בקשה. ראשי צוותים ומנהלים ישירים מוגדרים בניהול ← <a href="#h-teams">צוותים</a>.</p>
+
+    <h3>כל השאר, בשורה אחת</h3>
+    <ul>
+      <li><strong>מתכנן שבועי</strong> — שעות מתוכננות לכל יום מול אותם לקוחות, פרויקטים והזמנות עבודה; מושוות לשעות בפועל שנרשמו כמתוכנן, בפועל ופער. תכנון לעולם אינו מנצל תקציב.</li>
+      <li><strong>הוצאות</strong> — כסף או שעות שנדרשים מול לקוח, פרויקט והזמנת עבודה, עם אסמכתה. דרישה בתוך התקרה של סוג ההוצאה מאושרת עם השמירה; מעל התקרה היא עוברת לאישור. המאשרים מסמנים אותה אחר כך כשולמה או נדחתה. הוצאות אינן מקטינות תקציב שעות.</li>
+      <li><strong>לוח בקרה</strong> — רישומים שנרשמו בלבד, מסוננים לפי תקופה, אנשים, לקוח, פרויקט והזמנת עבודה.</li>
+      <li><strong>ספרייה</strong> — הערות משותפות, מתויגות, ולפעמים מקושרות ללקוחות ולפרויקטים.</li>
+      <li><strong>יומן ביקורת</strong> — כל שינוי שלמעלה, מי עשה אותו ומתי.</li>
+      <li><strong>Taskana</strong> — קורא מ-WorkDesk אנשים, לקוחות, פרויקטים, הזמנות עבודה, תקציבים, מכסות ושעות שנרשמו, ומציג אותם ליד המשימות. ראו <a href="#ch-tk-wd">מ-WorkDesk ל-Taskana</a>.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 4 ============ -->
+  <section class="ch" id="ch-roles" data-part="WorkDesk" data-title="תפקידים והרשאות">
+    <div class="ch-head"><span class="ch-num">04</span><h2>תפקידים והרשאות</h2></div>
+    <p class="lede">תשעה תפקידים ב-WorkDesk. מה שאתם רואים ב-WorkDesk, מה מותר לכם לשנות ובאילו רשומות של מי מותר לכם לגעת — הכול נובע מהתפקיד שלכם, כולל אילו לשוניות מופיעות בכלל. התפקיד קובע גם את ברירת המחדל של <a href="#ch-access">הגישה לפורטל</a> ושל התפקיד ב-Taskana.</p>
+
+    <h3>תשעת התפקידים</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:70px">קוד</th><th style="width:170px">תפקיד</th><th>מה הוא כולל</th></tr></thead>
+      <tbody>
+        <tr><td><code>EMP</code></td><td><strong>עובד/ת</strong></td><td>מדווח/ת שעות, מתכנן/ת את השבוע שלו/ה, מדווח/ת הוצאות, כותב/ת בספרייה.</td></tr>
+        <tr><td><code>SEN</code></td><td><strong>עובד/ת בכיר/ה</strong></td><td>כמו עובד/ת. ההבדל הוא בוותק ובמה שהמתכנן השבועי ולוח הבקרה מראים למנהלים.</td></tr>
+        <tr><td><code>TL</code></td><td><strong>ראש צוות</strong></td><td>כמו עובד/ת בכיר/ה, ובנוסף מאשר/ת שעות והוצאות של הצוות, משבץ/ת את הצוות לפרויקטים ורשאי/ת לדווח שעות כחול · ניהול.</td></tr>
+        <tr><td><code>PM</code></td><td><strong>מנהל/ת פרויקט</strong></td><td>כמו ראש צוות, ובנוסף בעלים של פרויקטים, הזמנות עבודה, תקציבים ושיבוצים.</td></tr>
+        <tr><td><code>OPS</code></td><td><strong>מנהל/ת תפעול</strong></td><td>כמו מנהל/ת פרויקט, על כל הלקוחות. מנהל/ת רשימות אב, עובדים, תפקידים והגדרות.</td></tr>
+        <tr><td><code>FIN</code></td><td><strong>כספים</strong></td><td>קריאה בלבד בתקציבים, הוצאות, הזמנות עבודה וייצוא. אינו/ה מאשר/ת שעות.</td></tr>
+        <tr><td><code>CEO</code></td><td><strong>מנכ"ל / בעלים</strong></td><td>גישה מלאה, כולל הקצאת תפקידים, מחיקה, יומן הביקורת והגדרות החברה.</td></tr>
+        <tr><td><code>EXT</code></td><td><strong>קבלן חיצוני</strong></td><td>מדווח/ת שעות רק על הזמנות עבודה שהוא/היא משובץ/ת אליהן במפורש. בלי תקציבים, ספרייה או לוח בקרה; ב-Taskana — רק המשימות שהוא/היא עובד/ת עליהן.</td></tr>
+        <tr><td><code>VIEW</code></td><td><strong>צופה</strong></td><td>גישת קריאה בלבד ללוח הבקרה, לבעל/ת עניין מסוים/ת. בלי זכויות דיווח.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>אותיות היקף</h3>
+    <p>הרשאה אינה פשוט פועלת או כבויה — יש לה היקף שקובע <em>של מי</em> הרשומות שהיא מגיעה אליהן.</p>
+    <div class="legend">
+      <span><b>Y</b> מותר, בכל החברה</span>
+      <span><b>O</b> הרשומות שלי בלבד</span>
+      <span><b>T</b> הצוות שלי בלבד</span>
+      <span><b>P</b> הפרויקטים שלי בלבד</span>
+      <span><b>–</b> אסור</span>
+    </div>
+    <p><strong>T · הצוות שלי</strong> פירושו: מי שחולק איתכם צוות, מי שכפוף לכם, וכל מי שבצוות שאתם מובילים. <strong>P · הפרויקטים שלי</strong> פירושו: פרויקטים שבבעלותכם, פרויקטים שאתם משובצים אליהם, וכל מי שדיווח עליהם שעות או מחזיק בהם שיבוץ.</p>
+
+    <h3>טבלת ההרשאות המלאה</h3>
+    <p>זו אותה טבלה ש-WorkDesk מציג תחת <strong>⚙ ← תפקידים והרשאות</strong>. משימות אינן בה: מה שאדם רשאי לעשות ב-Taskana הוא התפקיד שלו ב-Taskana — ראו <a href="#ch-access">גישה לפורטל</a>.</p>
+    <div class="tw"><table class="matrix" id="matrix"></table></div>
+    <figure>
+      <img src="img/he/58-admin-roles.png" alt="החלק תפקידים והרשאות בחלון ניהול המערכת, עם טבלת ההרשאות.">
+      <figcaption><span class="fno">איור 6.1</span><span>אותה טבלה בתוך היישום, תחת <strong>⚙ ← תפקידים והרשאות</strong>.</span></figcaption>
+    </figure>
+
+    <h3>אילו לשוניות כל תפקיד רואה</h3>
+    <p>לשוניות מוסתרות ולא מושבתות, כך ששני אנשים יכולים להסתכל על יישומים שונים מאוד.</p>
+    <div class="tw"><table>
+      <thead><tr><th>תפקיד</th><th>לשוניות מוצגות</th></tr></thead>
+      <tbody>
+        <tr><td><code>EMP</code> <code>SEN</code></td><td>יומן שעות · מתכנן שבועי · הוצאות · לוח בקרה · ספרייה</td></tr>
+        <tr><td><code>TL</code></td><td>יומן שעות · מתכנן שבועי · הוצאות · ניהול (אנשים ושיבוצים בלבד, הצוות שלו) · אישורים · לוח בקרה · ספרייה</td></tr>
+        <tr><td><code>PM</code> <code>OPS</code> <code>CEO</code></td><td>יומן שעות · מתכנן שבועי · הוצאות · ניהול (מלא) · אישורים · לוח בקרה · ספרייה</td></tr>
+        <tr><td><code>FIN</code></td><td>יומן שעות (קריאה בלבד) · ניהול (תקציבים, קריאה בלבד) · לוח בקרה · ספרייה</td></tr>
+        <tr><td><code>EXT</code></td><td>יומן שעות · מתכנן שבועי · הוצאות</td></tr>
+        <tr><td><code>VIEW</code></td><td>יומן שעות (קריאה בלבד) · לוח בקרה</td></tr>
+      </tbody>
+    </table></div>
+    <p style="font-size:14px; color:var(--muted)">ראיית <em>ערכי</em> תקציב מתחילה במנהל/ת פרויקט — בלשונית הניהול של ראש צוות יש אנשים ושיבוצים ומכסות של הצוות שלו, לא תקציבים, כך שהוא מאשר את שעות הצוות בלי לראות כמה הפרויקט שווה.</p>
+    <div class="fig-pair">
+      <figure>
+        <img src="img/he/91-ext-tabs.png" alt="סרגל הלשוניות כפי שקבלן חיצוני רואה אותו.">
+        <figcaption><span class="fno">איור 6.2</span><span>קבלן חיצוני — בלי לוח בקרה, ספרייה או ניהול.</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/he/96-view-tabs.png" alt="סרגל הלשוניות כפי שצופה רואה אותו: יומן שעות ולוח בקרה בלבד.">
+        <figcaption><span class="fno">איור 6.3</span><span>צופה — יומן שעות ולוח בקרה, לקריאה בלבד.</span></figcaption>
+      </figure>
+    </div>
+
+    <h3>איך תפקיד נקבע או משתנה</h3>
+    <ul>
+      <li>בהרשמה <em>מבקשים</em> תפקיד. כל דבר מעל ראש צוות יוצר בקשת שינוי תפקיד בנוסף לבקשת ההפעלה.</li>
+      <li>מנהל/ת תפעול או המנכ"ל מאשרים את התפקיד בהפעלה — ורשאים לשנות אותו לפני ההפעלה.</li>
+      <li>אחר כך התפקיד משתנה ב<strong>ניהול ← אנשים</strong>, ברשימה הנפתחת בעמודת התפקיד. כל שינוי נרשם ביומן הביקורת כ-<code>Role change EMP → SEN for …</code>.</li>
+      <li>רק <code>OPS</code> ו-<code>CEO</code> רשאים לנהל עובדים ותפקידים. אף אחד אחר, בשום דרג, אינו יכול לקדם איש.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 5 ============ -->
+  <section class="ch" id="ch-screen" data-part="WorkDesk" data-title="התמצאות במסך">
+    <div class="ch-head"><span class="ch-num">05</span><h2>התמצאות במסך</h2></div>
+    <p class="lede">סרגל עליון כהה אחד, שורת לשוניות אחת, וכמה כפתורי סמל שפותחים כל מה שאינו לשונית. הכפתור ⌂ מחזיר לדף הבית של הפורטל.</p>
+
+    <figure>
+      <img src="img/he/50-ops-timelog.png" alt="חלון WorkDesk המלא: סרגל עליון כהה עם המותג, כפתורי סמל ושם המשתמש; שורת לשוניות; לשונית יומן השעות מתחת.">
+      <figcaption><span class="fno">איור 7.1</span><span>המסגרת, כפי שמנהל/ת תפעול רואה אותה — כל הלשוניות וכל כפתורי הסמל מוצגים.</span></figcaption>
+    </figure>
+
+    <div class="tw"><table>
+      <thead><tr><th style="width:150px">רכיב</th><th>מה הוא עושה</th></tr></thead>
+      <tbody>
+        <tr><td><strong>⌂</strong></td><td>חזרה לדף הבית של פורטל העובדים, שבו נמצאים Taskana, המדריך ומאגר הידע.</td></tr>
+        <tr><td><strong>GALIL · WorkDesk</strong></td><td>המותג. התג שלידו מראה היכן נשמרים הנתונים והאם השינוי האחרון כבר נשמר שם.</td></tr>
+        <tr><td><strong>EN / עב</strong></td><td>מחליף את כל פורטל העובדים בין אנגלית לעברית. בעברית כל מסך נפרש מימין לשמאל. הבחירה נשמרת במכשיר הזה.</td></tr>
+        <tr><td><strong>KB · ?</strong></td><td>פותחים את מאגר הידע ואת המדריך הזה בלשונית חדשה.</td></tr>
+        <tr><td><strong>תג לא מקוון</strong></td><td>מופיע כשהדפדפן מנותק. השינויים עדיין נכתבים מקומית.</td></tr>
+        <tr><td><strong>סמל ◱</strong></td><td><em>השיבוצים והמכסות שלי</em> — העבודה הממומנת שלכם והכפתור לבקשת שעות נוספות. ראו <a href="#ch-mywork">השיבוצים והמכסות שלי</a>.</td></tr>
+        <tr><td><strong>סמל ⚙</strong></td><td><em>ניהול מערכת</em> — תפקידים והרשאות, הגדרות החברה, גיבוי ושחזור ויומן הביקורת. מוצג לכל מי שרשאי לגבות נתונים או לקרוא את יומן הביקורת. ניהול הרשומות השוטף נמצא בלשונית <a href="#ch-budgets">ניהול</a>.</td></tr>
+        <tr><td><strong>סמל ☾ / ☀</strong></td><td>מחליף בין ערכת נושא בהירה לכהה. הבחירה נשמרת במכשיר הזה וחלה על כל הפורטל, כולל תצוגת הטלפון שלמטה.</td></tr>
+        <tr><td><strong>השם שלכם</strong></td><td>פותח את הפרופיל — שעות לפי חוזה, מנהל/ת, שיטת כניסה, התחברויות ו<strong>התנתקות</strong>.</td></tr>
+        <tr><td><strong>תגי לשוניות</strong></td><td>תג כתום על <strong>אישורים</strong> סופר בקשות פתוחות שמחכות לכם.</td></tr>
+        <tr><td><strong>הודעות קופצות</strong></td><td>אישורים מופיעים בתחתית המסך לכמה שניות. מחיקות מגיעות עם כפתור <strong>ביטול הפעולה</strong> — השתמשו בו לפני שהוא נעלם.</td></tr>
+      </tbody>
+    </table></div>
+
+    <figure class="fig-narrow">
+      <img src="img/he/21-emp-profile.png" alt="חלון הפרופיל שלי עם תמונה, תג תפקיד, מחלקה, צוות, מנהל/ת, שעות לפי חוזה והתחברויות.">
+      <figcaption><span class="fno">איור 7.2</span><span>הפרופיל שלי — נפתח מהשם בפינה העליונה.</span></figcaption>
+    </figure>
+
+    <h3 id="h-tables">עבודה עם טבלאות</h3>
+    <p>כל טבלה ב-WorkDesk — יומן השעות, ההוצאות, כל חלק בניהול, טבלת התפקידים, יומן הביקורת והשיבוצים שלי — עובדת באותה דרך. לכל אחת יש שורת כלים ממש מעליה.</p>
+
+    <figure>
+      <img src="img/he/22-table-toolbar.png" alt="שורת הכלים מעל טבלת יומן השעות: תצוגה שמורה, מיון, הזזת עמודה וכפתורי איפוס.">
+      <figcaption><span class="fno">איור 7.3</span><span>שורת הכלים של הטבלה, מעל טבלת יומן השעות.</span></figcaption>
+    </figure>
+    <ul>
+      <li><strong>מיון</strong> — לחיצה על כותרת עמודה ממיינת א←ת (הנמוך קודם), לחיצה נוספת ת←א (הגבוה קודם), ולחיצה שלישית מבטלת. ▲ או ▼ ליד הכותרת מראים את המיון הפעיל. הבורר <strong>מיון</strong> וכפתוריו בשורת הכלים עושים אותו דבר. תאריכים ומספרים ממוינים לפי ערך, ותאים ריקים תמיד בסוף.</li>
+      <li><strong>הזזת עמודה</strong> — גררו את הכותרת שלה אל עמודה אחרת, או בחרו אותה ב<strong>הזזת עמודה</strong> והשתמשו בחיצים.</li>
+      <li><strong>שינוי רוחב</strong> — גררו את קצה הכותרת. לחיצה כפולה על הקצה, או <strong>↔ רוחב</strong>, מחזירה רוחב אוטומטי שמתאים לתוכן.</li>
+      <li><strong>איפוס</strong> — <strong>⇄ סדר</strong> מחזיר את סדר העמודות המקורי; <strong>↺ הכול</strong> מנקה מיון, סדר ורוחב יחד.</li>
+    </ul>
+    <p><strong>תצוגות שמורות.</strong> <strong>＋ שמירה</strong> שומר את המיון, סדר העמודות והרוחב הנוכחיים בשם; שמירה בשם קיים מחליפה אותו. בחירת תצוגה מרשימת <strong>תצוגה</strong> מחילה אותה. כשתצוגה נבחרה, <strong>☆</strong> הופך אותה לנפתחת אוטומטית בכל פעם שהטבלה נפתחת (הוא הופך ל-<strong>★</strong>); לחיצה נוספת מבטלת. <strong>🗑</strong> מוחק את התצוגה. תצוגות שייכות לכם ולטבלה אחת — לכל אדם יש משלו, ותצוגה שנשמרה ביומן השעות לא תוצע בהוצאות.</p>
+    <div class="note">התצוגות השמורות נשמרות בדפדפן הזה תחת <code>galil-workdesk-table-views</code>, בנפרד מנתוני WorkDesk, ולכן אינן חלק מגיבוי ואינן עוברות למחשב אחר. מיון או שינוי עמודות שלא נשמרו נשארים עד טעינה מחדש של הדף; אחריה הטבלה נפתחת בתצוגת ★ שלכם, או בפריסה המקורית.</div>
+
+    <h3>בטלפון</h3>
+    <p>מתחת ל-820 פיקסלים, WorkDesk מחליף את כל המסגרת בגרסת טלפון ייעודית במקום לדחוס את פריסת המחשב לעמודה צרה: עמוד אחד בכל פעם, סרגל ניווט תחתון, בוררי תאריך ושעה של המכשיר, וכל יעד הקשה בגובה 44 פיקסלים לפחות. אלה אותם נתונים ואותם כללים — כל רישום עדיין עובר במנוע הזכאות — רק בפריסה לאגודל במקום לעכבר.</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:120px">לשונית תחתונה</th><th>מה יש בה</th></tr></thead>
+      <tbody>
+        <tr><td><strong>זמן</strong></td><td><strong>טיימר</strong> רץ — <strong>▶ הפעלת הטיימר</strong>, ואז <strong>■ עצירה ודיווח</strong> בסיום, שפותח את טופס הרישום עם שעות ההתחלה והסיום כבר ממולאות. <strong>דיווח בלי טיימר</strong> מדלג ישר לטופס. כל רישום מתחת אפשר לערוך, לשכפל (אותן אפשרויות כמו במחשב — ראו <a href="#ch-time">שכפול רישום</a>) או למחוק.</td></tr>
+        <tr><td><strong>תכנון</strong></td><td>המתכנן השבועי, יום אחד בכל פעם.</td></tr>
+        <tr><td><strong>הוצאות</strong></td><td>דיווח הוצאה פותח גיליון תחתון עם אותם שדות — ואותו פקד צירוף אסמכתה — כמו הטופס במחשב.</td></tr>
+        <tr><td><strong>עוד</strong></td><td>ספרייה, אישורים (אם אתם מאשרים משהו), השיבוצים והמכסות שלי, הפרופיל שלי, דף הבית של הפורטל, Taskana, המדריך ומאגר הידע.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="fig-pair">
+      <figure>
+        <img src="img/he/98-mobile-timelog.png" alt="לשונית הזמן בטלפון: כרטיס טיימר גדול ומתחתיו רשימת הרישומים של החודש ככרטיסים.">
+        <figcaption><span class="fno">איור 7.4</span><span>לשונית הזמן בטלפון — הטיימר הוא הדרך העיקרית לדווח את יום העבודה.</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/he/99-mobile-more.png" alt="גיליון עוד: ספרייה, השיבוצים והמכסות שלי, הפרופיל שלי וקישורים לפורטל.">
+        <figcaption><span class="fno">איור 7.5</span><span>גיליון עוד — כל מה שלא נכנס לסרגל התחתון.</span></figcaption>
+      </figure>
+    </div>
+    <div class="note">
+      <span class="tag">מה נשאר במחשב</span>
+      <p>לוח הבקרה, הניהול וניהול המערכת בנויים למסך גדול יותר ואינם חלק מגרסת הטלפון. <strong>הפרופיל שלי ← תצוגה במכשיר הזה</strong> מאפשר לקבע <strong>תמיד טלפון</strong> או <strong>תמיד מחשב</strong> במקום לעקוב אחרי רוחב החלון.</p>
+    </div>
+  </section>
+
+  <!-- ============ 6 ============ -->
+  <section class="ch" id="ch-time" data-part="WorkDesk" data-title="יומן שעות" data-caps="reportOwnTime,reportBlueTime,viewOthersTime">
+    <div class="ch-head"><span class="ch-num">06</span><h2>יומן שעות</h2></div>
+    <p class="lede">המקום שבו מדווחים את היום. טופס בראש העמוד, חודש של רישומים מתחתיו, ומנוע ביניהם שמחליט אם כל רישום נרשם או עובר למאשר/ת.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="reportOwnTime,reportBlueTime,viewOthersTime,editOthersTime,excelExport"></div>
+
+    <figure>
+      <img src="img/he/10-emp-timelog.png" alt="לשונית יומן השעות: טופס דיווח שעות, ניווט חודשים עם סיכומים, שורת מסננים וטבלת הרישומים.">
+      <figcaption><span class="fno">איור 8.1</span><span>יומן השעות כפי שעובד/ת רואה אותו. הסיכומים יושבים ליד ניווט החודשים: אדום, צהוב, סה"כ, מחלה — ובכתום, כל מה שנמצא באישור. אפשר ללחוץ על קוד הזמנת עבודה כדי להעתיק אותו.</span></figcaption>
+    </figure>
+
+    <h3>דיווח שעות</h3>
+    <ol class="steps">
+      <li>קבעו <strong>תאריך</strong>, או לחצו <strong>היום</strong>. תאריכים עתידיים נדחים — אותם מתכננים במתכנן השבועי.</li>
+      <li>בחרו <strong>סוג</strong>: <em>עבודה</em>, <em>מחלה</em> או <em>חופשה</em>. מחלה וחופשה מסתירות את שדות השעה — ראו <a href="#h-leave">ימי מחלה וחופשה</a> בהמשך.</li>
+      <li>קבעו <strong>התחלה</strong> ו<strong>סיום</strong> מרשימות השעה והדקה. <strong>שעות</strong> מתמלא מעצמו, מעוגל לחצי השעה הקרובה.</li>
+      <li>בחרו <strong>סוג שעות</strong> — <span class="swatch" style="background:var(--red)"></span> אדום · חברה, <span class="swatch" style="background:var(--yellow)"></span> צהוב · לקוח, או — אם אתם מנהלים פרויקטים של לקוחות — <span class="swatch" style="background:var(--blue)"></span> כחול · ניהול.</li>
+      <li>לצהוב או כחול, בחרו <strong>לקוח</strong>, <strong>פרויקט</strong> ו<strong>הזמנת עבודה</strong> אם הפרויקט מנוהל לפי הזמנות עבודה. אם רוצים, בחרו את ה<strong>משימה ב-Taskana</strong> שהזמן הלך אליה.</li>
+      <li>כתבו <strong>תיאור</strong> — הוא חובה. <strong>הערות</strong> הן רשות.</li>
+      <li>לחצו <strong>הוספת רישום</strong>.</li>
+    </ol>
+
+    <figure>
+      <img src="img/he/11-emp-timelog-form.png" alt="טופס דיווח השעות: תאריך, סוג, התחלה, סיום, שעות מחושבות, בורר אדום/צהוב/כחול ושדות הרשימות.">
+      <figcaption><span class="fno">איור 8.2</span><span>הטופס, כפי שמנהל/ת פרויקט רואה אותו — שימו לב לאפשרות הכחולה, שמוצעת רק לתפקידים שמנהלים פרויקטים של לקוחות. הרשימות מציגות רק את מה שאתם משובצים אליו — אם פרויקט חסר, עוד לא שובצתם אליו.</span></figcaption>
+    </figure>
+
+    <div class="note">
+      <span class="tag">הקלדה חופשית</span>
+      <p>ללקוח, לפרויקט ולהזמנת העבודה יש מתג <strong>הקלדה חופשית</strong> לדבר שעוד אינו ברשימת האב. מותר להקליד שם, אבל הרישום עובר אז לאישור כ<em>פריט שאינו ברשימה</em>, ועם האישור השם הופך לרשומה אמיתית ברשימת האב.</p>
+    </div>
+
+    <h3 id="h-leave">ימי מחלה וחופשה</h3>
+    <ol class="steps">
+      <li>קבעו את <strong>הסוג</strong> ל<em>מחלה</em> או <em>חופשה</em>.</li>
+      <li>קבעו <strong>מתאריך</strong> ו<strong>עד תאריך</strong>. <strong>ימים</strong> סופר את ימי העבודה (ראשון עד חמישי) בטווח — שישי ושבת מדולגים. תאריכים עתידיים מותרים, כך שאפשר לבקש חופשה מראש. בקשה אחת מכסה עד 60 ימי עבודה.</li>
+      <li>במחלה, צרפו ב<strong>אישור מחלה</strong> את האישור מהמרפאה או מהרופא — PDF או תמונה, עד 2MB. אפשר להחליף או להסיר אותו לפני השליחה.</li>
+      <li>הוסיפו <strong>תיאור</strong> ולחצו <strong>שליחת בקשה</strong>.</li>
+    </ol>
+    <p>הטופס מראה למי הבקשה נשלחת: <strong>המנהל/ת הישיר/ה שלכם</strong>, או — אם אין — שרשרת האישורים הרגילה. כל יום בטווח נשמר כ<strong>ממתין</strong> ונשאר מחוץ לסיכומים עד שהמנהל/ת מאשר/ת או דוחה את כל הבקשה בבת אחת. דחייה מבטלת כל יום בה, והסיבה מוצגת על כל אחד.</p>
+    <p><strong>המנכ"ל</strong> הוא התפקיד היחיד שימי המחלה והחופשה שלו נרשמים ישירות, בלי בקשה — לו ולכל אדם אחר.</p>
+    <p>אישור מצורף מופיע ככפתור 📎 על כל יום ביומן השעות ועל כרטיס הבקשה באישורים; לחיצה פותחת את המסמך.</p>
+
+    <h3>מה הטופס מסרב לשמור</h3>
+    <ul>
+      <li>שעת סיום שאינה אחרי שעת ההתחלה.</li>
+      <li>תיאור ריק.</li>
+      <li>שעות צהובות או כחולות בלי לקוח או בלי פרויקט. אם זה פנימי — עברו לאדום.</li>
+      <li>בלי הזמנת עבודה בפרויקט שמנוהל לפי הזמנות עבודה.</li>
+      <li>חפיפה עם רישום אחר שכבר דיווחתם באותו יום — ההודעה מציינת את השעות המתנגשות.</li>
+      <li>רישום זהה (אותו תאריך, אותן התחלה וסיום, אותו תיאור).</li>
+      <li>תאריך עתידי (רישומי עבודה בלבד — מחלה וחופשה יכולות להיות בעתיד).</li>
+      <li>מחלה או חופשה ביום שכבר רשום כהיעדרות, או טווח בלי ימי עבודה.</li>
+      <li>תאריך בתוך חודש שנסגר לשכר.</li>
+    </ul>
+
+    <h3>מנוע הזכאות</h3>
+    <p>ברגע השמירה, WorkDesk מריץ את הבדיקות האלה לפי הסדר. הראשונה שנכשלת מעבירה את הרישום ל<strong>ממתין</strong>, רושמת את הסיבה ופותחת בקשת אישור.</p>
+    <div class="tw"><table>
+      <thead><tr><th class="num" style="width:44px">#</th><th style="width:210px">בדיקה</th><th>תוצאה</th></tr></thead>
+      <tbody>
+        <tr><td class="num">1</td><td>מחלה או חופשה</td><td>ממתין — <em>בקשת היעדרות</em>, אל המנהל/ת הישיר/ה. נרשם ישירות רק כשהמנכ"ל רושם.</td></tr>
+        <tr><td class="num">2</td><td>אדום · חברה</td><td>נרשם ישירות — לעולם אינו תלוי בשיבוץ, מכסה או תקציב. עדיין נספר במגבלות היומיות הרכה והקשיחה שלמטה. כחול · ניהול <strong>אינו</strong> פטור: הוא עובר בבדיקות 3–8 בדיוק כמו צהוב.</td></tr>
+        <tr><td class="num">3</td><td>לקוח, פרויקט או הזמנת עבודה שאינם ברשימה</td><td>ממתין — <em>פריט שאינו ברשימה</em>.</td></tr>
+        <tr><td class="num">4</td><td>משובץ לפרויקט או להזמנה?</td><td>ממתין — <em>לא משובץ</em>.</td></tr>
+        <tr><td class="num">5</td><td>המכסה שלכם בשיבוץ</td><td>ממתין — <em>חריגה מהמכסה</em>.</td></tr>
+        <tr><td class="num">6</td><td>תקציב הפרויקט או הזמנת העבודה</td><td>ממתין — <em>חריגה מהתקציב</em>. עולה לבעלים של הפרויקט ולא לראש הצוות.</td></tr>
+        <tr><td class="num">7</td><td>מגבלה יומית קשיחה (ברירת מחדל 12 שעות)</td><td>ממתין — <em>חריגה מהמגבלה היומית</em>.</td></tr>
+        <tr><td class="num">8</td><td>מגבלה יומית רכה (ברירת מחדל 9 שעות)</td><td>נרשם, מסומן בכתום. לא צריך אישור.</td></tr>
+        <tr><td class="num">9</td><td>כל השאר</td><td>נרשם. משימה ב-Taskana על הרישום לעולם אינה משנה את התוצאה.</td></tr>
+      </tbody>
+    </table></div>
+    <p>הניצול סופר <strong>שעות צהובות וכחולות שנרשמו</strong>. שום דבר ממתין אינו נספר מול מכסה או תקציב, ואינו מופיע בשום סיכום על המסך — ולכן שעות ממתינות מוצגות בנפרד, בכתום, כ<em>באישור</em>.</p>
+
+    <div class="note warn">
+      <span class="tag">התרעה מוקדמת</span>
+      <p>ברגע שבוחרים פרויקט, באנר מעל הטופס מראה איפה אתם עומדים בשיבוץ: אפור מ-75%, כתום מ-90%, אדום ב-100% — <em>"רישומים נוספים מתקבלים, אבל עוברים לאישור."</em> אף פעם לא נחסמים; רק מנותבים.</p>
+    </div>
+
+    <h3>סטטוסים של רישום</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:130px">סטטוס</th><th>משמעות</th></tr></thead>
+      <tbody>
+        <tr><td><strong>נרשם</strong></td><td>נספר. כלול בסיכומים, בתקציבים ובייצוא.</td></tr>
+        <tr><td><strong>ממתין</strong></td><td>מחכה למאשר/ת. מוחרג מכל סיכום. השורה צבועה ומציגה את הסיבה.</td></tr>
+        <tr><td><strong>בוטל</strong></td><td>נדחה. נשאר גלוי לכם עם הסיבה של המאשר/ת, ולעולם אינו תורם שעות.</td></tr>
+        <tr><td><strong>נעול</strong></td><td>החודש נסגר לשכר. לא ניתן לעריכה; שינוי מחייב בקשת עריכה רטרואקטיבית.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>עריכה, מחיקה ותיקון</h3>
+    <ul>
+      <li><strong>✎</strong> טוען רישום בחזרה לטופס. שמירת רישום ממתין מריצה את המנוע מחדש; שמירת רישום שנרשם בידי מאשר/ת משאירה אותו רשום.</li>
+      <li><strong>🗑</strong> מוחק אותו ומבטל כל אישור ממתין שקשור אליו. ההודעה מציעה <strong>ביטול הפעולה</strong>.</li>
+      <li>העמודה <strong>סטטוס פרויקט</strong> מציגה את הסטטוס הנוכחי של הפרויקט כפי שנקבע ב<a href="#ch-budgets">ניהול ← פרויקטים</a>. כאן היא לקריאה בלבד; מסנן סטטוס הפרויקט משתמש באותו ערך.</li>
+      <li>את הרישומים שלכם מותר לערוך תמיד. עריכת רישומים של אחרים מחייבת <code>editOthersTime</code> — ראש צוות בתוך הצוות, מנהל/ת פרויקט בתוך הפרויקטים שלו, מנהל/ת תפעול והמנכ"ל בכל מקום.</li>
+      <li>פתיחת <strong>דיווח שעות על המשימה ב-WorkDesk</strong> ממשימה ב-Taskana מביאה אתכם לכאן כשהטופס כבר מכוון ללקוח, לפרויקט, להזמנת העבודה ולמשימה.</li>
+      <li>לחיצה על קוד <strong>הזמנת עבודה</strong> בכל מקום בטבלה מעתיקה אותו ללוח — שימושי להדבקה בדוא״ל או במערכת אחרת. הודעה קטנה מציינת מה הועתק.</li>
+    </ul>
+
+    <h3>שכפול רישום</h3>
+    <p>הכפתור <strong>⧉</strong> ליד רישום עבודה (<strong>⧉ שכפול…</strong> בטלפון) פותח את אפשרויות השכפול:</p>
+    <ul>
+      <li><strong>היום הקודם</strong>, <strong>היום הבא</strong>, <strong>השבוע הקודם</strong>, <strong>השבוע הבא</strong> — עותק אחד, יום אחד או שבעה ימים משם.</li>
+      <li><strong>מותאם</strong> — הקלידו מספר ימים ובחרו <strong>ימים אחורה</strong> או <strong>ימים קדימה</strong>. לבד זה יוצר עותק אחד במרחק הזה. סמנו <strong>העתקה לכל יום עבודה שביניהם</strong> כדי להעתיק את הרישום לכל ראשון–חמישי בטווח — למשל 5 ימים אחורה מעתיק אותו לכל יום עבודה בחמשת הימים האחרונים. השורה מתחת לשדה מציגה את התאריך, או כמה ימים, לפני שלוחצים <strong>שכפול</strong>.</li>
+      <li><strong>תאריך מסוים</strong> — בחרו כל תאריך עד היום ולחצו <strong>שכפול</strong>.</li>
+    </ul>
+    <p>כל עותק לוקח את הלקוח, הפרויקט, הזמנת העבודה, המשימה ב-Taskana, סוג השעות, השעות והתיאור של הרישום, ועובר במנוע הזכאות כרישום חדש — הוא יכול להגיע לממתין גם אם המקור נרשם, למשל אם העותק יחרוג עכשיו ממכסה. תאריכים שאינם יכולים לקבל עותק מדולגים ומפורטים בהודעה: תאריכים אחרי היום (אותם מתכננים במתכנן השבועי), חודשים סגורים, וימים שבהם העותק יחפוף לרישום קיים או יחזור עליו בדיוק.</p>
+
+    <h3>סינון וסיכומים</h3>
+    <p>ניווט החודשים זז חודש אחד בכל פעם; <strong>היום</strong> חוזר לחודש הנוכחי. מתחתיו מסננים לפי עובד/ת, לקוח, פרויקט, הזמנת עבודה, משימה ב-Taskana, סוג רישום, סטטוס פרויקט וסטטוס רישום. <strong>ניקוי</strong> מאפס את כל המסננים. הסיכומים תמיד מתארים את התצוגה המסוננת. למיון, סידור או שינוי רוחב של עמודות ולשמירת הפריסה כתצוגה, ראו <a href="#h-tables">עבודה עם טבלאות</a>.</p>
+
+    <h3>ייצוא</h3>
+    <p><strong>⬇ התצוגה הזו</strong> מייצא את החודש המסונן. <strong>⬇ הכול</strong> מייצא את כל מה שבהיקף ההרשאה שלכם — שלעובד/ת, עובד/ת בכיר/ה או קבלן חיצוני פירושו הרשומות שלהם בלבד. רישומים ממתינים עוברים לגיליון נפרד כדי שלעולם לא ייחשבו לזמן שדווח. ראו <a href="#ch-export">ייצוא לאקסל</a>.</p>
+  </section>
+
+  <!-- ============ 7 ============ -->
+  <section class="ch" id="ch-planner" data-part="WorkDesk" data-title="מתכנן שבועי" data-caps="planOwnWeek">
+    <div class="ch-head"><span class="ch-num">07</span><h2>מתכנן שבועי</h2></div>
+    <p class="lede">כוונה, לא רישום. רישומים מתוכננים לעולם אינם נספרים כשעות מדווחות — הם קיימים כדי לראות את השבוע לפני שהוא קורה ולהשוות אחריו.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="planOwnWeek,planOthersWeek,excelExport"></div>
+
+    <figure>
+      <img src="img/he/12-emp-planner.png" alt="המתכנן השבועי עם עמודות ימים, רישומים מתוכננים ובורר התצוגה מעליהם.">
+      <figcaption><span class="fno">איור 9.1</span><span>שבוע במתכנן. עוברים בין יום, שבוע וחודש עם הכפתורים למעלה.</span></figcaption>
+    </figure>
+
+    <h3>תכנון בלוק</h3>
+    <ol class="steps">
+      <li>בחרו <strong>יום</strong>, <strong>שבוע</strong> או <strong>חודש</strong> (רשת של ארבעה שבועות), וזוזו עם <strong>‹ ›</strong> או <strong>השבוע</strong>.</li>
+      <li>לחצו <strong>+ תכנון</strong> בעמודת יום.</li>
+      <li>קבעו התחלה וסיום — השעות המחושבות מופיעות מתחת — ואז סוג שעות, לקוח, פרויקט, הזמנת עבודה, משימה ב-Taskana ותיאור.</li>
+      <li><strong>שמירה</strong>. אפשר לגרור את הכרטיס ליום אחר בכל עת.</li>
+    </ol>
+
+    <h3>הצעות מהמשימות שלכם ב-Taskana</h3>
+    <p>המשימות שלכם ב-Taskana שיש להן תאריך יעד ועוד לא הושלמו מופיעות כתגים בצבע טורקיז מעל הרשת. גררו אחת ליום, והרישום המתוכנן נוצר עם הפרויקט, הזמנת העבודה והכותרת של המשימה.</p>
+
+    <h3>קיבולת, פער והעתקה</h3>
+    <ul>
+      <li>התגים <strong>מתוכנן</strong>, <strong>בפועל</strong> ו<strong>פער</strong> משווים את התכנון לזמן שנרשם באותה תקופה.</li>
+      <li><strong>קיבולת</strong> משווה את התכנון לשעות לפי חוזה (שעות שבועיות, מותאמות לטווח המוצג). תכנון מעבר לקיבולת צובע את התג בכתום ומוסיף באנר.</li>
+      <li><strong>העתקת השבוע</strong> משכפלת כל רישום מתוכנן מוצג שבעה ימים קדימה.</li>
+      <li><strong>⬇ ייצוא</strong> מפיק גיליון של תכנון מול ביצוע עם עמודת פער.</li>
+    </ul>
+
+    <h3>תכנון עבור מישהו אחר</h3>
+    <p>עם <code>planOthersWeek</code> מופיע בורר <strong>תכנון עבור</strong>. ראשי צוותים רואים את הצוות שלהם, מנהלי פרויקטים את האנשים של הפרויקטים שלהם, מנהלי תפעול והמנכ"ל — את כולם. שמירת שינוי בתכנון של מישהו אחר שולחת לו הודעה.</p>
+  </section>
+
+  <!-- ============ 9 ============ -->
+  <section class="ch" id="ch-expenses" data-part="WorkDesk" data-title="הוצאות" data-caps="reportExpenses,approveExpenses">
+    <div class="ch-head"><span class="ch-num">09</span><h2>הוצאות</h2></div>
+    <p class="lede">כסף או שעות, מוצמדים ללקוח ולפרויקט, עם אסמכתה כשסוג ההוצאה דורש זאת.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="reportExpenses,approveExpenses,excelExport"></div>
+
+    <figure>
+      <img src="img/he/16-emp-expenses.png" alt="לשונית ההוצאות: טופס דיווח למעלה, ניווט חודשים עם סיכומים לפי מטבע וטבלת ההוצאות.">
+      <figcaption><span class="fno">איור 10.1</span><span>הוצאות. הסיכומים מוצגים לפי מטבע, עם תג נוסף להוצאות שנרשמו בשעות.</span></figcaption>
+    </figure>
+
+    <h3>רישום הוצאה</h3>
+    <ol class="steps">
+      <li>קבעו <strong>תאריך</strong> ו<strong>שעה</strong>.</li>
+      <li>בחרו <strong>סוג הוצאה</strong>. סוגים עם תקרה מציגים אותה ברשימה.</li>
+      <li>בחרו <strong>סוג ערך</strong>: <em>כסף</em> (עם מטבע) או <em>שעות</em>.</li>
+      <li>אם רוצים, הצמידו אותה ללקוח, לפרויקט ולהזמנת עבודה.</li>
+      <li>כתבו <strong>תיאור</strong> — חובה. הוסיפו הערות אם זה עוזר.</li>
+      <li>צרפו <strong>אסמכתה</strong> אם הסוג דורש, ואז <strong>הוספת הוצאה</strong>.</li>
+    </ol>
+
+    <div class="note warn">
+      <span class="tag">תקרות ואסמכתאות</span>
+      <p>הוצאה עד תקרת האישור האוטומטי של הסוג שלה מאושרת במקום. מעל התקרה היא נשמרת כ<strong>הוגש</strong> ומנותבת לאישור. כשהסוג דורש אסמכתה, הטופס לא יישלח בלי קובץ מצורף.</p>
+    </div>
+
+    <h3>סטטוס החזר</h3>
+    <p>ארבעה מצבים — <strong>הוגש</strong>, <strong>אושר</strong>, <strong>שולם</strong>, <strong>נדחה</strong>. מי שרשאי לאשר הוצאות משנה אותו מהרשימה בטבלה — חוץ מההוצאות של עצמו, שעליהן מחליט מישהו אחר. כל השאר רואים תג צבעוני.</p>
+
+    <h3>דיווח עבור מישהו אחר</h3>
+    <p>עם <code>approveExpenses</code> מופיע בטופס בורר <strong>עבור</strong>, בהיקף האנשים שאתם רואים. אותם אנשים מופיעים במסנן החודש.</p>
+
+    <h3>עריכה, מחיקה וייצוא</h3>
+    <p><strong>✎</strong> טוען את ההוצאה בחזרה לטופס; <strong>🗑</strong> מוחק אותה, עם ביטול. בהוצאות שלכם מותר לפעול תמיד, ובהוצאות של אחרים — אם אתם רשאים לאשר הוצאות. <strong>⬇ התצוגה הזו</strong> ו-<strong>⬇ הכול</strong> מייצאים עם שמות קובצי האסמכתה בעמודה משלהם.</p>
+
+    <h3>החלפה או הסרה של אסמכתה</h3>
+    <p>כשקובץ מצורף, הוא מופיע כתג ליד כפתור בחירת הקובץ עם שני פקדים: סמל החלפה שפותח שוב את בוחר הקבצים ומחליף את הקובץ במקומו, ו-<strong>✕</strong> שמסיר אותו — שאר ההוצאה לא משתנה. ספירת <strong>📎</strong> בטבלה היא עצמה כפתור: לחיצה פותחת מחדש את שורת ההוצאה בטופס כדי להחליף או להסיר את הקובץ.</p>
+    <div class="note warn">
+      <span class="tag">אסמכתה נדרשת לא יורדת לאפס</span>
+      <p>אם סוג ההוצאה דורש אסמכתה, הסרת הקובץ היחיד מציגה את אותה אזהרה שהטופס מציג כשמעולם לא צורף קובץ — <strong>שמירת השינויים</strong> חסומה עד שבוחרים קובץ חדש.</p>
+    </div>
+  </section>
+
+  <!-- ============ 10 ============ -->
+  <section class="ch" id="ch-budgets" data-part="WorkDesk" data-title="ניהול" data-caps="viewBudgets,editBudgets,createWorkOrders,assignPeople,manageClientsProjects,manageEmployeesRoles">
+    <div class="ch-head"><span class="ch-num">10</span><h2>ניהול</h2></div>
+    <p class="lede">הלשונית התפעולית השוטפת — תקציבים, הזמנות עבודה ורשומות האב של החברה — מאחורי לשונית <strong>ניהול</strong> אחת בסרגל העליון. תתי־הלשוניות שלה: <strong>אנשים · צוותים · לקוחות · פרויקטים · הזמנות עבודה · תקציבים · שיבוצים ומכסות · סוגי הוצאות · תור אימות</strong>, ובסוף <strong>ממתינים להפעלה</strong> לתפעול ולמנכ"ל. אילו מהן תראו תלוי בתפקיד שלכם. איך הרשומות האלה קשורות זו לזו — ראו <a href="#ch-model">איך WorkDesk בנוי</a>. כל מה שנשמר כאן — אנשים, לקוחות, פרויקטים והזמנות עבודה — מופיע גם ב-Taskana, לקריאה בלבד, ברגע שהוא נשמר.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="viewBudgets,editBudgets,createWorkOrders,assignPeople,manageTeams,manageClientsProjects,manageEmployeesRoles"></div>
+
+    <div class="note">
+      <span class="tag">מי רואה מה</span>
+      <p>מנהלי פרויקטים רואים תקציבים בפרויקטים שלהם. מנהלי תפעול, המנכ"ל וכספים רואים את כולם; כספים רשאים להסתכל אבל לא לשנות. לאחרים אין חלק תקציבים — ולשונית הניהול עצמה מופיעה רק כשלפחות חלק אחד רלוונטי לכם.</p>
+    </div>
+
+    <figure>
+      <img src="img/he/40-pm-budgets.png" alt="חלק התקציבים: כרטיס לכל תקציב עם פס ניצול ואריחי נתונים — מתוקצב, נוצל, באישור, נותר ומיצוי צפוי.">
+      <figcaption><span class="fno">איור 11.1</span><span>כרטיס תקציב. הפס מציג שעות שנוצלו בצבע מלא ושעות באישור מקווקוות מאחוריהן, כך שתקציב שעומד להיחרג נראה לפני שהוא נחרג.</span></figcaption>
+    </figure>
+
+    <h3>יצירת תקציב</h3>
+    <ol class="steps">
+      <li>לחצו <strong>+ תקציב חדש</strong>.</li>
+      <li>בחרו <strong>לקוח</strong>, ואז צמצמו ל<strong>פרויקט</strong> ואם רוצים ל<strong>הזמנת עבודה</strong>. השארת הפרויקט ריק מתקצבת את כל הפרויקטים של הלקוח יחד.</li>
+      <li>בחרו <strong>בסיס תמחור</strong> ומלאו את השדות המתאימים.</li>
+      <li><strong>שמירת תקציב</strong>.</li>
+    </ol>
+    <div class="tw"><table>
+      <thead><tr><th style="width:120px">בסיס</th><th>מה מזינים</th></tr></thead>
+      <tbody>
+        <tr><td><strong>כסף</strong></td><td>מטבע, סכום ותעריף שעתי. השעות המתוקצבות מחושבות — <code>סכום ÷ תעריף</code> — והשדה הופך לקריאה בלבד.</td></tr>
+        <tr><td><strong>שעות</strong></td><td>שעות מתוקצבות ישירות.</td></tr>
+        <tr><td><strong>עמודים / מילים / מותאם</strong></td><td>יחידות מתוקצבות, שם היחידה, כמה הופקו עד כה, ושעות מתוקצבות לצדן.</td></tr>
+      </tbody>
+    </table></div>
+    <figure class="fig-narrow">
+      <img src="img/he/43-pm-new-budget.png" alt="חלון תקציב חדש עם לקוח, פרויקט, הזמנת עבודה, בסיס, מטבע, סכום, תעריף ושעות מחושבות.">
+      <figcaption><span class="fno">איור 11.2</span><span>עורך התקציב.</span></figcaption>
+    </figure>
+
+    <h3>קריאת כרטיס תקציב</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:190px">נתון</th><th>איך הוא מחושב</th></tr></thead>
+      <tbody>
+        <tr><td><strong>נוצל</strong></td><td>שעות צהובות וכחולות שנרשמו בהיקף התקציב. תקציב הזמנת עבודה סופר רק את ההזמנה; תקציב פרויקט סופר את הפרויקט.</td></tr>
+        <tr><td><strong>באישור</strong></td><td>שעות צהובות וכחולות ממתינות באותו היקף. עוד לא נוצלו — אבל בדרך.</td></tr>
+        <tr><td><strong>נותר</strong></td><td>מתוקצב פחות נוצל. הופך לאדום כשהוא שלילי.</td></tr>
+        <tr><td><strong>ערך שנוצל</strong></td><td>בבסיס כסף בלבד — שעות שנוצלו × תעריף.</td></tr>
+        <tr><td><strong>תוצרים</strong></td><td>בבסיסי יחידות בלבד — מה שהופק מול היחידות המתוקצבות.</td></tr>
+        <tr><td><strong>מיצוי צפוי</strong></td><td>מחושב מקצב השריפה של <strong>30 הימים האחרונים</strong>. מציג <em>עכשיו</em> אם כבר מוצה, ו-<em>—</em> אם לא נשרף דבר.</td></tr>
+      </tbody>
+    </table></div>
+    <p>ב-<strong>90%</strong> הכרטיס מציג באנר כתום, גלוי לבעלי הפרויקט ולכספים. ב-<strong>100%</strong> הוא הופך לאדום, וכל רישום צהוב או כחול נוסף על הפרויקט מנותב לאישור.</p>
+
+    <h3>היסטוריית שינויים</h3>
+    <p>עריכת הבסיס, הסכום, התעריף, השעות, היחידות או המטבע של תקציב נוספת להיסטוריה שלו. הכפתור <strong>היסטוריה</strong> פותח טבלה של מתי, מי, איזה שדה, והערכים לפני ואחרי.</p>
+
+    <h3>הזמנות עבודה</h3>
+    <figure>
+      <img src="img/he/41-pm-work-orders.png" alt="הזמנות העבודה: טבלת קודים, כותרות, לקוח ופרויקט, סטטוס, אסמכתת חוזה, תאריכים, תקציב וניצול.">
+      <figcaption><span class="fno">איור 11.3</span><span>מרשם הזמנות העבודה, עם ניצול מול התקציב של כל הזמנה.</span></figcaption>
+    </figure>
+    <ol class="steps">
+      <li>עברו ל<strong>הזמנות עבודה</strong> ולחצו <strong>+ הזמנת עבודה חדשה</strong>.</li>
+      <li>בחרו את הפרויקט — WorkDesk מציע קוד בצורה <code>WO-[ראשי תיבות של הלקוח]-[6 ספרות]</code>. מותר לשנות את הספרות, אבל הצורה נאכפת.</li>
+      <li>תנו לה כותרת, סטטוס (<strong>פעיל</strong>, <strong>בהמתנה</strong>, <strong>סגור</strong>), אסמכתת חוזה ותאריכים.</li>
+      <li>הזינו <strong>שעות מתוקצבות להזמנת העבודה</strong>, ורשומת תקציב תיווצר או תתעדכן עבורכם.</li>
+    </ol>
+    <figure class="fig-narrow">
+      <img src="img/he/42-pm-new-work-order.png" alt="חלון הזמנת עבודה חדשה עם הקוד המוצע, כותרת, סטטוס, אסמכתת חוזה, תאריכים ושעות מתוקצבות.">
+      <figcaption><span class="fno">איור 11.4</span><span>עורך הזמנת העבודה.</span></figcaption>
+    </figure>
+    <div class="note warn">
+      <span class="tag">תופעת לוואי שכדאי להכיר</span>
+      <p>יצירת הזמנת העבודה הראשונה בפרויקט מסמנת אותו <strong>לפי הזמנות עבודה</strong>. מעכשיו כל רישום צהוב או כחול עליו חייב לציין הזמנת עבודה. ההזמנה מופיעה מיד גם ב-Taskana, בשדה <strong>הזמנת עבודה</strong> של משימות הפרויקט.</p>
+    </div>
+
+    <h3>אנשים</h3>
+    <p>כולם, עם דוא״ל, תפקיד, צוות, מנהל/ת וסטטוס. מנהלי תפעול והמנכ"ל משנים תפקידים מהרשימה כאן ויכולים <strong>להשבית</strong> או <strong>להפעיל מחדש</strong> חשבון — חוץ משלהם, שאותו משנה מנהל/ת אחר/ת. כל השאר רואים את אותה רשימה לקריאה בלבד. העמודה <strong>בשימוש</strong> סופרת את הרשומות שכל אדם קשור אליהן. העמודה <strong>גישה לפורטל</strong> מראה אילו חלקים של הפורטל האדם יכול לפתוח ואת התפקיד שלו ב-Taskana; מנהלי תפעול והמנכ"ל משנים אותה עם <strong>✎</strong> — ראו <a href="#ch-access">גישה לפורטל</a>.</p>
+    <figure>
+      <img src="img/he/51-admin-people.png" alt="חלק האנשים בלשונית הניהול: רשימת העובדים עם תפקיד, צוות, מנהל/ת, גישה לפורטל וסטטוס.">
+      <figcaption><span class="fno">איור 11.5</span><span>אנשים. השבתה שומרת את ההיסטוריה של האדם; היא רק מונעת ממנו להיכנס לפורטל.</span></figcaption>
+    </figure>
+
+    <h3 id="h-teams">צוותים</h3>
+    <p>תת־הלשונית השנייה, אחרי <strong>אנשים</strong>. ראשי צוותים, מנהלי פרויקטים, מנהלי תפעול והמנכ"ל מקימים כאן צוותים, משבצים בהם אנשים, בוחרים לכל חבר את ה<strong>מנהל/ת הישיר/ה</strong> ומבקשים אנשים מצוותים אחרים. כל צוות בחברה מוצג ככרטיס; הצוותים שלכם קודם.</p>
+
+    <h4>כרטיס הצוות</h4>
+    <p>כל כרטיס מציג את הצבע וראשי התיבות של הצוות, את ה<strong>שם</strong>, ה<strong>מחלקה</strong> והקוד הקצר, את ה<strong>תיאור</strong>, את ראש הצוות, המיקום ואיש הקשר, את הלקוחות העיקריים ואת החברים כתמונות — חברים זמניים (בהשאלה מצוות אחר) מוקפים בקו מקווקו. בצוותים שלכם הכרטיס מציע <strong>ניהול</strong> ו<strong>עריכת פרטים</strong>; בצוותים אחרים — <strong>בקשת חבר צוות</strong>.</p>
+
+    <h4>יצירה או התאמה של צוות</h4>
+    <ol class="steps">
+      <li>לחצו <strong>+ צוות חדש</strong> (או <strong>עריכת פרטים</strong> בכרטיס).</li>
+      <li>מלאו את שלושת שדות החובה: <strong>שם</strong>, <strong>תיאור</strong> ו<strong>מחלקה</strong>. רשימת המחלקות מכסה את המחלקות המקובלות בחברת כתיבה טכנית — או בחרו <strong>אחר — הקלידו</strong> והקלידו משלכם.</li>
+      <li>אם רוצים, קבעו <strong>קוד קצר</strong>, <strong>צבע</strong>, <strong>דוא״ל או ערוץ של הצוות</strong>, <strong>מיקום</strong> ו<strong>לקוחות עיקריים</strong>. הלקוחות העיקריים מוצעים ראשונים כשהצוות מבקש אדם בהשאלה.</li>
+      <li>מנהלי תפעול והמנכ"ל בוחרים גם את <strong>ראש הצוות</strong>; כל מי שיוצר צוות אחר הופך לראש שלו.</li>
+      <li>לחצו <strong>יצירת צוות</strong> או <strong>שמירת הצוות</strong>.</li>
+    </ol>
+
+    <h4>שיבוץ אנשים פנויים</h4>
+    <p>הלוח <strong>אנשים פנויים</strong> מציג כל מי ש<strong>אין לו צוות</strong>, <strong>אין לו מנהל/ת ישיר/ה</strong>, או שניהם. בחרו אחד מהצוותים שלכם ב<strong>שיבוץ בצוות…</strong>: האדם מצטרף אליו וראש הצוות הופך למנהל/ת הישיר/ה שלו.</p>
+    <p><strong>ניהול</strong> בכרטיס שלכם פותח את הצוות: שנו לכל חבר את המנהל/ת הישיר/ה מהרשימה, הוציאו מישהו עם <strong>הסרה</strong> (המנהל/ת הישיר/ה נשמר/ת), או הוסיפו אדם עם <strong>הוספת אדם</strong> ו<strong>המנהל/ת הישיר/ה</strong>. <strong>מחיקת הצוות</strong> אפשרית כשאין בו חברים.</p>
+
+    <h4>בקשת אדם מצוות אחר</h4>
+    <p>השתמשו ב<strong>בקשת חבר צוות</strong> בכרטיס של צוות אחר, בכפתור שלמעלה, או ב<strong>בקשת מישהו מצוות אחר</strong> בתוך הניהול. בחרו מה אתם מבקשים:</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:190px"></th><th>זמני — לפרויקט של לקוח</th><th>העברה קבועה</th></tr></thead>
+      <tbody>
+        <tr><td><strong>ממלאים</strong></td><td>האדם, הצוות שלכם, ה<strong>לקוח</strong>, ה<strong>פרויקט</strong>, תאריכי <strong>מ-</strong> ו<strong>עד</strong>, מכסת שעות (רשות) וסיבה</td><td>האדם, הצוות שלכם וסיבה</td></tr>
+        <tr><td><strong>נשלח אל</strong></td><td colspan="2">מי שבוחרים ב<strong>שליחת הבקשה אל</strong>: ראש הצוות של האדם, המנהל/ת הישיר/ה שלו, או המנכ"ל</td></tr>
+        <tr><td><strong>מופיע כ-</strong></td><td><em>השאלה בין צוותים</em> באישורים</td><td><em>העברה בין צוותים</em> באישורים</td></tr>
+        <tr><td><strong>עם האישור</strong></td><td>האדם שומר על הצוות והמנהל/ת שלו, מופיע בצוות שלכם כחבר זמני בתאריכים האלה, ומקבל שיבוץ על הפרויקט (עם המכסה שקבעתם, בתוקף רק בין התאריכים)</td><td>האדם עובר לצוות שלכם וראש הצוות שלכם הופך למנהל/ת הישיר/ה שלו</td></tr>
+      </tbody>
+    </table></div>
+    <p>רשימת <strong>בקשות צוות</strong> בתחתית תת־הלשונית מציגה את הבקשות ששלחתם, את אלה שהתבקשתם להחליט עליהן ואת אלה שמערבות את הצוותים שלכם, עם הסטטוס שלהן.</p>
+
+    <h4>מי רשאי לעשות מה</h4>
+    <p>ראשי צוותים ומנהלי פרויקטים מנהלים רק את הצוותים שהם מובילים. הם יכולים לשבץ אנשים שאין להם צוות או שנמצאים בצוות אחר שלהם — אבל לא את עצמם, מנהל/ת תפעול או המנכ"ל; את כל השאר צריך לבקש. איש אינו משנה את המנהל/ת הישיר/ה של עצמו. מנהלי תפעול והמנכ"ל מנהלים כל צוות ובוחרים את ראש הצוות.</p>
+    <div class="note">
+      <span class="tag">למה זה חשוב</span>
+      <p><strong>המנהל/ת הישיר/ה</strong> מקבל/ת את בקשות המחלה והחופשה של האדם. <strong>ראש הצוות</strong> ראשון בתור לשאר בקשות האישור שלו, והמנהל/ת הישיר/ה אחריו. לניתוב המלא ראו <a href="#ch-model">איך WorkDesk בנוי</a>.</p>
+    </div>
+
+    <h3>ממתינים להפעלה</h3>
+    <p>הרשמות חדשות מחכות כאן. לכל אחת:</p>
+    <ol class="steps">
+      <li>אשרו או שנו את ה<strong>תפקיד</strong> שהתבקש.</li>
+      <li>קבעו <strong>צוות</strong>.</li>
+      <li>תנו <strong>פרויקט ראשון</strong> ו<strong>מכסה</strong> בשעות.</li>
+      <li><strong>הפעלה</strong> — או <strong>דחייה</strong>, שסוגרת את החשבון.</li>
+    </ol>
+    <figure>
+      <img src="img/he/52-admin-activation.png" alt="חלק הממתינים להפעלה.">
+      <figcaption><span class="fno">איור 11.6</span><span>הפעלה. הפעולה כאן סוגרת גם את הבקשה המתאימה בתור האישורים.</span></figcaption>
+    </figure>
+
+    <h3>שיבוצים ומכסות</h3>
+    <p>הפקד שמחליט של מי השעות הצהובות והכחולות נרשמות בשקט ושל מי עוברות לאישור.</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:130px">ערך המכסה</th><th>השפעה</th></tr></thead>
+      <tbody>
+        <tr><td><strong>ריק</strong> (<code>∞</code>)</td><td>ללא הגבלה בתוך תקציב הפרויקט.</td></tr>
+        <tr><td><strong>0</strong></td><td>משובץ אבל עוד לא ממומן — כל רישום עובר לאישור.</td></tr>
+        <tr><td><strong>מספר</strong></td><td>השעות שהאדם רשאי לדווח בשיבוץ הזה לפני שנדרש אישור.</td></tr>
+      </tbody>
+    </table></div>
+    <p>המכסה נקבעת <em>לכל שיבוץ</em>, לא לכל אדם: אותו כותב יכול להחזיק 40 שעות בהזמנת עבודה אחת ו-200 באחרת. עורכים מספר במקום, והוא נשמר כשיוצאים מהשדה. המכסה שלכם מוצגת כאן לקריאה בלבד — מגדילים אותה דרך <a href="#ch-mywork">השיבוצים שלי ← בקשת שעות</a>, כמו כולם; <strong>🗑</strong> מסיר את השיבוץ. שעות כחולות נשענות על המכסה ועל התקציב בדיוק כמו צהובות. ב-Taskana המכסה מוצגת כ<em>בנק השעות</em> של האדם.</p>
+    <figure>
+      <img src="img/he/53-admin-assignments.png" alt="חלק השיבוצים והמכסות: טופס ליצירת שיבוץ מעל טבלה של אדם, פרויקט, הזמנת עבודה, מכסה, נוצל, באישור ונותר.">
+      <figcaption><span class="fno">איור 11.7</span><span>שיבוצים. השארת <b>הזמנת עבודה</b> ריקה יוצרת שיבוץ ברמת הפרויקט שמכסה כל הזמנה בו.</span></figcaption>
+    </figure>
+
+    <h3>לקוחות, פרויקטים וסוגי הוצאות</h3>
+    <p>כל אחד הוא טבלה עם טופס הוספה מעליה. שינוי שם עם <strong>✎</strong>, הסרה עם <strong>🗑</strong>.</p>
+    <div class="note stop">
+      <span class="tag">דבר שבשימוש לא נמחק</span>
+      <p>העמודה <strong>בשימוש</strong> סופרת את הרשומות השמורות שמפנות לפריט. אם היא מעל אפס, ההסרה נדחית. השביתו או סגרו אותו במקום.</p>
+    </div>
+    <div class="fig-pair">
+      <figure>
+        <img src="img/he/54-admin-clients.png" alt="חלק הלקוחות עם שם, ראשי תיבות, איש קשר ואימות.">
+        <figcaption><span class="fno">איור 11.8</span><span>לקוחות. <b>ראשי התיבות</b> נכנסים לקוד הזמנת העבודה, אז כדאי שיהיו קצרים ויציבים.</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/he/55-admin-projects.png" alt="חלק הפרויקטים עם פרויקט, לקוח, סטטוס, בעלים ומעקב לפי הזמנות עבודה.">
+        <figcaption><span class="fno">איור 11.9</span><span>פרויקטים. רשימת הבעלים מציעה מנהלי פרויקטים, ראשי צוותים, מנהלי תפעול ואת המנכ"ל. ב-Taskana הבעלים מוצג כראש הפרויקט.</span></figcaption>
+      </figure>
+    </div>
+    <figure class="fig-narrow">
+      <img src="img/he/57-admin-expense-types.png" alt="חלק סוגי ההוצאות עם תיבת אסמכתה נדרשת ותקרת אישור אוטומטי לכל סוג.">
+      <figcaption><span class="fno">איור 11.10</span><span>סוגי הוצאות. התקרה ודגל האסמכתה הם מה שקובע את התנהגות טופס ההוצאות.</span></figcaption>
+    </figure>
+
+    <h3>תור אימות</h3>
+    <p>לקוחות ופרויקטים שנוצרו מאישור של פריט שאינו ברשימה מחכים כאן עד שמנהל/ת לוחץ/ת <strong>אישור</strong>. זה שלב הסדר אחרי שבוע עמוס בשמות שהוקלדו.</p>
+    <figure class="fig-narrow">
+      <img src="img/he/59-admin-verify.png" alt="תור האימות.">
+      <figcaption><span class="fno">איור 11.11</span><span>תור האימות.</span></figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ 11 ============ -->
+  <section class="ch" id="ch-approvals" data-part="WorkDesk" data-title="אישורים" data-caps="approveTime,approveExpenses">
+    <div class="ch-head"><span class="ch-num">11</span><h2>אישורים</h2></div>
+    <p class="lede">תור אחד לכל מה שהמנוע לא יכול היה להחליט לבד: רישומי שעות, הגדלות מכסה, פריטים שאינם ברשימה, הוצאות מעל התקרה, חשבונות חדשים, שינויי תפקיד ועריכות רטרואקטיביות.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="approveTime,approveExpenses,manageEmployeesRoles"></div>
+
+    <figure>
+      <img src="img/he/31-tl-approvals.png" alt="תור האישורים: מסנני סוג בקשה, בורר סטטוס וכרטיסי בקשה עם הקשר וכפתורי פעולה.">
+      <figcaption><span class="fno">איור 12.1</span><span>התור. כל כרטיס נושא את כל מה שצריך כדי להחליט בלי לעזוב את הדף — השעות, המכסה בשיבוץ, התקציב המושפע ומילותיו של המבקש.</span></figcaption>
+    </figure>
+
+    <h3>מה מגיע לתור שלכם</h3>
+    <ul>
+      <li>בקשות שנותבו אליכם ישירות.</li>
+      <li>בקשות מכל מי שבהיקף האישור שלכם — הצוות לראש צוות, הפרויקטים למנהל/ת פרויקט.</li>
+      <li><code>OPS</code> ו-<code>CEO</code> רואים הכול: מי שגבוה יותר בשרשרת רשאי תמיד לפעול.</li>
+      <li><strong>לעולם לא הבקשות שלכם.</strong> בקשה שפתחתם אינה גלויה לכם כמאשרים, יהיה התפקיד אשר יהיה.</li>
+    </ul>
+
+    <h3>איך בקשה מנותבת</h3>
+    <p>לרוב הסיבות, WorkDesk מנסה לפי הסדר: <strong>ראש הצוות שלכם ← המנהל/ת הישיר/ה ← מנהל/ת פרויקט ← מנהל/ת התפעול ← המנכ"ל</strong>, ומדלג על מי שאינו פעיל, אינו רשאי לאשר שעות, או הוא המבקש.</p>
+    <p>ל<strong>בקשת היעדרות</strong> (מחלה או חופשה) הוא מנסה <strong>קודם את המנהל/ת הישיר/ה</strong>, ואז חוזר לסדר שלמעלה.</p>
+    <p><strong>השאלה</strong> או <strong>העברה בין צוותים</strong> נשלחת למי שהמבקש/ת בחר/ה — ראש הצוות של האדם, המנהל/ת הישיר/ה שלו או המנכ"ל. הכרטיס מציג את האדם, שני הצוותים, ובהשאלה — את הלקוח, הפרויקט, התאריכים ומכסת השעות. אישור השאלה יוצר את השיבוץ של האדם; אישור העברה מעביר אותו ומציב את ראש הצוות החדש כמנהל/ת הישיר/ה שלו. ראו <a href="#h-teams">צוותים</a>.</p>
+    <p>ל<strong>חריגה מהתקציב</strong> הוא מדלג על הצוות לגמרי והולך <strong>מנהל/ת פרויקט ← מנהל/ת תפעול ← המנכ"ל</strong>, כי ההחלטה שייכת למי שהתקציב בבעלותו.</p>
+
+    <h3>ארבע הפעולות</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:180px">פעולה</th><th>מה קורה</th></tr></thead>
+      <tbody>
+        <tr><td><strong>אישור</strong></td><td>הרישום נרשם, או ההוצאה מאושרת, או החשבון מופעל. המבקש מקבל הודעה.</td></tr>
+        <tr><td><strong>עריכה ואישור</strong></td><td>פותח את הרישום בטופס יומן שעות מלא. מתקנים, ואז <strong>שמירה ואישור</strong>. גם ההגשה המקורית וגם הגרסה המתוקנת נשמרות ביומן הביקורת. אפשר גם לקבוע שם את המכסה של האדם בשיבוץ.</td></tr>
+        <tr><td><strong>דחייה</strong></td><td>סיבה כתובה היא חובה. הרישום הופך לבוטל, נשאר גלוי למבקש עם הסיבה שלכם, ולעולם אינו תורם שעות.</td></tr>
+        <tr><td><strong>בקשת מידע</strong></td><td>שולח שאלה. הבקשה נשארת ממתינה וההתכתבות מופיעה כשרשור על הכרטיס.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="fig-pair">
+      <figure>
+        <img src="img/he/32-tl-decline.png" alt="חלון דחיית בקשה עם שדה סיבה חובה.">
+        <figcaption><span class="fno">איור 12.2</span><span>דחייה. בלי סיבה החלון מסרב.</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/he/33-tl-request-info.png" alt="חלון בקשת מידע עם שדה שאלה.">
+        <figcaption><span class="fno">איור 12.3</span><span>בקשת מידע. שום סטטוס לא משתנה.</span></figcaption>
+      </figure>
+    </div>
+
+    <h3>מה אישור מתקן בשקט</h3>
+    <ul>
+      <li><strong>פריט שאינו ברשימה</strong> — הלקוח או הפרויקט שהוקלדו הופכים לרשומת אב אמיתית ומאומתת, והרישום מופנה אליה.</li>
+      <li><strong>לא משובץ</strong> — נוצר שיבוץ לאדם על הפרויקט או ההזמנה, כך שהרישום הבא לא יעורר את זה שוב.</li>
+      <li><strong>חריגה מהמכסה</strong> — אתם מתבקשים לבחור. <strong>אישור בלבד</strong> רושם את הרישום הזה ומשאיר את המכסה; <strong>אישור והגדלת המכסה</strong> מגדיל אותה בדיוק בגובה החריגה, כך שגם הרישום הבא לא יעורר את זה.</li>
+      <li><strong>הפעלת חשבון</strong> — אשרו את התפקיד ברשימה שבכרטיס לפני האישור.</li>
+    </ul>
+
+    <h3>אישור מרוכז</h3>
+    <p>סמנו את התיבה בכמה כרטיסים, וכפתור <strong>אישור מרוכז</strong> מופיע. בקשות שהסיבה שלהן <strong>חריגה מהתקציב</strong> אינן ניתנות לסימון ולאישור מרוכז — מטפלים בהן אחת־אחת.</p>
+
+    <h3>סקירת החלטות</h3>
+    <p>העבירו את בורר <strong>הסטטוס</strong> ל<em>אושר</em> או <em>נדחה</em> כדי לראות היסטוריה. תראו החלטות שקיבלתם, החלטות שנותבו אליכם, וכ-<code>OPS</code> או <code>CEO</code> — הכול. כל אחת מציגה מי החליט, מתי, וכל הערה.</p>
+    <figure>
+      <img src="img/he/63-ops-approvals.png" alt="תור האישורים של מנהל/ת תפעול, עם בקשות מכל החברה.">
+      <figcaption><span class="fno">איור 12.4</span><span>אותו תור למנהל/ת תפעול — בכל החברה, עם ספירות חיות על מסנני הסוג.</span></figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ 12 ============ -->
+  <section class="ch" id="ch-dashboard" data-part="WorkDesk" data-title="לוח בקרה" data-caps="dashboardOwn,dashboardCompany">
+    <div class="ch-head"><span class="ch-num">12</span><h2>לוח בקרה</h2></div>
+    <p class="lede">זמן שנרשם בלבד, על תקופה שאתם בוחרים, עם תא טייס למנהלים בראש לכל מי שיש לו אנשים או תקציבים לעקוב אחריהם.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="dashboardOwn,dashboardCompany,excelExport"></div>
+
+    <figure>
+      <img src="img/he/44-pm-dashboard.png" alt="לוח הבקרה: בוררי טווח, מסננים, תא הטייס למנהלים, אריחי נתונים, גרף שעות לאורך זמן ופסי שעות לפי לקוח.">
+      <figcaption><span class="fno">איור 13.1</span><span>לוח הבקרה של מנהל/ת פרויקט. הטווחים נעים מהשבוע ועד כל הזמן; המתג <b>%</b> מציג כל נתון כחלק מסך השעות.</span></figcaption>
+    </figure>
+
+    <h3>היקף</h3>
+    <p>עם <code>dashboardCompany</code> רואים את כל מי שבהיקף שלכם ומקבלים בחירה מרובה של <strong>עובדים</strong>. בלעדיה — עובד/ת, עובד/ת בכיר/ה — לוח הבקרה מציג רק את הנתונים שלכם. לקבלנים חיצוניים אין לוח בקרה בכלל.</p>
+
+    <h3>תא הטייס למנהלים</h3>
+    <p>מוצג לראשי צוותים, מנהלי פרויקטים, מנהלי תפעול, כספים והמנכ"ל. ארבעה אריחים שמשנים צבע כשהם צריכים תשומת לב:</p>
+    <ul>
+      <li><strong>אישורים פתוחים</strong> — בקשות שמחכות לכם.</li>
+      <li><strong>פרויקטים מעל 90% מהתקציב</strong> — בשמם, בכותרת המשנה.</li>
+      <li><strong>אנשים מעל הקיבולת</strong> — תכנון מעבר לשעות לפי חוזה השבוע.</li>
+      <li><strong>שעות באישור</strong> — שעות ממתינות בהיקף שלכם שעוד לא נספרות.</li>
+    </ul>
+
+    <h3>הנתונים</h3>
+    <p>סה"כ שעות · אדום · צהוב · <strong>ניצולת</strong> (צהוב כחלק מהסה"כ) · ימי מחלה · ימי חופשה · הוצאות לפי מטבע · רישומים שדווחו. מתחתם: שעות לאורך זמן כגרף שטח מוערם של אדום וצהוב, שעות לפי לקוח כרשימת פסים מדורגת, ושני פסי השוואה: חלוקת אדום/צהוב/כחול, ותכנון מול ביצוע עם הפער.</p>
+    <figure>
+      <img src="img/he/17-emp-dashboard.png" alt="לוח הבקרה של עובד/ת: הנתונים האישיים בלבד, בלי תא טייס.">
+      <figcaption><span class="fno">איור 13.2</span><span>אותו לוח בקרה לעובד/ת — נתונים אישיים, בלי תא טייס ובלי מסנן עובדים.</span></figcaption>
+    </figure>
+
+    <h3>מסננים וייצוא</h3>
+    <p>מסננים לפי עובד/ת, לקוח, פרויקט והזמנת עבודה; <strong>ניקוי</strong> מאפס אותם. <strong>⬇ ייצוא</strong> כותב את הרישומים שמאחורי הגרפים — לא את הגרף — כדי שאפשר יהיה לבדוק את המספרים.</p>
+  </section>
+
+  <!-- ============ 13 ============ -->
+  <section class="ch" id="ch-library" data-part="WorkDesk" data-title="ספרייה" data-caps="libraryRead,libraryWrite">
+    <div class="ch-head"><span class="ch-num">13</span><h2>ספרייה</h2></div>
+    <p class="lede">הידע של הבית — החלטות סגנון, הכרעות מינוח, קטעים חוזרים, מוסכמות של לקוחות — עם חיפוש בכותרות, בגוף ובתגיות.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="libraryRead,libraryWrite"></div>
+
+    <figure>
+      <img src="img/he/18-emp-library.png" alt="הספרייה כרשת כרטיסים עם כותרות, גוף, תגיות ושורת כותב, מתחת לשדה חיפוש ומסנן תגיות.">
+      <figcaption><span class="fno">איור 14.1</span><span>הספרייה. החיפוש הוא בטקסט מלא; בורר התגיות מצמצם עוד.</span></figcaption>
+    </figure>
+
+    <h3>הוספת פריט</h3>
+    <ol class="steps">
+      <li>לחצו <strong>+ פריט חדש</strong>.</li>
+      <li>תנו לו כותרת — חובה — וגוף.</li>
+      <li>הוסיפו תגיות מופרדות בפסיקים, וקישור אם יש.</li>
+      <li>אם רוצים, הצמידו אותו ללקוח או לפרויקט, והוסיפו תמונה.</li>
+      <li>סמנו <strong>פרטי לי</strong> אם זו הערה אישית ולא ידע של הבית.</li>
+      <li><strong>שמירה</strong>.</li>
+    </ol>
+
+    <h3>מי רשאי לערוך מה</h3>
+    <ul>
+      <li>פריטים פרטיים גלויים רק לכותב שלהם.</li>
+      <li>את הפריטים שלכם מותר לערוך או למחוק. <code>OPS</code> ו-<code>CEO</code> רשאים לערוך של כולם.</li>
+      <li>כספים יכולים לקרוא בספרייה אבל לא לכתוב בה. לקבלנים ולצופים אין לשונית ספרייה. נהלים וחומרי הדרכה לכל החברה שייכים ל<a href="../kb/index.html">מאגר הידע</a>.</li>
+    </ul>
+  </section>
+
+  <!-- ============ 14 ============ -->
+  <section class="ch" id="ch-mywork" data-part="WorkDesk" data-title="השיבוצים והמכסות שלי" data-caps="reportOwnTime">
+    <div class="ch-head"><span class="ch-num">14</span><h2>השיבוצים והמכסות שלי</h2></div>
+    <p class="lede">הכפתור ◱ בסרגל העליון. המקום שבו נמצאת העבודה הממומנת שלכם, ושבו מבקשים עוד שעות לפני שנגמרות. Taskana מציג את אותם נתונים כ<em>בנקי השעות שלי</em> בעמוד העבודה שלי.</p>
+    <div class="locked-note"></div>
+
+    <figure>
+      <img src="img/he/19-emp-my-assignments.png" alt="חלון השיבוצים והמכסות שלי: טבלת פרויקטים, הזמנות עבודה, מכסה, נוצל, באישור ונותר, עם כפתורי בקשת שעות.">
+      <figcaption><span class="fno">איור 15.1</span><span>השיבוצים שלכם. תג אחוזים מופיע מ-75%, הופך לכתום ב-90% ולאדום ב-100% — או מעבר לכך.</span></figcaption>
+    </figure>
+
+    <h3>בקשת שעות נוספות</h3>
+    <ol class="steps">
+      <li>לחצו <strong>בקשת שעות</strong> בשיבוץ שצריך אותן.</li>
+      <li>קראו את ארבעת הנתונים — מכסה, נוצל, נותר, באישור — והזינו את השעות הנוספות.</li>
+      <li>כתבו הצדקה. שני השדות חובה.</li>
+      <li><strong>שליחת הבקשה</strong>.</li>
+    </ol>
+    <figure class="fig-narrow">
+      <img src="img/he/20-emp-request-hours.png" alt="חלון בקשת שעות נוספות עם אריחי מכסה, נוצל, נותר ובאישור מעל שדות השעות וההצדקה.">
+      <figcaption><span class="fno">איור 15.2</span><span>עם האישור המכסה גדלה אוטומטית — אף אחד לא צריך לזכור לערוך אותה.</span></figcaption>
+    </figure>
+    <p>הבקשה מופיעה בתור האישורים כ<strong>הגדלת מכסה</strong>, עם השעות המבוקשות וההצדקה שלכם. עם האישור, המכסה גדלה אוטומטית.</p>
+    <div class="note">
+      <span class="tag">אם אין לכם שיבוצים בכלל</span>
+      <p>הכפתור ◱ עדיין נפתח, אבל מציג הודעה שאין לכם עדיין שיבוצים במקום הטבלה. בקשו ממנהל/ת תפעול לשבץ אתכם לפרויקט — עד אז, כל שעה צהובה או כחולה שתדווחו תעבור לאישור כ<em>לא משובץ</em>.</p>
+    </div>
+  </section>
+
+  <!-- ============ 15 ============ -->
+  <section class="ch" id="ch-admin" data-part="WorkDesk" data-title="ניהול מערכת" data-caps="backupRestore,viewAuditLog">
+    <div class="ch-head"><span class="ch-num">15</span><h2>ניהול מערכת</h2></div>
+    <p class="lede">חלון אחד מאחורי הכפתור ⚙, עם חלקים בצדו. ניהול הרשומות השוטף (אנשים, הפעלה, שיבוצים, לקוחות, פרויקטים, סוגי הוצאות, אימות) נמצא בלשונית <a href="#ch-budgets">ניהול</a>; החלון הזה מחזיק רק את ההגדרות שחברה קובעת פעם אחת ונוגעת בהן לעתים רחוקות.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="backupRestore,viewAuditLog"></div>
+
+    <h3>תפקידים והרשאות</h3>
+    <p>תצוגה לקריאה בלבד של אותה טבלת הרשאות שמופיעה ב<a href="#ch-roles">תפקידים והרשאות</a>, לעיון בזמן שאתם מחוברים בתפקיד מסוים.</p>
+
+    <h3>הגדרות החברה</h3>
+    <p><code>OPS</code> ו-<code>CEO</code> בלבד.</p>
+    <ul>
+      <li><strong>גבול יומי רך</strong> (ברירת מחדל 9 שעות) — רישומים מעליו נרשמים עם סימון כתום.</li>
+      <li><strong>גבול יומי קשיח</strong> (ברירת מחדל 12 שעות) — רישומים מעליו עוברים לאישור.</li>
+      <li><strong>שעות שבועיות כברירת מחדל</strong> (ברירת מחדל 42 שעות).</li>
+    </ul>
+    <h4>סגירת חודש ונעילה לשכר</h4>
+    <ol class="steps">
+      <li>בחרו את החודש ולחצו <strong>סגירת חודש</strong>.</li>
+      <li>אם בחודש עדיין יש בקשות ממתינות, WorkDesk מסרב ואומר כמה. נקו קודם את התור.</li>
+      <li>עם הסגירה, כל רישום שנרשם בחודש הופך ל<strong>נעול</strong> ואינו ניתן עוד לעריכה.</li>
+      <li>חודש סגור מופיע כתג <code>🔒</code> עם קישור <strong>פתיחה מחדש</strong>, שמשחרר את הרישומים שלו.</li>
+    </ol>
+    <figure>
+      <img src="img/he/60-admin-settings.png" alt="חלק הגדרות החברה עם גבולות יומיים רך וקשיח, שעות שבועיות כברירת מחדל ופקד סגירת החודש.">
+      <figcaption><span class="fno">איור 16.1</span><span>הגדרות החברה.</span></figcaption>
+    </figure>
+
+    <h3>גיבוי ושחזור</h3>
+    <p>ראו <a href="#ch-data">גיבוי ושחזור</a> לתבנית הקובץ ולשלוש פעולות השחזור — יש לזה פרק משלו כי זה עד כדי כך חשוב.</p>
+
+    <h3>יומן ביקורת</h3>
+    <p>רק הוספה. כל כניסה, התנתקות, שינוי תפקיד, שינוי גישה לפורטל, החלטת אישור, עריכת תקציב, שינוי מכסה ומחיקה נרשמים עם מבצע, חותמת זמן, ישות ומכשיר. גלוי ל-<code>OPS</code>,‏ <code>FIN</code> ו-<code>CEO</code>; מוצגות 400 הרשומות האחרונות, ונשמרות 4,000.</p>
+    <figure>
+      <img src="img/he/62-admin-audit.png" alt="חלק יומן הביקורת: טבלה של חותמת זמן, מבצע, פעולה, ישות ו-IP.">
+      <figcaption><span class="fno">איור 16.2</span><span>יומן הביקורת.</span></figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ 16 ============ -->
+  <section class="ch" id="ch-data" data-part="WorkDesk" data-title="גיבוי ושחזור" data-caps="backupRestore">
+    <div class="ch-head"><span class="ch-num">16</span><h2>גיבוי ושחזור</h2></div>
+    <p class="lede">באחסון מקומי זו רשת הביטחון היחידה שיש; עם GitHub או OneDrive זו עדיין הדרך לשמור עותק מתוארך. <code>OPS</code> ו-<code>CEO</code> בלבד. למשימות של Taskana יש גיבוי משלהן — ראו <a href="#ch-tk-roles">תפקידים, תובנות ונתונים ב-Taskana</a>.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="backupRestore"></div>
+
+    <figure>
+      <img src="img/he/61-admin-backup.png" alt="לשונית הגיבוי והשחזור עם הלוחות להורדה, לשחזור ולייבוא רשימות.">
+      <figcaption><span class="fno">איור 17.1</span><span>גיבוי ושחזור, בתוך ניהול המערכת.</span></figcaption>
+    </figure>
+
+    <h3>תבנית הקובץ</h3>
+    <p>גיבוי תקין הוא אובייקט JSON עם ארבעה מפתחות עליונים, שאחד מהם עוטף את כל השאר:</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:130px">מפתח</th><th>ערך</th></tr></thead>
+      <tbody>
+        <tr><td><code>app</code></td><td>חייב להיות בדיוק <code>"galil-workdesk"</code>. כל דבר אחר נדחה.</td></tr>
+        <tr><td><code>version</code></td><td><code>7</code> בגרסה הזו.</td></tr>
+        <tr><td><code>exported</code></td><td>חותמת זמן ISO.</td></tr>
+        <tr><td><code>data</code></td><td>האובייקט שמחזיק כל ישות: רישומים, פרויקטים, הזמנות עבודה, תקציבים, שיבוצים, הוצאות, ספרייה, אישורים, ביקורת והרשימות. משימות אינן בו — הן בקובץ של Taskana.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>שלוש הפעולות</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:170px">פעולה</th><th>מה היא עושה</th></tr></thead>
+      <tbody>
+        <tr><td><strong>הורדת גיבוי</strong></td><td>כותבת הכול אל <code>galil-workdesk-backup-YYYY-MM-DD.json</code>.</td></tr>
+        <tr><td><strong>שחזור הכול</strong></td><td>טוענת הכול, כולל רישומים, ומחליפה את מה שקיים. בחרו את הקובץ, לחצו <strong>בדיקה ותצוגה מקדימה</strong>, בדקו את ספירות הרשומות, ואז <strong>שחזור הכול</strong>.</td></tr>
+        <tr><td><strong>ייבוא הרשימות בלבד</strong></td><td>פונקציה אחרת. טוענת רק הגדרות של רשימות — לקוחות, פרויקטים, הזמנות עבודה, סוגי הוצאות וצוותים — ולעולם לא נוגעת ברישומים. פריטים קיימים מזוהים לפי מזהה, שם או קוד ומדולגים.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="note warn">
+      <span class="tag">אם האחסון מתמלא</span>
+      <p>אחסון הדפדפן מוגבל. אם הוא מתמלא, WorkDesk מזהיר שהשינוי האחרון לא נשמר ומבקש להוריד גיבוי ולהסיר קבצים מצורפים. קחו את ההודעה ברצינות — היא אומרת שכתיבה נכשלה.</p>
+    </div>
+  </section>
+
+  <!-- ============ 17 ============ -->
+  <section class="ch" id="ch-export" data-part="WorkDesk" data-title="ייצוא לאקסל" data-caps="excelExport">
+    <div class="ch-head"><span class="ch-num">17</span><h2>ייצוא לאקסל</h2></div>
+    <p class="lede">חמישה מודולים מייצאים. כל קובץ הוא <code>.xlsx</code> אמיתי עם פס כותרת ממותג, שורה שמתעדת את הסינון ואת מי שייצא, שורת כותרות מוקפאת ומסוננת, תאריכי אקסל אמיתיים ושורת סיכום. כשהפורטל בעברית, הכותרות בעברית והגיליון נפרש מימין לשמאל.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="excelExport"></div>
+
+    <div class="tw"><table>
+      <thead><tr><th style="width:140px">מ-</th><th style="width:230px">קובץ</th><th>מכיל</th></tr></thead>
+      <tbody>
+        <tr><td><strong>יומן שעות</strong></td><td><code>galil-time-YYYY-MM.xlsx</code><br><code>galil-time-all.xlsx</code></td><td>רישומים עם סיכומי אדום, צהוב וימים. רישומים ממתינים עוברים לגיליון <em>Pending</em> נפרד.</td></tr>
+        <tr><td><strong>מתכנן שבועי</strong></td><td><code>galil-plan.xlsx</code></td><td>תכנון מול ביצוע לכל בלוק, עם עמודת פער.</td></tr>
+        <tr><td><strong>הוצאות</strong></td><td><code>galil-expenses-YYYY-MM.xlsx</code><br><code>galil-expenses-all.xlsx</code></td><td>סכומים ושעות מסוכמים, סטטוס החזר, שמות קובצי אסמכתה.</td></tr>
+        <tr><td><strong>תקציבים</strong></td><td><code>galil-budgets-all.xlsx</code></td><td>מתוקצב, נוצל, באישור, נותר, אחוז ניצול, מיצוי צפוי, יחידות ומה שהופק.</td></tr>
+        <tr><td><strong>לוח בקרה</strong></td><td><code>galil-dashboard-all.xlsx</code></td><td>הרישומים שמאחורי הגרפים בטווח שנבחר.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>היקף</h3>
+    <p>היקף הייצוא נקבע לפי טבלת ההרשאות, לא לפי המסך. <strong>⬇ הכול</strong> נותן לעובד/ת, עובד/ת בכיר/ה או קבלן חיצוני את הרשומות שלהם; לראש צוות — את הצוות; למנהל/ת פרויקט — את הפרויקטים שלו; ולתפעול, כספים, המנכ"ל וצופים — הכול.</p>
+    <p>עמודות התאריך נושאות תאריכי אקסל אמיתיים, כך שהן ממוינות ומסוננות כראוי. עמודות אדום וצהוב צבועות כמו ביישום.</p>
+  </section>
+
+  <!-- ============ Part C · Taskana ============ -->
+  <section class="ch" id="ch-tk-basics" data-part="Taskana" data-title="מה זה Taskana" data-caps="openTaskana">
+    <a id="taskana"></a>
+    <p class="part">חלק ג׳ · Taskana</p>
+    <div class="ch-head"><span class="ch-num">19</span><h2>מה זה Taskana</h2></div>
+    <p class="lede">ב-Taskana מתכננים את העבודה עצמה ועוקבים אחריה: כל משימת כתיבה, עריכה, סקירה, איור ותרגום בכל פרויקט של לקוח, בלוח וברשימות, עם תגובות, שאלות ותתי־משימות. הוא מחזיק משימות בלבד — האנשים, הלקוחות, הפרויקטים והזמנות העבודה שהוא עובד עליהם מגיעים מ-WorkDesk.</p>
+    <div class="locked-note"></div>
+
+    <figure>
+      <img src="img/he/t01-board.png" alt="הלוח של Taskana: סרגל הצד, ושש עמודות של תהליך העבודה — מאגר, לביצוע, כתיבה, סקירת עמיתים, סקירת מומחה, הושלם — עם כרטיסי משימות.">
+      <figcaption><span class="fno">איור 19.1</span><span>הלוח. כל כרטיס מציג את מפתח המשימה, הכותרת, הסוג, העדיפות, תאריך היעד והאחראי; גוררים אותו כדי להעביר אותו בתהליך.</span></figcaption>
+    </figure>
+
+    <h3>פתיחה</h3>
+    <p>לחצו על האריח <strong>Taskana</strong> בדף הבית של הפורטל. אתם כבר מחוברים — Taskana משתמש בהתחברות של הפורטל — והתפקיד שלכם ב-Taskana מגיע מ<a href="#ch-access">הגישה לפורטל</a>. <strong>פורטל העובדים</strong> בראש סרגל הצד מחזיר לדף הבית.</p>
+
+    <h3>העמודים</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:160px">עמוד</th><th>מה הוא מציג</th></tr></thead>
+      <tbody>
+        <tr><td><strong>סקירה</strong></td><td>המשימות הפתוחות שלכם, ספירות של באיחור ובסקירה, שאלות פתוחות, פרויקטים פעילים ופעילות אחרונה.</td></tr>
+        <tr><td><strong>תיבת דואר</strong></td><td>אזכורים, הקצאות ותגובות למשימות שלכם. הספרה לידה היא פריטים שלא נקראו.</td></tr>
+        <tr><td><strong>העבודה שלי</strong></td><td>משימות שהוקצו לכם ומשימות שפתחתם עבור אחרים — ו<strong>בנקי השעות שלי</strong>, המכסה שלכם בכל פרויקט מ-WorkDesk.</td></tr>
+        <tr><td><strong>לוח</strong></td><td>כל משימה בעמודת התהליך שלה, עם סינון לפי לקוח, פרויקט, אחראי, סוג, עדיפות, סטטוס או טקסט.</td></tr>
+        <tr><td><strong>כל המשימות</strong></td><td>אותן משימות כרשימה, עם פעולות מרובות.</td></tr>
+        <tr><td><strong>תובנות</strong></td><td>מדדי מסירה — ראו <a href="#ch-tk-roles">תפקידים, תובנות ונתונים ב-Taskana</a>.</td></tr>
+        <tr><td><strong>לקוחות ופרויקטים</strong></td><td>כל לקוח ופרויקט מ-WorkDesk, עם המשימות, הזמנות העבודה, התקציב והצוות שלו.</td></tr>
+        <tr><td><strong>אנשים</strong></td><td>כל האנשים מ-WorkDesk עם התפקיד שלהם ב-Taskana והמשימות שלהם.</td></tr>
+        <tr><td><strong>תצוגות שמורות</strong></td><td>מסננים של הלוח או הרשימה ששמרתם, לעצמכם או משותפים עם כולם.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>תהליך העבודה</h3>
+    <dl class="kv">
+      <dt>מאגר</dt><dd>ידוע, עוד לא מתוכנן.</dd>
+      <dt>לביצוע</dt><dd>מתוכנן ומוכן להתחלה.</dd>
+      <dt>כתיבה</dt><dd>בכתיבה, עריכה, איור או תרגום.</dd>
+      <dt>סקירת עמיתים</dt><dd>אצל עמית/ה לסקירה.</dd>
+      <dt>סקירת מומחה</dt><dd>אצל מומחה התוכן של הלקוח.</dd>
+      <dt>הושלם</dt><dd>נמסר. העברת משימה חוזרת להושלם יוצרת את הבאה.</dd>
+    </dl>
+    <p><strong>סוגים:</strong> כתיבה · עריכה לשונית · סקירה · איור · תרגום · לוקליזציה · ראיון מומחה · פרסום · ליקוי בתיעוד · מחקר. <strong>עדיפויות:</strong> קריטית · גבוהה · בינונית · נמוכה.</p>
+  </section>
+
+  <section class="ch" id="ch-tk-tasks" data-part="Taskana" data-title="עבודה עם משימות" data-caps="tkWorkTasks,tkComment">
+    <div class="ch-head"><span class="ch-num">20</span><h2>עבודה עם משימות</h2></div>
+    <p class="lede">משימה שייכת לפרויקט אחד — ולפעמים לאחת מהזמנות העבודה שלו — ויש לה אחראי אחד. כל מה שקשור אליה נמצא בעמוד הפרטים שלה: סטטוס, תאריכים, הערכה, תיאור, תתי־משימות, רשימת בדיקה, קישורים, קבצים, תגובות ושאלות, והשעות שדווחו עליה ב-WorkDesk.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="tkWorkTasks,tkDeleteTasks,tkComment"></div>
+
+    <h3>יצירת משימה</h3>
+    <ol class="steps">
+      <li>לחצו <strong>משימה חדשה</strong> בלוח, ברשימה, בפרויקט או בעבודה שלי.</li>
+      <li>תנו לה <strong>כותרת</strong> ובחרו <strong>פרויקט</strong>. רשימת הפרויקטים היא של WorkDesk.</li>
+      <li>אם לפרויקט יש הזמנות עבודה, בחרו את <strong>הזמנת העבודה</strong> שהמשימה שייכת אליה. החלפת הפרויקט מנקה אותה.</li>
+      <li>בחרו <strong>סוג</strong>, <strong>עדיפות</strong>, <strong>אחראי</strong>, תאריכי <strong>התחלה</strong> ו<strong>יעד</strong> ו<strong>הערכה</strong> בשעות.</li>
+      <li>שמרו. המשימה מקבלת מפתח ממפתח הפרויקט ומספר — למשל <code>RSOM-4</code>.</li>
+    </ol>
+
+    <figure>
+      <img src="img/he/t02-task.png" alt="פרטי משימה ב-Taskana: סטטוס, אחראי, תאריכים והזמנת עבודה בצד, התיאור, תתי־המשימות והתגובות במרכז, והחלק שעות ב-WorkDesk.">
+      <figcaption><span class="fno">איור 20.1</span><span>משימה. <b>שעות ב-WorkDesk</b> מציג את הזמן שדווח על המשימה מול ההערכה, את בנק השעות של האחראי ואת התקציב שהיא נשענת עליו.</span></figcaption>
+    </figure>
+
+    <h3>במשימה</h3>
+    <ul>
+      <li><strong>לחצו לעריכה</strong> — כל שדה: כותרת, תיאור, סטטוס, סוג, עדיפות, אחראי, תאריכים, הערכה, הזמנת עבודה, תוויות, תוצר (למשל <em>Vol 1 · Ch 3</em>) וחזרה.</li>
+      <li><strong>תתי־משימות</strong> ו<strong>רשימת בדיקה</strong> מפרקות את העבודה; תת־משימה היא משימה בפני עצמה.</li>
+      <li><strong>משימות מקושרות</strong> — <em>חוסמת את</em>, <em>חסומה על ידי</em>, <em>קשורה ל־</em>. משימה שחסומה על ידי משימה שלא הסתיימה מסומנת <strong>חסומה</strong>.</li>
+      <li><strong>קבצים וקישורים</strong> — טיוטות, מסמכי מקור, הערות מומחה. קבצים עד 1MB.</li>
+      <li><strong>תגובות</strong> — הקלידו <code>@</code> כדי לאזכר מישהו; זה מגיע לתיבת הדואר שלו. <strong>שאלה</strong> נשארת פתוחה עד שמישהו מסמן אותה כנענתה.</li>
+      <li><strong>היסטוריה</strong> — כל שינוי, מי עשה אותו ומתי.</li>
+      <li><strong>העתקת קישור</strong> — קישור שפותח את המשימה הזו.</li>
+    </ul>
+
+    <h3>דיווח שעות על משימה</h3>
+    <p>שעות מדווחים ב-WorkDesk, אף פעם לא ב-Taskana. במשימה שהוקצתה לכם, <strong>דיווח שעות על המשימה ב-WorkDesk</strong> פותח את יומן השעות של WorkDesk כשהלקוח, הפרויקט, הזמנת העבודה והמשימה כבר נבחרו. כשהרישום נרשם, השעות שלו מופיעות תחת <strong>שעות ב-WorkDesk</strong> במשימה; שעות שעדיין באישור מוצגות לידן.</p>
+
+    <h3>לוחות, רשימות ותצוגות שמורות</h3>
+    <ul>
+      <li>גררו כרטיס לעמודה אחרת כדי לשנות את הסטטוס שלו.</li>
+      <li>סננו לפי לקוח, פרויקט, אחראי, סוג, עדיפות, סטטוס, <em>באיחור</em>, <em>שאלות פתוחות</em> או טקסט. <strong>שמירת תצוגה</strong> שומרת את המסננים — לכם, או משותפים עם כולם.</li>
+      <li>ב<strong>כל המשימות</strong>, בחרו כמה משימות והשתמשו ב<strong>פעולות מרובות</strong> כדי לשנות להן סטטוס, אחראי או עדיפות, להעביר אותן לפרויקט אחר או למחוק אותן.</li>
+    </ul>
+  </section>
+
+  <section class="ch" id="ch-tk-wd" data-part="Taskana" data-title="מ-WorkDesk ל-Taskana" data-caps="tkSeeAll">
+    <div class="ch-head"><span class="ch-num">21</span><h2>מ-WorkDesk ל-Taskana</h2></div>
+    <p class="lede">אנשים, לקוחות, פרויקטים והזמנות עבודה מוגדרים ב-WorkDesk ומוצגים ב-Taskana. Taskana שומר אותם מעודכנים בעצמו; אף אחד לא מקליד אותם פעמיים.</p>
+    <div class="locked-note"></div>
+
+    <div class="tw"><table>
+      <thead><tr><th style="width:170px">ב-WorkDesk</th><th>ב-Taskana</th></tr></thead>
+      <tbody>
+        <tr><td><strong>אנשים</strong></td><td>האנשים של Taskana, עם שמות באנגלית ובעברית, תואר תפקיד ומחלקה. התפקיד שלהם ב-Taskana הוא הגישה שלהם לפורטל. אדם שהושבת ב-WorkDesk אינו ניתן להקצאה.</td></tr>
+        <tr><td><strong>לקוחות</strong></td><td>לקוחות ופרויקטים, עם הפרויקטים והמשימות הפתוחות של כל לקוח.</td></tr>
+        <tr><td><strong>פרויקטים</strong></td><td>הפרויקטים של Taskana — שם, לקוח, ראש פרויקט (הבעלים ב-WorkDesk), סטטוס ותאריכים. כל פרויקט מקבל <strong>מפתח</strong> קצר למספור המשימות.</td></tr>
+        <tr><td><strong>הזמנות עבודה</strong></td><td>השדה <strong>הזמנת עבודה</strong> בכל משימה, ורשימת הזמנות העבודה של הפרויקט עם המשימות הפתוחות והתקציב של כל אחת.</td></tr>
+        <tr><td><strong>תקציבים, שיבוצים, שעות</strong></td><td>המחוונים ב<a href="#ch-tk-hours">תקציב ובנקי שעות</a>.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>מתי זה מתעדכן</h3>
+    <p>בכל פעם ש-WorkDesk שומר שינוי, Taskana קולט אותו — מיד בלשונית אחרת, וכשחוזרים לחלון של Taskana. <strong>נתונים ← עדכון מ-WorkDesk עכשיו</strong> עושה זאת לפי דרישה.</p>
+
+    <h3>מה נשאר ב-Taskana</h3>
+    <p>בעמוד פרויקט, מנהל או מנהל מערכת יכולים לערוך את שני הדברים שהם של Taskana: <strong>המפתח</strong> ו<strong>סוג המסמך</strong> של הפרויקט, ואת התיאור שלו. כל השאר בלקוחות, בפרויקטים ובאנשים מציג הערה — <em>מנוהל ב-WorkDesk</em> — עם <strong>פתיחת WorkDesk</strong> למי שיכול.</p>
+    <div class="perm" data-perm="tkProjectSettings"></div>
+  </section>
+
+  <section class="ch" id="ch-tk-hours" data-part="Taskana" data-title="תקציב ובנקי שעות" data-caps="tkOwnBank,tkBudgets">
+    <div class="ch-head"><span class="ch-num">22</span><h2>תקציב ובנקי שעות</h2></div>
+    <p class="lede">Taskana מציג את הנתונים של WorkDesk ליד העבודה: כמה מתקציב הפרויקט נוצל, כמה שעות נשארו לכל אדם בו, וכמה שעות הושקעו בכל משימה.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="tkOwnBank,tkBudgets"></div>
+
+    <figure>
+      <img src="img/he/t03-budget.png" alt="עמוד פרויקט ב-Taskana עם הכרטיס תקציב ושעות: פס תקציב לכל הזמנת עבודה ופס בנק שעות לכל אדם.">
+      <figcaption><span class="fno">איור 22.1</span><span>הכרטיס <b>תקציב ושעות</b> בפרויקט. החלק המלא בכל פס הוא שעות שנרשמו; החלק המקווקו הוא שעות שמחכות לאישור.</span></figcaption>
+    </figure>
+
+    <h3>המחוונים</h3>
+    <dl class="kv">
+      <dt>תקציב</dt><dd>השעות המתוקצבות של הפרויקט — או של הזמנת עבודה — מול השעות הצהובות והכחולות שנרשמו ב-WorkDesk, עם השעות שנותרו (או החריגה) והשעות שמחכות לאישור. כתום מ-90%, אדום מעבר ל-100%. בעמוד הפרויקט, בכל הזמנת עבודה ובכל משימה.</dd>
+      <dt>בנק שעות</dt><dd>המכסה של אדם אחד בפרויקט או בהזמנת העבודה (השיבוץ שלו ב-WorkDesk) מול מה שהוא רשם שם: שעות שנותרו, שעות מעבר למכסה, או <em>ללא הגבלה</em>. <em>לא משובץ לפרויקט הזה ב-WorkDesk</em> אומר שהשעות שלו שם יעברו לאישור.</dd>
+      <dt>שעות על המשימה</dt><dd>שעות שדווחו ב-WorkDesk עם המשימה — בכל הצבעים — מול ההערכה של המשימה.</dd>
+    </dl>
+
+    <h3>מי רואה אותם</h3>
+    <ul>
+      <li><strong>כולם</strong> רואים את בנק השעות שלהם — בעבודה שלי תחת <strong>בנקי השעות שלי</strong>, בעמוד הפרויקט כ<strong>בנק השעות שלך</strong>, ובמשימות שלהם.</li>
+      <li><strong>מנהלים ומנהלי מערכת</strong> רואים גם תקציבים ואת בנק השעות של כל חבר צוות, כפי שמנהלי פרויקטים, מנהלי תפעול והמנכ"ל רואים אותם ב-WorkDesk.</li>
+      <li>הנתונים לקריאה בלבד. תקציבים, מכסות ושיבוצים משנים ב-WorkDesk — ניהול ← תקציבים ושיבוצים ומכסות; שעות נוספות מבקשים מ-◱ <em>השיבוצים והמכסות שלי</em> ב-WorkDesk.</li>
+    </ul>
+  </section>
+
+  <section class="ch" id="ch-tk-roles" data-part="Taskana" data-title="תפקידים, תובנות ונתונים ב-Taskana" data-caps="tkSeeAll">
+    <div class="ch-head"><span class="ch-num">23</span><h2>תפקידים, תובנות ונתונים ב-Taskana</h2></div>
+    <p class="lede">חמישה תפקידים ב-Taskana, שנקבעים לכל אדם בגישה לפורטל. התובנות מודדות מסירה; הנתונים מחזיקים את הגיבוי, ייצוא ה-CSV ונתוני ההדגמה.</p>
+    <div class="locked-note"></div>
+
+    <h3>חמשת התפקידים</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:120px">תפקיד</th><th>מה הוא כולל</th></tr></thead>
+      <tbody>
+        <tr><td><strong>מנהל מערכת</strong></td><td>הכול, כולל הנתונים, גיבוי ושחזור, ותצוגות שמורות ותגובות של כל אחד.</td></tr>
+        <tr><td><strong>מנהל</strong></td><td>כל משימה, הגדרות פרויקט (מפתח וסוג מסמך), מחיקת כל משימה, תקציבים ובנקי השעות של הצוות.</td></tr>
+        <tr><td><strong>חבר צוות</strong></td><td>יוצר ועובד על משימות, מגיב ושואל; מוחק משימות שהוא פתח.</td></tr>
+        <tr><td><strong>חיצוני</strong></td><td>רק המשימות שהוא אחראי עליהן, פתח, או אוזכר בהן. בלי עמודי תובנות, לקוחות או אנשים.</td></tr>
+        <tr><td><strong>צופה</strong></td><td>קורא הכול ומגיב; לא משנה דבר.</td></tr>
+      </tbody>
+    </table></div>
+    <p>ברירות המחדל לפי התפקיד ב-WorkDesk מופיעות ב<a href="#ch-access">גישה לפורטל</a>.</p>
+    <div class="perm" data-perm="tkSeeAll,tkWorkTasks,tkDeleteTasks,tkProjectSettings,tkBudgets,tkData"></div>
+
+    <h3>תובנות</h3>
+    <p>לתקופה (30 יום עד כל הזמן), ללקוח ולפרויקט: משימות שנפתחו מול משימות שנסגרו לפי שבוע או חודש, שיעור סגירה, מסירה בזמן, זמן מחזור, שאלות שנענו, איפה העבודה נמצאת לפי שלב, עומס לפי אדם והשלמה לכל פרויקט. <strong>הצגה כטבלה</strong> נותנת את המספרים שמאחורי כל גרף.</p>
+
+    <h3>נתונים</h3>
+    <div class="perm" data-perm="tkData"></div>
+    <ul>
+      <li><strong>הורדת גיבוי</strong> / <strong>העתקת גיבוי</strong> — כל משימה, תגובה ותצוגה בקובץ JSON אחד. <strong>ייצוא משימות (CSV)</strong> לגיליון אלקטרוני.</li>
+      <li><strong>שחזור מגיבוי…</strong> מחליף את הנתונים של Taskana; <strong>ביטול השחזור האחרון</strong> מחזיר את מה שהיה קודם.</li>
+      <li><strong>עדכון מ-WorkDesk עכשיו</strong> — ראו <a href="#ch-tk-wd">מ-WorkDesk ל-Taskana</a>.</li>
+      <li><strong>נתוני דוגמה</strong> — משימות מומצאות לצוות האמיתי על הפרויקטים של WorkDesk. רשומות הדגמה מסומנות, כך שהסרתן משאירה את העבודה האמיתית במקומה.</li>
+    </ul>
+    <p>באחסון GitHub כל שמירה היא commit, כך שגם היסטוריית הענף היא גיבוי; ב-OneDrive עותק מתוארך נשמר ב-<code>backups/</code> פעם ביום.</p>
+  </section>
+
+  <!-- ============ 18 ============ -->
+  <section class="ch" id="ch-ref" data-part="עיון" data-title="עיון">
+    <div class="ch-head"><span class="ch-num">18</span><h2>עיון</h2></div>
+    <p class="lede">אוצר המילים הקבוע, ברירות המחדל והמגבלות, במקום אחד.</p>
+
+    <h3>סטטוסים</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:160px">קבוצה</th><th>ערכים</th></tr></thead>
+      <tbody>
+        <tr><td><strong>סטטוס רישום</strong></td><td>נרשם · ממתין · בוטל · נעול</td></tr>
+        <tr><td><strong>סטטוס פרויקט</strong></td><td>פעיל · בעבודה · טיוטה א׳ · טיוטה ב׳ · ממתין למידע · ממתין לסקירה · בהמתנה · הושלם</td></tr>
+        <tr><td><strong>סטטוס משימה ב-Taskana</strong></td><td>מאגר · לביצוע · כתיבה · סקירת עמיתים · סקירת מומחה · הושלם</td></tr>
+        <tr><td><strong>עדיפות ב-Taskana</strong></td><td>קריטית · גבוהה · בינונית · נמוכה</td></tr>
+        <tr><td><strong>תפקיד ב-Taskana</strong></td><td>מנהל מערכת · מנהל · חבר צוות · חיצוני · צופה</td></tr>
+        <tr><td><strong>סטטוס הזמנת עבודה</strong></td><td>פעיל · בהמתנה · סגור</td></tr>
+        <tr><td><strong>החזר</strong></td><td>הוגש · אושר · שולם · נדחה</td></tr>
+        <tr><td><strong>סוגי בקשות</strong></td><td>רישום שעות · בקשת היעדרות · השאלה בין צוותים · העברה בין צוותים · הגדלת מכסה · פריט חדש ברשימה · הוצאה · הפעלת חשבון · שינוי תפקיד · עריכה רטרואקטיבית</td></tr>
+        <tr><td><strong>בסיסי תמחור</strong></td><td>כסף · שעות · עמודים · מילים · מותאם</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>ברירות מחדל ומגבלות</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:260px">הגדרה</th><th class="num" style="width:110px">ברירת מחדל</th><th>היכן משנים</th></tr></thead>
+      <tbody>
+        <tr><td>גבול יומי רך</td><td class="num">9 h</td><td>הגדרות החברה</td></tr>
+        <tr><td>גבול יומי קשיח</td><td class="num">12 h</td><td>הגדרות החברה</td></tr>
+        <tr><td>שעות שבועיות</td><td class="num">42 h</td><td>הגדרות החברה, או לכל אדם</td></tr>
+        <tr><td>עיגול שעות</td><td class="num">0.5 h</td><td>קבוע</td></tr>
+        <tr><td>משך התחברות</td><td class="num">12 h</td><td>קבוע — חוסר פעילות</td></tr>
+        <tr><td>כניסות שגויות עד נעילה</td><td class="num">5</td><td>קבוע — נעילה ל-15 דקות</td></tr>
+        <tr><td>תוקף קישור איפוס סיסמה</td><td class="num">30 min</td><td>קבוע</td></tr>
+        <tr><td>אורך סיסמה מינימלי</td><td class="num">12</td><td>קבוע — ועוד אות גדולה, אות קטנה וספרה</td></tr>
+        <tr><td>חלון קצב שריפה</td><td class="num">30 d</td><td>קבוע</td></tr>
+        <tr><td>שורות ביקורת מוצגות</td><td class="num">400</td><td>קבוע — 4,000 נשמרות</td></tr>
+        <tr><td>קובץ מצורף במשימת Taskana</td><td class="num">1 MB</td><td>קבוע</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>שמור לגרסה מאוחרת יותר</h3>
+    <ul>
+      <li><strong>יתרות שנתיות של מחלה וחופשה</strong> — היום ההיעדרות מאושרת על ידי המנהל/ת; עוד לא נבדקת יתרה שנתית.</li>
+    </ul>
+
+    <h3>חשבונות הדגמה</h3>
+    <p>בלי Microsoft Entra ID, נתוני ההדגמה נכנסים בתור צוות GALIL, כולם עם הסיסמה <code>GalilWorkdesk1</code>. היכנסו לפורטל בתור כל אחד מהם כדי לראות מה התפקיד רואה ב-WorkDesk וב-Taskana.</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:90px">תפקיד</th><th style="width:170px">שם</th><th style="width:250px">דוא״ל</th><th>תפקיד ב-Taskana</th></tr></thead>
+      <tbody>
+        <tr><td><code>CEO</code></td><td>תמיר ניסמן</td><td><code>tamir@galiltc.co.il</code></td><td>מנהל מערכת</td></tr>
+        <tr><td><code>OPS</code></td><td>ינון כנר</td><td><code>inon.kanner@galiltc.co.il</code></td><td>מנהל מערכת</td></tr>
+        <tr><td><code>PM</code></td><td>דני גלמן</td><td><code>danny.gelman@galiltc.co.il</code></td><td>מנהל מערכת (שונה בגישה לפורטל)</td></tr>
+        <tr><td><code>PM</code></td><td>כפיר חודרה</td><td><code>kfir@galiltc.co.il</code></td><td>מנהל</td></tr>
+        <tr><td><code>EMP</code></td><td>איתן פיש</td><td><code>eitan.f@galiltc.co.il</code></td><td>חבר צוות</td></tr>
+        <tr><td><code>EXT</code></td><td>גיל הדר</td><td><code>gil.hadar@galiltc.co.il</code></td><td>חיצוני</td></tr>
+      </tbody>
+    </table></div>
+    <p>כדי לנסות את שאר התפקידים, שנו למישהו את התפקיד בניהול ← אנשים.</p>
+    <div class="fig-pair">
+      <figure>
+        <img src="img/he/71-fin-budgets.png" alt="חלק התקציבים כפי שכספים רואים אותו: אותם כרטיסים, בלי כפתורי עריכה.">
+        <figcaption><span class="fno">איור 24.1</span><span>כספים רואים כל תקציב בלשונית הניהול, עם כפתור ייצוא ובלי זכויות עריכה.</span></figcaption>
+      </figure>
+      <figure>
+        <img src="img/he/95-view-landing.png" alt="יומן השעות של צופה: קריאה בלבד, עם הודעה שלתפקיד אין זכויות דיווח.">
+        <figcaption><span class="fno">איור 24.2</span><span>יומן השעות של צופה — קריאה בלבד, בלי זכויות דיווח.</span></figcaption>
+      </figure>
+    </div>
+  </section>
+
+
+  </main>
+</div>
+
+<footer class="foot">
+  <h3>שמירה על המדריך עדכני</h3>
+  <p>המדריך מתאר את <strong>פורטל העובדים של GALIL</strong>: דף הבית של הפורטל והכניסה, WorkDesk ו-Taskana. טבלאות ההרשאות נוצרות משתי טבלאות בקובץ <code>handbook.js</code>, כך ששינוי הרשאה שם הוא עריכה של שורה אחת שמעדכנת את הטבלאות, התגים וסינון התפקידים יחד — בשתי השפות.</p>
+  <p>שאלות שהמדריך אינו עונה עליהן: <a href="mailto:info@galiltc.co.il">info@galiltc.co.il</a>.</p>
+</footer>
+
+<script src="../config.js"></script>
+<script src="../shared/portal.js"></script>
+<script src="handbook.js"></script>
+</body>
+</html>

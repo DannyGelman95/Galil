@@ -136,7 +136,7 @@ function taskView(t) {
       h("div", { class: "td-side" },
         ro ? h("div", { class: "note small" }, icon("alert"), " " + tr("You can view and comment on this task, but your role ({r}) can't change it.", { r: tr(roleOf()) })) : null,
         prop(tr("Status"), sel("status", STATUSES.map(function (s) { return { value: s.k, label: tr(s.k) }; })), "tf-status"),
-        prop(tr("Assignee"), sel("assigneeId", [{ value: "", label: tr("Unassigned") }].concat(db.users.filter(function (x) { return x.isActive || x.id === t.assigneeId; }).map(function (x) { return { value: x.id, label: x.fullName }; }))), "tf-assigneeId",
+        prop(tr("Assignee"), sel("assigneeId", [{ value: "", label: tr("Unassigned") }].concat(db.users.filter(function (x) { return x.isActive || x.id === t.assigneeId; }).map(function (x) { return { value: x.id, label: userName(x.id) }; }))), "tf-assigneeId",
           !ro && t.assigneeId !== u.id ? h("button", { class: "linklike small", onclick: function () { change("assigneeId", u.id); } }, tr("Assign to me")) : null),
         prop(tr("Type"), sel("type", TYPES.map(function (x) { return { value: x, label: tr(x) }; })), "tf-type"),
         prop(tr("Priority"), sel("priority", PRIORITIES.map(function (x) { return { value: x.k, label: tr(x.k) }; })), "tf-priority"),
@@ -335,7 +335,7 @@ function composer(t) {
     return h("button", { class: ui.composerKind === k ? "on" : "", "aria-pressed": ui.composerKind === k ? "true" : "false", onclick: function () { ui.composerKind = k; renderOverlay(); var n = document.getElementById("composer"); if (n) n.focus(); } }, icon(ic), label);
   };
   return h("div", { class: "composer" }, ta, hint,
-    h("div", { class: "bar2" }, avatar(u.id), h("span", { class: "small muted" }, tr("as {n}", { n: u.fullName })),
+    h("div", { class: "bar2" }, avatar(u.id), h("span", { class: "small muted" }, tr("as {n}", { n: userName(u.id) })),
       h("span", { class: "sp" }),
       h("div", { class: "seg", role: "group", "aria-label": tr("Post as") }, kindBtn("comment", "comment", tr("Comment")), kindBtn("question", "question", tr("Question"))),
       h("button", { class: "btn primary sm", onclick: post }, ui.composerKind === "question" ? tr("Ask") : tr("Post"))));

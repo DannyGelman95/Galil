@@ -52,7 +52,7 @@ function shell(title, body, foot) {
   return h("div", { class: "modal" }, h("div", { class: "modal-h" }, h("h2", null, title), h("button", { class: "x", onclick: closeModal, "aria-label": tr("Close") }, icon("x"))), h("div", { class: "modal-b" }, body), foot ? h("div", { class: "modal-f" }, foot) : null);
 }
 function finish() { ui.modal = null; ui.modalStack = []; }
-var userOpts = function () { return db.users.filter(function (u) { return u.isActive; }).map(function (u) { return { value: u.id, label: u.fullName + " — " + u.jobTitle }; }); };
+var userOpts = function () { return db.users.filter(function (u) { return u.isActive; }).map(function (u) { return { value: u.id, label: userName(u.id) + " — " + u.jobTitle }; }); };
 var opts = function (arr) { return function () { return arr.map(function (x) { var k = x.k || x; return { value: k, label: tr(k) }; }); }; };
 var parseLabels = function (s) { return s.split(",").map(function (x) { return x.trim().replace(/^#/, ""); }).filter(Boolean); };
 var weekendHelp = function (v) { return isWeekend(v) ? tr("Falls on a weekend (Fri–Sat).") : null; };

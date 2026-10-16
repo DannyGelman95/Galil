@@ -73,7 +73,7 @@ function pageHome() {
     .filter(function (a) { var t = byId(db.tasks, a.taskId); return t && canSee(t); }).sort(function (a, b) { return a.at < b.at ? 1 : -1; }).slice(0, 12);
   var hr = new Date().getHours();
   return {
-    title: tr(hr < 12 ? "Good morning, {name}" : hr < 18 ? "Good afternoon, {name}" : "Good evening, {name}", { name: u.fullName.split(" ")[0] }),
+    title: tr(hr < 12 ? "Good morning, {name}" : hr < 18 ? "Good afternoon, {name}" : "Good evening, {name}", { name: userName(u.id).split(" ")[0] }),
     crumbs: tr("Overview"), actions: newTaskBtn(),
     body: [
       h("div", { class: "grid g4", style: { marginBottom: "16px" } },
@@ -156,7 +156,7 @@ function pageMy() {
   var reported = db.tasks.filter(function (t) { return t.reporterId === u.id && t.assigneeId !== u.id && t.status !== "Done"; });
   var groups = STATUSES.filter(function (s) { return s.k !== "Done"; }).map(function (s) { return { s: s, ts: mine.filter(function (t) { return t.status === s.k; }) }; }).filter(function (g) { return g.ts.length; });
   return {
-    title: tr("My work"), crumbs: u.fullName + " · " + u.jobTitle, actions: newTaskBtn({ assigneeId: u.id }),
+    title: tr("My work"), crumbs: userName(u.id) + " · " + u.jobTitle, actions: newTaskBtn({ assigneeId: u.id }),
     body: h("div", { class: "grid g2" },
       h("section", { class: "card pad" }, h("h2", null, tr("Assigned to me")),
         groups.length ? groups.map(function (g) { return [h("h3", { style: { marginTop: "12px" } }, tr(g.s.k) + " (" + g.ts.length + ")"), g.ts.map(taskRow)]; }) : h("div", { class: "empty" }, tr("Nothing assigned to you."))),
@@ -289,7 +289,7 @@ function bulkBar(ids) {
   return h("div", { class: "bulkbar", role: "region", "aria-label": tr("Bulk actions") },
     h("b", null, trn(tasks.length, "{n} selected", "{n} selected")),
     sel("bulk-status", tr("Status"), STATUSES.map(function (s) { return h("option", { value: s.k }, tr(s.k)); }), "status"),
-    sel("bulk-assignee", tr("Assignee"), [h("option", { value: "__none" }, tr("Unassigned"))].concat(db.users.filter(function (u) { return u.isActive; }).map(function (u) { return h("option", { value: u.id }, u.fullName); })), "assigneeId"),
+    sel("bulk-assignee", tr("Assignee"), [h("option", { value: "__none" }, tr("Unassigned"))].concat(db.users.filter(function (u) { return u.isActive; }).map(function (u) { return h("option", { value: u.id }, userName(u.id)); })), "assigneeId"),
     sel("bulk-priority", tr("Priority"), PRIORITIES.map(function (p) { return h("option", { value: p.k }, tr(p.k)); }), "priority"),
     sel("bulk-project", tr("Move to project"), db.projects.filter(function (p) { return p.status !== "Archived"; }).map(function (p) { return h("option", { value: p.id }, p.key + " · " + p.name); }), "projectId"),
     h("span", { class: "sp" }),
@@ -408,7 +408,7 @@ function pagePeople() {
         var open = ts.filter(function (t) { return t.status !== "Done"; });
         var od = open.filter(isOverdue).length;
         return h("tr", clickable({ class: "click" + (u.isActive ? "" : " inactive"), role: "row" }, function () { go("people/" + u.id); }),
-          h("td", null, h("span", { class: "row nowrap" }, avatar(u.id), h("span", null, u.fullName,
+          h("td", null, h("span", { class: "row nowrap" }, avatar(u.id), h("span", null, userName(u.id),
             u.pendingActivation && !u.declined ? h("span", { class: "chip amber", style: { marginInlineStart: "6px" } }, tr("Pending")) : u.isActive ? null : h("span", { class: "chip", style: { marginInlineStart: "6px" } }, tr("Inactive")),
             u.employment === "Outsourced" ? h("span", { class: "chip teal", style: { marginInlineStart: "6px" } }, tr("Outsourced")) : null, h("div", { class: "muted small" }, u.email)))),
           h("td", null, u.jobTitle), h("td", null, u.department), h("td", null, tr(u.role || "Member")), h("td", { class: "num" }, open.length),
@@ -422,7 +422,7 @@ function pagePerson(id) {
   if (!u) return notFound(tr("Person not found"), tr("This person no longer exists."));
   var ts = db.tasks.filter(function (t) { return t.assigneeId === u.id; });
   return {
-    title: u.fullName, crumbs: h("span", null, h("a", { href: "#/people" }, tr("People")), " / " + u.jobTitle),
+    title: userName(u.id), crumbs: h("span", null, h("a", { href: "#/people" }, tr("People")), " / " + u.jobTitle),
     actions: h("div", { class: "row" }, newTaskBtn({ assigneeId: u.isActive ? u.id : "" })),
     body: h("div", { class: "grid g2" },
       h("section", { class: "card pad" }, h("h2", null, tr("Assigned tasks")),
@@ -430,7 +430,7 @@ function pagePerson(id) {
           var g = ts.filter(function (t) { return t.status === s.k; });
           return g.length ? [h("h3", { style: { marginTop: "12px" } }, tr(s.k) + " (" + g.length + ")"), g.map(taskRow)] : null;
         }), ts.length ? null : h("div", { class: "empty" }, tr("No tasks assigned."))),
-      h("section", { class: "card pad", style: { alignSelf: "start" } }, h("div", { class: "row", style: { marginBottom: "12px" } }, avatar(u.id, true), h("div", null, h("b", null, u.fullName), h("div", { class: "muted small" }, u.jobTitle))),
+      h("section", { class: "card pad", style: { alignSelf: "start" } }, h("div", { class: "row", style: { marginBottom: "12px" } }, avatar(u.id, true), h("div", null, h("b", null, userName(u.id)), h("div", { class: "muted small" }, u.jobTitle))),
         kv(tr("Email"), h("span", { class: "sel-text" }, u.email)), kv(tr("Department"), u.department), kv(tr("Reports to"), u.managerId ? userName(u.managerId) : ""),
         kv(tr("Employment"), tr(u.employment || "Employee")), kv(tr("Role"), tr(u.role || "Member")),
         kv(tr("Status"), u.isActive ? tr("Active") : u.fromWorkdesk === false ? tr("Not in WorkDesk") : tr("No Taskana access")),
