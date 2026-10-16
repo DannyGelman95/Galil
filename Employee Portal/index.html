@@ -18171,7 +18171,7 @@ function sheetXML(spec) {
   if (anyTotal && spec.rows.length) {
     var tc = cols.map(function (c, i) {
       var ref = colName(i) + r;
-      if (i === 0) return cell(ref, 12, "s", "TOTALS");
+      if (i === 0) return cell(ref, 12, "s", WDI18N.t("TOTALS"));
       if (!c.total) return cell(ref, 12, "s", "");
       var sum = spec.rows.reduce(function (a, x) { return a + (Number(x[c.key]) || 0); }, 0);
       return cell(ref, 13, "n", Math.round(sum * 100) / 100);
@@ -18194,7 +18194,7 @@ function sheetXML(spec) {
     '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
     '<sheetPr><tabColor rgb="FF8CC63E"/></sheetPr>' +
     '<dimension ref="A1:' + last + Math.max(5, r) + '"/>' +
-    '<sheetViews><sheetView workbookViewId="0" showGridLines="0">' +
+    '<sheetViews><sheetView workbookViewId="0" showGridLines="0"' + (WDI18N.he ? ' rightToLeft="1"' : '') + '>' +
     '<pane ySplit="4" topLeftCell="A5" activePane="bottomLeft" state="frozen"/>' +
     '</sheetView></sheetViews>' +
     '<sheetFormatPr defaultRowHeight="15"/>' +
@@ -18250,6 +18250,16 @@ function downloadBlob(bytes, filename, mime) {
   setTimeout(function () { URL.revokeObjectURL(url); a.remove(); }, 400);
 }
 function exportXLSX(sheets, filename) {
+  /* headings, and the interface words in the cells, in the interface language */
+  if (WDI18N.he) sheets = sheets.map(function (sh) {
+    return Object.assign({}, sh, {
+      name: WDI18N.t(sh.name).replace(/[\\\/?*\[\]:]/g, " ").slice(0, 31), title: WDI18N.t(sh.title), meta: WDI18N.t(sh.meta),
+      columns: sh.columns.map(function (c) { return Object.assign({}, c, { label: WDI18N.t(c.label) }); }),
+      rows: sh.rows.map(function (r) {
+        var o = {}; Object.keys(r).forEach(function (k) { o[k] = typeof r[k] === "string" && !/^\d{4}-\d\d-\d\d$/.test(r[k]) ? WDI18N.t(r[k]) : r[k]; }); return o;
+      })
+    });
+  });
   try { downloadBlob(buildXLSX(sheets), filename, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"); toast("Downloaded " + filename, "ok"); }
   catch (e) { toast("Export failed: " + e.message, "error"); }
 }
@@ -18957,10 +18967,10 @@ function Bar(p) {
 /* month navigator */
 function MonthNav(p) {
   return h("div", { className: "row", style: { gap: 4 } },
-    h("button", { className: "iconbtn", style: { color: C.muted, minHeight: 36, minWidth: 36 }, onClick: function () { p.onChange(p.value - 1); }, "aria-label": "Previous month" }, "‹"),
+    h("button", { className: "iconbtn", style: { color: C.muted, minHeight: 36, minWidth: 36 }, onClick: function () { p.onChange(p.value - 1); }, "aria-label": "Previous month" }, WDI18N.he ? "›" : "‹"),
     h("div", { style: { minWidth: 152, textAlign: "center", fontWeight: 700, fontSize: 14 } },
       MONTHS_FULL[((p.value % 12) + 12) % 12] + " " + (p.baseYear + Math.floor(p.value / 12))),
-    h("button", { className: "iconbtn", style: { color: C.muted, minHeight: 36, minWidth: 36 }, onClick: function () { p.onChange(p.value + 1); }, "aria-label": "Next month" }, "›"),
+    h("button", { className: "iconbtn", style: { color: C.muted, minHeight: 36, minWidth: 36 }, onClick: function () { p.onChange(p.value + 1); }, "aria-label": "Next month" }, WDI18N.he ? "‹" : "›"),
     h("button", { className: "btn t sm", onClick: function () { p.onChange(p.today); } }, "Today"));
 }
 
@@ -18973,9 +18983,9 @@ function Mark(p) {
 /* small helpers used by modules */
 function hoursChips(e) {
   return h("span", { className: "row", style: { gap: 4 } },
-    Number(e.red) ? h(Chip, { k: "red", title: "Red · company hours" }, num(e.red), " R") : null,
-    Number(e.yellow) ? h(Chip, { k: "yel", title: "Yellow · client hours" }, num(e.yellow), " Y") : null,
-    Number(e.blue) ? h(Chip, { k: "blue", title: "Blue · management hours" }, num(e.blue), " B") : null,
+    Number(e.red) ? h(Chip, { k: "red", title: "Red · company hours" }, num(e.red) + " R") : null,
+    Number(e.yellow) ? h(Chip, { k: "yel", title: "Yellow · client hours" }, num(e.yellow) + " Y") : null,
+    Number(e.blue) ? h(Chip, { k: "blue", title: "Blue · management hours" }, num(e.blue) + " B") : null,
     Number(e.day) ? h(Chip, { k: e.type === "Sick" ? "mut" : "gr", style: { background: e.type === "Sick" ? "rgba(156,140,232,.15)" : "rgba(63,169,126,.14)", color: e.type === "Sick" ? "#5A48B8" : "#1F7A57", borderColor: e.type === "Sick" ? "rgba(156,140,232,.4)" : "rgba(63,169,126,.4)" } }, num(e.day), " d") : null);
 }
 function statusBadge(e) {
@@ -19204,7 +19214,7 @@ function STable(p) {
       return React.cloneElement(th, {
         key: cid, style: st,
         className: (th.props.className || "") + (c.mid ? " c" : "") + (c.label ? " srt" : "") + (overCol === cid && dragCol && dragCol !== cid ? " dragover" : "") + (dragCol === cid ? " dragging" : ""),
-        title: c.label ? "Click to sort · drag to move the column · drag the right edge to resize" : "Drag to move the column · drag the right edge to resize",
+        title: WDI18N.t(c.label ? "Click to sort · drag to move the column · drag the right edge to resize" : "Drag to move the column · drag the right edge to resize"),
         "aria-sort": srt === "asc" ? "ascending" : srt === "desc" ? "descending" : null,
         draggable: true,
         onClick: c.label ? function () { setSort(cid); } : undefined,
@@ -20264,7 +20274,7 @@ function TimeLogTab(p) {
               return h("tr", { key: e.id, className: e.status === "pending" ? "pend" : e.status === "cancelled" ? "canc" : "" },
                 h("td", { style: { whiteSpace: "nowrap" } },
                   h("span", { className: "tnum" }, il(e.date)),
-                  h("span", { className: "cap", style: { marginLeft: 6 } }, DOW[s2d(e.date).getDay()])),
+                  h("span", { className: "cap", style: { marginInlineStart: 6 } }, DOW[s2d(e.date).getDay()])),
                 h("td", null, userName(db, e.assignee)),
                 h("td", null, e.type === "Work" ? h("span", { className: "cap" }, "Work") : h(Chip, { k: "mut", style: { background: e.type === "Sick" ? "var(--sickbg)" : "var(--vacbg)", color: e.type === "Sick" ? "var(--sicktx)" : "var(--vactx)", borderColor: e.type === "Sick" ? "var(--sickline)" : "var(--vacline)" } }, e.type)),
                 h("td", { className: "tnum", style: { whiteSpace: "nowrap" } }, e.start ? e.start + "–" + e.end : "—"),
@@ -20429,9 +20439,9 @@ function PlannerTab(p) {
         return h("button", { key: v, className: "pill" + (vmode === v ? " on" : ""), onClick: function () { setV(v); setOff(0); } }, v.charAt(0).toUpperCase() + v.slice(1));
       })),
       h("div", { className: "row", style: { gap: 4, minHeight: 38 } },
-        h("button", { className: "iconbtn", style: { color: C.muted, minHeight: 38 }, onClick: function () { setOff(off - 1); }, "aria-label": "Previous" }, "‹"),
+        h("button", { className: "iconbtn", style: { color: C.muted, minHeight: 38 }, onClick: function () { setOff(off - 1); }, "aria-label": "Previous" }, WDI18N.he ? "›" : "‹"),
         h("span", { className: "mono", style: { minWidth: 168, textAlign: "center", fontWeight: 700 } }, il(days[0]), " – ", il(days[days.length - 1])),
-        h("button", { className: "iconbtn", style: { color: C.muted, minHeight: 38 }, onClick: function () { setOff(off + 1); }, "aria-label": "Next" }, "›"),
+        h("button", { className: "iconbtn", style: { color: C.muted, minHeight: 38 }, onClick: function () { setOff(off + 1); }, "aria-label": "Next" }, WDI18N.he ? "‹" : "›"),
         h(Btn, { kind: "t", onClick: function () { setOff(0); } }, "This week")),
       pool.length > 1 ? h("div", { style: { minWidth: 176 } }, h(Sel, { label: "Planning for", value: who, options: pool.map(function (u) { return { value: u.id, label: u.fullName }; }), onChange: function (e) { setWho(e.target.value); } })) : null,
       h("div", { className: "grow" }),
@@ -20798,7 +20808,7 @@ function ApprovalsTab(p) {
         h("button", { className: "pill" + (typeFlt === "" ? " on" : ""), onClick: function () { setType(""); } }, "All"),
         REQ_TYPES.map(function (t) {
           return h("button", { key: t, className: "pill" + (typeFlt === t ? " on" : ""), onClick: function () { setType(t); } },
-            t, counts[t] ? h("span", { style: { marginLeft: 5, fontWeight: 800, color: typeFlt === t ? C.green : C.amber } }, counts[t]) : null);
+            t, counts[t] ? h("span", { style: { marginInlineStart: 5, fontWeight: 800, color: typeFlt === t ? C.green : C.amber } }, counts[t]) : null);
         })),
       h("div", { className: "grow" }),
       h("div", { style: { minWidth: 132 } }, h(Sel, { label: "Status", value: statusFlt, placeholder: "All", options: [{ value: "pending", label: "Pending" }, { value: "approved", label: "Approved" }, { value: "declined", label: "Declined" }], onChange: function (e) { setStatus(e.target.value); } })),
@@ -21253,7 +21263,7 @@ function ManagementTab(p) {
             h("div", { className: "col grow", style: { gap: 1 } },
               h("div", { className: "row", style: { gap: 7 } },
                 h("b", null, nameOf(db.clients, b.clientId)),
-                h("span", { className: "cap" }, "›"),
+                h("span", { className: "cap" }, WDI18N.he ? "‹" : "›"),
                 h("span", null, b.projectId ? nameOf(db.projects, b.projectId) : "All projects"),
                 b.workOrderId ? h(Chip, { k: "teal" }, nameOf(db.workOrders, b.workOrderId, "code")) : null,
                 h(Chip, { k: "gr" }, b.basis)),
@@ -21267,7 +21277,7 @@ function ManagementTab(p) {
             : pct >= 90 ? h("div", { className: "banner amber" }, "⚠ Budget at ", num(pct, 0), "% — visible to the project owner and Finance.") : null,
           h("div", { className: "row", style: { gap: 11 } },
             h(Bar, { used: used, pending: pend, total: b.hours || 1, style: { flex: 1, height: 12 } }),
-            h("span", { className: "mono", style: { fontWeight: 700, minWidth: 52, textAlign: "right" } }, num(pct, 0), "%")),
+            h("span", { className: "mono", style: { fontWeight: 700, minWidth: 52, textAlign: "end" } }, num(pct, 0), "%")),
           h("div", { className: "cards" },
             h("div", { className: "stat" }, h("div", { className: "k" }, "Budgeted"), h("div", { className: "v" }, num(b.hours), " h")),
             h("div", { className: "stat" }, h("div", { className: "k" }, "Consumed"), h("div", { className: "v" }, num(used), " h")),
@@ -21554,13 +21564,13 @@ function DashboardTab(p) {
             return h("div", { key: r.name, className: "row", style: { gap: 9 } },
               h("span", { style: { width: 150, fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, r.name),
               h("div", { className: "bar", style: { flex: 1, height: 14 } }, h("i", { style: { width: (r.v / maxClient * 100) + "%", background: C.teal } })),
-              h("span", { className: "mono cap", style: { minWidth: 62, textAlign: "right" } }, fmt(r.v), pctMode ? "" : " h"));
+              h("span", { className: "mono cap", style: { minWidth: 62, textAlign: "end" } }, fmt(r.v), pctMode ? "" : " h"));
           })) : h("div", { className: "empty" }, "No data.")),
         h("div", { className: "panel pad" },
           h("div", { className: "h3", style: { marginBottom: 8 } }, "Hour split · plan against actual"),
           h("div", { className: "col", style: { gap: 10 } },
             h("div", null,
-              h("div", { className: "row cap", style: { justifyContent: "space-between" } }, h("span", null, "Red / Yellow" + (blue ? " / Blue" : "") + " split"), h("span", { className: "mono" }, num(red), " / ", num(yellow), blue ? " / " + num(blue) : "")),
+              h("div", { className: "row cap", style: { justifyContent: "space-between" } }, h("span", null, blue ? "Red / Yellow / Blue split" : "Red / Yellow split"), h("span", { className: "mono" }, num(red), " / ", num(yellow), blue ? " / " + num(blue) : "")),
               h("div", { className: "bar", style: { height: 16 } },
                 h("i", { style: { width: (total ? red / total * 100 : 0) + "%", background: C.red } }),
                 h("i", { style: { width: (total ? yellow / total * 100 : 0) + "%", background: C.yellow } }),
@@ -22060,7 +22070,7 @@ function TeamsPanel(p) {
         members.slice(0, 9).map(function (u) { return h("span", { key: u.id, className: "avatar", style: { width: 26, height: 26, fontSize: 10 }, title: u.fullName + " · " + roleName(u.role) }, initialsOf(u.fullName)); }),
         members.length > 9 ? h("span", { className: "cap" }, "+", members.length - 9) : null,
         loans.map(function (r) { return h("span", { key: r.id, className: "avatar temp", style: { width: 26, height: 26, fontSize: 10 }, title: userName(db, r.userId) + " — temporary until " + il(r.end) }, initialsOf(userName(db, r.userId))); }),
-        h("span", { className: "cap", style: { marginLeft: 4 } }, members.length, " member", members.length === 1 ? "" : "s", loans.length ? " + " + loans.length + " temporary" : "")),
+        h("span", { className: "cap", style: { marginInlineStart: 4 } }, tr(members.length === 1 ? "1 member" : "{n} members", { n: members.length }), loans.length ? " + " + tr("{n} temporary", { n: loans.length }) : "")),
       h("div", { className: "row", style: { gap: 6 } },
         mineT ? h(Btn, { sm: true, kind: "p", onClick: function () { setManaging(t.id); } }, "Manage") : null,
         mineT ? h(Btn, { sm: true, onClick: function () { setEditing(t); } }, "Edit details") : null,
@@ -22303,7 +22313,7 @@ function MgmtPanel(p) {
             h("td", { className: "num", style: { color: C.amber } }, num(pend)),
             h("td", { style: { whiteSpace: "nowrap" } }, unlimited ? h("span", { className: "cap" }, "∞")
               : h("div", { className: "row", style: { gap: 8, flexWrap: "nowrap" } },
-                  h("span", { className: "tnum", style: { minWidth: 42, textAlign: "right" } }, num(Number(a.allowanceHours) - used), " h"),
+                  h("span", { className: "tnum", style: { minWidth: 42, textAlign: "end" } }, num(Number(a.allowanceHours) - used), " h"),
                   h(Bar, { used: used, pending: pend, total: a.allowanceHours, style: { width: 84 } }),
                   h("span", { style: { minWidth: 54, display: "inline-flex", justifyContent: "flex-end" } },
                     pct >= 75 ? h(Chip, { k: pct >= 100 ? "err" : pct >= 90 ? "amber" : "gr" }, num(pct, 0), "%") : null))),
@@ -22832,9 +22842,9 @@ function MobilePlanner(p) {
   return h(React.Fragment, null,
     h("div", { className: "mrow", style: { justifyContent: "space-between" } },
       h("div", { className: "row", style: { gap: 4 } },
-        h("button", { className: "iconbtn ink", onClick: function () { setOff(off - 1); }, "aria-label": "Previous week" }, "‹"),
+        h("button", { className: "iconbtn ink", onClick: function () { setOff(off - 1); }, "aria-label": "Previous week" }, WDI18N.he ? "›" : "‹"),
         h("b", null, il(days[0]), " – ", il(days[6])),
-        h("button", { className: "iconbtn ink", onClick: function () { setOff(off + 1); }, "aria-label": "Next week" }, "›")),
+        h("button", { className: "iconbtn ink", onClick: function () { setOff(off + 1); }, "aria-label": "Next week" }, WDI18N.he ? "‹" : "›")),
       h(Btn, { sm: true, kind: "t", onClick: function () { setOff(0); } }, "This week")),
     h("div", { className: "row", style: { gap: 6 } },
       h(Chip, { k: "teal" }, "Planned ", num(planned), " h"),
@@ -23141,7 +23151,7 @@ function MyWork(p) {
           h("td", { className: "num", style: { color: C.amber } }, num(pend)),
           h("td", { style: { whiteSpace: "nowrap" } }, unlimited ? h("span", { className: "cap" }, "\u2014")
             : h("div", { className: "row", style: { gap: 8, flexWrap: "nowrap" } },
-                h("span", { className: "tnum", style: { minWidth: 42, textAlign: "right" } }, num(Number(a.allowanceHours) - used), " h"),
+                h("span", { className: "tnum", style: { minWidth: 42, textAlign: "end" } }, num(Number(a.allowanceHours) - used), " h"),
                 h(Bar, { used: used, pending: pend, total: a.allowanceHours, style: { width: 92 } }),
                 h("span", { style: { minWidth: 54, display: "inline-flex", justifyContent: "flex-end" } },
                   pct >= 75 ? h(Chip, { k: pct >= 100 ? "err" : pct >= 90 ? "amber" : "gr" }, num(pct, 0), "%") : null))),

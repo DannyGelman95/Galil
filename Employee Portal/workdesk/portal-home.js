@@ -34,6 +34,7 @@ var PORTAL_CSS = [
 ".tile .tname{font:700 19px/1.2 var(--font)}",
 ".tile .tdesc{font-size:13.5px;color:var(--muted);line-height:1.5}",
 ".tile .tstats{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}",
+".tile .tstats .chip{white-space:normal}",
 ".tile .tgo{display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:13.5px;color:var(--tc,var(--deep))}",
 ".tile.off{cursor:not-allowed;opacity:.62;filter:grayscale(.6)}",
 ".tile.off:hover{transform:none}",
@@ -95,7 +96,9 @@ var RTL_CSS = [
 "[dir=rtl] .mnav .badge{right:auto;left:calc(50% - 20px)}",
 "[dir=rtl] .he{text-align:right}",
 /* numbers, codes, emails and times keep their own left-to-right order */
-"[dir=rtl] .tnum,[dir=rtl] .mono,[dir=rtl] input[type=email],[dir=rtl] input[type=number],[dir=rtl] input[type=date],[dir=rtl] input[type=month]{unicode-bidi:isolate}",
+/* times, dates and figures read left to right; a phrase that starts in Hebrew stays right to left */
+"[dir=rtl] .tnum,[dir=rtl] .mono,[dir=rtl] td.num{unicode-bidi:plaintext}",
+"[dir=rtl] input[type=number],[dir=rtl] input[type=date],[dir=rtl] input[type=month],[dir=rtl] input[type=time]{unicode-bidi:isolate}",
 "[dir=rtl] input[type=email],[dir=rtl] input[type=password]{direction:ltr;text-align:right}",
 "[dir=rtl] .ltr{direction:ltr;unicode-bidi:isolate}"
 ].join("\n");

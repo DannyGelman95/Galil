@@ -54,12 +54,17 @@ var WDI18N = (function () {
     if (!he || typeof s !== "string" || !LETTER.test(s)) return s;
     var hit = cache.get(s);
     if (hit !== undefined) return hit;
-    var out = s, r = lookup(s);
+    var out = s, r = lookup(s), tr0 = s.trim();
+    if (r == null && tr0 !== s) { r = lookup(tr0); if (r != null) r = s.slice(0, s.indexOf(tr0)) + r + s.slice(s.indexOf(tr0) + tr0.length); }
     if (r != null) out = r;
     else {
       /* keep leading symbols / spaces and trailing punctuation around the words */
       var m = /^([^A-Za-z0-9]*?)([A-Za-z0-9][\s\S]*?)([\s.:…!?]*)$/.exec(s);
-      if (m && (m[1] || m[3])) { r = lookup(m[2]); if (r != null) out = m[1] + r + m[3]; }
+      if (m && (m[1] || m[3])) {
+        r = m[3] ? lookup(m[2] + m[3].trim()) : null;
+        if (r != null) out = m[1] + r + m[3].slice(m[3].trim().length ? m[3].lastIndexOf(m[3].trim()) + m[3].trim().length : 0);
+        else { r = lookup(m[2]); if (r != null) out = m[1] + r + m[3]; }
+      }
     }
     if (cache.size > 20000) cache.clear();
     cache.set(s, out);
