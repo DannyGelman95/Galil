@@ -15,7 +15,7 @@
 "use strict";
 var WDCloud = (function () {
   var base = window.WORKDESK_CONFIG || {}, over = null;
-  var CONFIG_KEY = "galil-workdesk-config", TOKEN_KEY = "galil-workdesk-github-token", BASE_KEY = "galil-workdesk-cloud-base", META_KEY = "galil-workdesk-cloud-meta", BACKUP_DAY_KEY = "galil-workdesk-backup-day";
+  var CONFIG_KEY = "galil-workdesk-config", TOKEN_KEY = (window.GalilPortal && GalilPortal.GITHUB_TOKEN_KEY) || "galil-portal-github-token", BASE_KEY = "galil-workdesk-cloud-base", META_KEY = "galil-workdesk-cloud-meta", BACKUP_DAY_KEY = "galil-workdesk-backup-day";
   try { over = JSON.parse(localStorage.getItem(CONFIG_KEY) || "null"); } catch (e) {}
   var C = {
     domain: (base.domain || "@galiltc.co.il").toLowerCase(), storage: base.storage || "",
@@ -40,10 +40,12 @@ var WDCloud = (function () {
   var api = { enabled: REMOTE || ENTRA, remote: false, entra: ENTRA, storage: STORAGE, config: C, data: null, onRemote: null };
 
   /* ---------- helpers ---------- */
+  /* interface text in the portal's language (workdesk/i18n.js, loaded after this file) */
+  function T(s) { return window.WDI18N ? WDI18N.t(s) : s; }
   function el(tag, attrs) {
     var e = document.createElement(tag);
-    Object.keys(attrs || {}).forEach(function (k) { if (k === "style") e.style.cssText = attrs[k]; else if (k.slice(0, 2) === "on") e.addEventListener(k.slice(2), attrs[k]); else e.setAttribute(k, attrs[k]); });
-    for (var i = 2; i < arguments.length; i++) { var c = arguments[i]; if (c == null) continue; e.appendChild(typeof c === "string" ? document.createTextNode(c) : c); }
+    Object.keys(attrs || {}).forEach(function (k) { if (k === "style") e.style.cssText = attrs[k]; else if (k.slice(0, 2) === "on") e.addEventListener(k.slice(2), attrs[k]); else e.setAttribute(k, k === "placeholder" || k === "title" ? T(attrs[k]) : attrs[k]); });
+    for (var i = 2; i < arguments.length; i++) { var c = arguments[i]; if (c == null) continue; e.appendChild(typeof c === "string" ? document.createTextNode(T(c)) : c); }
     return e;
   }
   function wait(ms) { return new Promise(function (r) { setTimeout(r, ms); }); }
@@ -308,13 +310,14 @@ var WDCloud = (function () {
   function paintStatus() {
     if (!api.remote || !document.body) return;
     if (!pill) {
-      pill = el("button", { id: "wd-sync", title: "", style: "position:fixed;left:12px;bottom:12px;z-index:900;display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#D9E4D0);background:var(--surface,#fff);color:var(--muted,#5F6E62);font:600 11.5px system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12);max-width:60vw", onclick: function () { api.showInfo(); } });
+      pill = el("button", { id: "wd-sync", title: "", style: "position:fixed;inset-inline-start:12px;bottom:12px;z-index:900;display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#D9E4D0);background:var(--surface,#fff);color:var(--muted,#5F6E62);font:600 11.5px system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12);max-width:60vw", onclick: function () { api.showInfo(); } });
       document.body.appendChild(pill);
     }
     var s = S.state, w = where();
     var text = s === "saving" ? "Saving to " + w + "…" : s === "loading" ? "Opening from " + w + "…" : s === "offline" ? "Offline — changes are kept and will sync" :
       s === "error" || s === "token" ? "Not saved: " + S.error : "Saved to " + w + (S.lastSync ? " · " + S.lastSync.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "");
     var dot = { saving: "#EDA100", loading: "#EDA100", offline: "#8A9585", error: "#C0392B", token: "#C0392B" }[s] || "#008300";
+    text = T(text);
     pill.replaceChildren(el("i", { style: "width:8px;height:8px;border-radius:50%;flex:none;background:" + dot }), el("span", { style: "overflow:hidden;text-overflow:ellipsis;white-space:nowrap" }, text));
     pill.title = text;
   }
@@ -339,7 +342,7 @@ var WDCloud = (function () {
   function screen(root, title, children) {
     root.replaceChildren(el("div", { class: "auth" }, el("div", { class: "authcard" },
       el("div", { style: "display:flex;align-items:center;gap:12px;margin-bottom:14px" },
-        el("div", { style: "font-weight:800;font-size:22px;letter-spacing:.06em;color:var(--ink)" }, "GALIL"), el("div", { class: "cap" }, "WorkDesk")),
+        el("div", { style: "font-weight:800;font-size:22px;letter-spacing:.06em;color:var(--ink)" }, "GALIL"), el("div", { class: "cap" }, "Employee Portal")),
       el("div", { class: "h2", style: "font-size:20px;font-weight:700;margin-bottom:10px" }, title), children)));
   }
   function errorBanner(msg) { return msg ? el("div", { class: "banner err", style: "margin-bottom:10px" }, "⚠ " + msg) : null; }
@@ -365,7 +368,7 @@ var WDCloud = (function () {
     var start = function (data) { S.data = data; api.data = data; S.etag = null; S.base = null; S.baseText = null; S.dirty = true; api.remote = true; S.state = "saving"; push().then(next); };
     var fileIn = el("input", { type: "file", accept: ".json,application/json", style: "display:none", onchange: function (e) {
       var f = e.target.files[0]; if (!f) return; var rd = new FileReader();
-      rd.onload = function () { var o; try { o = JSON.parse(rd.result); } catch (x) { alert("That file isn't valid JSON."); return; } var v = S.hooks.validateBackup(o); if (!v.ok) { alert(v.reason); return; } var d = S.hooks.emptyDB(); Object.keys(d).forEach(function (k) { if (o.data[k] == null) o.data[k] = d[k]; }); start(o.data); };
+      rd.onload = function () { var o; try { o = JSON.parse(rd.result); } catch (x) { alert(T("That file isn't valid JSON.")); return; } var v = S.hooks.validateBackup(o); if (!v.ok) { alert(T(v.reason)); return; } var d = S.hooks.emptyDB(); Object.keys(d).forEach(function (k) { if (o.data[k] == null) o.data[k] = d[k]; }); start(o.data); };
       rd.readAsText(f);
     } });
     screen(root, "Set up WorkDesk", el("div", null,
@@ -479,10 +482,10 @@ var WDCloud = (function () {
           el("button", { class: "btn sm", onclick: function () { box.remove(); } }, "Cancel"),
           el("button", { class: "btn p sm", onclick: function () {
             var guid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i, id = v("cx-client"), ten = v("cx-tenant"), st = sel.value, rp = v("cx-repo").split("/");
-            if (id && !guid.test(id)) return alert("The client ID is a GUID like 00000000-0000-0000-0000-000000000000.");
-            if (ten && !guid.test(ten)) return alert("The tenant ID is a GUID like 00000000-0000-0000-0000-000000000000.");
-            if (st === "onedrive" && !id) return alert("OneDrive needs the Microsoft Entra application ID.");
-            if (st === "github" && rp.length !== 2) return alert("Enter the repository as owner/name.");
+            if (id && !guid.test(id)) return alert(T("The client ID is a GUID like 00000000-0000-0000-0000-000000000000."));
+            if (ten && !guid.test(ten)) return alert(T("The tenant ID is a GUID like 00000000-0000-0000-0000-000000000000."));
+            if (st === "onedrive" && !id) return alert(T("OneDrive needs the Microsoft Entra application ID."));
+            if (st === "github" && rp.length !== 2) return alert(T("Enter the repository as owner/name."));
             api.setConfig({ storage: st, entra: { clientId: id, tenantId: ten }, onedrive: { folderLink: v("cx-folder") }, github: { owner: rp[0] || "", repo: rp[1] || "", branch: v("cx-branch") || "workdesk-data", path: g.path } });
           } }, "Save and reload"))));
     document.body.appendChild(box);

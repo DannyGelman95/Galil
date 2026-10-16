@@ -6,14 +6,15 @@
 <meta name="theme-color" content="#1B2A18">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
-<title>GALIL WorkDesk — V7</title>
+<title>GALIL Employee Portal</title>
 <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
 <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="manifest" href="manifest.webmanifest">
+<link rel="stylesheet" href="shared/fonts/fonts.css">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-title" content="WorkDesk">
+<meta name="apple-mobile-web-app-title" content="GALIL Portal">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
   html,body,#root{height:100%}
@@ -26,16 +27,21 @@
 </head>
 <body>
 <div id="root"></div>
-<!-- sign-in and shared data files (config.js decides: this browser, GitHub or OneDrive) -->
+<!-- portal settings, the shared sign-in / language / theme layer, and WorkDesk's data files
+     (config.js decides where the data lives: this browser, GitHub or OneDrive) -->
 <script src="config.js"></script>
+<script src="shared/portal.js"></script>
+<script>GalilPortal.applyLang();</script>
 <script src="vendor/msal-browser.min.js"></script>
-<script src="workdesk-cloud.js"></script>
-<div id="boot"><b>GALIL WORKDESK</b><span>Starting…</span></div>
+<script src="workdesk/workdesk-cloud.js"></script>
+<script src="workdesk/i18n.js"></script>
+<script src="workdesk/he.js"></script>
+<div id="boot"><b>GALIL EMPLOYEE PORTAL</b><span>Starting…</span></div>
 <script>
 window.__bootFail = function (e) {
   var b = document.getElementById("boot");
   if (!b) { b = document.createElement("div"); b.id = "boot"; document.body.appendChild(b); }
-  b.innerHTML = "<b>GALIL WORKDESK</b><span>This build could not start in this browser.</span>";
+  b.innerHTML = "<b>GALIL EMPLOYEE PORTAL</b><span>This build could not start in this browser.</span>";
   var p = document.createElement("pre"); p.textContent = (e && (e.stack || e.message)) || String(e);
   b.appendChild(p);
 };
@@ -17456,7 +17462,8 @@ var Recharts = (function () {
    data local under the frozen storage key `galil-workdesk-v1` (§3.2).
    ===================================================================== */
 
-var h = React.createElement;
+/* every element goes through the interface-language layer (workdesk/i18n.js) */
+var h = WDI18N.h, tr = WDI18N.tr;
 var useState = React.useState, useEffect = React.useEffect,
     useRef = React.useRef, useMemo = React.useMemo, useCallback = React.useCallback;
 var AreaChart = Recharts.AreaChart, Area = Recharts.Area, XAxis = Recharts.XAxis,
@@ -17515,10 +17522,10 @@ var pad = function (n) { return String(n).padStart(2, "0"); };
 var d2s = function (d) { return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()); };
 var s2d = function (s) { var p = String(s || "").split("-").map(Number); return new Date(p[0], p[1] - 1, p[2]); };
 var todayStr = function () { return d2s(new Date()); };
-var MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-var MONTHS_FULL = ["January","February","March","April","May","June","July","August","September","October","November","December"];
-var DOW = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
-var DOW_FULL = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+var MONTHS = WDI18N.he ? ["ינו׳","פבר׳","מרץ","אפר׳","מאי","יוני","יולי","אוג׳","ספט׳","אוק׳","נוב׳","דצמ׳"] : ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var MONTHS_FULL = WDI18N.he ? ["ינואר","פברואר","מרץ","אפריל","מאי","יוני","יולי","אוגוסט","ספטמבר","אוקטובר","נובמבר","דצמבר"] : ["January","February","March","April","May","June","July","August","September","October","November","December"];
+var DOW = WDI18N.he ? ["א׳","ב׳","ג׳","ד׳","ה׳","ו׳","ש׳"] : ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"];
+var DOW_FULL = WDI18N.he ? ["יום ראשון","יום שני","יום שלישי","יום רביעי","יום חמישי","יום שישי","שבת"] : ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 /* Israeli format throughout — §7.1 */
 var il = function (s) { if (!s) return ""; var d = s2d(s); return pad(d.getDate()) + "/" + pad(d.getMonth() + 1) + "/" + d.getFullYear(); };
 var ilLong = function (s) { if (!s) return ""; var d = s2d(s); return DOW_FULL[d.getDay()] + ", " + il(s); };
@@ -17543,9 +17550,9 @@ var MIN_OPTS = (function () { var a = []; for (var i = 0; i < 60; i += 5) a.push
 
 /* ================= §4.1 role catalogue ================= */
 var ROLES = [
-  { code: "EMP",  name: "Employee",            desc: "Reports own time, plans own week, reports own expenses, works assigned tasks, writes to the Library." },
-  { code: "SEN",  name: "Senior Employee",     desc: "As Employee, plus may create draft tasks within assigned projects and see their full task board." },
-  { code: "TL",   name: "Team Lead",           desc: "As Senior Employee, plus approves time and expenses for their team and manages task assignment." },
+  { code: "EMP",  name: "Employee",            desc: "Reports own time, sick and vacation days, plans own week, reports own expenses, writes to the Library." },
+  { code: "SEN",  name: "Senior Employee",     desc: "As Employee, plus sees the people and budgets of the projects they are assigned to." },
+  { code: "TL",   name: "Team Lead",           desc: "As Senior Employee, plus approves time, leave and expenses for their team and assigns people to projects." },
   { code: "PM",   name: "Project Manager",     desc: "As Team Lead, plus owns projects, work orders, budgets and assignments." },
   { code: "OPS",  name: "Operations Manager",  desc: "As Project Manager across all clients. Manages master lists, employees, roles and settings." },
   { code: "FIN",  name: "Finance",             desc: "Read-only across budgets, expenses, work orders and exports. Cannot approve time." },
@@ -17574,9 +17581,7 @@ var PERM = {
   viewBudgets:                ["-","-","-","P","Y","Y","Y","-","-"],
   editBudgets:                ["-","-","-","P","Y","-","Y","-","-"],
   createWorkOrders:           ["-","-","-","P","Y","-","Y","-","-"],
-  createTasks:                ["-","P","P","P","Y","-","Y","-","-"],
-  assignTasks:                ["-","-","T","P","Y","-","Y","-","-"],
-  updateOwnTaskStatus:        ["Y","Y","Y","Y","Y","-","Y","Y","-"],
+  assignPeople:               ["-","-","T","P","Y","-","Y","-","-"],
   manageClientsProjects:      ["-","-","-","P","Y","-","Y","-","-"],
   manageEmployeesRoles:       ["-","-","-","-","Y","-","Y","-","-"],
   dashboardOwn:               ["Y","Y","Y","Y","Y","Y","Y","-","Y"],
@@ -17587,21 +17592,21 @@ var PERM = {
   backupRestore:              ["-","-","-","-","Y","-","Y","-","-"],
   viewAuditLog:               ["-","-","-","-","Y","Y","Y","-","-"],
   /* Teams sub-tab: leads set up their own teams (OPS and CEO manage every team) */
-  manageTeams:                ["-","-","Y","Y","Y","-","Y","-","-"],
-  /* Employee Knowledge Base (site/kb/) — every employee, not contractors or viewers */
-  knowledgeBase:              ["Y","Y","Y","Y","Y","Y","Y","-","-"]
+  manageTeams:                ["-","-","Y","Y","Y","-","Y","-","-"]
 };
+/* Tasks live in Taskana, and who may open Taskana, the Handbook and the Knowledge
+   Base is the person's portal access (Management → People), not this matrix. */
 var PERM_LABELS = {
   reportOwnTime: "Report own time", reportBlueTime: "Report Blue \u00b7 management hours", viewOthersTime: "View others' time", editOthersTime: "Edit others' time",
   approveTime: "Approve time requests", planOwnWeek: "Plan own week", planOthersWeek: "Plan others' week",
   reportExpenses: "Report expenses", approveExpenses: "Approve expenses", viewBudgets: "View budgets",
-  editBudgets: "Create / edit budgets", createWorkOrders: "Create work orders", createTasks: "Create tasks",
-  assignTasks: "Assign tasks to people", updateOwnTaskStatus: "Update own task status",
+  editBudgets: "Create / edit budgets", createWorkOrders: "Create work orders",
+  assignPeople: "Assign people to projects",
   manageClientsProjects: "Manage clients & projects", manageEmployeesRoles: "Manage employees & roles",
   dashboardOwn: "Dashboard — own figures", dashboardCompany: "Dashboard — company figures",
   libraryRead: "Library — read", libraryWrite: "Library — write", excelExport: "Excel export",
   backupRestore: "Backup / restore", viewAuditLog: "View audit log",
-  knowledgeBase: "Knowledge Base", manageTeams: "Set up teams & managers"
+  manageTeams: "Set up teams & managers"
 };
 var ROLE_ORDER = ["EMP","SEN","TL","PM","OPS","FIN","CEO","EXT","VIEW"];
 /* scope letter for a capability: "Y" | "O" | "T" | "P" | "-" */
@@ -17616,7 +17621,7 @@ var can = function (user, cap) { return user ? scopeOf(user.role, cap) !== "-" :
 function emptyDB() {
   return {
     users: [], teams: [], clients: [], projects: [], workOrders: [], budgets: [],
-    tasks: [], taskAssignees: [], assignments: [], entries: [], planned: [],
+    assignments: [], entries: [], planned: [],
     expenses: [], attachments: [], library: [], approvals: [], audit: [],
     expenseTypes: [], teamRequests: [], settings: {}
   };
@@ -17660,12 +17665,15 @@ function mkUser(id, name, nameHe, role, title, dept, teamId, managerId, active) 
 
 /* ================= toast ================= */
 var _toastFn = null;
-function toast(msg, kind, action) { if (_toastFn) _toastFn(msg, kind, action); }
+function toast(msg, kind, action) {
+  if (action && action.label) action = Object.assign({}, action, { label: WDI18N.t(action.label) });
+  if (_toastFn) _toastFn(WDI18N.t(msg), kind, action);
+}
 
 /* ================= lookups ================= */
 function byId(arr, id) { for (var i = 0; i < (arr || []).length; i++) if (arr[i].id === id) return arr[i]; return null; }
 function nameOf(arr, id, field) { var o = byId(arr, id); return o ? o[field || "name"] : ""; }
-function userName(db, id) { var u = byId(db.users, id); return u ? u.fullName : "—"; }
+function userName(db, id) { var u = byId(db.users, id); return u ? (WDI18N.he && u.fullNameHe ? u.fullNameHe : u.fullName) : "—"; }
 function initialsOf(s) { return String(s || "").split(/\s+/).map(function (w) { return w[0]; }).join("").slice(0, 2).toUpperCase(); }
 
 /* ================= Sick / Vacation leave =================
@@ -17767,13 +17775,7 @@ function entitlementCheck(db, entry) {
   var asg = findAssignment(db, entry.assignee, entry.projectId, entry.workOrderId, entry.date);
   if (!asg) return no("Not assigned");
 
-  /* 5 — task selected but not assigned to the user */
-  if (entry.taskId) {
-    var ta = db.taskAssignees.filter(function (x) { return x.taskId === entry.taskId && x.userId === entry.assignee; });
-    if (!ta.length) return no("Task not assigned");
-    var tk = byId(db.tasks, entry.taskId);
-    if (tk && (tk.status === "Done" || tk.status === "Cancelled")) return no("Task closed");  /* §10.3 */
-  }
+  /* 5 — (the Taskana task an entry names is information only and never gates it) */
 
   /* 6 — allowance on this assignment */
   var allow = asg.allowanceHours;
@@ -17980,10 +17982,6 @@ var PS_COLOR = {
   "Active": "#3FA97E", "WIP": "#17A3B8", "Draft A": "#8CC63E", "Draft B": "#5C8B22",
   "Pending Information": "#F0A32C", "Pending Review": "#9C8CE8", "On hold": "#5B6B57", "Done": "#1B2A18"
 };
-var TASK_STATUSES = ["To do", "In progress", "Blocked", "In review", "Done", "Cancelled"];
-var TS_COLOR = { "To do": "#5B6B57", "In progress": "#17A3B8", "Blocked": "#E05C4B", "In review": "#9C8CE8", "Done": "#3FA97E", "Cancelled": "#8A9686" };
-var PRIORITIES = ["Low", "Normal", "High", "Critical"];
-var PR_COLOR = { "Low": "#5B6B57", "Normal": "#17A3B8", "High": "#F0A32C", "Critical": "#C0392B" };
 var ENTRY_STATUS_LABEL = { draft: "Draft", pending: "Pending", registered: "Registered", cancelled: "Cancelled", locked: "Locked" };
 </script>
 <script>"use strict";
@@ -19366,13 +19364,14 @@ function AuthLogo(p) {
     h(Mark, { color: C.deep, style: { width: 46, height: 38 } }),
     h("b", null, "GALIL"),
     h("span", null, "Technical Writing · Training · Implementation"),
-    h("div", { style: { marginTop: 8, fontWeight: 700, fontSize: 20, letterSpacing: ".02em" } }, "WorkDesk"),
+    h("div", { style: { marginTop: 8, fontWeight: 700, fontSize: 20, letterSpacing: ".02em" } }, "Employee Portal"),
+    h("div", { className: "cap", style: { textAlign: "center" } }, "WorkDesk · Taskana · Handbook · Knowledge Base"),
     p.sub ? h("div", { className: "cap" }, p.sub) : null);
 }
 
 /* ---------------- §6.1 sign-in ---------------- */
 function SignIn(p) {
-  var s = useState({ email: "", pw: "", err: "", mode: "", who: "", lang: "en" }), st = s[0], set = s[1];
+  var s = useState({ email: "", pw: "", err: "", mode: "", who: "" }), st = s[0], set = s[1];
   var db = p.db;
   var lockedUntil = function (email) { var f = failStore[email]; return f && f.until > Date.now() ? f.until : 0; };
 
@@ -19398,7 +19397,7 @@ function SignIn(p) {
 
   return h("div", { className: "auth" },
     h("div", { className: "authcard" },
-      h(AuthLogo, { sub: "Version 7.1 · standalone build" }),
+      h(AuthLogo, { sub: WDCloud.remote || WDCloud.entra ? null : "Standalone demo" }),
 
       st.mode === "forgot"
         ? h("div", { className: "col", style: { gap: 12 } },
@@ -19427,7 +19426,7 @@ function SignIn(p) {
                         onClick: function () { p.onSignIn(u, "microsoft"); }
                       }, h("span", { className: "avatar", style: { width: 26, height: 26, fontSize: 10 } }, initialsOf(u.fullName)),
                          h("span", { className: "grow col", style: { gap: 0, minWidth: 0 } },
-                           h("span", { className: "nm" }, u.fullName),
+                           h("span", { className: "nm" }, displayName(u)),
                            h("span", { className: "em" }, u.email)),
                          h(Chip, { k: "gr" }, u.role));
                     })),
@@ -19450,22 +19449,7 @@ function SignIn(p) {
             h("div", { className: "sep" }),
             h("div", { className: "row", style: { justifyContent: "space-between", gap: 8 } },
               h("span", { className: "cap" }, "Language"),
-              h("div", { className: "pillbar" },
-                h("button", {
-                  className: "pill" + (st.lang !== "he" ? " on" : ""),
-                  onClick: function () { set(Object.assign({}, st, { lang: "en" })); }
-                }, "English"),
-                h("button", {
-                  className: "pill" + (st.lang === "he" ? " on" : ""), lang: "he",
-                  title: "Hebrew interface — reserved for V8 (§15.1)",
-                  onClick: function () {
-                    set(Object.assign({}, st, { lang: "he" }));
-                    toast("Hebrew and right-to-left layout are reserved for V8 (specification §15.1). The interface stays English for V7.", "");
-                    setTimeout(function () { set(function (cur) { return Object.assign({}, cur, { lang: "en" }); }); }, 1400);
-                  }
-                }, "עברית"))),
-            st.lang === "he" ? h("div", { className: "banner amber", style: { marginTop: 8 } },
-              "⚠ Hebrew is the reserved localization slot — every string moves to a resource file and the layout flips to RTL in V8.") : null,
+              h(LangSwitch, { light: true })),
             WDCloud.entra ? null : h("div", { className: "cap", style: { marginTop: 8, background: C.wash, padding: "7px 9px", borderRadius: 9 } },
               h("b", null, "Demo accounts"), " — password ", h("span", { className: "mono" }, "GalilWorkdesk1"), ". Try ",
               h("span", { className: "mono" }, "danny.gelman" + DOMAIN), " (Project Manager) or ",
@@ -19672,17 +19656,11 @@ function optionsFor(db, form, viewer) {
   var clients = db.clients.filter(function (c) { return cids.indexOf(c.id) >= 0; });
   var projects = db.projects.filter(function (p) { return pids.indexOf(p.id) >= 0 && (!form.clientId || p.clientId === form.clientId); });
   var wos = db.workOrders.filter(function (w) { return w.projectId === form.projectId; });
-  var tasks = db.tasks.filter(function (t) {
-    if (form.workOrderId) { if (t.workOrderId !== form.workOrderId) return false; }
-    else if (t.projectId !== form.projectId) return false;
-    if (wide || viewer.id !== form.assignee) return true;
-    return db.taskAssignees.some(function (ta) { return ta.taskId === t.id && ta.userId === form.assignee; });
-  });
   return {
     clients: clients.map(function (c) { return { value: c.id, label: c.name }; }),
     projects: projects.map(function (p) { return { value: p.id, label: p.name }; }),
     workOrders: wos.map(function (w) { return { value: w.id, label: w.code + " — " + w.title }; }),
-    tasks: tasks.map(function (t) { return { value: t.id, label: t.title }; })
+    tasks: taskanaOptions(db, form, viewer)
   };
 }
 
@@ -19766,7 +19744,7 @@ function formToEntry(db, f) {
   if (e.clientId) e.client = nameOf(db.clients, e.clientId);
   if (e.projectId) e.project = nameOf(db.projects, e.projectId);
   if (e.workOrderId) e.workOrder = nameOf(db.workOrders, e.workOrderId, "code");
-  if (e.taskId) e.task = nameOf(db.tasks, e.taskId, "title");
+  if (e.taskId) e.task = taskanaTaskLabel(e.taskId) || f.task || "";
   return e;
 }
 
@@ -19897,7 +19875,7 @@ function EntryForm(p) {
         onFreeToggle: function (v) { set(Object.assign({}, f, { freeWO: v, workOrderId: "", workOrder: "" })); },
         onChange: function (v) { up("workOrderId", v); }, onFreeChange: function (v) { up("workOrder", v); }
       }),
-      h(Sel, { label: "Task", cls: "grow", value: f.taskId, placeholder: opts.tasks.length ? "— none —" : "— no assigned task —", options: opts.tasks, onChange: function (e) { up("taskId", e.target.value); } })
+      h(Sel, { label: "Taskana task (optional)", cls: "grow", value: f.taskId, placeholder: opts.tasks.length ? "— none —" : "— no open Taskana task —", options: opts.tasks, onChange: function (e) { up("taskId", e.target.value); } })
     ),
     h("div", { className: "band" },
       h(Inp, {
@@ -20145,7 +20123,7 @@ function TimeLogTab(p) {
   var baseYear = new Date().getFullYear();
   var todayIdx = (new Date().getFullYear() - baseYear) * 12 + new Date().getMonth();
   var ms = useState(todayIdx), month = ms[0], setMonth = ms[1];
-  var fs = useState({ employees: [], clientId: "", projectId: "", workOrderId: "", taskId: "", type: "", projectStatus: "", status: "" });
+  var fs = useState({ employees: [], clientId: "", projectId: "", workOrderId: "", type: "", projectStatus: "", status: "" });
   var flt = fs[0], setFlt = fs[1];
   var es = useState(null), editing = es[0], setEditing = es[1];
   var ks = useState(0), formKey = ks[0], bump = ks[1];
@@ -20160,7 +20138,6 @@ function TimeLogTab(p) {
     if (flt.clientId && e.clientId !== flt.clientId) return false;
     if (flt.projectId && e.projectId !== flt.projectId) return false;
     if (flt.workOrderId && e.workOrderId !== flt.workOrderId) return false;
-    if (flt.taskId && e.taskId !== flt.taskId) return false;
     if (flt.type && e.type !== flt.type) return false;
     if (flt.projectStatus && entryProjectStatus(db, e) !== flt.projectStatus) return false;
     if (flt.status && e.status !== flt.status) return false;
@@ -20209,7 +20186,7 @@ function TimeLogTab(p) {
         client: e.clientId ? nameOf(db.clients, e.clientId) : (e.client || ""),
         project: e.projectId ? nameOf(db.projects, e.projectId) : (e.project || ""),
         workOrder: e.workOrderId ? nameOf(db.workOrders, e.workOrderId, "code") : (e.workOrder || ""),
-        task: e.taskId ? nameOf(db.tasks, e.taskId, "title") : "",
+        task: e.task || "",
         projectStatus: entryProjectStatus(db, e), status: ENTRY_STATUS_LABEL[e.status] || e.status,
         reason: e.statusReason, description: e.description, notes: e.notes
       };
@@ -20222,7 +20199,7 @@ function TimeLogTab(p) {
       { key: "blue", label: "Blue h", type: "number", total: true, width: 10 },
       { key: "day", label: "Days", type: "number", total: true, width: 8 },
       { key: "client", label: "Client" }, { key: "project", label: "Project" },
-      { key: "workOrder", label: "Work order", width: 18 }, { key: "task", label: "Task" },
+      { key: "workOrder", label: "Work order", width: 18 }, { key: "task", label: "Taskana task" },
       { key: "projectStatus", label: "Project status", width: 17 },
       { key: "status", label: "Entry status", width: 14 }, { key: "reason", label: "Reason", width: 18 },
       { key: "description", label: "Description", width: 44 }, { key: "notes", label: "Notes", width: 26 }
@@ -20268,11 +20245,10 @@ function TimeLogTab(p) {
         h("div", { style: { minWidth: 140 } }, h(Sel, { label: "Client", value: flt.clientId, placeholder: "All", options: db.clients.map(function (c) { return { value: c.id, label: c.name }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { clientId: e.target.value, projectId: "", workOrderId: "" })); } })),
         h("div", { style: { minWidth: 168 } }, h(Sel, { label: "Project", value: flt.projectId, placeholder: "All", options: db.projects.filter(function (x) { return !flt.clientId || x.clientId === flt.clientId; }).map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { projectId: e.target.value, workOrderId: "" })); } })),
         h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Work order", value: flt.workOrderId, placeholder: "All", options: db.workOrders.filter(function (w) { return !flt.projectId || w.projectId === flt.projectId; }).map(function (w) { return { value: w.id, label: w.code }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { workOrderId: e.target.value })); } })),
-        h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Task", value: flt.taskId, placeholder: "All", options: db.tasks.filter(function (t) { return !flt.projectId || t.projectId === flt.projectId; }).map(function (t) { return { value: t.id, label: t.title }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { taskId: e.target.value })); } })),
         h("div", { style: { minWidth: 108 } }, h(Sel, { label: "Entry type", value: flt.type, placeholder: "All", options: ["Work", "Sick", "Vacation"], onChange: function (e) { setFlt(Object.assign({}, flt, { type: e.target.value })); } })),
         h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Project status", value: flt.projectStatus, placeholder: "All", options: PROJECT_STATUSES, onChange: function (e) { setFlt(Object.assign({}, flt, { projectStatus: e.target.value })); } })),
         h("div", { style: { minWidth: 132 } }, h(Sel, { label: "Entry status", value: flt.status, placeholder: "All", options: [{ value: "registered", label: "Registered" }, { value: "pending", label: "Pending" }, { value: "cancelled", label: "Cancelled" }, { value: "locked", label: "Locked" }], onChange: function (e) { setFlt(Object.assign({}, flt, { status: e.target.value })); } })),
-        h(Btn, { kind: "t", onClick: function () { setFlt({ employees: [], clientId: "", projectId: "", workOrderId: "", taskId: "", type: "", projectStatus: "", status: "" }); } }, "Clear"))),
+        h(Btn, { kind: "t", onClick: function () { setFlt({ employees: [], clientId: "", projectId: "", workOrderId: "", type: "", projectStatus: "", status: "" }); } }, "Clear"))),
 
     /* ---- list ---- */
     h("div", { className: "panel scroll" },
@@ -20280,7 +20256,7 @@ function TimeLogTab(p) {
         ? h("div", { className: "empty" }, "No entries for ", MONTHS_FULL[m], " ", y, " with these filters.")
         : h(STable, { id: "time-log", grow: "Description", center: ["Type", "Time", "Hours", "Project status"], className: "tbl mid" },
             h("thead", null, h("tr", null,
-              ["Date", "Employee", "Type", "Time", "Hours", "Client", "Project", "Work order", "Task", "Project status", "Description", ""].map(function (c, i) {
+              ["Date", "Employee", "Type", "Time", "Hours", "Client", "Project", "Work order", "Taskana task", "Project status", "Description", ""].map(function (c, i) {
                 return h("th", { key: i, className: c === "Hours" ? "hrs" : "" }, c);
               }))),
             h("tbody", null, rows.map(function (e) {
@@ -20296,7 +20272,7 @@ function TimeLogTab(p) {
                 h("td", null, e.clientId ? nameOf(db.clients, e.clientId) : e.client ? h("span", { title: "Typed by the employee — not in the master list" }, e.client, " ", h(Chip, { k: "amber" }, "new")) : "—"),
                 h("td", null, e.projectId ? nameOf(db.projects, e.projectId) : e.project ? h("span", null, e.project, " ", h(Chip, { k: "amber" }, "new")) : "—"),
                 h("td", null, h(CopyCell, { value: e.workOrderId ? nameOf(db.workOrders, e.workOrderId, "code") : (e.workOrder || "") })),
-                h("td", null, e.taskId ? nameOf(db.tasks, e.taskId, "title") : "—"),
+                h("td", null, e.task ? h("span", { className: "tnum" }, e.task) : "—"),
                 h("td", null, psChip(entryProjectStatus(db, e)) || h("span", { className: "cap" }, "—")),
                 h("td", null, h("div", { className: "row", style: { gap: 6 } }, statusBadge(e), h("span", null, e.description)),
                   e.notes ? h("div", { className: "cap" }, e.notes) : null,
@@ -20312,316 +20288,56 @@ function TimeLogTab(p) {
 </script>
 <script>"use strict";
 /* =====================================================================
-   §10 — Module: Tasks
+   Taskana tasks, seen from WorkDesk
+   WorkDesk no longer keeps tasks: Taskana does, on the same projects (the
+   people, clients, projects and work orders are WorkDesk's). A time entry
+   may name the Taskana task the time went to; the choice is optional and
+   never gates the entry. The list comes from Taskana's data as this
+   browser last saw it (shared/portal.js).
    ===================================================================== */
 
-function taskConsumed(db, taskId) {
-  return db.entries.filter(function (e) { return e.taskId === taskId && e.status === "registered"; })
-    .reduce(function (a, e) { return a + (Number(e.yellow) || 0) + (Number(e.red) || 0) + (Number(e.blue) || 0); }, 0);
-}
-function taskConsumedBy(db, taskId, userId) {
-  return db.entries.filter(function (e) { return e.taskId === taskId && e.assignee === userId && e.status === "registered"; })
-    .reduce(function (a, e) { return a + (Number(e.yellow) || 0) + (Number(e.red) || 0) + (Number(e.blue) || 0); }, 0);
-}
-function taskAssigneeIds(db, taskId) {
-  return db.taskAssignees.filter(function (t) { return t.taskId === taskId; }).map(function (t) { return t.userId; });
-}
-function taskIsBlocked(db, t) {
-  return (t.dependencies || []).some(function (id) { var d = byId(db.tasks, id); return d && d.status !== "Done"; });
-}
-function isOverdue(t) { return t.dueDate && t.dueDate < todayStr() && ["Done", "Cancelled"].indexOf(t.status) < 0; }
-function overdueCount(db, user) {
-  var mine = taskScope(db, user);
-  return mine.filter(isOverdue).length;
-}
-/* which tasks may this user see */
 /* the project status shown beside a time entry is the project's own, set under
    Management → Projects; it is never edited from the Time Log */
 function entryProjectStatus(db, e) {
   var pr = e && e.projectId ? byId(db.projects, e.projectId) : null;
   return pr ? pr.status || "" : "";
 }
-
-/* who may move a task between statuses: anyone who creates tasks within their
-   scope, otherwise only its assignees (updateOwnTaskStatus) */
-function canMoveTask(db, user, t) {
-  if (can(user, "createTasks") && taskScope(db, user).indexOf(t) >= 0) return true;
-  return can(user, "updateOwnTaskStatus") && taskAssigneeIds(db, t.id).indexOf(user.id) >= 0;
+function taskanaData() { return GalilPortal.taskana(); }
+function taskanaKey(t, data) {
+  var pr = byId((data && data.projects) || [], t.projectId);
+  return (pr && pr.key ? pr.key : "?") + "-" + t.num;
+}
+function taskanaLabel(t, data) { return taskanaKey(t, data) + " \u00b7 " + t.title; }
+/* open Taskana tasks on a WorkDesk project (and work order), for the person the time is for */
+function taskanaOptions(db, form, viewer) {
+  var data = taskanaData();
+  if (!data || !form.projectId) return [];
+  var person = byId(db.users, form.assignee) || {};
+  var tkUser = (data.users || []).filter(function (u) { return u.id === person.id || (u.email || "").toLowerCase() === (person.email || "").toLowerCase(); })[0];
+  var wide = ["OPS", "CEO"].indexOf(viewer.role) >= 0 || viewer.id !== form.assignee;
+  return (data.tasks || []).filter(function (t) {
+    if (t.projectId !== form.projectId || t.status === "Done") return false;
+    if (form.workOrderId && t.workOrderId && t.workOrderId !== form.workOrderId) return false;
+    if (wide) return true;
+    return !!tkUser && (t.assigneeId === tkUser.id || t.reporterId === tkUser.id);
+  }).sort(function (a, b) { return (a.num || 0) - (b.num || 0); })
+    .map(function (t) { return { value: t.id, label: taskanaLabel(t, data) }; });
+}
+/* a person's open Taskana tasks (Taskana matches people to WorkDesk by id or email) */
+function taskanaTasksOf(db, userId) {
+  var data = taskanaData(), person = byId(db.users, userId);
+  if (!data || !person) return [];
+  var tkUser = (data.users || []).filter(function (u) { return u.id === person.id || (u.email || "").toLowerCase() === (person.email || "").toLowerCase(); })[0];
+  if (!tkUser) return [];
+  return (data.tasks || []).filter(function (t) { return t.assigneeId === tkUser.id && t.status !== "Done"; });
+}
+/* the label kept on the entry, so it still reads well where Taskana's data isn't loaded */
+function taskanaTaskLabel(id) {
+  var data = taskanaData(); if (!data || !id) return "";
+  var t = byId(data.tasks || [], id);
+  return t ? taskanaLabel(t, data) : "";
 }
 
-function taskScope(db, user) {
-  if (["OPS", "CEO", "FIN"].indexOf(user.role) >= 0) return db.tasks;
-  if (user.role === "EXT") return db.tasks.filter(function (t) { return taskAssigneeIds(db, t.id).indexOf(user.id) >= 0; });
-  var pids = ownedProjectIds(db, user);
-  return db.tasks.filter(function (t) {
-    if (taskAssigneeIds(db, t.id).indexOf(user.id) >= 0) return true;
-    return pids.indexOf(t.projectId) >= 0;
-  });
-}
-
-function TaskEditor(p) {
-  var db = p.db, user = p.user;
-  var s = useState(p.value), f = s[0], set = s[1];
-  var es = useState({}), errs = es[0], setErrs = es[1];
-  var up = function (k, v) {
-    var n = Object.assign({}, f); n[k] = v;
-    if (k === "projectId") { n.workOrderId = ""; }
-    set(n); var ne = Object.assign({}, errs); delete ne[k]; setErrs(ne);
-  };
-  var wos = db.workOrders.filter(function (w) { return w.projectId === f.projectId; });
-  var proj = byId(db.projects, f.projectId);
-  var assignPool = db.users.filter(function (u) { return u.isActive && ["VIEW", "FIN"].indexOf(u.role) < 0; });
-
-  function save() {
-    var e = {};
-    if (!String(f.title).trim()) e.title = "Give the task a short, action-phrased title.";
-    if (!f.projectId) e.projectId = "Select a project.";
-    if (!String(f.description).trim()) e.description = "Describe what done looks like.";
-    if (proj && proj.isWoTracked && wos.length && !f.workOrderId) e.workOrderId = "This project is tracked by work order. Select one.";
-    setErrs(e); if (Object.keys(e).length) return;
-    p.onSave(f);
-  }
-  return h(Modal, {
-    title: f.id ? "Edit task" : "New task", size: "md", onClose: p.onClose,
-    footer: [
-      f.id && can(user, "createTasks") ? h(Btn, { key: "d", kind: "d", onClick: function () { p.onDelete(f); } }, "Delete") : null,
-      h("div", { key: "s", className: "grow" }),
-      h(Btn, { key: "c", onClick: p.onClose }, "Cancel"),
-      h(Btn, { key: "o", kind: "p", onClick: save }, "Save task")]
-  },
-    h("div", { className: "col", style: { gap: 10 } },
-      h(Inp, { label: "Title", req: true, value: f.title, err: errs.title, onChange: function (e) { up("title", e.target.value); } }),
-      h("div", { className: "grid2" },
-        h(Sel, { label: "Project", req: true, value: f.projectId, err: errs.projectId, placeholder: "Select…", options: db.projects.map(function (x) { return { value: x.id, label: nameOf(db.clients, x.clientId) + " — " + x.name }; }), onChange: function (e) { up("projectId", e.target.value); } }),
-        h(Sel, { label: "Work order", value: f.workOrderId, err: errs.workOrderId, placeholder: wos.length ? "— none —" : "— none on this project —", options: wos.map(function (w) { return { value: w.id, label: w.code + " — " + w.title }; }), onChange: function (e) { up("workOrderId", e.target.value); } })),
-      h(Txt, { label: "Description", req: true, rows: 3, value: f.description, err: errs.description, placeholder: "What does done look like?", onChange: function (e) { up("description", e.target.value); } }),
-      h("div", { className: "grid4" },
-        h(Sel, { label: "Status", req: true, value: f.status, options: TASK_STATUSES, onChange: function (e) { up("status", e.target.value); } }),
-        h(Sel, { label: "Priority", req: true, value: f.priority, options: PRIORITIES, onChange: function (e) { up("priority", e.target.value); } }),
-        h(Inp, { label: "Start date", type: "date", value: f.startDate || "", onChange: function (e) { up("startDate", e.target.value); } }),
-        h(Inp, { label: "Due date", type: "date", value: f.dueDate || "", onChange: function (e) { up("dueDate", e.target.value); } })),
-      h(Inp, { label: "Hour allowance", type: "number", step: "0.5", value: f.allowanceHours == null ? "" : f.allowanceHours, placeholder: "Budgeted hours for this task", onChange: function (e) { up("allowanceHours", e.target.value === "" ? null : Number(e.target.value)); } }),
-      can(user, "assignTasks") ? h(Picker, {
-        label: "Assignees", avatars: true, value: f.assignees || [],
-        hint: "A task with no assignee sits in the project backlog.",
-        options: assignPool.map(function (u) { return { value: u.id, label: u.fullName, meta: u.role }; }),
-        onChange: function (v) { up("assignees", v); }
-      }) : null,
-      h(Picker, {
-        label: "Dependencies — must reach Done first", value: f.dependencies || [],
-        empty: "No other tasks on this project.",
-        options: db.tasks.filter(function (t) { return t.id !== f.id && t.projectId === f.projectId; })
-          .map(function (t) { return { value: t.id, label: t.title, meta: t.status }; }),
-        onChange: function (v) { up("dependencies", v); }
-      }),
-      h(Inp, { label: "Attachment or link", value: f.linkText || "", placeholder: "https://… or a file reference", onChange: function (e) { up("linkText", e.target.value); } }),
-      f.id ? h("div", { className: "fld" },
-        h("label", null, "Comments"),
-        h("div", { className: "col", style: { gap: 6 } },
-          (f.comments || []).map(function (c, i) {
-            return h("div", { key: i, className: "panel pad", style: { background: C.wash } },
-              h("div", { className: "cap" }, userName(db, c.userId), " · ", new Date(c.at).toLocaleString("en-GB")),
-              h("div", null, c.text));
-          }),
-          h("div", { className: "row", style: { gap: 6 } },
-            h("input", { id: "tk-cmt", placeholder: "Add a comment — @mention a colleague", style: { flex: 1, minHeight: 38, padding: "7px 9px", border: "1px solid " + C.line, borderRadius: 9, background: "#fff" } }),
-            h(Btn, { onClick: function () {
-              var el = document.getElementById("tk-cmt"); if (!el || !el.value.trim()) return;
-              up("comments", (f.comments || []).concat([{ userId: user.id, text: el.value.trim(), at: nowISO() }]));
-              el.value = "";
-            } }, "Post")))) : null));
-}
-
-function TasksTab(p) {
-  var db = p.db, user = p.user;
-  var vs = useState(user.role === "EMP" || user.role === "EXT" ? "mine" : "board"), view = vs[0], setView = vs[1];
-  var es = useState(null), editing = es[0], setEditing = es[1];
-  var fs = useState({ projectId: "", assignee: "", priority: "", status: "" }), flt = fs[0], setFlt = fs[1];
-  var ds = useState(null), drag = ds[0], setDrag = ds[1];
-  var ps = useState(null), prompt = ps[0], setPrompt = ps[1];
-
-  var scope = taskScope(db, user);
-  var list = scope.filter(function (t) {
-    if (view === "mine" && taskAssigneeIds(db, t.id).indexOf(user.id) < 0) return false;
-    if (flt.projectId && t.projectId !== flt.projectId) return false;
-    if (flt.assignee && taskAssigneeIds(db, t.id).indexOf(flt.assignee) < 0) return false;
-    if (flt.priority && t.priority !== flt.priority) return false;
-    if (flt.status && t.status !== flt.status) return false;
-    return true;
-  });
-
-  function persist(form) {
-    p.mutate(function (d) {
-      var rec = {
-        id: form.id || uid("t"), projectId: form.projectId, workOrderId: form.workOrderId || null,
-        title: form.title.trim(), description: form.description.trim(), status: form.status, priority: form.priority,
-        allowanceHours: form.allowanceHours, startDate: form.startDate || null, dueDate: form.dueDate || null,
-        parentTaskId: null, dependencies: form.dependencies || [], comments: form.comments || [],
-        attachments: form.linkText ? [{ name: form.linkText }] : (form.attachments || [])
-      };
-      if (taskIsBlocked(d, rec) && ["Done", "Cancelled"].indexOf(rec.status) < 0) rec.status = "Blocked";
-      var i = d.tasks.findIndex(function (x) { return x.id === rec.id; });
-      if (i >= 0) { audit(d, user.id, "Task updated", "tasks", rec.id, d.tasks[i], rec); d.tasks[i] = rec; }
-      else { d.tasks.unshift(rec); audit(d, user.id, "Task created", "tasks", rec.id, null, rec); }
-      if (can(user, "assignTasks") && form.assignees) {
-        d.taskAssignees = d.taskAssignees.filter(function (x) { return x.taskId !== rec.id; });
-        form.assignees.forEach(function (uid2) { d.taskAssignees.push({ id: uid("ta"), taskId: rec.id, userId: uid2, allowanceHours: rec.allowanceHours }); });
-      }
-    });
-    setEditing(null); toast("Task saved.", "ok");
-  }
-  function remove(form) {
-    p.mutate(function (d) {
-      d.tasks = d.tasks.filter(function (x) { return x.id !== form.id; });
-      d.taskAssignees = d.taskAssignees.filter(function (x) { return x.taskId !== form.id; });
-      audit(d, user.id, "Task deleted", "tasks", form.id, form, null);
-    });
-    setEditing(null); toast("Task deleted.", "");
-  }
-  function setStatus(t, status) {
-    if (status === t.status) return;
-    if (!canMoveTask(db, user, t)) { toast("Only this task's assignees, or someone who manages its project's tasks, can change its status.", "error"); return; }
-    if (["Done", "Cancelled"].indexOf(status) < 0 && taskIsBlocked(db, t)) { toast("This task is blocked by a dependency that is not Done.", "error"); return; }
-    p.mutate(function (d) {
-      var rec = byId(d.tasks, t.id); if (!rec) return;
-      var before = rec.status; rec.status = status;
-      audit(d, user.id, "Task status: " + before + " → " + status, "tasks", t.id, null, null);
-      /* dependents unblock */
-      d.tasks.forEach(function (x) {
-        if ((x.dependencies || []).indexOf(t.id) >= 0 && x.status === "Blocked" && !taskIsBlocked(d, x)) x.status = "To do";
-      });
-    });
-    /* §10.3 — moving to Done prompts for time when under 50% of allowance */
-    if (status === "Done" && t.allowanceHours && taskAssigneeIds(db, t.id).indexOf(user.id) >= 0) {
-      var mine = taskConsumedBy(db, t.id, user.id);
-      if (mine < Number(t.allowanceHours) * 0.5) setPrompt({ task: t, reported: mine });
-    }
-  }
-  function openNew() {
-    setEditing({
-      id: null, projectId: flt.projectId || "", workOrderId: "", title: "", description: "",
-      status: "To do", priority: "Normal", allowanceHours: null, startDate: todayStr(), dueDate: "",
-      dependencies: [], assignees: [], comments: [], attachments: [], linkText: ""
-    });
-  }
-  function openEdit(t) {
-    if (!canMoveTask(db, user, t)) { toast("This task belongs to colleagues — only its assignees, or someone who manages its project's tasks, can edit it.", ""); return; }
-    setEditing(Object.assign({}, t, { assignees: taskAssigneeIds(db, t.id), linkText: (t.attachments && t.attachments[0]) ? t.attachments[0].name : "" }));
-  }
-
-  function TaskCard(pp) {
-    var t = pp.t, cons = taskConsumed(db, t.id), who = taskAssigneeIds(db, t.id);
-    return h("div", {
-      className: "kcard", draggable: canMoveTask(db, user, t),
-      onDragStart: function () { setDrag(t.id); }, onDragEnd: function () { setDrag(null); },
-      onClick: function () { openEdit(t); }, tabIndex: 0,
-      onKeyDown: function (e) { if (e.key === "Enter") openEdit(t); },
-      style: drag === t.id ? { opacity: .4 } : null
-    },
-      h("div", { className: "row", style: { gap: 5, marginBottom: 3 } },
-        h(Chip, { k: "mut", style: { background: PR_COLOR[t.priority] + "1E", color: PR_COLOR[t.priority], borderColor: PR_COLOR[t.priority] + "55" } }, t.priority),
-        isOverdue(t) ? h(Chip, { k: "err" }, "overdue") : null,
-        taskIsBlocked(db, t) ? h(Chip, { k: "amber" }, "blocked") : null),
-      h("div", { style: { fontWeight: 600, fontSize: 13 } }, t.title),
-      h("div", { className: "cap" }, nameOf(db.projects, t.projectId), t.workOrderId ? " · " + nameOf(db.workOrders, t.workOrderId, "code") : ""),
-      t.dueDate ? h("div", { className: "cap mono" }, "due ", il(t.dueDate)) : null,
-      t.allowanceHours ? h("div", { className: "row", style: { gap: 6, marginTop: 5 } },
-        h(Bar, { used: cons, total: t.allowanceHours, style: { flex: 1 } }),
-        h("span", { className: "cap mono" }, num(cons), "/", num(t.allowanceHours), " h")) : null,
-      who.length ? h("div", { className: "row", style: { gap: 3, marginTop: 5 } },
-        who.slice(0, 4).map(function (u) { return h("span", { key: u, className: "avatar", style: { width: 21, height: 21, fontSize: 9 }, title: userName(db, u) }, initialsOf(userName(db, u))); })) : h("div", { className: "cap", style: { marginTop: 4 } }, "unassigned — backlog"));
-  }
-
-  return h("div", { className: "page" },
-    h("div", { className: "panel pad row", style: { gap: 9 } },
-      h("div", { className: "pillbar" },
-        [["mine", "My tasks"], ["board", "Board"], ["list", "List"], ["project", "Project view"]].map(function (v) {
-          return h("button", { key: v[0], className: "pill" + (view === v[0] ? " on" : ""), onClick: function () { setView(v[0]); } }, v[1]);
-        })),
-      h("div", { className: "grow" }),
-      h("div", { style: { minWidth: 170 } }, h(Sel, { label: "Project", value: flt.projectId, placeholder: "All", options: db.projects.map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { projectId: e.target.value })); } })),
-      h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Assignee", value: flt.assignee, placeholder: "Anyone", options: db.users.filter(function (u) { return u.isActive; }).map(function (u) { return { value: u.id, label: u.fullName }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { assignee: e.target.value })); } })),
-      h("div", { style: { minWidth: 118 } }, h(Sel, { label: "Priority", value: flt.priority, placeholder: "All", options: PRIORITIES, onChange: function (e) { setFlt(Object.assign({}, flt, { priority: e.target.value })); } })),
-      can(user, "createTasks") ? h("div", { className: "fld", style: { flex: "0 0 auto" } }, h("label", null, " "), h(Btn, { kind: "p", onClick: openNew }, "+ New task")) : null),
-
-    view === "board" || view === "mine"
-      ? h("div", { className: "kan" }, TASK_STATUSES.map(function (st) {
-          var col = list.filter(function (t) { return t.status === st; });
-          return h("div", {
-            key: st, className: "kcol",
-            onDragOver: function (e) { e.preventDefault(); e.currentTarget.classList.add("over"); },
-            onDragLeave: function (e) { e.currentTarget.classList.remove("over"); },
-            onDrop: function (e) { e.preventDefault(); e.currentTarget.classList.remove("over"); var t = byId(db.tasks, drag); if (t) setStatus(t, st); setDrag(null); }
-          },
-            h("h4", null, h("span", { className: "row", style: { gap: 6 } }, h(StatusDot, { color: TS_COLOR[st] }), st), h(Chip, { k: "mut" }, col.length)),
-            h("div", null, col.map(function (t) { return h(TaskCard, { key: t.id, t: t }); }),
-              col.length === 0 ? h("div", { className: "cap", style: { textAlign: "center", padding: 12 } }, "—") : null));
-        }))
-      : null,
-
-    view === "list" ? h("div", { className: "panel scroll" },
-      h(STable, { id: "tasks-list", grow: "Task", center: ["Status", "Priority", "Due", "Hours"], className: "tbl" },
-        h("thead", null, h("tr", null, ["Task", "Project", "Work order", "Status", "Priority", "Assignees", "Due", "Hours", ""].map(function (c, i) { return h("th", { key: i, className: c === "Hours" ? "num" : "" }, c); }))),
-        h("tbody", null, list.sort(function (a, b) { return String(a.dueDate || "9").localeCompare(String(b.dueDate || "9")); }).map(function (t) {
-          var cons = taskConsumed(db, t.id);
-          return h("tr", { key: t.id },
-            h("td", null, h("b", null, t.title), h("div", { className: "cap" }, t.description.slice(0, 90))),
-            h("td", null, nameOf(db.projects, t.projectId)),
-            h("td", { className: "mono", style: { fontSize: 12 } }, t.workOrderId ? nameOf(db.workOrders, t.workOrderId, "code") : "—"),
-            h("td", { "data-sort": t.status }, canMoveTask(db, user, t)
-              ? h("select", { value: t.status, onChange: function (e) { setStatus(t, e.target.value); }, className: "minisel" },
-                  TASK_STATUSES.map(function (s) { return h("option", { key: s, value: s }, s); }))
-              : h(Chip, { k: "mut", style: { background: TS_COLOR[t.status] + "1E", color: TS_COLOR[t.status], borderColor: TS_COLOR[t.status] + "55" } }, t.status)),
-            h("td", null, h(Chip, { k: "mut", style: { background: PR_COLOR[t.priority] + "1E", color: PR_COLOR[t.priority], borderColor: PR_COLOR[t.priority] + "55" } }, t.priority)),
-            h("td", null, taskAssigneeIds(db, t.id).map(function (u) { return userName(db, u); }).join(", ") || h("span", { className: "cap" }, "backlog")),
-            h("td", { className: "mono" }, t.dueDate ? h("span", { style: isOverdue(t) ? { color: C.error, fontWeight: 700 } : null }, il(t.dueDate)) : "—"),
-            h("td", { className: "num" }, t.allowanceHours ? num(cons) + " / " + num(t.allowanceHours) : num(cons)),
-            h("td", null, canMoveTask(db, user, t) ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit", onClick: function () { openEdit(t); } }, "✎") : null));
-        })))) : null,
-
-    view === "project" ? h("div", { className: "scroll col", style: { gap: 10 } },
-      db.projects.filter(function (pr) { return list.some(function (t) { return t.projectId === pr.id; }); }).map(function (pr) {
-        var tks = list.filter(function (t) { return t.projectId === pr.id; });
-        var alw = tks.reduce(function (a, t) { return a + (Number(t.allowanceHours) || 0); }, 0);
-        var use = tks.reduce(function (a, t) { return a + taskConsumed(db, t.id); }, 0);
-        return h("div", { key: pr.id, className: "panel pad" },
-          h("div", { className: "row", style: { marginBottom: 7 } },
-            h("div", { className: "h3 grow" }, nameOf(db.clients, pr.clientId), " — ", pr.name),
-            psChip(pr.status),
-            h("span", { className: "cap mono" }, num(use), " of ", num(alw), " h across ", tks.length, " tasks"),
-            h(Bar, { used: use, total: alw, style: { width: 130 } })),
-          h(STable, { id: "tasks-project", grow: "Task", center: ["Status", "Due", "Consumption"], className: "tbl" },
-            h("thead", null, h("tr", null, ["Task", "Status", "Assignees", "Due", "Consumption"].map(function (c, i) { return h("th", { key: i }, c); }))),
-            h("tbody", null, tks.map(function (t) {
-              var cons = taskConsumed(db, t.id);
-              var ed = canMoveTask(db, user, t);
-              return h("tr", { key: t.id, onClick: ed ? function () { openEdit(t); } : undefined, style: ed ? { cursor: "pointer" } : null },
-                h("td", null, t.title),
-                h("td", null, h(Chip, { k: "mut", style: { background: TS_COLOR[t.status] + "1E", color: TS_COLOR[t.status], borderColor: TS_COLOR[t.status] + "55" } }, t.status)),
-                h("td", null, taskAssigneeIds(db, t.id).map(function (u) { return userName(db, u); }).join(", ") || "—"),
-                h("td", { className: "mono" }, t.dueDate ? il(t.dueDate) : "—"),
-                h("td", null, h("div", { className: "row", style: { gap: 7 } },
-                  h(Bar, { used: cons, total: t.allowanceHours || cons || 1, style: { width: 110 } }),
-                  h("span", { className: "cap mono" }, num(cons), t.allowanceHours ? " / " + num(t.allowanceHours) : "", " h"))));
-            }))));
-      }),
-      list.length === 0 ? h("div", { className: "empty panel" }, "No tasks match.") : null) : null,
-
-    editing ? h(TaskEditor, { db: db, user: user, value: editing, onSave: persist, onDelete: remove, onClose: function () { setEditing(null); } }) : null,
-
-    prompt ? h(Modal, {
-      title: "Report the time you spent?", size: "sm", onClose: function () { setPrompt(null); },
-      footer: [h(Btn, { key: "n", onClick: function () { setPrompt(null); } }, "Not now"),
-               h(Btn, { key: "y", kind: "p", onClick: function () { var t = prompt.task; setPrompt(null); p.goReport(t); } }, "Report time")]
-    },
-      h("p", null, "You have reported ", h("b", null, num(prompt.reported), " h"), " against ", h("b", null, prompt.task.title),
-        ", which is under half of its ", num(prompt.task.allowanceHours), " h allowance."),
-      h("p", { className: "cap" }, "The Time Log form will open pre-filled for this task.")) : null);
-}
-
-/* =====================================================================
-   §11 — Module: Week Planner
-   ===================================================================== */
 function startOfWeek(d) { var x = new Date(d); x.setDate(x.getDate() - x.getDay()); x.setHours(0, 0, 0, 0); return x; }
 
 function PlannerTab(p) {
@@ -20649,11 +20365,10 @@ function PlannerTab(p) {
   var whoUser = byId(db.users, who) || user;
   var capacity = Number(whoUser.weeklyHours || 42) * (count / 7);
 
-  /* assigned tasks with a due date appear as suggestions — §11 */
-  var suggestions = db.tasks.filter(function (t) {
-    return t.dueDate && ["Done", "Cancelled"].indexOf(t.status) < 0 &&
-      taskAssigneeIds(db, t.id).indexOf(who) >= 0 &&
-      !plans.some(function (x) { return x.taskId === t.id; });
+  /* the person's open Taskana tasks with a due date appear as suggestions — §11 */
+  var tkData = taskanaData();
+  var suggestions = taskanaTasksOf(db, who).filter(function (t) {
+    return t.dueDate && byId(db.projects, t.projectId) && !plans.some(function (x) { return x.taskId === t.id; });
   });
 
   function addPlan(date, seed) {
@@ -20691,7 +20406,7 @@ function PlannerTab(p) {
         planned: pl, actual: act, variance: Math.round((act - pl) * 100) / 100,
         client: x.clientId ? nameOf(db.clients, x.clientId) : "", project: x.projectId ? nameOf(db.projects, x.projectId) : "",
         workOrder: x.workOrderId ? nameOf(db.workOrders, x.workOrderId, "code") : "",
-        task: x.taskId ? nameOf(db.tasks, x.taskId, "title") : "", description: x.description
+        task: x.task || "", description: x.description
       };
     });
     exportXLSX([{
@@ -20702,7 +20417,7 @@ function PlannerTab(p) {
         { key: "actual", label: "Actual h", type: "number", total: true, accent: "red" },
         { key: "variance", label: "Variance", type: "number", total: true },
         { key: "client", label: "Client" }, { key: "project", label: "Project" },
-        { key: "workOrder", label: "Work order", width: 18 }, { key: "task", label: "Task" },
+        { key: "workOrder", label: "Work order", width: 18 }, { key: "task", label: "Taskana task" },
         { key: "description", label: "Description", width: 40 }],
       rows: rows
     }], "galil-plan.xlsx");
@@ -20732,12 +20447,12 @@ function PlannerTab(p) {
 
     h("div", { className: "row", style: { gap: 8, flex: "0 0 auto" } },
       suggestions.length ? h("div", { className: "panel pad row", style: { gap: 7, flex: 1, overflowX: "auto" } },
-        h("span", { className: "cap", style: { fontWeight: 700 } }, "Suggested from assigned tasks — drag onto a day:"),
+        h("span", { className: "cap", style: { fontWeight: 700 } }, "Suggested from your Taskana tasks — drag onto a day:"),
         suggestions.map(function (t) {
           return h("div", {
             key: t.id, className: "chip teal", draggable: true, style: { cursor: "grab" },
             onDragStart: function () { setDrag({ suggestion: t.id }); }
-          }, t.title, " · due ", il(t.dueDate));
+          }, taskanaLabel(t, tkData), " · due ", il(t.dueDate));
         })) : null),
 
     h("div", { className: "scroll", style: { paddingBottom: 4 } },
@@ -20753,8 +20468,8 @@ function PlannerTab(p) {
               e.preventDefault();
               if (!drag) return;
               if (drag.suggestion) {
-                var t = byId(db.tasks, drag.suggestion);
-                if (t) addPlan(ds2, { projectId: t.projectId, clientId: (byId(db.projects, t.projectId) || {}).clientId || "", workOrderId: t.workOrderId || "", taskId: t.id, description: t.title });
+                var t = byId((tkData && tkData.tasks) || [], drag.suggestion);
+                if (t) addPlan(ds2, { projectId: t.projectId, clientId: (byId(db.projects, t.projectId) || {}).clientId || "", workOrderId: t.workOrderId || "", taskId: t.id, task: taskanaLabel(t, tkData), description: t.title });
               } else movePlan(drag, ds2);
               setDrag(null);
             }
@@ -20771,7 +20486,7 @@ function PlannerTab(p) {
                 },
                   h("div", { className: "mono", style: { fontWeight: 700 } }, x.start, "–", x.end),
                   h("div", null, x.projectId ? nameOf(db.projects, x.projectId) : "—"),
-                  x.taskId ? h("div", { className: "cap" }, nameOf(db.tasks, x.taskId, "title")) : null,
+                  x.task ? h("div", { className: "cap" }, x.task) : null,
                   h("div", { className: "cap" }, x.description));
               }),
               h("button", { className: "btn t sm", style: { minHeight: 32 }, onClick: function () { addPlan(ds2); } }, "+ plan"))
@@ -20793,7 +20508,7 @@ function savePlanned(mutate, user, f) {
       yellow: f.hourType === "yellow" ? hrs : 0,
       blue: f.hourType === "blue" ? hrs : 0,
       clientId: f.clientId || null, projectId: f.projectId || null, workOrderId: f.workOrderId || null,
-      taskId: f.taskId || null, description: f.description
+      taskId: f.taskId || null, task: f.taskId ? (taskanaTaskLabel(f.taskId) || f.task || "") : "", description: f.description
     };
     var i = d.planned.findIndex(function (x) { return x.id === rec.id; });
     if (i >= 0) d.planned[i] = rec; else d.planned.push(rec);
@@ -20813,7 +20528,7 @@ function PlanEditor(p) {
   };
   var projects = db.projects.filter(function (x) { return !f.clientId || x.clientId === f.clientId; });
   var wos = db.workOrders.filter(function (w) { return w.projectId === f.projectId; });
-  var tasks = db.tasks.filter(function (t) { return t.projectId === f.projectId; });
+  var tasks = taskanaOptions(db, { projectId: f.projectId, workOrderId: f.workOrderId, assignee: f.userId }, p.user);
   return h(Modal, {
     title: (f.id ? "Edit" : "New") + " planned entry — " + ilLong(f.date), size: "sm", onClose: p.onClose,
     footer: [f.id ? h(Btn, { key: "d", kind: "d", onClick: function () { p.onDelete(f); } }, "Delete") : null,
@@ -20833,7 +20548,7 @@ function PlanEditor(p) {
       h(Sel, { label: "Project", value: f.projectId || "", placeholder: "—", options: projects.map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { up("projectId", e.target.value); } }),
       h("div", { className: "grid2" },
         h(Sel, { label: "Work order", value: f.workOrderId || "", placeholder: "—", options: wos.map(function (w) { return { value: w.id, label: w.code }; }), onChange: function (e) { up("workOrderId", e.target.value); } }),
-        h(Sel, { label: "Task", value: f.taskId || "", placeholder: "—", options: tasks.map(function (t) { return { value: t.id, label: t.title }; }), onChange: function (e) { up("taskId", e.target.value); } })),
+        h(Sel, { label: "Taskana task", value: f.taskId || "", placeholder: "—", options: tasks, onChange: function (e) { up("taskId", e.target.value); } })),
       h(Inp, { label: "Description", value: f.description, onChange: function (e) { up("description", e.target.value); } }),
       h("div", { className: "banner gr" }, "Planned entries do not count as reported hours.")));
 }
@@ -21014,7 +20729,7 @@ function ApprovalsTab(p) {
         h(Chip, { k: "gr" }, e.clientId ? nameOf(db.clients, e.clientId) : (e.client || "—"), e.clientId ? "" : " (typed)"),
         h(Chip, { k: "gr" }, e.projectId ? nameOf(db.projects, e.projectId) : (e.project || "—")),
         e.workOrderId ? h(Chip, { k: "gr" }, nameOf(db.workOrders, e.workOrderId, "code")) : null,
-        e.taskId ? h(Chip, { k: "gr" }, nameOf(db.tasks, e.taskId, "title")) : null) : null,
+        e.task ? h(Chip, { k: "gr" }, e.task) : null) : null,
       e ? h("div", { style: { fontSize: 13.5 } }, e.description) : null,
       x ? h("div", { style: { fontSize: 13.5 } }, x.etype, " — ", x.description) : null,
       tq ? h("div", { className: "col", style: { gap: 5, fontSize: 13.5 } },
@@ -21022,7 +20737,6 @@ function ApprovalsTab(p) {
           tq.kind === "loan" ? " — temporary" : " — permanent transfer"),
         tq.kind === "loan" ? h("div", { className: "row", style: { gap: 6 } },
           h(Chip, { k: "gr" }, nameOf(db.clients, tq.clientId)), h(Chip, { k: "gr" }, nameOf(db.projects, tq.projectId)),
-          tq.taskId ? h(Chip, { k: "gr" }, nameOf(db.tasks, tq.taskId, "title")) : null,
           h("span", { className: "cap mono" }, il(tq.start), " – ", il(tq.end)),
           h("span", { className: "cap" }, tq.hours != null ? num(tq.hours) + " h allowance" : "no hour limit")) : null,
         tq.note ? h("div", { className: "cap" }, "\u201c", tq.note, "\u201d") : null) : null,
@@ -21683,7 +21397,7 @@ function rangeBounds(key) {
 function DashboardTab(p) {
   var db = p.db, user = p.user;
   var rs = useState("month"), range = rs[0], setRange = rs[1];
-  var fs = useState({ employees: [], clientId: "", projectId: "", workOrderId: "", taskId: "" }), flt = fs[0], setFlt = fs[1];
+  var fs = useState({ employees: [], clientId: "", projectId: "", workOrderId: "" }), flt = fs[0], setFlt = fs[1];
   var ps2 = useState(false), pctMode = ps2[0], setPct = ps2[1];
 
   var bounds = rangeBounds(range);
@@ -21699,7 +21413,6 @@ function DashboardTab(p) {
     if (flt.clientId && e.clientId !== flt.clientId) return false;
     if (flt.projectId && e.projectId !== flt.projectId) return false;
     if (flt.workOrderId && e.workOrderId !== flt.workOrderId) return false;
-    if (flt.taskId && e.taskId !== flt.taskId) return false;
     return true;
   });
   var expenses = db.expenses.filter(function (x) { return allowed.indexOf(x.userId) >= 0 && x.date >= bounds[0] && x.date <= bounds[1]; });
@@ -21748,7 +21461,6 @@ function DashboardTab(p) {
         .reduce(function (a, x) { return a + (Number(x.red) || 0) + (Number(x.yellow) || 0) + (Number(x.blue) || 0); }, 0);
       return pl > Number(u.weeklyHours || 42);
     });
-    var overdue = db.tasks.filter(isOverdue);
     cockpit = h("div", { className: "cards" },
       h("div", { className: "stat", style: { borderColor: pendingApprovals ? C.amber : C.line } },
         h("div", { className: "k" }, "Outstanding approvals"), h("div", { className: "v", style: { color: pendingApprovals ? C.amber : C.ink } }, pendingApprovals)),
@@ -21757,8 +21469,13 @@ function DashboardTab(p) {
         h("div", { className: "s" }, overBudget.slice(0, 2).map(function (b) { return b.projectId ? nameOf(db.projects, b.projectId) : ""; }).join(", "))),
       h("div", { className: "stat" }, h("div", { className: "k" }, "People over capacity"), h("div", { className: "v" }, overCap.length),
         h("div", { className: "s" }, overCap.slice(0, 2).map(function (u) { return u.fullName; }).join(", "))),
-      h("div", { className: "stat", style: { borderColor: overdue.length ? C.amber : C.line } },
-        h("div", { className: "k" }, "Overdue tasks"), h("div", { className: "v", style: { color: overdue.length ? C.amber : C.ink } }, overdue.length)));
+      (function () {
+        var held = db.entries.filter(function (e) { return e.status === "pending" && canSeeEntry(db, user, e); });
+        var hrs = held.reduce(function (a, e) { return a + (Number(e.red) || 0) + (Number(e.yellow) || 0) + (Number(e.blue) || 0); }, 0);
+        return h("div", { className: "stat", style: { borderColor: held.length ? C.amber : C.line } },
+          h("div", { className: "k" }, "Hours in approval"), h("div", { className: "v", style: { color: held.length ? C.amber : C.ink } }, num(hrs)),
+          h("div", { className: "s" }, tr("{n} entries waiting", { n: held.length })));
+      })());
   }
 
   function doExport() {
@@ -21767,7 +21484,7 @@ function DashboardTab(p) {
       meta: (RANGES.filter(function (r) { return r.key === range; })[0] || {}).label + " · " + il(bounds[0]) + " to " + il(bounds[1]) + "  ·  Exported " + ilLong(todayStr()) + " by " + user.fullName,
       columns: [{ key: "date", label: "Date", type: "date" }, { key: "employee", label: "Employee" },
         { key: "client", label: "Client" }, { key: "project", label: "Project" }, { key: "workOrder", label: "Work order", width: 18 },
-        { key: "task", label: "Task" }, { key: "red", label: "Red h", type: "number", accent: "red", total: true },
+        { key: "task", label: "Taskana task" }, { key: "red", label: "Red h", type: "number", accent: "red", total: true },
         { key: "yellow", label: "Yellow h", type: "number", accent: "yellow", total: true },
         { key: "blue", label: "Blue h", type: "number", total: true },
         { key: "description", label: "Description", width: 44 }],
@@ -21776,7 +21493,7 @@ function DashboardTab(p) {
           date: e.date, employee: userName(db, e.assignee),
           client: e.clientId ? nameOf(db.clients, e.clientId) : e.client, project: e.projectId ? nameOf(db.projects, e.projectId) : e.project,
           workOrder: e.workOrderId ? nameOf(db.workOrders, e.workOrderId, "code") : "",
-          task: e.taskId ? nameOf(db.tasks, e.taskId, "title") : "",
+          task: e.task || "",
           red: Number(e.red) || 0, yellow: Number(e.yellow) || 0, blue: Number(e.blue) || 0, description: e.description
         };
       })
@@ -21801,8 +21518,7 @@ function DashboardTab(p) {
       h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Client", value: flt.clientId, placeholder: "All", options: db.clients.map(function (c) { return { value: c.id, label: c.name }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { clientId: e.target.value, projectId: "" })); } })),
       h("div", { style: { minWidth: 170 } }, h(Sel, { label: "Project", value: flt.projectId, placeholder: "All", options: db.projects.filter(function (x) { return !flt.clientId || x.clientId === flt.clientId; }).map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { projectId: e.target.value, workOrderId: "" })); } })),
       h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Work order", value: flt.workOrderId, placeholder: "All", options: db.workOrders.filter(function (w) { return !flt.projectId || w.projectId === flt.projectId; }).map(function (w) { return { value: w.id, label: w.code }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { workOrderId: e.target.value })); } })),
-      h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Task", value: flt.taskId, placeholder: "All", options: db.tasks.filter(function (t) { return !flt.projectId || t.projectId === flt.projectId; }).map(function (t) { return { value: t.id, label: t.title }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { taskId: e.target.value })); } })),
-      h(Btn, { kind: "t", onClick: function () { setFlt({ employees: [], clientId: "", projectId: "", workOrderId: "", taskId: "" }); } }, "Clear")),
+      h(Btn, { kind: "t", onClick: function () { setFlt({ employees: [], clientId: "", projectId: "", workOrderId: "" }); } }, "Clear")),
 
     h("div", { className: "scroll col", style: { gap: 10 } },
       cockpit ? h("div", { className: "col", style: { gap: 5 } }, h("div", { className: "h3" }, "Manager cockpit"), cockpit) : null,
@@ -21883,7 +21599,7 @@ function LibraryTab(p) {
       var rec = {
         id: f.id || uid("l"), title: f.title.trim(), body: f.body, authorUserId: f.authorUserId || user.id,
         isPrivate: !!f.isPrivate, tags: String(f.tagsText || "").split(",").map(function (s) { return s.trim(); }).filter(Boolean),
-        projectId: f.projectId || null, taskId: f.taskId || null, link: f.link || "", imageUrl: f.imageUrl || "",
+        projectId: f.projectId || null, link: f.link || "", imageUrl: f.imageUrl || "",
         createdAt: f.createdAt || nowISO()
       };
       var i = d.library.findIndex(function (x) { return x.id === rec.id; });
@@ -21900,7 +21616,7 @@ function LibraryTab(p) {
       h("div", { style: { minWidth: 260 }, className: "grow" }, h(Inp, { label: "Search", value: q, placeholder: "Full-text search across titles, bodies and tags", onChange: function (e) { setQ(e.target.value); } })),
       h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Tag", value: tag, placeholder: "All tags", options: allTags, onChange: function (e) { setTag(e.target.value); } })),
       can(user, "libraryWrite") ? h("div", { className: "fld", style: { flex: "0 0 auto" } }, h("label", null, " "),
-        h(Btn, { kind: "p", onClick: function () { setEditing({ id: null, title: "", body: "", isPrivate: false, tagsText: "", projectId: "", taskId: "", link: "", imageUrl: "" }); } }, "+ New item")) : null),
+        h(Btn, { kind: "p", onClick: function () { setEditing({ id: null, title: "", body: "", isPrivate: false, tagsText: "", projectId: "", link: "", imageUrl: "" }); } }, "+ New item")) : null),
 
     h("div", { className: "scroll", style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(290px,1fr))", gap: 10, alignContent: "start" } },
       items.length === 0 ? h("div", { className: "empty panel" }, "Nothing matches.") : null,
@@ -21913,9 +21629,8 @@ function LibraryTab(p) {
           h("div", { style: { fontSize: 13, whiteSpace: "pre-wrap" } }, l.body),
           l.link ? h("a", { href: l.link, target: "_blank", rel: "noreferrer", style: { fontSize: 12.5 } }, l.link) : null,
           h("div", { className: "row", style: { gap: 5 } }, (l.tags || []).map(function (t) { return h(Chip, { key: t, k: "gr" }, "#", t); })),
-          l.projectId || l.taskId ? h("div", { className: "row", style: { gap: 5 } },
-            l.projectId ? h(Chip, { k: "teal" }, nameOf(db.projects, l.projectId)) : null,
-            l.taskId ? h(Chip, { k: "teal" }, nameOf(db.tasks, l.taskId, "title")) : null) : null,
+          l.projectId ? h("div", { className: "row", style: { gap: 5 } },
+            h(Chip, { k: "teal" }, nameOf(db.projects, l.projectId))) : null,
           h("div", { className: "row cap" },
             h("span", { className: "grow" }, userName(db, l.authorUserId), " · ", il(String(l.createdAt).slice(0, 10))),
             (l.authorUserId === user.id || ["OPS", "CEO"].indexOf(user.role) >= 0) && can(user, "libraryWrite")
@@ -21935,8 +21650,7 @@ function LibraryTab(p) {
           h(Inp, { label: "Tags (comma separated)", value: editing.tagsText, onChange: function (e) { setEditing(Object.assign({}, editing, { tagsText: e.target.value })); } }),
           h(Inp, { label: "Link", value: editing.link, placeholder: "https://…", onChange: function (e) { setEditing(Object.assign({}, editing, { link: e.target.value })); } })),
         h("div", { className: "grid2" },
-          h(Sel, { label: "Attach to project", value: editing.projectId || "", placeholder: "—", options: db.projects.map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { setEditing(Object.assign({}, editing, { projectId: e.target.value, taskId: "" })); } }),
-          h(Sel, { label: "Attach to task", value: editing.taskId || "", placeholder: "—", options: db.tasks.filter(function (t) { return !editing.projectId || t.projectId === editing.projectId; }).map(function (t) { return { value: t.id, label: t.title }; }), onChange: function (e) { setEditing(Object.assign({}, editing, { taskId: e.target.value })); } })),
+          h(Sel, { label: "Attach to project", value: editing.projectId || "", placeholder: "—", options: db.projects.map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { setEditing(Object.assign({}, editing, { projectId: e.target.value })); } })),
         h("div", { className: "row", style: { gap: 14 } },
           h("label", { className: "row", style: { gap: 7, minHeight: 44 } },
             h("input", { type: "checkbox", checked: !!editing.isPrivate, onChange: function (e) { setEditing(Object.assign({}, editing, { isPrivate: e.target.checked })); } }), "Private to me"),
@@ -21964,7 +21678,7 @@ function LibraryTab(p) {
 
 function usageCount(db, kind, id) {
   if (kind === "clients") return db.entries.filter(function (e) { return e.clientId === id; }).length + db.projects.filter(function (p) { return p.clientId === id; }).length;
-  if (kind === "projects") return db.entries.filter(function (e) { return e.projectId === id; }).length + db.tasks.filter(function (t) { return t.projectId === id; }).length;
+  if (kind === "projects") return db.entries.filter(function (e) { return e.projectId === id; }).length + db.assignments.filter(function (a) { return a.projectId === id; }).length;
   if (kind === "workOrders") return db.entries.filter(function (e) { return e.workOrderId === id; }).length;
   if (kind === "users") return db.entries.filter(function (e) { return e.assignee === id; }).length;
   if (kind === "expenseTypes") { var t = byId(db.expenseTypes, id); return t ? db.expenses.filter(function (x) { return x.etype === t.name; }).length : 0; }
@@ -22018,13 +21732,13 @@ function ListEditor(pp) {
 
 /* ---------- the Management sections ---------- */
 var MGMT_SECTIONS = [
-  { k: "people",       label: "People",                   show: function (u) { return can(u, "assignTasks") || can(u, "manageClientsProjects") || can(u, "manageEmployeesRoles"); } },
+  { k: "people",       label: "People",                   show: function (u) { return can(u, "assignPeople") || can(u, "manageClientsProjects") || can(u, "manageEmployeesRoles"); } },
   { k: "teams",        label: "Teams",                    show: function (u) { return can(u, "manageTeams"); } },
-  { k: "clients",      label: "Clients",                  show: function (u) { return can(u, "assignTasks") || can(u, "manageClientsProjects") || can(u, "viewBudgets"); } },
-  { k: "projects",     label: "Projects",                 show: function (u) { return can(u, "assignTasks") || can(u, "manageClientsProjects") || can(u, "viewBudgets"); } },
+  { k: "clients",      label: "Clients",                  show: function (u) { return can(u, "assignPeople") || can(u, "manageClientsProjects") || can(u, "viewBudgets"); } },
+  { k: "projects",     label: "Projects",                 show: function (u) { return can(u, "assignPeople") || can(u, "manageClientsProjects") || can(u, "viewBudgets"); } },
   { k: "wos",          label: "Work Orders",              show: function (u) { return can(u, "viewBudgets") || can(u, "createWorkOrders") || can(u, "manageClientsProjects"); } },
   { k: "budgets",      label: "Budgets",                  show: function (u) { return can(u, "viewBudgets"); } },
-  { k: "assignments",  label: "Assignments & Allowances", show: function (u) { return can(u, "assignTasks") || can(u, "manageClientsProjects"); } },
+  { k: "assignments",  label: "Assignments & Allowances", show: function (u) { return can(u, "assignPeople") || can(u, "manageClientsProjects"); } },
   { k: "expenseTypes", label: "Expense Types",            show: function (u) { return can(u, "manageClientsProjects") || can(u, "manageEmployeesRoles") || can(u, "approveExpenses"); } },
   { k: "verify",       label: "Verification Queue",       show: function (u) { return can(u, "manageClientsProjects"); } },
   { k: "activation",   label: "Pending Activation",       show: function (u) { return can(u, "manageEmployeesRoles"); } }
@@ -22052,12 +21766,8 @@ function applyTeamRequest(d, req, actor) {
   }
   /* a loan: the person keeps their team and manager, and is assigned to the work */
   if (r.projectId && !d.assignments.some(function (x) { return x.userId === u.id && x.projectId === r.projectId && !x.workOrderId; })) {
-    var tk = r.taskId ? byId(d.tasks, r.taskId) : null;
-    d.assignments.push({ id: uid("a"), userId: u.id, projectId: r.projectId, workOrderId: tk && tk.workOrderId ? tk.workOrderId : null,
+    d.assignments.push({ id: uid("a"), userId: u.id, projectId: r.projectId, workOrderId: null,
       allowanceHours: r.hours == null ? null : Number(r.hours), grantedBy: actor.id, grantedAt: nowISO(), from: r.start, until: r.end, viaLoan: r.id });
-  }
-  if (r.taskId && !d.taskAssignees.some(function (x) { return x.taskId === r.taskId && x.userId === u.id; })) {
-    d.taskAssignees.push({ id: uid("ta"), taskId: r.taskId, userId: u.id, allowanceHours: r.hours == null ? null : Number(r.hours) });
   }
   audit(d, actor.id, "Loaned " + u.fullName + " to team " + to.name + " until " + r.end, "users", u.id, null, null);
 }
@@ -22069,7 +21779,7 @@ function applyTeamRequest(d, req, actor) {
    · place available people (no team, or no direct manager) into a team — the team
      lead becomes their direct manager unless another is chosen;
    · ask another team's lead / manager / the CEO to lend one of their people for a
-     client's project or task for a period (Team loan), or to move a person over for
+     client's project for a period (Team loan), or to move a person over for
      good (Team transfer). Both go through Approvals.
    Team Leads and Project Managers manage the teams they lead; Operations and the
    CEO manage every team. The direct manager receives leave requests; the team lead
@@ -22169,13 +21879,12 @@ function TeamEditor(p) {
 function TeamRequestModal(p) {
   var db = p.db, user = p.user;
   var myTeams = db.teams.filter(function (t) { return canManageTeam(user, t); });
-  var s = useState(Object.assign({ kind: "loan", userId: "", toTeamId: p.toTeamId || (myTeams[0] || {}).id || "", clientId: "", projectId: "", taskId: "", start: todayStr(), end: "", hours: "", note: "", approverId: "" }, p.value || {}));
+  var s = useState(Object.assign({ kind: "loan", userId: "", toTeamId: p.toTeamId || (myTeams[0] || {}).id || "", clientId: "", projectId: "", start: todayStr(), end: "", hours: "", note: "", approverId: "" }, p.value || {}));
   var f = s[0], set = s[1];
   var es = useState({}), errs = es[0], setErrs = es[1];
   var up = function (k, v) {
     var n = Object.assign({}, f); n[k] = v;
-    if (k === "clientId") { n.projectId = ""; n.taskId = ""; }
-    if (k === "projectId") n.taskId = "";
+    if (k === "clientId") { n.projectId = ""; }
     if (k === "userId") n.approverId = "";
     set(n); var e = Object.assign({}, errs); delete e[k]; setErrs(e);
   };
@@ -22187,7 +21896,6 @@ function TeamRequestModal(p) {
   var teamClients = toTeam && toTeam.clientIds ? toTeam.clientIds : [];
   var clients = db.clients.slice().sort(function (a, b) { return (teamClients.indexOf(b.id) >= 0) - (teamClients.indexOf(a.id) >= 0); });
   var projects = db.projects.filter(function (x) { return x.clientId === f.clientId; });
-  var tasks = db.tasks.filter(function (t) { return t.projectId === f.projectId && ["Done", "Cancelled"].indexOf(t.status) < 0; });
 
   function send() {
     var e = {};
@@ -22214,7 +21922,7 @@ function TeamRequestModal(p) {
     h("div", { className: "col", style: { gap: 10 } },
       h(Field, { label: "What are you asking for?" },
         h("div", { className: "seg", role: "radiogroup", style: { width: "100%" } },
-          [["loan", "Temporary — for a client's project or task"], ["transfer", "Permanent transfer"]].map(function (o) {
+          [["loan", "Temporary — for a client's project"], ["transfer", "Permanent transfer"]].map(function (o) {
             return h("button", { key: o[0], type: "button", role: "radio", "aria-checked": f.kind === o[0] ? "true" : "false", className: f.kind === o[0] ? "on g" : "", style: { flex: 1, justifyContent: "center" }, onClick: function () { up("kind", o[0]); } }, o[1]);
           }))),
       h("div", { className: "grid2" },
@@ -22222,10 +21930,9 @@ function TeamRequestModal(p) {
           options: people.map(function (u) { return { value: u.id, label: u.fullName + " — " + nameOf(db.teams, u.teamId) + " (" + roleName(u.role) + ")" }; }),
           onChange: function (e) { up("userId", e.target.value); } }),
         h(Sel, { label: f.kind === "loan" ? "To join your team" : "To move to your team", req: true, value: f.toTeamId, err: errs.toTeamId, options: myTeams.map(function (t) { return { value: t.id, label: t.name }; }), onChange: function (e) { up("toTeamId", e.target.value); } })),
-      f.kind === "loan" ? h("div", { className: "grid3" },
+      f.kind === "loan" ? h("div", { className: "grid2" },
         h(Sel, { label: "Client", req: true, value: f.clientId, err: errs.clientId, placeholder: "Select…", options: clients.map(function (c) { return { value: c.id, label: c.name + (teamClients.indexOf(c.id) >= 0 ? " ★" : "") }; }), onChange: function (e) { up("clientId", e.target.value); } }),
-        h(Sel, { label: "Project", req: true, value: f.projectId, err: errs.projectId, disabled: !f.clientId, placeholder: projects.length ? "Select…" : "— choose a client —", options: projects.map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { up("projectId", e.target.value); } }),
-        h(Sel, { label: "Task (optional)", value: f.taskId, disabled: !f.projectId, placeholder: tasks.length ? "— whole project —" : "— no open tasks —", options: tasks.map(function (t) { return { value: t.id, label: t.title }; }), onChange: function (e) { up("taskId", e.target.value); } })) : null,
+        h(Sel, { label: "Project", req: true, value: f.projectId, err: errs.projectId, disabled: !f.clientId, placeholder: projects.length ? "Select…" : "— choose a client —", options: projects.map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { up("projectId", e.target.value); } })) : null,
       f.kind === "loan" ? h("div", { className: "grid3" },
         h(Inp, { label: "From", req: true, type: "date", value: f.start, err: errs.start, onChange: function (e) { up("start", e.target.value); } }),
         h(Inp, { label: "To", req: true, type: "date", value: f.end, err: errs.end, onChange: function (e) { up("end", e.target.value); } }),
@@ -22238,7 +21945,7 @@ function TeamRequestModal(p) {
           return { value: id, label: u.fullName + " — " + why };
         }), onChange: function (e) { up("approverId", e.target.value); } }),
       h("div", { className: "banner teal" }, f.kind === "loan"
-        ? "✉ On approval the person joins your team for these dates, is assigned to the project (and task) with the allowance you set, and keeps their own team and manager."
+        ? "✉ On approval the person joins your team for these dates, is assigned to the project with the allowance you set, and keeps their own team and manager."
         : "✉ On approval the person moves to your team and your team lead becomes their direct manager.")));
 }
 
@@ -22309,7 +22016,7 @@ function TeamsPanel(p) {
       d.teamRequests = d.teamRequests || [];
       var r = {
         id: uid("tr"), kind: f.kind, userId: f.userId, fromTeamId: f.fromTeamId, toTeamId: f.toTeamId,
-        clientId: f.kind === "loan" ? f.clientId : null, projectId: f.kind === "loan" ? f.projectId : null, taskId: f.kind === "loan" ? (f.taskId || null) : null,
+        clientId: f.kind === "loan" ? f.clientId : null, projectId: f.kind === "loan" ? f.projectId : null,
         start: f.kind === "loan" ? f.start : null, end: f.kind === "loan" ? f.end : null, hours: f.kind === "loan" ? f.hours : null,
         note: f.note || "", requesterId: user.id, approverId: f.approverId, status: "pending", createdAt: nowISO(), decidedAt: null
       };
@@ -22401,7 +22108,7 @@ function TeamsPanel(p) {
             h("td", null, r.kind === "loan" ? "Temporary" : "Transfer"),
             h("td", null, userName(db, r.userId)),
             h("td", null, nameOf(db.teams, r.fromTeamId) || "—", " → ", nameOf(db.teams, r.toTeamId) || "—"),
-            h("td", null, r.kind === "loan" ? h("span", null, nameOf(db.projects, r.projectId), r.taskId ? " · " + nameOf(db.tasks, r.taskId, "title") : "", h("div", { className: "cap mono" }, il(r.start), " – ", il(r.end))) : "—"),
+            h("td", null, r.kind === "loan" ? h("span", null, nameOf(db.projects, r.projectId), h("div", { className: "cap mono" }, il(r.start), " – ", il(r.end))) : "—"),
             h("td", null, userName(db, r.requesterId)),
             h("td", null, userName(db, r.approverId)),
             h("td", null, h(Chip, { k: r.status === "approved" ? "gr" : r.status === "declined" ? "err" : "amber" }, r.status)));
@@ -22453,7 +22160,7 @@ function TeamManage(p) {
       h("b", null, "Temporary members"),
       loans.map(function (r) {
         return h("div", { key: r.id, className: "cap" }, h("b", null, userName(db, r.userId)), " from ", nameOf(db.teams, r.fromTeamId), " · ", nameOf(db.projects, r.projectId),
-          r.taskId ? " · " + nameOf(db.tasks, r.taskId, "title") : "", " · until ", il(r.end));
+          " · until ", il(r.end));
       })) : null,
     h("div", { className: "band" },
       h(Sel, { label: "Add a person", value: a.userId, placeholder: candidates.length ? "Select…" : "— nobody available —",
@@ -22469,16 +22176,16 @@ function TeamManage(p) {
 }
 
 /* Renders one Management section. Used by the Management tab. */
-function MgmtPanel(p) {
-  var db = p.db, user = p.user, section = p.section;
-  var isAdmin = can(user, "manageEmployeesRoles");
-  var canLists = can(user, "manageClientsProjects");
-
-  if (section === "teams") return h(TeamsPanel, { db: db, user: user, mutate: p.mutate });
-
-  if (section === "people") return h(ListEditor, { itemLabel: "person",
+/* Management → People, with each person's Employee Portal access (WorkDesk,
+   Taskana and its role, the Handbook, the Knowledge Base) */
+function PeoplePanel(p) {
+  var db = p.db, user = p.user, isAdmin = p.isAdmin;
+  var es = useState(null), editing = es[0], setEditing = es[1];
+  return h(React.Fragment, null,
+    isAdmin ? h("div", { className: "cap", style: { marginBottom: 8 } }, "Portal access decides which apps each person sees on the Employee Portal home page. Without a choice, it follows the WorkDesk role; ✎ changes it.") : null,
+    h(ListEditor, { itemLabel: "person",
     db: db, user: user, mutate: p.mutate, kind: "users", canEdit: false,
-    cols: ["Name", "Email", "Role", "Team", "Manager", "Status"],
+    cols: ["Name", "Email", "Role", "Team", "Manager", "Portal access", "Status"],
     row: function (u) {
       return [
         h("div", null, h("b", null, u.fullName), u.fullNameHe ? h("div", { className: "cap he" }, u.fullNameHe) : null),
@@ -22491,6 +22198,8 @@ function MgmtPanel(p) {
           : h(Chip, { k: "gr", title: u.id === user.id ? "Your own role is changed by another administrator" : null }, roleName(u.role)),
         u.teamId ? nameOf(db.teams, u.teamId) : "—",
         u.managerId ? userName(db, u.managerId) : "—",
+        h("div", { className: "row", style: { gap: 4, flexWrap: "nowrap" } }, h(AccessChips, { user: u }),
+          isAdmin ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Change portal access", "aria-label": "Change portal access for " + u.fullName, onClick: function () { setEditing(u); } }, "\u270e") : null),
         h("div", { className: "row", style: { gap: 5 } },
           u.pendingActivation ? h(Chip, { k: "amber" }, "pending") : u.isActive ? h(Chip, { k: "gr" }, "active") : h(Chip, { k: "mut" }, "Inactive"),
           isAdmin && !u.pendingActivation && u.id !== user.id ? h(Btn, { sm: true, kind: "t", onClick: function () {
@@ -22499,7 +22208,18 @@ function MgmtPanel(p) {
       ];
     },
     fields: [], make: function () { return null; }
-  });
+  }),
+    editing ? h(AccessModal, { user: user, person: byId(db.users, editing.id) || editing, mutate: p.mutate, onClose: function () { setEditing(null); } }) : null);
+}
+
+function MgmtPanel(p) {
+  var db = p.db, user = p.user, section = p.section;
+  var isAdmin = can(user, "manageEmployeesRoles");
+  var canLists = can(user, "manageClientsProjects");
+
+  if (section === "teams") return h(TeamsPanel, { db: db, user: user, mutate: p.mutate });
+
+  if (section === "people") return h(PeoplePanel, { db: db, user: user, mutate: p.mutate, isAdmin: isAdmin });
 
   if (section === "activation") return h("div", { className: "col", style: { gap: 9 } },
     h("div", { className: "cap" }, "New accounts appear here. Confirm or change the requested role, assign the person to a team and to their initial projects, then activate."),
@@ -22541,7 +22261,7 @@ function MgmtPanel(p) {
 
   if (section === "assignments") return h("div", { className: "col", style: { gap: 9 } },
     h("div", { className: "cap" }, "Allowance is set per assignment, not per person. Zero means “assigned but not yet funded” — every entry goes to approval. Blank means unlimited within the project budget."),
-    canLists || can(user, "assignTasks") ? h("div", { className: "band" },
+    canLists || can(user, "assignPeople") ? h("div", { className: "band" },
       h(Sel, { label: "Person", id: "asg-u", options: db.users.filter(function (u) { return u.isActive; }).map(function (u) { return { value: u.id, label: u.fullName }; }), onChange: function () {} }),
       h(Sel, { label: "Project", id: "asg-p", options: db.projects.map(function (x) { return { value: x.id, label: nameOf(db.clients, x.clientId) + " — " + x.name }; }), onChange: function () {} }),
       h(Sel, { label: "Work order", id: "asg-w", placeholder: "— project level —", options: db.workOrders.map(function (w) { return { value: w.id, label: w.code }; }), onChange: function () {} }),
@@ -22587,7 +22307,7 @@ function MgmtPanel(p) {
                   h(Bar, { used: used, pending: pend, total: a.allowanceHours, style: { width: 84 } }),
                   h("span", { style: { minWidth: 54, display: "inline-flex", justifyContent: "flex-end" } },
                     pct >= 75 ? h(Chip, { k: pct >= 100 ? "err" : pct >= 90 ? "amber" : "gr" }, num(pct, 0), "%") : null))),
-            h("td", null, canLists || can(user, "assignTasks") ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove assignment", onClick: function () {
+            h("td", null, canLists || can(user, "assignPeople") ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove assignment", onClick: function () {
               p.mutate(function (d) { d.assignments = d.assignments.filter(function (x) { return x.id !== a.id; }); audit(d, user.id, "Assignment removed", "assignments", a.id, null, null); });
             } }, "🗑") : null));
         })))));
@@ -22789,11 +22509,11 @@ function AdminModal(p) {
             }, '{\n  "app":      "galil-workdesk",\n  "version":  7,\n  "exported": "2026-09-05T08:14:00.000Z",\n  "data": { "entries": […], "projects": […], … }\n}'),
             h("p", { style: { margin: 0, fontSize: 13, maxWidth: "72ch" } },
               "Every entry must carry ", h("span", { className: "mono" }, "id, date, type, start, end, client, project, red, yellow, blue, day, assignee, description, notes"),
-              " — and, from V7, ", h("span", { className: "mono" }, "workOrder, task, status, statusReason, approvedBy, approvedAt"), ".")),
+              " — and, from V7, ", h("span", { className: "mono" }, "workOrder, task, status, statusReason, approvedBy, approvedAt"), ". ", h("span", { className: "mono" }, "task"), " is the Taskana task the time went to (optional).")),
           h("div", { className: "grid2" },
             h("div", { className: "panel pad col", style: { gap: 8 } },
               h("div", { className: "h3" }, "Backup"),
-              h("div", { className: "cap" }, "Everything: entries, plans, tasks, budgets, expenses, library, approvals, audit log and lists."),
+              h("div", { className: "cap" }, "Everything: entries, plans, budgets, expenses, library, approvals, audit log and lists. (Tasks are in Taskana, which keeps its own backup.)"),
               h(Btn, { kind: "p", onClick: downloadBackup }, "⬇ Download backup")),
             h("div", { className: "panel pad col", style: { gap: 8 } },
               h("div", { className: "h3" }, "Restore Backup"),
@@ -22812,10 +22532,10 @@ function AdminModal(p) {
             h("div", { className: "row", style: { gap: 8, flexWrap: "wrap" } }, h(Btn, { sm: true, onClick: function () { WDCloud.showInfo(); } }, "Details"))) : null,
           h("div", { className: "panel pad col", style: { gap: 8 } },
             h("div", { className: "h3" }, "Demo data"),
-            h("div", { className: "cap" }, "Made-up clients, projects, work orders, budgets, tasks, hours and expenses for the real GALIL team — different every time. Demo records are marked, so removing them leaves real work alone."),
+            h("div", { className: "cap" }, "Made-up clients, projects, work orders, budgets, hours and expenses for the real GALIL team — different every time. Demo records are marked, so removing them leaves real work alone. Taskana fills its own demo tasks on these projects."),
             h("div", { className: "row", style: { gap: 8, flexWrap: "wrap" } },
               h(Btn, { onClick: function () { ask({ title: "Fill with demo data?", message: "Adds random demo work for the team, replacing earlier demo data. Real records stay as they are.", okLabel: "Fill" }).then(function (yes) { if (yes) { p.mutate(function (d) { addDemo(d); audit(d, user.id, "Demo data added", "-", "-", null, null); }); toast("Demo data added.", "ok"); } }); } }, "Fill with demo data"),
-              hasDemo(db) ? h(Btn, { kind: "d", onClick: function () { ask({ title: "Remove the demo data?", message: "Demo clients, projects, work orders, budgets, tasks, hours, plans, expenses and approvals are removed. Real records and people stay.", okLabel: "Remove", danger: true }).then(function (yes) { if (yes) { p.mutate(function (d) { removeDemo(d); audit(d, user.id, "Demo data removed", "-", "-", null, null); }); toast("Demo data removed.", "ok"); } }); } }, "Remove demo data") : null)),
+              hasDemo(db) ? h(Btn, { kind: "d", onClick: function () { ask({ title: "Remove the demo data?", message: "Demo clients, projects, work orders, budgets, hours, plans, expenses and approvals are removed. Real records and people stay.", okLabel: "Remove", danger: true }).then(function (yes) { if (yes) { p.mutate(function (d) { removeDemo(d); audit(d, user.id, "Demo data removed", "-", "-", null, null); }); toast("Demo data removed.", "ok"); } }); } }, "Remove demo data") : null)),
           h("div", { className: "panel pad col", style: { gap: 8 } },
             h("div", { className: "h3" }, "Reset"),
             h("div", { className: "cap" }, "Wipes local data and reloads the demonstration seed. The storage key ", h("span", { className: "mono" }, KEY), " itself never changes."),
@@ -22984,7 +22704,7 @@ function MobileEntrySheet(p) {
     day ? null : h(Sel, { label: "Client", req: f.hourType !== "red", err: errs.client, value: f.clientId, placeholder: "Select…", options: opts.clients, onChange: function (e) { up("clientId", e.target.value); } }),
     day ? null : h(Sel, { label: "Project", req: f.hourType !== "red", err: errs.project, value: f.projectId, placeholder: "Select…", options: opts.projects, onChange: function (e) { up("projectId", e.target.value); } }),
     day ? null : h(Sel, { label: "Work order", err: errs.workOrder, value: f.workOrderId, placeholder: opts.workOrders.length ? "Select…" : "— none on this project —", options: opts.workOrders, disabled: !f.projectId, onChange: function (e) { up("workOrderId", e.target.value); } }),
-    day ? null : h(Sel, { label: "Task", value: f.taskId, placeholder: opts.tasks.length ? "— none —" : "— no assigned task —", options: opts.tasks, onChange: function (e) { up("taskId", e.target.value); } }),
+    day ? null : h(Sel, { label: "Taskana task (optional)", value: f.taskId, placeholder: opts.tasks.length ? "— none —" : "— no open Taskana task —", options: opts.tasks, onChange: function (e) { up("taskId", e.target.value); } }),
     h(Inp, { label: "Description", req: true, err: errs.description, value: f.description, placeholder: f.type === "Work" ? "What did you work on?" : "Optional note", onChange: function (e) { up("description", e.target.value); } }),
     h(Inp, { label: "Notes", value: f.notes, placeholder: "Optional", onChange: function (e) { up("notes", e.target.value); } }),
     day ? h(LeaveBand, { db: db, viewer: user, form: f, up: up }) : null);
@@ -23153,80 +22873,6 @@ function MobilePlanner(p) {
     }) : null);
 }
 
-/* ---------- Tasks ---------- */
-function MobileTasks(p) {
-  var db = p.db, user = p.user;
-  var vs = useState("mine"), view = vs[0], setView = vs[1];
-  var fs = useState(""), status = fs[0], setStatus = fs[1];
-  var es = useState(null), editing = es[0], setEditing = es[1];
-
-  var scope = taskScope(db, user);
-  var list = scope.filter(function (t) {
-    if (view === "mine" && taskAssigneeIds(db, t.id).indexOf(user.id) < 0) return false;
-    if (status && t.status !== status) return false;
-    return true;
-  }).sort(function (a, b) { return String(a.dueDate || "9999").localeCompare(String(b.dueDate || "9999")); });
-
-  function move(t, v) {
-    if (v === t.status) return;
-    if (!canMoveTask(db, user, t)) { toast("Only this task's assignees, or someone who manages its project's tasks, can change its status.", "error"); return; }
-    if (["Done", "Cancelled"].indexOf(v) < 0 && taskIsBlocked(db, t)) { toast("This task is blocked by a dependency that is not Done.", "error"); return; }
-    p.mutate(function (d) {
-      var rec = byId(d.tasks, t.id); if (!rec) return;
-      var before = rec.status; rec.status = v;
-      audit(d, user.id, "Task status: " + before + " → " + v, "tasks", t.id, null, null);
-      d.tasks.forEach(function (x) {
-        if ((x.dependencies || []).indexOf(t.id) >= 0 && x.status === "Blocked" && !taskIsBlocked(d, x)) x.status = "To do";
-      });
-    });
-    toast("Task moved to " + v + ".", "ok");
-  }
-
-  return h(React.Fragment, null,
-    h("div", { className: "mseg" },
-      h("button", { className: "pill" + (view === "mine" ? " on" : ""), onClick: function () { setView("mine"); } }, "My tasks"),
-      h("button", { className: "pill" + (view === "all" ? " on" : ""), onClick: function () { setView("all"); } }, "All I can see")),
-    h("div", { className: "mseg" },
-      h("button", { className: "pill" + (!status ? " on" : ""), onClick: function () { setStatus(""); } }, "Any status"),
-      TASK_STATUSES.map(function (sname) {
-        return h("button", { key: sname, className: "pill" + (status === sname ? " on" : ""), onClick: function () { setStatus(sname); } }, sname);
-      })),
-    list.length === 0 ? h("div", { className: "mcard" }, h("span", { className: "cap" }, "No tasks match.")) : null,
-    list.map(function (t) {
-      var cons = taskConsumed(db, t.id);
-      return h("div", { key: t.id, className: "mcard", style: { borderLeft: "3px solid " + (TS_COLOR[t.status] || C.muted) } },
-        h("div", { className: "mhead" },
-          h("div", { className: "mt" }, t.title),
-          h(Chip, { k: "mut", style: { background: PR_COLOR[t.priority] + "1E", color: PR_COLOR[t.priority], borderColor: PR_COLOR[t.priority] + "55" } }, t.priority)),
-        h("div", { className: "mrow" },
-          h("span", null, nameOf(db.projects, t.projectId)),
-          t.dueDate ? h("span", { className: "tnum", style: isOverdue(t) ? { color: C.error, fontWeight: 700 } : null }, "due ", il(t.dueDate)) : null,
-          h("span", { className: "tnum" }, num(cons), t.allowanceHours ? " / " + num(t.allowanceHours) : "", " h")),
-        h("div", { className: "row", style: { gap: 6 } },
-          canMoveTask(db, user, t)
-            ? h("select", { className: "minisel", style: { minHeight: 40, flex: 1 }, value: t.status, "aria-label": "Status of " + t.title,
-                onChange: function (e) { move(t, e.target.value); } },
-                TASK_STATUSES.map(function (sname) { return h("option", { key: sname, value: sname }, sname); }))
-            : h("span", { className: "grow" }, h(Chip, { k: "mut", style: { background: TS_COLOR[t.status] + "1E", color: TS_COLOR[t.status], borderColor: TS_COLOR[t.status] + "55" } }, t.status)),
-          can(user, "createTasks") || can(user, "assignTasks") ? h(Btn, { sm: true, onClick: function () { setEditing(Object.assign({}, t, { assignees: taskAssigneeIds(db, t.id) })); } }, "✎") : null));
-    }),
-    editing ? h(TaskEditor, {
-      db: db, user: user, value: editing,
-      onSave: function (f) {
-        p.mutate(function (d) {
-          var rec = Object.assign({}, f); delete rec.assignees;
-          var i = d.tasks.findIndex(function (x) { return x.id === rec.id; });
-          if (i >= 0) { audit(d, user.id, "Task edited", "tasks", rec.id, d.tasks[i], rec); d.tasks[i] = rec; }
-          d.taskAssignees = d.taskAssignees.filter(function (x) { return x.taskId !== rec.id; });
-          (f.assignees || []).forEach(function (uidv) { d.taskAssignees.push({ id: uid("ta"), taskId: rec.id, userId: uidv }); });
-        });
-        setEditing(null); toast("Task saved.", "ok");
-      },
-      onDelete: function (f) { p.mutate(function (d) { d.tasks = d.tasks.filter(function (x) { return x.id !== f.id; }); }); setEditing(null); },
-      onClose: function () { setEditing(null); }
-    }) : null);
-}
-
 /* ---------- Expenses ---------- */
 function MobileExpenses(p) {
   var db = p.db, user = p.user;
@@ -23354,7 +23000,6 @@ function MobileLibrary(p) {
 var MOBILE_TABS = [
   { k: "time", label: "Time", icon: "⏱" },
   { k: "planner", label: "Plan", icon: "🗓" },
-  { k: "tasks", label: "Tasks", icon: "✓" },
   { k: "expenses", label: "Expenses", icon: "🧾" },
   { k: "more", label: "More", icon: "☰" }
 ];
@@ -23367,7 +23012,6 @@ function MobileApp(p) {
   var allowed = MOBILE_TABS.filter(function (t) {
     if (t.k === "time") return can(user, "reportOwnTime") || can(user, "viewOthersTime");
     if (t.k === "planner") return can(user, "planOwnWeek");
-    if (t.k === "tasks") return user.role !== "VIEW";
     if (t.k === "expenses") return can(user, "reportExpenses") || can(user, "approveExpenses");
     return true;
   });
@@ -23381,7 +23025,7 @@ function MobileApp(p) {
   }
 
   var approvals = openApprovalsFor(db, user).length;
-  var overdue = overdueCount(db, user);
+  var acc = GalilPortal.access(user);
 
   function delEntry(e) {
     var snapshot = JSON.parse(JSON.stringify(e));
@@ -23399,7 +23043,6 @@ function MobileApp(p) {
   var body =
     tab === "time" ? h(MobileTime, Object.assign({ onDelete: delEntry, onDuplicate: dupEntry }, common)) :
     tab === "planner" ? h(MobilePlanner, common) :
-    tab === "tasks" ? h(MobileTasks, common) :
     tab === "expenses" ? h(MobileExpenses, common) :
     tab === "approvals" ? h(ApprovalsTab, common) :
     tab === "library" ? h(MobileLibrary, common) :
@@ -23407,10 +23050,11 @@ function MobileApp(p) {
 
   return h("div", { className: "mob" },
     h("div", { className: "mtop" },
+      h("button", { className: "iconbtn", id: "to-portal", onClick: p.onHome, "aria-label": "Back to the Employee Portal home", style: { fontSize: 19, minWidth: 38 } }, "\u2302"),
       h(Mark, { style: { width: 26, height: 22 } }),
       h("div", { className: "grow", style: { lineHeight: 1.1 } },
         h("b", { style: { letterSpacing: ".14em", fontSize: 13 } }, "GALIL"),
-        h("div", { style: { fontSize: 10, color: "var(--chromesoft)" } }, "WorkDesk · V7.2")),
+        h("div", { style: { fontSize: 10, color: "var(--chromesoft)" } }, "WorkDesk")),
       h("button", {
         className: "iconbtn", onClick: function () { p.setTheme(p.theme === "dark" ? "light" : "dark"); },
         "aria-label": p.theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme"
@@ -23428,7 +23072,7 @@ function MobileApp(p) {
 
     h("div", { className: "mnav", role: "tablist" },
       allowed.map(function (t) {
-        var badge = t.k === "tasks" ? overdue : t.k === "more" ? approvals : 0;
+        var badge = t.k === "more" ? approvals : 0;
         var on = tab === t.k || (t.k === "more" && ["approvals", "library", "more"].indexOf(tab) >= 0);
         return h("button", {
           key: t.k, role: "tab", "aria-selected": on ? "true" : "false", className: on ? "on" : "",
@@ -23438,12 +23082,15 @@ function MobileApp(p) {
       })),
 
     sheet === "more" ? h(Sheet, { title: "More", onClose: function () { setSheet(null); } },
+      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); p.onHome(); } }, "\u2302  Employee Portal home"),
+      acc.taskana !== "none" ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "taskana/index.html#/my" }, "\u2611  My tasks in Taskana") : null,
       h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); setTab("library"); } }, "📚  Library"),
       can(user, "approveTime") || can(user, "approveExpenses") ? h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); setTab("approvals"); } }, "✔  Approvals", approvals ? h(Chip, { k: "amber" }, approvals) : null) : null,
       h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet("mywork"); } }, "◱  My assignments and allowances"),
       h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet("profile"); } }, "👤  My profile"),
-      can(user, "knowledgeBase") ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "../kb/index.html", target: "_blank", rel: "noopener" }, "📖  Knowledge Base") : null,
-      h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "../handbook/index.html", target: "_blank", rel: "noopener" }, "❓  Help — WorkDesk Handbook"),
+      acc.kb ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "kb/index.html" }, "📖  Knowledge Base") : null,
+      acc.handbook ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "handbook/index.html#workdesk" }, "❓  Help — the Handbook") : null,
+      h("div", { className: "row", style: { justifyContent: "space-between" } }, h("span", { className: "cap" }, "Language"), h(LangSwitch, { light: true })),
       h("div", { className: "sep" }),
       h("div", { className: "cap" }, "The Dashboard, Management and System administration are laid out for a larger screen. Switch to the desktop layout to reach them — this phone will keep that choice."),
       h(Btn, { kind: "p", style: { minHeight: 48 }, onClick: function () { p.onForceDesktop(); } }, "🖥  Switch to the desktop layout")) : null,
@@ -23452,7 +23099,8 @@ function MobileApp(p) {
     sheet === "profile" ? h(Profile, { db: db, user: user, onClose: function () { setSheet(null); }, onSignOut: p.onSignOut }) : null);
 }
 </script>
-<script src="workdesk-seed.js"></script>
+<script src="workdesk/workdesk-seed.js"></script>
+<script src="workdesk/portal-home.js"></script>
 <script>"use strict";
 /* =====================================================================
    Application shell — §14.3 tab bar, §6.4 session, §8.3 my assignments
@@ -23461,7 +23109,6 @@ function MobileApp(p) {
 var TABS = [
   { k: "time",     label: "Time Log",    need: null },
   { k: "planner",  label: "Week Planner",need: "planOwnWeek" },
-  { k: "tasks",    label: "Tasks",       need: null },
   { k: "expenses", label: "Expenses",    need: null },
   { k: "management", label: "Management", need: null },
   { k: "approvals",label: "Approvals",   need: "approveTime" },
@@ -23527,12 +23174,17 @@ function Profile(p) {
           h("div", { className: "row", style: { gap: 5, marginTop: 3 } }, h(Chip, { k: "gr" }, roleName(user.role)), h(Chip, { k: "mut" }, user.jobTitle)))),
       h("div", { className: "panel pad col", style: { gap: 3, background: C.wash } },
         [["Department", user.department], ["Team", user.teamId ? nameOf(db.teams, user.teamId) : "—"],
+         ["Portal access", h(AccessChips, { user: user })],
          ["Manager", user.managerId ? userName(db, user.managerId) : "—"], ["Start date", il(user.startDate)],
          ["Contracted", user.weeklyHours + " h/week · " + user.dailyHours + " h/day"],
          ["Employment", user.employmentType], ["Sign-in", user.authProvider === "microsoft" ? "Microsoft Entra ID + Authenticator" : "Company email and password"]
         ].map(function (r) {
           return h("div", { key: r[0], className: "row" }, h("span", { className: "cap", style: { width: 122 } }, r[0]), h("b", null, r[1]));
         })),
+      h("div", { className: "row", style: { gap: 8, justifyContent: "space-between" } },
+        h("div", { className: "col", style: { gap: 2 } }, h("div", { className: "h3" }, "Language"),
+          h("span", { className: "cap" }, "English or Hebrew, for the whole Employee Portal on this device.")),
+        h(LangSwitch, { light: true })),
       p.setViewPref ? h("div", { className: "col", style: { gap: 5 } },
         h("div", { className: "h3" }, "Layout on this device"),
         h("div", { className: "cap" }, "Auto follows the width of the window: the phone build below 820 px, the desktop build above it."),
@@ -23552,6 +23204,16 @@ function Profile(p) {
           h(Chip, { k: "gr" }, "current")))));
 }
 
+/* #/ is the portal home; #/workdesk/<tab> opens WorkDesk on a tab */
+function readRoute() {
+  var m = /^#\/?workdesk(?:\/(\w+))?/.exec(location.hash || "");
+  return m ? { view: "workdesk", tab: m[1] || null } : { view: "home", tab: null };
+}
+function writeRoute(view, tab) {
+  var hsh = view === "workdesk" ? "#/workdesk" + (tab ? "/" + tab : "") : "#/";
+  if (location.hash !== hsh) try { history.pushState(null, "", hsh); } catch (e) { location.hash = hsh; }
+}
+
 function App() {
   var ds = useState(function () {
     if (WDCloud.enabled) return WDCloud.data || emptyDB();     // shared file, or Microsoft sign-in still to come
@@ -23564,7 +23226,9 @@ function App() {
   useEffect(function () { WDCloud.onRemote = function (d) { setDb(d); }; return function () { WDCloud.onRemote = null; }; }, []);
   var ss = useState(function () { try { return localStorage.getItem(SESSION_KEY) || null; } catch (e) { return null; } });
   var sessionId = ss[0], setSession = ss[1];
-  var ts = useState("time"), tab = ts[0], setTab = ts[1];
+  var ts = useState(function () { return readRoute().tab || "time"; }), tab = ts[0], setTab = ts[1];
+  /* the portal home (#/) or WorkDesk (#/workdesk/<tab>) */
+  var vws = useState(function () { return readRoute().view; }), view = vws[0], setView = vws[1];
   var us = useState("signin"), authMode = us[0], setAuthMode = us[1];
   var ms = useState(false), admin = ms[0], setAdmin = ms[1];
   var pfs = useState(false), profile = pfs[0], setProfile = pfs[1];
@@ -23600,6 +23264,16 @@ function App() {
     };
   }, []);
 
+  /* back / forward between the home page and WorkDesk */
+  useEffect(function () {
+    var f = function () { var r = readRoute(); setView(r.view); if (r.tab) setTab(r.tab); };
+    window.addEventListener("hashchange", f);
+    window.addEventListener("popstate", f);
+    return function () { window.removeEventListener("hashchange", f); window.removeEventListener("popstate", f); };
+  }, []);
+  function openWorkdesk(t) { if (t) setTab(t); setView("workdesk"); writeRoute("workdesk", t || tab); }
+  function goHome() { setView("home"); writeRoute("home"); }
+
   var dismiss = function (id) { setToasts(function (l) { return l.filter(function (x) { return x.id !== id; }); }); };
 
   /* single mutation entry point — writes through to the frozen storage key */
@@ -23624,14 +23298,17 @@ function App() {
     try { localStorage.setItem(SESSION_KEY, u.id); } catch (e) {}
     setSession(u.id);
     setTab(can(u, "reportOwnTime") ? "time" : can(u, "dashboardOwn") ? "dashboard" : "time");
-    toast("Signed in as " + u.fullName + " · " + roleName(u.role), "ok");
+    toast("Signed in as " + displayName(u) + " · " + roleName(u.role), "ok");
   }
   function signOut() {
     if (user) mutate(function (d) { audit(d, user.id, "Sign-out", "users", user.id, null, null); });
     try { localStorage.removeItem(SESSION_KEY); } catch (e) {}
+    writeRoute("home");
     if (WDCloud.entra) { WDCloud.signOut(); return; }
-    setSession(null); setProfile(false); setAdmin(false); setAuthMode("signin");
+    setSession(null); setProfile(false); setAdmin(false); setAuthMode("signin"); setView("home");
   }
+  /* Taskana, the Handbook and the Knowledge Base sign out by coming here with #signout */
+  useEffect(function () { if (location.hash === "#signout") { if (user) signOut(); else writeRoute("home"); } }, []);
   function register(payload) {
     var id = uid("u");
     mutate(function (d) {
@@ -23667,41 +23344,49 @@ function App() {
       h(Toasts, { items: toasts, dismiss: dismiss }), h(AskHost));
   }
 
+  var portalAccess = GalilPortal.access(user);
+  var approvalCount = openApprovalsFor(db, user).length;
+
+  /* the Employee Portal home page — where everyone lands after signing in */
+  if (view !== "workdesk" || !portalAccess.workdesk) {
+    return h(React.Fragment, null,
+      h(PortalHome, {
+        db: db, user: user, theme: theme, setTheme: setTheme, approvals: approvalCount,
+        onOpen: openWorkdesk, onProfile: function () { setProfile(true); }, onSignOut: signOut
+      }),
+      profile ? h(Profile, { db: db, user: user, viewPref: viewPref, setViewPref: setViewPref, onClose: function () { setProfile(false); }, onSignOut: signOut }) : null,
+      h(Toasts, { items: toasts, dismiss: dismiss }), h(AskHost));
+  }
+
   /* §14.4 — below the breakpoint the phone shell renders instead, unless the
      person has pinned the desktop layout on this device. */
   var isMobile = viewPref === "mobile" || (viewPref === "auto" && narrow);
   if (isMobile) {
     return h(React.Fragment, null,
       h(MobileApp, {
-        db: db, user: user, mutate: mutate, theme: theme, setTheme: setTheme, onSignOut: signOut,
+        db: db, user: user, mutate: mutate, theme: theme, setTheme: setTheme, onSignOut: signOut, onHome: goHome,
         onForceDesktop: function () { setViewPref("desktop"); toast("Desktop layout pinned on this device. My profile \u2192 Layout switches back.", ""); }
       }),
       h(Toasts, { items: toasts, dismiss: dismiss }), h(AskHost));
   }
 
-  var approvalCount = openApprovalsFor(db, user).length;
-  var overdue = overdueCount(db, user);
   var shown = TABS.filter(function (t) {
     if (t.k === "management" && !canOpenManagement(user)) return false;
-    if (t.k === "tasks" && user.role === "VIEW") return false;
     if (t.k === "expenses" && !can(user, "reportExpenses") && !can(user, "approveExpenses")) return false;
     if (t.k === "time" && !can(user, "reportOwnTime") && !can(user, "viewOthersTime")) return false;
     return !t.need || can(user, t.need);
   });
   if (!shown.some(function (t) { return t.k === tab; })) tab = shown.length ? shown[0].k : "time";
 
-  function goReportTask(t) {
-    setTab("time");
-    toast("Open the Time Log form and select " + t.title + ".", "");
-  }
 
   var common = { db: db, user: user, mutate: mutate };
 
   return h("div", { className: "app" },
     h("div", { className: "topbar" },
+      h("button", { className: "iconbtn", id: "to-portal", onClick: goHome, title: "Back to the Employee Portal home", "aria-label": "Back to the Employee Portal home", style: { fontSize: 19 } }, "\u2302"),
       h("div", { className: "brand" },
         h(Mark, null),
-        h("div", null, "GALIL", h("small", null, "WorkDesk · V7.2")),
+        h("div", null, "GALIL", h("small", null, "WorkDesk")),
         h(Chip, { k: "gr", style: { background: "rgba(255,255,255,.1)", color: "#C9DDB4", borderColor: "rgba(255,255,255,.2)" } }, WDCloud.remote ? (WDCloud.storage === "github" ? "GitHub" : "OneDrive") : "Standalone")),
       isOnline ? null : h(Chip, { k: "amber" }, "Offline — changes cached locally"),
       h("div", { className: "spacer" }),
@@ -23716,26 +23401,26 @@ function App() {
       }, "\ud83d\udcf1") : null,
       h("button", { className: "iconbtn", title: "My assignments and allowances", onClick: function () { setMyWork(true); } }, "◱"),
       h("button", { className: "iconbtn", title: "System administration", onClick: function () { setAdmin(true); } }, "⚙"),
-      can(user, "knowledgeBase") ? h("a", { className: "iconbtn", style: { textDecoration: "none" }, href: "../kb/index.html", target: "_blank", rel: "noopener", title: "Knowledge Base — onboarding, company rules and training", "aria-label": "Open the Employee Knowledge Base" }, h(KbIcon)) : null,
-      h("a", { className: "iconbtn", style: { textDecoration: "none", fontWeight: 700 }, href: "../handbook/index.html", target: "_blank", rel: "noopener", title: "Help — open the WorkDesk Handbook" }, "?"),
+      h(LangSwitch, null),
+      portalAccess.kb ? h("a", { className: "iconbtn", style: { textDecoration: "none" }, href: "kb/index.html", target: "_blank", rel: "noopener", title: "Knowledge Base — onboarding, company rules and training", "aria-label": "Open the Employee Knowledge Base" }, h(KbIcon)) : null,
+      portalAccess.handbook ? h("a", { className: "iconbtn", style: { textDecoration: "none", fontWeight: 700 }, href: "handbook/index.html#workdesk", target: "_blank", rel: "noopener", title: "Help — open the Handbook" }, "?") : null,
       h("button", { className: "who iconbtn", style: { minWidth: 0, padding: "0 8px", gap: 9 }, onClick: function () { setProfile(true); }, title: "My profile" },
         h("span", { className: "avatar", style: user.photoUrl ? { backgroundImage: "url(" + user.photoUrl + ")", backgroundSize: "cover" } : null }, user.photoUrl ? "" : initialsOf(user.fullName)),
         h("span", { className: "nm col", style: { alignItems: "center", gap: 0 } },
-          h("span", { style: { fontWeight: 600 } }, user.fullName),
+          h("span", { style: { fontWeight: 600 } }, displayName(user)),
           h("span", { className: "rolechip" }, roleName(user.role))))),
 
     h("div", { className: "tabs", role: "tablist" },
       shown.map(function (t) {
-        var badge = t.k === "approvals" ? approvalCount : t.k === "tasks" ? overdue : 0;
+        var badge = t.k === "approvals" ? approvalCount : 0;
         return h("button", {
           key: t.k, role: "tab", "aria-selected": tab === t.k ? "true" : "false",
-          className: "tab" + (tab === t.k ? " on" : ""), onClick: function () { setTab(t.k); }
-        }, t.label, badge ? h("span", { className: "badge", title: t.k === "approvals" ? "Outstanding requests" : "Overdue tasks" }, badge) : null);
+          className: "tab" + (tab === t.k ? " on" : ""), onClick: function () { setTab(t.k); writeRoute("workdesk", t.k); }
+        }, t.label, badge ? h("span", { className: "badge", title: "Outstanding requests" }, badge) : null);
       })),
 
     tab === "time"      ? h(TimeLogTab, common) : null,
     tab === "planner"   ? h(PlannerTab, common) : null,
-    tab === "tasks"     ? h(TasksTab, Object.assign({ goReport: goReportTask }, common)) : null,
     tab === "expenses"  ? h(ExpensesTab, common) : null,
     tab === "management" ? h(ManagementTab, common) : null,
     tab === "approvals" ? h(ApprovalsTab, common) : null,
@@ -23759,7 +23444,7 @@ function KbIcon() {
 (function () {
   applyTheme(readTheme());
   var style = document.createElement("style");
-  style.textContent = CSS;
+  style.textContent = CSS + "\n" + PORTAL_CSS + "\n" + RTL_CSS;
   document.head.appendChild(style);
   var boot = document.getElementById("boot");
   if (boot) boot.remove();

@@ -2,8 +2,9 @@
    GALIL WorkDesk — the real GALIL team and the demo-data generator.
    Loaded after the app's main script: seed() here replaces the old
    fictional seed. seed(false) is the team only; seed() / seed(true) adds
-   random demo work (clients, projects, work orders, budgets, tasks, time
-   entries, plans, expenses, notes, approvals). Every demo record carries
+   random demo work (clients, projects, work orders, budgets, time
+   entries, plans, expenses, notes, approvals). Tasks are Taskana's: its own
+   demo data puts tasks on these same projects. Every demo record carries
    demo: true so removeDemo() can take it out without touching real work.
    ===================================================================== */
 "use strict";
@@ -81,7 +82,7 @@ function seed(withDemo) {
   return db;
 }
 
-var WD_DEMO_KEYS = ["clients", "projects", "workOrders", "budgets", "tasks", "taskAssignees", "assignments", "entries", "planned", "expenses", "attachments", "library", "approvals", "teamRequests"];
+var WD_DEMO_KEYS = ["clients", "projects", "workOrders", "budgets", "assignments", "entries", "planned", "expenses", "attachments", "library", "approvals", "teamRequests"];
 function hasDemo(db) { return WD_DEMO_KEYS.some(function (k) { return (db[k] || []).some(function (x) { return x.demo; }); }); }
 function removeDemo(db) {
   WD_DEMO_KEYS.forEach(function (k) { db[k] = (db[k] || []).filter(function (x) { return !x.demo; }); });
@@ -113,7 +114,7 @@ function addDemo(db) {
   clients.forEach(function (c) {
     if (!byId(db.clients, c[0])) db.clients.push(D({ id: c[0], name: c[1], initials: c[2], isInternal: false, contactName: c[3], contactEmail: c[4], notes: "", isVerified: true }));
   });
-  /* project id, client, name, status, owner (manager), team, WO code prefix, budget basis, writers */
+  /* project id, client, name, status, owner (manager), team, WO code prefix, budget basis, writers, work topics */
   var P = [
     ["p-iai1", "c-iai", "Radar Suite — Operator Manual", "Active", "u-danny", "team-def", "WO-IAI-0041", "Money", ["u-eitan", "u-daniel"], ["Vol 1 Ch 3 — Track modes", "Vol 1 Ch 4 — Display console", "Vol 2 — Maintenance procedures", "Illustration pass — chapter 3", "Peer review — chapter 2"]],
     ["p-elb1", "c-elb", "Avionics Help System", "WIP", "u-danny", "team-def", "WO-ELB-0007", "Hours", ["u-eitan", "u-daniel", "u-gil"], ["Help topic migration — batch 2", "Fix broken cross-references", "Release 5 publish", "SME review — radio panel"]],
@@ -123,7 +124,6 @@ function addDemo(db) {
     ["p-hft1", "c-hft", "Banking App — Online Help", "Active", "u-niv", "team-niv", "WO-HFT-0005", "Money", ["u-penina", "u-yosi"], ["Payments topics", "Cards topics", "Loans topics", "Legal review of fee wording"]]
   ];
   var DESCS = ["Drafting", "Source review with the SME", "Screenshots and figures", "Peer review comments", "Style-guide pass", "Client call and follow-up", "Reworking review feedback", "Publishing build"];
-  var TASK_ST = ["To do", "In progress", "In progress", "In review", "Blocked", "Done"];
   P.forEach(function (r) {
     var pid = r[0], cid = r[1], owner = who(r[4]), writers = r[8].map(who).filter(Boolean);
     var team = byId(db.teams, r[5]); if (team && (team.clientIds || []).indexOf(cid) < 0) team.clientIds = (team.clientIds || []).concat([cid]);
@@ -142,12 +142,6 @@ function addDemo(db) {
     }
     writers.concat([owner]).forEach(function (u, i) {
       db.assignments.push(D({ id: uid("a"), userId: u, projectId: pid, workOrderId: u === owner ? null : woIds[i % 2], allowanceHours: u === owner ? null : between(40, 160), grantedBy: owner, grantedAt: nowISO() }));
-    });
-    r[9].forEach(function (title, i) {
-      var st = pick(TASK_ST), tid = pid + "-t" + (i + 1), start = between(-30, 5);
-      db.tasks.push(D({ id: tid, projectId: pid, workOrderId: woIds[i % 2], title: title, description: "", status: st, priority: pick(["Low", "Normal", "Normal", "High", "Critical"]),
-        allowanceHours: between(8, 40), startDate: T(start), dueDate: T(start + between(7, 30)), parentTaskId: null, dependencies: [], comments: [], attachments: [] }));
-      db.taskAssignees.push(D({ id: uid("ta"), taskId: tid, userId: writers[i % writers.length], allowanceHours: between(8, 40) }));
     });
     r.push(woIds);
   });
@@ -168,15 +162,14 @@ function addDemo(db) {
     Object.keys(projOf).forEach(function (u) {
       if (!byId(db.users, u) || rnd() < 0.06) return;                 // the odd day off
       var rows = projOf[u], r = pick(rows), first = between(4, 6), isMgr = r[4] === u;
-      var tsk = db.tasks.filter(function (t) { return t.projectId === r[0]; });
       if (isMgr) {
         db.entries.push(mk({ d: ds, u: u, s: "09:00", e: hh(9 + first), blue: first, c: r[1], p: r[0], desc: "Project management — " + pick(["client sync", "planning", "budget review", "team review"]) }));
         if (rnd() < 0.5) db.entries.push(mk({ d: ds, u: u, s: hh(10 + first), e: hh(12 + first), red: 2, c: "c-gal", p: "p-int1", desc: "Team administration" }));
       } else {
-        var t1 = pick(tsk);
-        db.entries.push(mk({ d: ds, u: u, s: "09:00", e: hh(9 + first), yellow: first, c: r[1], p: r[0], w: t1 ? t1.workOrderId : r[10][0], t: t1 ? t1.id : null, desc: pick(DESCS) + (t1 ? " — " + t1.title : "") }));
-        var r2 = pick(rows), t2 = pick(db.tasks.filter(function (t) { return t.projectId === r2[0]; })), rest = 9 - first - between(0, 1);
-        if (rest > 0) db.entries.push(mk({ d: ds, u: u, s: hh(10 + first), e: hh(10 + first + rest), yellow: rest, c: r2[1], p: r2[0], w: t2 ? t2.workOrderId : r2[10][0], t: t2 ? t2.id : null, desc: pick(DESCS) }));
+        var i1 = between(0, r[9].length - 1);
+        db.entries.push(mk({ d: ds, u: u, s: "09:00", e: hh(9 + first), yellow: first, c: r[1], p: r[0], w: r[10][i1 % 2], desc: pick(DESCS) + " — " + r[9][i1] }));
+        var r2 = pick(rows), i2 = between(0, r2[9].length - 1), rest = 9 - first - between(0, 1);
+        if (rest > 0) db.entries.push(mk({ d: ds, u: u, s: hh(10 + first), e: hh(10 + first + rest), yellow: rest, c: r2[1], p: r2[0], w: r2[10][i2 % 2], desc: pick(DESCS) }));
       }
     });
     ["u-tamir", "u-inon"].forEach(function (u) {
@@ -232,8 +225,8 @@ function addDemo(db) {
   });
 
   db.library.push(
-    D({ id: uid("l"), title: "GALIL house style — quick rules", body: "Sentence case for headings. Second person for procedures. No future tense in steps. Israeli date format everywhere.", authorUserId: who("u-kfir"), isPrivate: false, tags: ["style", "writing"], projectId: null, taskId: null, link: "", createdAt: nowISO() }),
-    D({ id: uid("l"), title: "Screenshot capture checklist", body: "1366×768 window. Hide personal data. PNG, 96 dpi. Crop to the control plus one container.", authorUserId: who("u-danny"), isPrivate: false, tags: ["images", "checklist"], projectId: "p-iai1", taskId: null, link: "", createdAt: nowISO() }),
-    D({ id: uid("l"), title: "IFU wording — regulatory notes", body: "Use the client's approved warning phrases verbatim. Every change to an alarm description goes through regulatory review.", authorUserId: who("u-ranit"), isPrivate: false, tags: ["medical", "regulatory"], projectId: "p-cmd1", taskId: null, link: "", createdAt: nowISO() }));
+    D({ id: uid("l"), title: "GALIL house style — quick rules", body: "Sentence case for headings. Second person for procedures. No future tense in steps. Israeli date format everywhere.", authorUserId: who("u-kfir"), isPrivate: false, tags: ["style", "writing"], projectId: null, link: "", createdAt: nowISO() }),
+    D({ id: uid("l"), title: "Screenshot capture checklist", body: "1366×768 window. Hide personal data. PNG, 96 dpi. Crop to the control plus one container.", authorUserId: who("u-danny"), isPrivate: false, tags: ["images", "checklist"], projectId: "p-iai1", link: "", createdAt: nowISO() }),
+    D({ id: uid("l"), title: "IFU wording — regulatory notes", body: "Use the client's approved warning phrases verbatim. Every change to an alarm description goes through regulatory review.", authorUserId: who("u-ranit"), isPrivate: false, tags: ["medical", "regulatory"], projectId: "p-cmd1", link: "", createdAt: nowISO() }));
   return db;
 }
