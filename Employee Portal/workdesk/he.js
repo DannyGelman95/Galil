@@ -1259,6 +1259,8 @@ WDI18N.add({
 "Signs for GALIL": "החותם מטעם גליל",
 "The CEO": "המנכ\"ל",
 "Notes and terms (printed on the document)": "הערות ותנאים (מודפסים על המסמך)",
+"Title in Hebrew (for the Hebrew document)": "שם בעברית (למסמך בעברית)",
+"Optional — otherwise the Hebrew document is titled by the work order number": "רשות — אחרת המסמך בעברית ייקרא לפי מספר ההזמנה",
 "Work order document — {code}": "מסמך הזמנת עבודה — {code}",
 "Work order document — draft": "מסמך הזמנת עבודה — טיוטה",
 "Document language": "שפת המסמך",
