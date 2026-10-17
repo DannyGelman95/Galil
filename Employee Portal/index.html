@@ -18392,6 +18392,28 @@ var CSS = [
 /* tabular figures without changing typeface — §14.1 one face across a table row */
 ".tnum{font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1}",
 ".sep{height:1px;background:var(--line);margin:8px 0}",
+/* Dashboard: widgets on a 12-column grid */
+".dgrid{display:grid;grid-template-columns:repeat(12,minmax(0,1fr));gap:10px;align-content:start}",
+".dwid{min-width:0;display:flex;flex-direction:column}",
+".dgrid.editing .dwid{outline:2px dashed var(--line);outline-offset:-2px;cursor:grab}",
+".dwid.dragging{opacity:.5}",
+".dkpi .v{font:700 28px/1.1 var(--mono);color:var(--ink)}",
+".dkpi .s{font-size:12px;color:var(--muted);margin-top:4px}",
+".dchart{width:100%;height:200px;display:block;overflow:visible}",
+".dax{font-size:10px;fill:var(--muted)}",
+".dtot{font:700 13px var(--mono);fill:var(--ink)}",
+".dcat{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px}",
+".dcatit{display:flex;flex-direction:column;gap:3px;align-items:flex-start;text-align:start;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--surface);cursor:pointer;font:inherit;color:var(--ink)}",
+".dcatit:hover{border-color:var(--deep);background:var(--wash)}",
+".dcatit.on{border-color:var(--green);background:var(--wash)}",
+"@media(max-width:1024px){.dgrid .dwid{grid-column:span 6!important}}",
+"@media(max-width:680px){.dgrid .dwid{grid-column:span 12!important}}",
+/* Approvals: requests as tiles that fill the width */
+".apgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:10px;align-content:start}",
+".apgrid>.empty{grid-column:1/-1}",
+".apcard{min-width:0;font-size:13px}",
+".apcard .apgo{margin-top:auto;padding-top:4px}",
+"@media(max-width:680px){.apgrid{grid-template-columns:1fr}}",
 /* Time Log: the report form on the start side (~35%), filters and list beside it */
 ":root{--tlw:clamp(264px,18vw,330px)}",
 ".tlsplit{flex:1;min-height:0;display:grid;grid-template-columns:var(--tlw) minmax(0,1fr);gap:10px}",
@@ -18634,7 +18656,7 @@ var CSS = [
 ".band .fld.wide{flex:2 1 240px}",
 ".band .fld.narrow{flex:0 0 104px}",
 ".band .fld.person{flex:0 0 190px}",
-".band .fld.date{flex:0 0 138px}",
+".band .fld.date{flex:0 0 150px}",
 /* start / end: two selects side by side, wide enough to read the numbers */
 ".band .fld.timefld{flex:0 0 118px}",
 ".timefld select{padding:7px 18px 7px 8px;background-position:right 5px center;background-size:9px 6px;text-align:center;font-family:var(--mono);font-weight:600;min-width:0}",
@@ -20926,26 +20948,27 @@ function ApprovalsTab(p) {
     var pickable = a.status === "pending" && a.reason !== "Budget exceeded";
     var bud = e ? budgetFor(db, e.projectId, e.workOrderId) : null;
     var asg = e ? findAssignment(db, e.assignee, e.projectId, e.workOrderId) : null;
-    return h("div", { className: "panel pad col", style: { gap: 8, borderLeft: "4px solid " + (a.status === "pending" ? C.amber : a.status === "approved" ? C.vacation : C.error) } },
-      h("div", { className: "row", style: { gap: 8 } },
-        pickable ? h("input", { type: "checkbox", checked: picked.indexOf(a.id) >= 0, onChange: function () { var n = picked.slice(); var i = n.indexOf(a.id); if (i >= 0) n.splice(i, 1); else n.push(a.id); setPicked(n); }, "aria-label": "Select request" }) : null,
+    return h("div", { className: "panel pad col apcard", style: { gap: 8, borderInlineStart: "4px solid " + (a.status === "pending" ? C.amber : a.status === "approved" ? C.vacation : C.error) } },
+      h("div", { className: "row", style: { gap: 8, flexWrap: "nowrap", alignItems: "flex-start" } },
+        pickable ? h("input", { type: "checkbox", style: { marginTop: 8 }, checked: picked.indexOf(a.id) >= 0, onChange: function () { var n = picked.slice(); var i = n.indexOf(a.id); if (i >= 0) n.splice(i, 1); else n.push(a.id); setPicked(n); }, "aria-label": "Select request" }) : null,
         h("span", { className: "avatar" }, initialsOf(userName(db, a.requesterId))),
-        h("div", { className: "grow col", style: { gap: 1 } },
-          h("div", { className: "row", style: { gap: 6 } },
-            h("b", null, userName(db, a.requesterId)),
-            h(Chip, { k: "teal" }, a.type),
-            a.reason !== a.type ? h(Chip, { k: a.reason === "Budget exceeded" ? "err" : "amber" }, a.reason) : null,
-            a.status !== "pending" ? h(Chip, { k: a.status === "approved" ? "gr" : "err" }, a.status) : null),
-          h("div", { className: "cap" }, "Raised ", new Date(a.createdAt).toLocaleString("en-GB"), " · routed to ", userName(db, a.assignedTo))),
-        e ? h("div", { className: "col", style: { alignItems: "flex-end" } },
+        h("div", { className: "grow col", style: { gap: 2 } },
+          h("b", null, userName(db, a.requesterId)),
+          h("div", { className: "cap" }, new Date(a.createdAt).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }), " \u2192 ", userName(db, a.assignedTo))),
+        e ? h("div", { className: "col", style: { alignItems: "flex-end", gap: 1 } },
           h("b", { className: "mono", style: { fontSize: 17 } }, num((Number(e.red) || 0) + (Number(e.yellow) || 0) + (Number(e.blue) || 0)), " h"),
-          h("span", { className: "cap mono" }, il(e.date), e.start ? " · " + e.start + "–" + e.end : "")) : null,
-        lv ? h("div", { className: "col", style: { alignItems: "flex-end" } },
+          h("span", { className: "cap mono" }, il(e.date)),
+          e.start ? h("span", { className: "cap mono" }, e.start + "–" + e.end) : null) : null,
+        lv ? h("div", { className: "col", style: { alignItems: "flex-end", gap: 1 } },
           h("b", { className: "mono", style: { fontSize: 17 } }, num(lv.days || requestEntryIds(a).length), " d"),
           h("span", { className: "cap mono" }, il(lv.from), lv.to && lv.to !== lv.from ? " \u2192 " + il(lv.to) : "")) : null,
-        x ? h("div", { className: "col", style: { alignItems: "flex-end" } },
+        x ? h("div", { className: "col", style: { alignItems: "flex-end", gap: 1 } },
           h("b", { className: "mono", style: { fontSize: 17 } }, money(x.amount, x.currency)),
           h("span", { className: "cap mono" }, il(x.date))) : null),
+      h("div", { className: "row", style: { gap: 5 } },
+        h(Chip, { k: "teal" }, a.type),
+        a.reason !== a.type ? h(Chip, { k: a.reason === "Budget exceeded" ? "err" : "amber" }, a.reason) : null,
+        a.status !== "pending" ? h(Chip, { k: a.status === "approved" ? "gr" : "err" }, a.status) : null),
 
       e ? h("div", { className: "row", style: { gap: 6, fontSize: 13 } },
         hoursChips(e),
@@ -20989,17 +21012,17 @@ function ApprovalsTab(p) {
         h("span", { className: "cap" }, "Assignment allowance"),
         asg.allowanceHours === null || asg.allowanceHours === undefined || asg.allowanceHours === ""
           ? h(Chip, { k: "gr" }, "unlimited within the project budget")
-          : [h(Bar, { key: "b", used: consumedOn(db, a.requesterId, asg, e && e.id), pending: pendingOn(db, a.requesterId, asg), total: asg.allowanceHours, style: { width: 150 } }),
+          : [h(Bar, { key: "b", used: consumedOn(db, a.requesterId, asg, e && e.id), pending: pendingOn(db, a.requesterId, asg), total: asg.allowanceHours, style: { flex: "1 1 70px", minWidth: 60 } }),
              h("span", { key: "t", className: "cap mono" }, num(consumedOn(db, a.requesterId, asg, e && e.id)), " used · ", num(pendingOn(db, a.requesterId, asg)), " in approval · of ", num(asg.allowanceHours), " h")]) : null,
       bud && bud.hours ? h("div", { className: "row", style: { gap: 9 } },
         h("span", { className: "cap" }, "Budget"),
-        h(Bar, { used: budgetConsumed(db, bud), pending: budgetPending(db, bud), total: bud.hours, style: { width: 150 } }),
+        h(Bar, { used: budgetConsumed(db, bud), pending: budgetPending(db, bud), total: bud.hours, style: { flex: "1 1 70px", minWidth: 60 } }),
         h("span", { className: "cap mono" }, num(budgetConsumed(db, bud)), " of ", num(bud.hours), " h consumed")) : null,
 
       a.thread && a.thread.length ? h("div", { className: "col", style: { gap: 4, background: C.wash, borderRadius: 10, padding: 8 } },
         a.thread.map(function (t, i) { return h("div", { key: i, style: { fontSize: 13 } }, h("b", null, userName(db, t.userId), ": "), t.text); })) : null,
 
-      a.status === "pending" ? h("div", { className: "row", style: { gap: 6 } },
+      a.status === "pending" ? h("div", { className: "row apgo", style: { gap: 6 } },
         h(Btn, { kind: "p", sm: true, onClick: function () {
           if (a.type === "Account activation") {
             var el = document.getElementById("role-" + a.id);
@@ -21010,8 +21033,8 @@ function ApprovalsTab(p) {
         } }, "Approve"),
         e && !lv ? h(Btn, { sm: true, onClick: function () { setEditing({ a: a, form: toForm(e) }); } }, "Edit & approve") : null,
         h(Btn, { sm: true, kind: "d", onClick: function () { setDeclining(a); } }, "Decline"),
-        h(Btn, { sm: true, kind: "t", onClick: function () { setAsking(a); } }, "Request information"))
-        : h("div", { className: "cap" }, a.status === "approved" ? "Approved" : "Declined", " by ", userName(db, a.decidedBy), " on ", new Date(a.decidedAt).toLocaleString("en-GB"), a.decisionNote ? " — " + a.decisionNote : ""));
+        h(Btn, { sm: true, kind: "t", title: "Request information", onClick: function () { setAsking(a); } }, "Request info"))
+        : h("div", { className: "cap apgo" }, a.status === "approved" ? "Approved" : "Declined", " by ", userName(db, a.decidedBy), " on ", new Date(a.decidedAt).toLocaleString("en-GB"), a.decisionNote ? " — " + a.decisionNote : ""));
   }
 
   return h("div", { className: "page" },
@@ -21027,7 +21050,7 @@ function ApprovalsTab(p) {
       h("div", { style: { minWidth: 132 } }, h(Sel, { label: "Status", value: statusFlt, placeholder: "All", options: [{ value: "pending", label: "Pending" }, { value: "approved", label: "Approved" }, { value: "declined", label: "Declined" }], onChange: function (e) { setStatus(e.target.value); } })),
       picked.length ? h("div", { className: "fld", style: { flex: "0 0 auto" } }, h("label", null, " "), h(Btn, { kind: "p", onClick: bulkApprove }, "Bulk approve ", picked.length)) : null),
 
-    h("div", { className: "scroll col", style: { gap: 9 } },
+    h("div", { className: "scroll apgrid" },
       mine.length === 0 ? h("div", { className: "empty panel" }, "Nothing in the queue.")
         : mine.map(function (a) { return h(Card, { key: a.id, a: a }); })),
 
@@ -21283,9 +21306,9 @@ function ExpensesTab(p) {
       h("div", { className: "h2", style: { marginBottom: 8 } }, f.id ? "Edit expense" : "Report an expense"),
       h("div", { className: "band" },
         can(user, "approveExpenses") ? h(Sel, { label: "Assignee", value: f.userId, options: db.users.filter(function (u) { return u.isActive && (u.id === user.id || scope.indexOf(u.id) >= 0); }).map(function (u) { return { value: u.id, label: u.fullName }; }), onChange: function (e) { up("userId", e.target.value); } }) : null,
-        h(Inp, { label: "Date", type: "date", cls: "narrow", value: f.date, onChange: function (e) { up("date", e.target.value); } }),
+        h(Inp, { label: "Date", type: "date", cls: "date", value: f.date, onChange: function (e) { up("date", e.target.value); } }),
         h("div", { className: "fld", style: { flex: "0 0 74px" } }, h("label", null, " "), h(Btn, { className: "sm", style: { minHeight: 38 }, onClick: function () { up("date", todayStr()); } }, "Today")),
-        h(Inp, { label: "Time", type: "time", cls: "narrow", value: f.time, onChange: function (e) { up("time", e.target.value); } }),
+        h(Inp, { label: "Time", type: "time", cls: "timefld", value: f.time, onChange: function (e) { up("time", e.target.value); } }),
         h(Sel, { label: "Expense type", req: true, err: errs.etype, value: f.etype, placeholder: "Select…", options: db.expenseTypes.map(function (t) { return { value: t.name, label: t.name + (t.ceiling != null ? " (ceiling " + t.ceiling + ")" : "") }; }), onChange: function (e) { up("etype", e.target.value); } }),
         h(Sel, { label: "Value kind", cls: "narrow", value: f.vkind, options: [{ value: "money", label: "Money" }, { value: "hours", label: "Hours" }], onChange: function (e) { up("vkind", e.target.value); } }),
         f.vkind === "money" ? h(Sel, { key: "cur", label: "Currency", cls: "narrow", value: f.currency, options: CURRENCIES, onChange: function (e) { up("currency", e.target.value); } }) : null,
@@ -21746,7 +21769,7 @@ var WO_TX = {
     contacts: "אנשי קשר מטעם הלקוח", name: "שם", roleOn: "תפקיד בפרויקט", email: "דוא״ל", phone: "טלפון",
     noContact: "לא הוגדר איש קשר מטעם הלקוח.", primary: "איש קשר ראשי",
     team: "צוות הפרויקט מטעם גליל", position: "תפקיד", lead: "מוביל/ת הפרויקט", member: "חבר/ת צוות", noTeam: "טרם שובצו אנשי צוות מגליל.",
-    notes: "הערות", sign: "אישור וחתימות", titleEn: "שם ההזמנה (כפי שנמסר)",
+    notes: "הערות", sign: "אישור וחתימות", titleEn: "שם ההזמנה",
     terms: "תנאי ההתקשרות",
     signNote: "בחתימתם מאשרים הצדדים את היקף העבודה, התקציב, לוח הזמנים והתנאים של הזמנת עבודה זו כמפורט לעיל.",
     forClient: "בשם הלקוח — ", forGalil: "בשם ", title: "תפקיד", signature: "חתימה", date: "תאריך",
@@ -21844,9 +21867,9 @@ function woDocData(db, wo, by, lang) {
   var signer = byId(db.users, wo.galilSignatoryId || "") || db.users.filter(function (u) { return u.role === "CEO" && u.isActive; })[0] || null;
   var owner = byId(db.users, pr.ownerUserId || "");
   var deliverables = String(wo.deliverables || "").split(/\n+/).map(function (x) { return x.replace(/^\s*[-•*]\s*/, "").trim(); }).filter(Boolean);
-  /* the Hebrew document is titled in Hebrew; an English-only title moves into the details */
-  var title = wo.title || "", titleNote = "";
-  if (he && !/[\u0590-\u05FF]/.test(title)) { titleNote = title; title = (wo.titleHe || "").trim() || T.untitled + " " + (wo.code || ""); }
+  /* both documents are headed "Work order <code>"; the order's own title (in Hebrew,
+     its Hebrew title when there is one) is listed in the details */
+  var title = T.untitled + " " + (wo.code || ""), titleNote = (he && (wo.titleHe || "").trim()) || wo.title || "";
   return {
     lang: he ? "he" : "en",
     code: wo.code || "", title: title, titleNote: titleNote, status: T.statuses[wo.status] || wo.status || "", contractRef: wo.contractRef || "",
@@ -21887,6 +21910,7 @@ function buildWOPdf(db, wo, by, lang) {
       o = o || {};
       (Array.isArray(t) ? t : [t]).forEach(function (ln, i) {
         ln = pdfSafe(ln);
+        if (rtlOf(ln)) ln = ln.replace(/[()[\]]/g, function (ch) { return { "(": ")", ")": "(", "[": "]", "]": "[" }[ch]; });
         doc.text(ln, X(x), yy + i * doc.getLineHeight() / doc.internal.scaleFactor, {
           align: flip(o.align || "left"), isInputVisual: false, isOutputVisual: true, isInputRtl: rtlOf(ln), isOutputRtl: false
         });
@@ -22054,7 +22078,13 @@ function buildWOPdf(db, wo, by, lang) {
     var next = sn + 2;
     if (d.notes) { section(String(next), T.notes); para(d.notes, 9.5); next++; }
 
-    /* standard terms, numbered n.1, n.2 … with the heading in bold */
+    /* standard terms, numbered n.1, n.2 … with the heading in bold; they share
+       the signatures' page, so they start a new page when both don't fit here */
+    font("normal", 8.5, MUTED);
+    var signNeed = H - 21 - (H - 21 - 40 - 3 - split(T.signNote, CW).length * 4.2 - 8);
+    font("normal", 8.8, INK);
+    var termsNeed = 8 + WO_TERMS[d.lang].reduce(function (a, c) { return a + split(c[0] + ". " + c[1], CW - 13).length * 4.1 + 1.5; }, 0);
+    if (y + termsNeed + signNeed + 6 > H - 21) { doc.addPage(); head(false); }
     section(String(next), T.terms);
     WO_TERMS[d.lang].forEach(function (c, i) {
       var no = next + "." + (i + 1), body = c[1].replace("{start}", dt(d.startDate)).replace("{end}", dt(d.endDate));
@@ -22111,7 +22141,7 @@ function buildWOPdf(db, wo, by, lang) {
       font("normal", 6.5, MUTED);
       txt(T.generated(d.generatedBy, stamp(d.generatedAt)), M, H - 6.5);
     }
-    doc.setProperties({ title: T.untitled + " " + d.code + " — " + d.title, subject: d.client + " · " + d.project, author: CO.name, creator: "GALIL WorkDesk" });
+    doc.setProperties({ title: T.untitled + " " + d.code + " — " + d.titleNote, subject: d.client + " · " + d.project, author: CO.name, creator: "GALIL WorkDesk" });
     return doc.output("blob");
   });
 }
@@ -22148,12 +22178,12 @@ function WODocModal(p) {
     var sched = d.startDate || d.endDate ? (d.startDate ? il(d.startDate) : "—") + (lang === "he" ? " עד " : " to ") + (d.endDate ? il(d.endDate) : "—") : "";
     var me = p.user ? (lang === "he" && p.user.fullNameHe ? p.user.fullNameHe : p.user.fullName) + "\n" : "";
     var subject = lang === "he"
-      ? "הזמנת עבודה " + d.code + " — " + d.title + " (" + d.client + ")"
-      : "Work order " + d.code + " — " + d.title + " (" + d.client + ")";
+      ? "הזמנת עבודה " + d.code + " — " + d.titleNote + " (" + d.client + ")"
+      : "Work order " + d.code + " — " + d.titleNote + " (" + d.client + ")";
     var body = lang === "he"
-      ? "שלום,\n\nמצורפת הזמנת עבודה " + d.code + " עבור " + d.project + ".\n\n" + "היקף העבודה: " + (d.scope || d.title) + "\n" +
+      ? "שלום,\n\nמצורפת הזמנת עבודה " + d.code + " עבור " + d.project + ".\n\n" + "היקף העבודה: " + (d.scope || d.titleNote) + "\n" +
         (sched ? "לוח זמנים: " + sched + "\n" : "") + "\nבברכה,\n" + me + CO.name
-      : "Hello,\n\nPlease find attached work order " + d.code + " for " + d.project + ".\n\n" + "Scope: " + (d.scope || d.title) + "\n" +
+      : "Hello,\n\nPlease find attached work order " + d.code + " for " + d.project + ".\n\n" + "Scope: " + (d.scope || d.titleNote) + "\n" +
         (sched ? "Schedule: " + sched + "\n" : "") + "\nKind regards,\n" + me + CO.name;
     var file = null;
     try { file = new File([blob], name, { type: "application/pdf" }); } catch (e) {}
@@ -22200,6 +22230,297 @@ function rangeBounds(key) {
   else if (key === "year") { a = new Date(now.getFullYear(), 0, 1); }
   else { a = new Date(2000, 0, 1); }
   return [d2s(a), d2s(b)];
+}
+
+/* =====================================================================
+   Customisable dashboard — each person keeps their own dashboards (saved in
+   the data file, so they follow them between devices). A dashboard is a list
+   of widgets; a widget is a metric, optionally grouped (by time, person,
+   team, client, project, …) and shown as a number, bars, columns, a line,
+   an area, a donut or a table — or one of the ready-made panels.
+   ===================================================================== */
+var DASH_METRICS = [
+  { k: "hours", label: "Total hours", unit: "h", add: true },
+  { k: "red", label: "Red hours · company", unit: "h", add: true, col: "red" },
+  { k: "yellow", label: "Yellow hours · client", unit: "h", add: true, col: "yellow" },
+  { k: "blue", label: "Blue hours · management", unit: "h", add: true, col: "blue" },
+  { k: "util", label: "Utilisation (Yellow of total)", unit: "%" },
+  { k: "entries", label: "Entries reported", unit: "", add: true },
+  { k: "people", label: "People reporting", unit: "" },
+  { k: "planned", label: "Planned hours", unit: "h", add: true },
+  { k: "variance", label: "Actual minus planned", unit: "h" },
+  { k: "pending", label: "Hours in approval", unit: "h", add: true },
+  { k: "sick", label: "Sick days", unit: "d", add: true },
+  { k: "vacation", label: "Vacation days", unit: "d", add: true },
+  { k: "expenses", label: "Expenses (₪)", unit: "₪", add: true }
+];
+var DASH_GROUPS = [
+  { k: "", label: "No grouping — one number" }, { k: "day", label: "Day" }, { k: "week", label: "Week" }, { k: "month", label: "Month" },
+  { k: "weekday", label: "Day of the week" }, { k: "employee", label: "Employee" }, { k: "team", label: "Team" },
+  { k: "client", label: "Client" }, { k: "project", label: "Project" }, { k: "workOrder", label: "Work order" },
+  { k: "hourType", label: "Hour type (Red / Yellow / Blue)" }, { k: "entryType", label: "Entry type (Work / Sick / Vacation)" }
+];
+var DASH_VIZ = [
+  { k: "kpi", label: "Number" }, { k: "bars", label: "Horizontal bars" }, { k: "columns", label: "Columns" },
+  { k: "line", label: "Line" }, { k: "area", label: "Area" }, { k: "donut", label: "Donut" }, { k: "table", label: "Table" }
+];
+var DASH_SIZES = [{ value: "3", label: "¼ width" }, { value: "4", label: "⅓ width" }, { value: "6", label: "½ width" }, { value: "8", label: "⅔ width" }, { value: "12", label: "Full width" }];
+var DASH_TIME = { day: 1, week: 1, month: 1, weekday: 1 };
+var DASH_PAL = ["var(--teal)", "var(--deep)", "var(--yellow)", "var(--red)", "var(--blue)", "var(--amber)", "var(--vac)", "var(--sick)", "#7C6BB0", "#3E8E7E", "var(--muted)"];
+
+/* ready-made widgets offered under "Add widget" */
+var DASH_CATALOG = [
+  { title: "Manager cockpit", type: "cockpit", size: 12, mgr: true },
+  { title: "Total hours", type: "metric", metric: "hours", group: "", viz: "kpi", size: 3 },
+  { title: "Utilisation", type: "metric", metric: "util", group: "", viz: "kpi", size: 3 },
+  { title: "Hours over time", type: "metric", metric: "hours", group: "day", viz: "area", size: 12 },
+  { title: "Hours by week", type: "metric", metric: "hours", group: "week", viz: "columns", size: 6 },
+  { title: "Hours by client", type: "metric", metric: "hours", group: "client", viz: "bars", size: 6 },
+  { title: "Hours by project", type: "metric", metric: "hours", group: "project", viz: "bars", size: 6 },
+  { title: "Hours by employee", type: "metric", metric: "hours", group: "employee", viz: "table", size: 6 },
+  { title: "Utilisation by employee", type: "metric", metric: "util", group: "employee", viz: "bars", size: 6 },
+  { title: "Utilisation by team", type: "metric", metric: "util", group: "team", viz: "columns", size: 6 },
+  { title: "Hour type split", type: "metric", metric: "hours", group: "hourType", viz: "donut", size: 4 },
+  { title: "Actual minus planned by employee", type: "metric", metric: "variance", group: "employee", viz: "bars", size: 6 },
+  { title: "Expenses by employee", type: "metric", metric: "expenses", group: "employee", viz: "bars", size: 6 },
+  { title: "Expenses by client", type: "metric", metric: "expenses", group: "client", viz: "donut", size: 4 },
+  { title: "Sick and vacation by employee", type: "metric", metric: "vacation", group: "employee", viz: "table", size: 6 },
+  { title: "Hours in approval by employee", type: "metric", metric: "pending", group: "employee", viz: "bars", size: 6 },
+  { title: "Hour split · plan against actual", type: "split", size: 6 },
+  { title: "Budgets at risk", type: "budgets", size: 6, top: 8, mgr: true }
+];
+
+function dashIsMgr(user) { return ["TL", "PM", "OPS", "CEO", "FIN"].indexOf(user.role) >= 0; }
+function dashDefault(user) {
+  var w = function (o) { return Object.assign({ id: uid("dw"), top: 10 }, o); };
+  var list = [];
+  if (dashIsMgr(user)) list.push(w({ title: "Manager cockpit", type: "cockpit", size: 12 }));
+  list.push(
+    w({ title: "Total hours", type: "metric", metric: "hours", viz: "kpi", group: "", size: 3 }),
+    w({ title: "Yellow · client", type: "metric", metric: "yellow", viz: "kpi", group: "", size: 3 }),
+    w({ title: "Red · company", type: "metric", metric: "red", viz: "kpi", group: "", size: 3 }),
+    w({ title: "Utilisation", type: "metric", metric: "util", viz: "kpi", group: "", size: 3 }),
+    w({ title: "Hours over time", type: "metric", metric: "hours", group: "day", viz: "area", size: 12 }),
+    w({ title: "Hours by client", type: "metric", metric: "hours", group: "client", viz: "bars", size: 6 }),
+    w({ title: "Hour split · plan against actual", type: "split", size: 6 }),
+    w({ title: "Sick days", type: "metric", metric: "sick", viz: "kpi", group: "", size: 3 }),
+    w({ title: "Vacation days", type: "metric", metric: "vacation", viz: "kpi", group: "", size: 3 }),
+    w({ title: "Expenses (₪)", type: "metric", metric: "expenses", viz: "kpi", group: "", size: 3 }),
+    w({ title: "Entries reported", type: "metric", metric: "entries", viz: "kpi", group: "", size: 3 }));
+  return [{ id: uid("db"), name: "Overview", widgets: list }];
+}
+
+/* the group a record falls in: [key, label, order] */
+function dashKey(db, g, r) {
+  var uidv = r.assignee || r.userId;
+  if (g === "day") return [r.date, pad(s2d(r.date).getDate()) + "/" + pad(s2d(r.date).getMonth() + 1), r.date];
+  if (g === "week") { var w = d2s(startOfWeek(s2d(r.date))); return [w, pad(s2d(w).getDate()) + "/" + pad(s2d(w).getMonth() + 1), w]; }
+  if (g === "month") { var m = String(r.date).slice(0, 7); return [m, MONTHS[Number(m.slice(5)) - 1] + " " + m.slice(2, 4), m]; }
+  if (g === "weekday") { var dw = s2d(r.date).getDay(); return [String(dw), DOW[dw], dw]; }
+  if (g === "employee") return [uidv, userName(db, uidv)];
+  if (g === "team") { var u = byId(db.users, uidv) || {}; return [u.teamId || "-", u.teamId ? nameOf(db.teams, u.teamId) : "No team"]; }
+  if (g === "client") return r.clientId ? [r.clientId, nameOf(db.clients, r.clientId)] : [r.client ? "t:" + r.client : "-", r.client || "No client"];
+  if (g === "project") return r.projectId ? [r.projectId, nameOf(db.projects, r.projectId)] : [r.project ? "t:" + r.project : "-", r.project || "No project"];
+  if (g === "workOrder") return r.workOrderId ? [r.workOrderId, nameOf(db.workOrders, r.workOrderId, "code")] : ["-", "No work order"];
+  if (g === "entryType") return [r.type || "Work", r.type || "Work"];
+  return ["all", "All"];
+}
+function dashAcc() { return { red: 0, yellow: 0, blue: 0, sick: 0, vac: 0, entries: 0, people: {}, planned: 0, exp: 0, pend: 0 }; }
+function dashValue(m, a) {
+  var hrs = a.red + a.yellow + a.blue;
+  return m === "hours" ? hrs : m === "red" ? a.red : m === "yellow" ? a.yellow : m === "blue" ? a.blue
+    : m === "util" ? (hrs ? a.yellow / hrs * 100 : 0) : m === "entries" ? a.entries : m === "people" ? Object.keys(a.people).length
+    : m === "planned" ? a.planned : m === "variance" ? hrs - a.planned : m === "pending" ? a.pend
+    : m === "sick" ? a.sick : m === "vacation" ? a.vac : m === "expenses" ? a.exp : 0;
+}
+/* the widget's numbers: one value, or one row per group (with the Red / Yellow / Blue parts) */
+function dashCompute(db, src, w) {
+  var keep = function (r) {
+    var who = r.assignee || r.userId;
+    if (w.employee && who !== w.employee) return false;
+    if (w.clientId && r.clientId !== w.clientId) return false;
+    if (w.projectId && r.projectId !== w.projectId) return false;
+    return true;
+  };
+  var groups = {}, g = w.group || "";
+  var at = function (r) {
+    var k = dashKey(db, g, r);
+    if (!groups[k[0]]) groups[k[0]] = { key: k[0], label: k[1], ord: k[2], acc: dashAcc() };
+    return groups[k[0]].acc;
+  };
+  src.entries.filter(keep).forEach(function (e) {
+    if (g === "hourType") {
+      [["red", "Red"], ["yellow", "Yellow"], ["blue", "Blue"]].forEach(function (c) {
+        var v = Number(e[c[0]]) || 0; if (!v) return;
+        if (!groups[c[0]]) groups[c[0]] = { key: c[0], label: c[1], ord: c[0] === "red" ? 0 : c[0] === "yellow" ? 1 : 2, acc: dashAcc() };
+        var aa = groups[c[0]].acc; aa[c[0]] += v; aa.entries++; aa.people[e.assignee] = 1;
+      });
+      return;
+    }
+    var a = at(e);
+    a.red += Number(e.red) || 0; a.yellow += Number(e.yellow) || 0; a.blue += Number(e.blue) || 0;
+    if (e.type === "Sick") a.sick += Number(e.day) || 0;
+    if (e.type === "Vacation") a.vac += Number(e.day) || 0;
+    a.entries++; a.people[e.assignee] = 1;
+  });
+  if (g !== "hourType" && g !== "entryType") {
+    if (w.metric === "planned" || w.metric === "variance") src.planned.filter(keep).forEach(function (x) { at(x).planned += (Number(x.red) || 0) + (Number(x.yellow) || 0) + (Number(x.blue) || 0); });
+    if (w.metric === "pending") src.pending.filter(keep).forEach(function (e) { at(e).pend += (Number(e.red) || 0) + (Number(e.yellow) || 0) + (Number(e.blue) || 0); });
+    if (w.metric === "expenses") src.expenses.filter(keep).forEach(function (x) { if (x.vkind === "money" && (x.currency || "₪") === "₪") at(x).exp += Number(x.amount) || 0; });
+  }
+  var rows = Object.keys(groups).map(function (k) {
+    var o = groups[k]; return { key: o.key, label: o.label, ord: o.ord, v: dashValue(w.metric, o.acc), red: o.acc.red, yellow: o.acc.yellow, blue: o.acc.blue };
+  });
+  if (!g) {
+    var a0 = rows[0] || { v: 0, red: 0, yellow: 0, blue: 0 };
+    return { total: a0.v, rows: rows };
+  }
+  if (DASH_TIME[g] || g === "hourType") rows.sort(function (a, b) { return a.ord < b.ord ? -1 : a.ord > b.ord ? 1 : 0; });
+  else {
+    rows = rows.filter(function (r) { return r.v; });
+    rows.sort(function (a, b) { return b.v - a.v; });
+    if (w.top) rows = rows.slice(0, Number(w.top));
+  }
+  var total = rows.reduce(function (a, r) { return a + r.v; }, 0);
+  return { total: total, rows: rows };
+}
+function dashFmt(m, v, pct, total) {
+  var md = DASH_METRICS.filter(function (x) { return x.k === m; })[0] || {};
+  if (pct && md.add && total) return num(v / total * 100, 0) + "%";
+  if (md.unit === "%") return num(v, 0) + "%";
+  if (md.unit === "₪") return money(Math.round(v), "₪");
+  return num(v) + (md.unit ? " " + md.unit : "");
+}
+
+/* ---- the charts, drawn as plain SVG at the width they are given ---- */
+function useBoxWidth() {
+  var ref = useRef(null), ws = useState(600), w = ws[0], setW = ws[1];
+  useEffect(function () {
+    var el = ref.current; if (!el) return;
+    var f = function () { var x = Math.round(el.getBoundingClientRect().width); if (x > 0) setW(x); };
+    f();
+    var ro = window.ResizeObserver ? new ResizeObserver(f) : null;
+    if (ro) ro.observe(el); else window.addEventListener("resize", f);
+    return function () { if (ro) ro.disconnect(); else window.removeEventListener("resize", f); };
+  }, []);
+  return [ref, w];
+}
+function DashColumns(p) {
+  var bw0 = useBoxWidth(), boxRef = bw0[0];
+  var rows = p.rows, n = rows.length, Wd = bw0[1], Hd = 200, padL = 34, padB = 26;
+  if (!n) return h("div", { ref: boxRef, className: "empty" }, "No data.");
+  var stack = p.stack;
+  var max = rows.reduce(function (a, r) { return Math.max(a, stack ? r.red + r.yellow + r.blue : r.v); }, 0) || 1;
+  var min = stack ? 0 : rows.reduce(function (a, r) { return Math.min(a, r.v); }, 0);
+  var span = max - min || 1, bw = (Wd - padL - 6) / n, y0 = 8 + (Hd - padB - 8) * (max / span);
+  var Y = function (v) { return 8 + (Hd - padB - 8) * ((max - v) / span); };
+  var every = Math.ceil(n / Math.max(2, Math.floor(Wd / 70)));
+  return h("div", { ref: boxRef }, h("svg", { viewBox: "0 0 " + Wd + " " + Hd, className: "dchart", role: "img", "aria-label": p.title },
+    [0, .5, 1].map(function (f, i) { var v = min + span * f; return h("g", { key: "g" + i }, h("line", { x1: padL, x2: Wd, y1: Y(v), y2: Y(v), stroke: "var(--line)" }), h("text", { x: padL - 4, y: Y(v) + 3, textAnchor: "end", className: "dax" }, num(v, 0))); }),
+    rows.map(function (r, i) {
+      var x = padL + 3 + i * bw, w = Math.max(2, bw * .72);
+      var parts = stack ? [["red", "var(--red)"], ["yellow", "var(--yellow)"], ["blue", "var(--blue)"]] : null, acc = 0;
+      return h("g", { key: r.key },
+        h("title", null, r.label + ": " + p.fmt(r.v)),
+        stack ? parts.map(function (c) { var v = r[c[0]]; if (!v) return null; var top = Y(acc + v), el = h("rect", { key: c[0], x: x, y: top, width: w, height: Math.max(0, Y(acc) - top), fill: c[1], rx: 2 }); acc += v; return el; })
+          : h("rect", { x: x, y: Math.min(Y(r.v), y0), width: w, height: Math.abs(Y(r.v) - y0), fill: r.v < 0 ? "var(--err)" : DASH_PAL[p.color || 0], rx: 2 }),
+        i % every === 0 ? h("text", { x: x + w / 2, y: Hd - 9, textAnchor: "middle", className: "dax" }, String(r.label).slice(0, 12)) : null);
+    })));
+}
+function DashLine(p) {
+  var bw0 = useBoxWidth(), boxRef = bw0[0];
+  var rows = p.rows, n = rows.length, Wd = bw0[1], Hd = 200, padL = 34, padB = 26;
+  if (!n) return h("div", { ref: boxRef, className: "empty" }, "No data.");
+  var max = rows.reduce(function (a, r) { return Math.max(a, r.v); }, 0) || 1, min = Math.min(0, rows.reduce(function (a, r) { return Math.min(a, r.v); }, 0));
+  var span = max - min || 1;
+  var X = function (i) { return n === 1 ? (padL + Wd) / 2 : padL + 4 + i * (Wd - padL - 10) / (n - 1); };
+  var Y = function (v) { return 8 + (Hd - padB - 8) * ((max - v) / span); };
+  var pts = rows.map(function (r, i) { return X(i) + "," + Y(r.v); }).join(" ");
+  var every = Math.ceil(n / Math.max(2, Math.floor(Wd / 70)));
+  return h("div", { ref: boxRef }, h("svg", { viewBox: "0 0 " + Wd + " " + Hd, className: "dchart", role: "img", "aria-label": p.title },
+    [0, .5, 1].map(function (f, i) { var v = min + span * f; return h("g", { key: "g" + i }, h("line", { x1: padL, x2: Wd, y1: Y(v), y2: Y(v), stroke: "var(--line)" }), h("text", { x: padL - 4, y: Y(v) + 3, textAnchor: "end", className: "dax" }, num(v, 0))); }),
+    p.area ? h("polygon", { points: X(0) + "," + Y(Math.max(min, 0)) + " " + pts + " " + X(n - 1) + "," + Y(Math.max(min, 0)), fill: DASH_PAL[p.color || 0], opacity: .25 }) : null,
+    h("polyline", { points: pts, fill: "none", stroke: DASH_PAL[p.color || 0], strokeWidth: 2.2, strokeLinejoin: "round" }),
+    rows.map(function (r, i) {
+      return h("g", { key: r.key },
+        h("circle", { cx: X(i), cy: Y(r.v), r: n > 40 ? 0 : 3, fill: DASH_PAL[p.color || 0] }, h("title", null, r.label + ": " + p.fmt(r.v))),
+        i % every === 0 ? h("text", { x: X(i), y: Hd - 9, textAnchor: "middle", className: "dax" }, String(r.label).slice(0, 12)) : null);
+    })));
+}
+function DashDonut(p) {
+  var rows = p.rows.filter(function (r) { return r.v > 0; }), total = rows.reduce(function (a, r) { return a + r.v; }, 0);
+  if (!total) return h("div", { className: "empty" }, "No data.");
+  var a0 = -Math.PI / 2, R = 60, r0 = 36;
+  var col = function (r, i) { return r.key === "red" ? "var(--red)" : r.key === "yellow" ? "var(--yellow)" : r.key === "blue" ? "var(--blue)" : DASH_PAL[i % DASH_PAL.length]; };
+  return h("div", { className: "row", style: { gap: 14, flexWrap: "nowrap", alignItems: "center" } },
+    h("svg", { viewBox: "-64 -64 128 128", width: 150, height: 150, style: { flex: "none" }, role: "img", "aria-label": p.title },
+      rows.map(function (r, i) {
+        var f = r.v / total, a1 = a0 + f * Math.PI * 2, big = f > .5 ? 1 : 0;
+        var path = f >= .9999
+          ? "M0,-" + R + "A" + R + "," + R + " 0 1 1 -0.01,-" + R + "L-0.01,-" + r0 + "A" + r0 + "," + r0 + " 0 1 0 0,-" + r0 + "Z"
+          : "M" + R * Math.cos(a0) + "," + R * Math.sin(a0) + "A" + R + "," + R + " 0 " + big + " 1 " + R * Math.cos(a1) + "," + R * Math.sin(a1) +
+            "L" + r0 * Math.cos(a1) + "," + r0 * Math.sin(a1) + "A" + r0 + "," + r0 + " 0 " + big + " 0 " + r0 * Math.cos(a0) + "," + r0 * Math.sin(a0) + "Z";
+        a0 = a1;
+        return h("path", { key: r.key, d: path, fill: col(r, i), stroke: "var(--surface)", strokeWidth: 1 }, h("title", null, r.label + ": " + p.fmt(r.v)));
+      }),
+      h("text", { x: 0, y: 5, textAnchor: "middle", className: "dtot" }, p.fmt(total))),
+    h("div", { className: "col grow", style: { gap: 4, minWidth: 0 } }, rows.map(function (r, i) {
+      return h("div", { key: r.key, className: "row", style: { gap: 7, flexWrap: "nowrap", fontSize: 12.5 } },
+        h("i", { style: { width: 10, height: 10, borderRadius: 3, background: col(r, i), flex: "none" } }),
+        h("span", { className: "grow", style: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, r.label),
+        h("span", { className: "mono cap" }, num(r.v / total * 100, 0), "%"));
+    })));
+}
+function DashBars(p) {
+  if (!p.rows.length) return h("div", { className: "empty" }, "No data.");
+  var max = p.rows.reduce(function (a, r) { return Math.max(a, Math.abs(r.v)); }, 0) || 1;
+  return h("div", { className: "col", style: { gap: 6 } }, p.rows.map(function (r) {
+    return h("div", { key: r.key, className: "row", style: { gap: 9, flexWrap: "nowrap" } },
+      h("span", { title: r.label, style: { width: "34%", fontSize: 12.5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, r.label),
+      h("div", { className: "bar", style: { flex: 1, height: 13 } }, h("i", { style: { width: (Math.abs(r.v) / max * 100) + "%", background: r.v < 0 ? "var(--err)" : DASH_PAL[p.color || 0] } })),
+      h("span", { className: "mono cap", style: { minWidth: 64, textAlign: "end" } }, p.fmt(r.v)));
+  }));
+}
+function DashTable(p) {
+  if (!p.rows.length) return h("div", { className: "empty" }, "No data.");
+  var hrsMetric = ["hours", "red", "yellow", "blue"].indexOf(p.metric) >= 0;
+  return h("div", { style: { overflow: "auto", maxHeight: 320 } }, h("table", { className: "tbl mid", style: { width: "100%" } },
+    h("thead", null, h("tr", null, h("th", null, p.groupLabel),
+      hrsMetric ? [h("th", { key: "r", className: "num" }, "Red"), h("th", { key: "y", className: "num" }, "Yellow"), h("th", { key: "b", className: "num" }, "Blue")] : null,
+      h("th", { className: "num" }, p.metricLabel))),
+    h("tbody", null, p.rows.map(function (r) {
+      return h("tr", { key: r.key }, h("td", null, r.label),
+        hrsMetric ? [h("td", { key: "r", className: "num" }, num(r.red)), h("td", { key: "y", className: "num" }, num(r.yellow)), h("td", { key: "b", className: "num" }, num(r.blue))] : null,
+        h("td", { className: "num", style: { fontWeight: 700 } }, p.fmt(r.v)));
+    }))));
+}
+
+/* the settings of one widget */
+function DashWidgetEditor(p) {
+  var db = p.db, s0 = useState(Object.assign({}, p.value)), f = s0[0], set = s0[1];
+  var up = function (k, v) { var n = Object.assign({}, f); n[k] = v; if (k === "group" && !v) n.viz = "kpi"; if (k === "group" && v && n.viz === "kpi") n.viz = DASH_TIME[v] ? "area" : "bars"; set(n); };
+  var isMetric = f.type === "metric";
+  return h(Modal, {
+    title: p.isNew ? "Add widget" : "Widget settings", size: "md", onClose: p.onClose,
+    footer: [h(Btn, { key: "c", onClick: p.onClose }, "Cancel"), h(Btn, { key: "s", kind: "p", onClick: function () { p.onSave(f); } }, p.isNew ? "Add to dashboard" : "Save")]
+  },
+    h("div", { className: "col", style: { gap: 10 } },
+      h(Inp, { label: "Title", value: f.title || "", onChange: function (e) { up("title", e.target.value); } }),
+      isMetric ? h("div", { className: "grid2" },
+        h(Sel, { label: "What to measure", value: f.metric, options: DASH_METRICS.map(function (m) { return { value: m.k, label: m.label }; }), onChange: function (e) { up("metric", e.target.value); } }),
+        h(Sel, { label: "Group by", value: f.group || "", options: DASH_GROUPS.map(function (g) { return { value: g.k, label: g.label }; }), onChange: function (e) { up("group", e.target.value); } })) : null,
+      isMetric ? h("div", { className: "grid2" },
+        h(Sel, { label: "Show as", value: f.viz, options: DASH_VIZ.filter(function (v) { return f.group ? v.k !== "kpi" : v.k === "kpi"; }).map(function (v) { return { value: v.k, label: v.label }; }), onChange: function (e) { up("viz", e.target.value); } }),
+        f.group && !DASH_TIME[f.group] && f.group !== "hourType" ? h(Sel, { label: "Show the top", value: String(f.top || ""), options: [{ value: "5", label: "5" }, { value: "10", label: "10" }, { value: "20", label: "20" }, { value: "", label: "All" }], onChange: function (e) { up("top", e.target.value ? Number(e.target.value) : 0); } }) : h("div")) : null,
+      isMetric ? h("div", { className: "grid3" },
+        h(Sel, { label: "Only for employee", value: f.employee || "", placeholder: "Everyone in view", options: p.people, onChange: function (e) { up("employee", e.target.value); } }),
+        h(Sel, { label: "Only for client", value: f.clientId || "", placeholder: "All clients", options: db.clients.map(function (c) { return { value: c.id, label: c.name }; }), onChange: function (e) { var n = Object.assign({}, f, { clientId: e.target.value, projectId: "" }); set(n); } }),
+        h(Sel, { label: "Only for project", value: f.projectId || "", placeholder: "All projects", options: db.projects.filter(function (x) { return !f.clientId || x.clientId === f.clientId; }).map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { up("projectId", e.target.value); } })) : null,
+      f.type === "budgets" ? h(Sel, { label: "Show the top", value: String(f.top || 8), options: ["5", "8", "12", "20"], onChange: function (e) { up("top", Number(e.target.value)); } }) : null,
+      h("div", { className: "grid2" },
+        h(Sel, { label: "Width", value: String(f.size || 6), options: DASH_SIZES, onChange: function (e) { up("size", Number(e.target.value)); } }),
+        isMetric && f.viz !== "kpi" && f.viz !== "table" && f.viz !== "donut" ? h(Sel, { label: "Colour", value: String(f.color || 0), options: [{ value: "0", label: "Teal" }, { value: "1", label: "Green" }, { value: "2", label: "Yellow" }, { value: "3", label: "Red" }, { value: "4", label: "Blue" }, { value: "5", label: "Amber" }], onChange: function (e) { up("color", Number(e.target.value)); } }) : h("div")),
+      isMetric ? h("div", { className: "cap" }, "The widget follows the dashboard's period and filters; the employee, client and project here narrow it further.") : null));
 }
 
 function DashboardTab(p) {
@@ -22310,6 +22631,125 @@ function DashboardTab(p) {
 
   var fmt = function (v) { return pctMode && total ? num((v / total) * 100, 0) + "%" : num(v); };
 
+  /* the person's dashboards */
+  var saved = (db.dashboards || {})[user.id];
+  var dfs = useState(function () { return dashDefault(user); }), fallback = dfs[0];
+  var boards = saved && saved.boards && saved.boards.length ? saved.boards : fallback;
+  var activeId = saved && saved.active && boards.some(function (b) { return b.id === saved.active; }) ? saved.active : boards[0].id;
+  var board = boards.filter(function (b) { return b.id === activeId; })[0];
+  var eds = useState(false), editMode = eds[0], setEditMode = eds[1];
+  var ws = useState(null), wEdit = ws[0], setWEdit = ws[1];
+  var cs = useState(false), catalog = cs[0], setCatalog = cs[1];
+  var dg = useState(null), dragW = dg[0], setDragW = dg[1];
+  function store(nb, act) {
+    p.mutate(function (d) { d.dashboards = d.dashboards || {}; d.dashboards[user.id] = { boards: nb, active: act || activeId }; });
+  }
+  function setWidgets(list) { store(boards.map(function (b) { return b.id === activeId ? Object.assign({}, b, { widgets: list }) : b; })); }
+  function moveW(id, to) {
+    var l = board.widgets.slice(), from = l.findIndex(function (x) { return x.id === id; });
+    if (from < 0 || to < 0 || to >= l.length) return;
+    var it = l.splice(from, 1)[0]; l.splice(to, 0, it); setWidgets(l);
+  }
+  function newBoard() {
+    ask({ title: "New dashboard", message: "Give the dashboard a name. It starts empty — add widgets from the catalogue.", input: true, label: "Name", placeholder: "e.g. Billing, My team, Client X", okLabel: "Create" }).then(function (name) {
+      if (!name) return;
+      var b = { id: uid("db"), name: name, widgets: [] };
+      store(boards.concat([b]), b.id); setEditMode(true);
+    });
+  }
+  function renameBoard() {
+    ask({ title: "Rename dashboard", input: true, label: "Name", value: board.name, okLabel: "Rename" }).then(function (name) {
+      if (name) store(boards.map(function (b) { return b.id === activeId ? Object.assign({}, b, { name: name }) : b; }));
+    });
+  }
+  function dupBoard() {
+    var b = { id: uid("db"), name: board.name + " (copy)", widgets: board.widgets.map(function (w) { return Object.assign({}, w, { id: uid("dw") }); }) };
+    store(boards.concat([b]), b.id);
+  }
+  function delBoard() {
+    if (boards.length < 2) { toast("Keep at least one dashboard.", "error"); return; }
+    ask({ title: "Delete dashboard?", message: "Delete “" + board.name + "” and its widgets?", okLabel: "Delete", danger: true }).then(function (yes) {
+      if (!yes) return;
+      var nb = boards.filter(function (b) { return b.id !== activeId; }); store(nb, nb[0].id);
+    });
+  }
+  function resetBoard() {
+    ask({ title: "Reset this dashboard?", message: "Replace its widgets with the standard set?", okLabel: "Reset" }).then(function (yes) {
+      if (yes) setWidgets(dashDefault(user)[0].widgets);
+    });
+  }
+
+  var src = {
+    entries: entries,
+    planned: plannedIn.filter(function (x) {
+      if (flt.employees.length && flt.employees.indexOf(x.userId) < 0) return false;
+      if (flt.clientId && x.clientId !== flt.clientId) return false;
+      if (flt.projectId && x.projectId !== flt.projectId) return false;
+      return true;
+    }),
+    expenses: expenses.filter(function (x) {
+      if (flt.employees.length && flt.employees.indexOf(x.userId) < 0) return false;
+      if (flt.clientId && x.clientId !== flt.clientId) return false;
+      if (flt.projectId && x.projectId !== flt.projectId) return false;
+      return true;
+    }),
+    pending: db.entries.filter(function (e) {
+      if (e.status !== "pending" || !canSeeEntry(db, user, e)) return false;
+      if (e.date < bounds[0] || e.date > bounds[1]) return false;
+      if (flt.employees.length && flt.employees.indexOf(e.assignee) < 0) return false;
+      if (flt.clientId && e.clientId !== flt.clientId) return false;
+      if (flt.projectId && e.projectId !== flt.projectId) return false;
+      return true;
+    })
+  };
+  var people = db.users.filter(function (u) { return allowed.indexOf(u.id) >= 0; }).map(function (u) { return { value: u.id, label: u.fullName }; });
+
+  function splitPanel() {
+    return h("div", { className: "col", style: { gap: 10 } },
+      h("div", null,
+        h("div", { className: "row cap", style: { justifyContent: "space-between" } }, h("span", null, blue ? "Red / Yellow / Blue split" : "Red / Yellow split"), h("span", { className: "mono" }, num(red), " / ", num(yellow), blue ? " / " + num(blue) : "")),
+        h("div", { className: "bar", style: { height: 16 } },
+          h("i", { style: { width: (total ? red / total * 100 : 0) + "%", background: C.red } }),
+          h("i", { style: { width: (total ? yellow / total * 100 : 0) + "%", background: C.yellow } }),
+          h("i", { style: { width: (total ? blue / total * 100 : 0) + "%", background: C.blue } }))),
+      h("div", null,
+        h("div", { className: "row cap", style: { justifyContent: "space-between" } }, h("span", null, "Planned against actual"), h("span", { className: "mono" }, num(plannedTotal), " planned · ", num(total), " actual")),
+        h("div", { className: "bar", style: { height: 16 } },
+          h("i", { style: { width: (Math.max(plannedTotal, total) ? total / Math.max(plannedTotal, total) * 100 : 0) + "%", background: C.deep } })),
+        h("div", { className: "cap" }, "Variance ", (total - plannedTotal >= 0 ? "+" : ""), num(total - plannedTotal), " h")));
+  }
+  function budgetsPanel(w) {
+    var list = db.budgets.filter(function (b) { return b.hours && (!flt.clientId || b.clientId === flt.clientId) && (!flt.projectId || b.projectId === flt.projectId); })
+      .map(function (b) { var u = budgetConsumed(db, b); return { b: b, u: u, pct: u / b.hours * 100 }; })
+      .sort(function (a, b) { return b.pct - a.pct; }).slice(0, w.top || 8);
+    if (!list.length) return h("div", { className: "empty" }, "No budgets.");
+    return h("div", { className: "col", style: { gap: 7 } }, list.map(function (r) {
+      return h("div", { key: r.b.id, className: "row", style: { gap: 9, flexWrap: "nowrap" } },
+        h("span", { style: { width: "42%", fontSize: 12.5, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, title: nameOf(db.projects, r.b.projectId) }, nameOf(db.clients, r.b.clientId), " · ", r.b.workOrderId ? nameOf(db.workOrders, r.b.workOrderId, "code") : nameOf(db.projects, r.b.projectId)),
+        h(Bar, { used: r.u, pending: budgetPending(db, r.b), total: r.b.hours, style: { flex: 1, height: 11 } }),
+        h("span", { className: "mono cap", style: { minWidth: 44, textAlign: "end", color: r.pct >= 100 ? C.error : r.pct >= 90 ? C.amber : null, fontWeight: 700 } }, num(r.pct, 0), "%"));
+    }));
+  }
+  function widgetBody(w) {
+    if (w.type === "cockpit") return cockpit || h("div", { className: "empty" }, "The cockpit is for managers.");
+    if (w.type === "split") return splitPanel();
+    if (w.type === "budgets") return budgetsPanel(w);
+    var md = DASH_METRICS.filter(function (m) { return m.k === w.metric; })[0] || DASH_METRICS[0];
+    var res = dashCompute(db, src, w), f = function (v) { return dashFmt(w.metric, v, pctMode, res.total); };
+    if (!w.group || w.viz === "kpi") {
+      return h("div", { className: "dkpi" },
+        h("div", { className: "v", style: { color: md.col === "red" ? C.red : md.col === "yellow" ? "#8A6410" : md.col === "blue" ? C.blue : null } }, dashFmt(w.metric, res.total, false)),
+        (w.title || "").trim() !== md.label ? h("div", { className: "s" }, md.label) : null);
+    }
+    var stack = w.metric === "hours" && (w.viz === "columns") && DASH_TIME[w.group];
+    var gl = (DASH_GROUPS.filter(function (g) { return g.k === w.group; })[0] || {}).label;
+    if (w.viz === "bars") return h(DashBars, { rows: res.rows, fmt: f, color: w.color });
+    if (w.viz === "columns") return h(DashColumns, { rows: res.rows, fmt: f, color: w.color, stack: stack, title: w.title });
+    if (w.viz === "line" || w.viz === "area") return h(DashLine, { rows: res.rows, fmt: f, color: w.color, area: w.viz === "area", title: w.title });
+    if (w.viz === "donut") return h(DashDonut, { rows: res.rows, fmt: function (v) { return dashFmt(w.metric, v, false); }, title: w.title });
+    return h(DashTable, { rows: res.rows, fmt: f, metric: w.metric, groupLabel: gl, metricLabel: md.label });
+  }
+
   return h("div", { className: "page" },
     h("div", { className: "panel pad row", style: { gap: 9 } },
       h("div", { className: "pillbar" }, RANGES.map(function (r) {
@@ -22322,62 +22762,67 @@ function DashboardTab(p) {
       can(user, "excelExport") ? h(Btn, { sm: true, onClick: doExport }, IconLabel("download", "Export")) : null),
 
     h("div", { className: "panel pad row", style: { gap: 8, alignItems: "flex-end" } },
-      companyView ? h("div", { style: { minWidth: 190 } }, h(MultiSelect, { label: "Employee", allLabel: "All in scope", avatars: true, value: flt.employees, options: db.users.filter(function (u) { return allowed.indexOf(u.id) >= 0; }).map(function (u) { return { value: u.id, label: u.fullName }; }), onChange: function (v) { setFlt(Object.assign({}, flt, { employees: v })); } })) : null,
+      companyView ? h("div", { style: { minWidth: 190 } }, h(MultiSelect, { label: "Employee", allLabel: "All in scope", avatars: true, value: flt.employees, options: people, onChange: function (v) { setFlt(Object.assign({}, flt, { employees: v })); } })) : null,
       h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Client", value: flt.clientId, placeholder: "All", options: db.clients.map(function (c) { return { value: c.id, label: c.name }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { clientId: e.target.value, projectId: "" })); } })),
       h("div", { style: { minWidth: 170 } }, h(Sel, { label: "Project", value: flt.projectId, placeholder: "All", options: db.projects.filter(function (x) { return !flt.clientId || x.clientId === flt.clientId; }).map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { projectId: e.target.value, workOrderId: "" })); } })),
       h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Work order", value: flt.workOrderId, placeholder: "All", options: db.workOrders.filter(function (w) { return !flt.projectId || w.projectId === flt.projectId; }).map(function (w) { return { value: w.id, label: w.code }; }), onChange: function (e) { setFlt(Object.assign({}, flt, { workOrderId: e.target.value })); } })),
       h(Btn, { kind: "t", onClick: function () { setFlt({ employees: [], clientId: "", projectId: "", workOrderId: "" }); } }, "Clear")),
 
-    h("div", { className: "scroll col", style: { gap: 10 } },
-      cockpit ? h("div", { className: "col", style: { gap: 5 } }, h("div", { className: "h3" }, "Manager cockpit"), cockpit) : null,
-      h("div", { className: "cards" },
-        h("div", { className: "stat" }, h("div", { className: "k" }, "Total hours"), h("div", { className: "v" }, num(total))),
-        h("div", { className: "stat" }, h("div", { className: "k" }, "Red · company"), h("div", { className: "v", style: { color: C.red } }, fmt(red))),
-        h("div", { className: "stat" }, h("div", { className: "k" }, "Yellow · client"), h("div", { className: "v", style: { color: "#8A6410" } }, fmt(yellow))),
-        blue ? h("div", { className: "stat" }, h("div", { className: "k" }, "Blue · management"), h("div", { className: "v", style: { color: C.blue } }, fmt(blue))) : null,
-        h("div", { className: "stat" }, h("div", { className: "k" }, "Utilisation"), h("div", { className: "v", style: { color: C.deep } }, num(util, 0), "%"), h("div", { className: "s" }, "Yellow of total")),
-        h("div", { className: "stat" }, h("div", { className: "k" }, "Sick days"), h("div", { className: "v", style: { color: C.sick } }, num(sick))),
-        h("div", { className: "stat" }, h("div", { className: "k" }, "Vacation days"), h("div", { className: "v", style: { color: C.vacation } }, num(vac))),
-        h("div", { className: "stat" }, h("div", { className: "k" }, "Expenses"), h("div", { className: "v", style: { fontSize: 17 } }, Object.keys(expTotals).length ? Object.keys(expTotals).map(function (c) { return money(expTotals[c], c); }).join("  ") : "—")),
-        h("div", { className: "stat" }, h("div", { className: "k" }, "Entries reported"), h("div", { className: "v" }, entries.length))),
+    /* the person's dashboards, and the tools to shape them */
+    h("div", { className: "row dboards", style: { gap: 6 } },
+      h("div", { className: "pillbar" }, boards.map(function (b) {
+        return h("button", { key: b.id, className: "pill" + (b.id === activeId ? " on" : ""), onClick: function () { store(boards, b.id); } }, b.name);
+      }), h("button", { className: "pill", title: "Create another dashboard", onClick: newBoard }, "+ New dashboard")),
+      h("div", { className: "grow" }),
+      editMode ? [
+        h(Btn, { key: "add", sm: true, kind: "p", onClick: function () { setCatalog(true); } }, "+ Add widget"),
+        h(Btn, { key: "ren", sm: true, onClick: renameBoard }, "Rename"),
+        h(Btn, { key: "dup", sm: true, onClick: dupBoard }, "Duplicate"),
+        h(Btn, { key: "rst", sm: true, onClick: resetBoard }, "Reset"),
+        h(Btn, { key: "del", sm: true, kind: "d", onClick: delBoard }, "Delete"),
+        h(Btn, { key: "done", sm: true, kind: "p", onClick: function () { setEditMode(false); } }, "Done")
+      ] : h(Btn, { sm: true, onClick: function () { setEditMode(true); } }, IconLabel("edit", "Customize"))),
 
-      h("div", { className: "panel pad" },
-        h("div", { className: "h3", style: { marginBottom: 6 } }, "Hours over time"),
-        h("div", { style: { height: 190 } },
-          series.length ? h(ResponsiveContainer, { width: "100%", height: "100%" },
-            h(AreaChart, { data: series, margin: { top: 6, right: 8, left: 0, bottom: 0 } },
-              h(CartesianGrid, { stroke: C.line }),
-              h(XAxis, { dataKey: "name", stroke: C.muted }),
-              h(YAxis, { stroke: C.muted }),
-              h(Tooltip, null),
-              h(Area, { type: "monotone", dataKey: "yellow", stackId: "1", stroke: C.yellow, fill: C.yellow, fillOpacity: .55, name: "Yellow" }),
-              h(Area, { type: "monotone", dataKey: "red", stackId: "1", stroke: C.red, fill: C.red, fillOpacity: .5, name: "Red" }),
-              h(Area, { type: "monotone", dataKey: "blue", stackId: "1", stroke: C.blue, fill: C.blue, fillOpacity: .45, name: "Blue" })))
-            : h("div", { className: "empty" }, "No hours in this range."))),
+    h("div", { className: "scroll" },
+      board.widgets.length === 0 ? h("div", { className: "empty panel" }, "This dashboard has no widgets yet. Choose Customize, then Add widget.") : null,
+      h("div", { className: "dgrid" + (editMode ? " editing" : "") }, board.widgets.map(function (w, i) {
+        return h("div", {
+          key: w.id, className: "panel pad dwid" + (dragW === w.id ? " dragging" : ""), style: { gridColumn: "span " + (w.size || 6) },
+          draggable: editMode,
+          onDragStart: function (e) { setDragW(w.id); try { e.dataTransfer.effectAllowed = "move"; e.dataTransfer.setData("text/plain", w.id); } catch (x) {} },
+          onDragOver: function (e) { if (dragW) e.preventDefault(); },
+          onDrop: function (e) { e.preventDefault(); if (dragW && dragW !== w.id) moveW(dragW, i); setDragW(null); },
+          onDragEnd: function () { setDragW(null); }
+        },
+          h("div", { className: "row", style: { gap: 6, marginBottom: 8, flexWrap: "nowrap" } },
+            h("div", { className: "h3 grow", style: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, w.title || "Widget"),
+            editMode ? h("div", { className: "row", style: { gap: 2, flexWrap: "nowrap" } },
+              h("button", { className: "tblbtn ic", title: "Move earlier", "aria-label": "Move earlier", disabled: i === 0, onClick: function () { moveW(w.id, i - 1); } }, WDI18N.he ? "→" : "←"),
+              h("button", { className: "tblbtn ic", title: "Move later", "aria-label": "Move later", disabled: i === board.widgets.length - 1, onClick: function () { moveW(w.id, i + 1); } }, WDI18N.he ? "←" : "→"),
+              h("button", { className: "tblbtn ic", title: "Widget settings", "aria-label": "Widget settings", onClick: function () { setWEdit({ w: w }); } }, h(Icon, { n: "edit", size: 14 })),
+              h("button", { className: "tblbtn ic", title: "Remove widget", "aria-label": "Remove widget", onClick: function () { setWidgets(board.widgets.filter(function (x) { return x.id !== w.id; })); } }, h(Icon, { n: "close", size: 14 }))) : null),
+          widgetBody(w));
+      }))),
 
-      h("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 } },
-        h("div", { className: "panel pad" },
-          h("div", { className: "h3", style: { marginBottom: 8 } }, "Hours by client"),
-          clientRows.length ? h("div", { className: "col", style: { gap: 7 } }, clientRows.slice(0, 9).map(function (r) {
-            return h("div", { key: r.name, className: "row", style: { gap: 9 } },
-              h("span", { style: { width: 150, fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, r.name),
-              h("div", { className: "bar", style: { flex: 1, height: 14 } }, h("i", { style: { width: (r.v / maxClient * 100) + "%", background: C.teal } })),
-              h("span", { className: "mono cap", style: { minWidth: 62, textAlign: "end" } }, fmt(r.v), pctMode ? "" : " h"));
-          })) : h("div", { className: "empty" }, "No data.")),
-        h("div", { className: "panel pad" },
-          h("div", { className: "h3", style: { marginBottom: 8 } }, "Hour split · plan against actual"),
-          h("div", { className: "col", style: { gap: 10 } },
-            h("div", null,
-              h("div", { className: "row cap", style: { justifyContent: "space-between" } }, h("span", null, blue ? "Red / Yellow / Blue split" : "Red / Yellow split"), h("span", { className: "mono" }, num(red), " / ", num(yellow), blue ? " / " + num(blue) : "")),
-              h("div", { className: "bar", style: { height: 16 } },
-                h("i", { style: { width: (total ? red / total * 100 : 0) + "%", background: C.red } }),
-                h("i", { style: { width: (total ? yellow / total * 100 : 0) + "%", background: C.yellow } }),
-                h("i", { style: { width: (total ? blue / total * 100 : 0) + "%", background: C.blue } }))),
-            h("div", null,
-              h("div", { className: "row cap", style: { justifyContent: "space-between" } }, h("span", null, "Planned against actual"), h("span", { className: "mono" }, num(plannedTotal), " planned · ", num(total), " actual")),
-              h("div", { className: "bar", style: { height: 16 } },
-                h("i", { style: { width: (Math.max(plannedTotal, total) ? total / Math.max(plannedTotal, total) * 100 : 0) + "%", background: C.deep } })),
-              h("div", { className: "cap" }, "Variance ", (total - plannedTotal >= 0 ? "+" : ""), num(total - plannedTotal), " h"))))))
+    catalog ? h(Modal, { title: "Add widget", size: "md", onClose: function () { setCatalog(false); } },
+      h("div", { className: "col", style: { gap: 8 } },
+        h("div", { className: "cap" }, "Pick a ready-made widget, or build your own from any measure, grouping and chart."),
+        h("div", { className: "dcat" },
+          h("button", { className: "dcatit on", onClick: function () { setCatalog(false); setWEdit({ w: { id: uid("dw"), title: "New widget", type: "metric", metric: "hours", group: "client", viz: "bars", size: 6, top: 10 }, isNew: true }); } },
+            h("b", null, "Build your own…"), h("span", { className: "cap" }, "Any measure · any grouping · any chart")),
+          DASH_CATALOG.filter(function (c) { return !c.mgr || dashIsMgr(user); }).map(function (c, i) {
+            var md = DASH_METRICS.filter(function (m) { return m.k === c.metric; })[0];
+            var vz = DASH_VIZ.filter(function (v) { return v.k === c.viz; })[0];
+            return h("button", { key: i, className: "dcatit", onClick: function () {
+              setWidgets(board.widgets.concat([Object.assign({ id: uid("dw"), top: 10 }, c)])); setCatalog(false); toast("Widget added.", "ok");
+            } }, h("b", null, c.title), c.type === "metric" ? h("span", { className: "cap" }, vz ? vz.label : "", " · ", md ? md.label : "") : h("span", { className: "cap" }, "Ready-made panel"));
+          })))) : null,
+
+    wEdit ? h(DashWidgetEditor, { db: db, value: wEdit.w, isNew: wEdit.isNew, people: people, onClose: function () { setWEdit(null); },
+      onSave: function (nw) {
+        setWidgets(wEdit.isNew ? board.widgets.concat([nw]) : board.widgets.map(function (x) { return x.id === nw.id ? nw : x; }));
+        setWEdit(null);
+      } }) : null
   );
 }
 
