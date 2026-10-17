@@ -18521,6 +18521,8 @@ var CSS = [
 ".tbl tr.pend td{opacity:.62}",
 ".tbl tr.pend td:first-child{box-shadow:inset 3px 0 0 var(--amber);opacity:1}",
 ".tbl tr.canc td{opacity:.5;text-decoration:line-through}",
+".tbl tr.bover td:first-child{box-shadow:inset 3px 0 0 var(--err)}",
+"[dir=rtl] .tbl tr.bover td:first-child{box-shadow:inset -3px 0 0 var(--err)}",
 ".tbl tr.canc td:first-child{box-shadow:inset 3px 0 0 var(--err);text-decoration:none}",
 ".tbl .num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}",
 /* the Hours column carries pills, so it reads left like every other value */
@@ -21358,6 +21360,8 @@ function ManagementTab(p) {
   var ws = useState(null), woEdit = ws[0], setWoEdit = ws[1];
   var hs = useState(null), history = hs[0], setHistory = hs[1];
   var dcs = useState(null), docWO = dcs[0], setDocWO = dcs[1];
+  var BF0 = { q: "", clientId: "", projectId: "", basis: "", level: "" };
+  var bfs = useState(BF0), bf = bfs[0], setBf = bfs[1];
 
   var scopeP = scopeOf(user.role, "viewBudgets");
   var pids = scopeP === "P" ? ownedProjectIds(db, user) : null;
@@ -21467,41 +21471,7 @@ function ManagementTab(p) {
       editable && tab === "budgets" ? h(Btn, { kind: "p", sm: true, onClick: function () { setEditing({ id: null, clientId: "", projectId: "", workOrderId: "", basis: "Hours", currency: "₪", amount: "", rate: "", hours: "", units: "", unitName: "", produced: 0, notes: "", history: [] }); } }, "+ New budget") : null,
       can(user, "createWorkOrders") && tab === "wos" ? h(Btn, { kind: "p", sm: true, onClick: function () { setWoEdit({ id: null, projectId: "", code: "", title: "", status: "Active", contractRef: "", startDate: todayStr(), endDate: "", notes: "", budgetHours: "" }); } }, "+ New work order") : null),
 
-    tab === "budgets" ? h("div", { className: "scroll col", style: { gap: 9 } },
-      budgets.length === 0 ? h("div", { className: "empty panel" }, "No budgets in your scope.") : null,
-      budgets.map(function (b) {
-        var used = budgetConsumed(db, b), pend = budgetPending(db, b);
-        var pct = b.hours ? (used / b.hours) * 100 : 0;
-        var proj = burnProjection(db, b);
-        return h("div", { key: b.id, className: "panel pad col", style: { gap: 8 } },
-          h("div", { className: "row", style: { gap: 9 } },
-            h("div", { className: "col grow", style: { gap: 1 } },
-              h("div", { className: "row", style: { gap: 7 } },
-                h("b", null, nameOf(db.clients, b.clientId)),
-                h("span", { className: "cap" }, WDI18N.he ? "‹" : "›"),
-                h("span", null, b.projectId ? nameOf(db.projects, b.projectId) : "All projects"),
-                b.workOrderId ? h(Chip, { k: "teal" }, nameOf(db.workOrders, b.workOrderId, "code")) : null,
-                h(Chip, { k: "gr" }, b.basis)),
-              h("div", { className: "cap" },
-                b.basis === "Money" ? money(b.amount, b.currency) + " at " + money(b.rate, b.currency) + "/h → " + num(b.hours) + " budgeted hours" :
-                b.basis === "Hours" ? num(b.hours) + " budgeted hours" :
-                num(b.units) + " " + (b.unitName || "units") + " · " + num(b.hours) + " budgeted hours")),
-            editable ? h(Btn, { sm: true, kind: "t", onClick: function () { setEditing(Object.assign({}, b)); } }, IconLabel("edit", "Edit")) : null,
-            (b.history || []).length ? h(Btn, { sm: true, kind: "t", onClick: function () { setHistory(b); } }, "History (" + b.history.length + ")") : null),
-          pct >= 100 ? h("div", { className: "banner err" }, h(Icon, { n: "stop", size: 15 }), "Budget fully consumed. All further Yellow entries on this project route to approval.")
-            : pct >= 90 ? h("div", { className: "banner amber" }, h(Icon, { n: "warn", size: 15 }), "Budget at ", num(pct, 0), "% — visible to the project owner and Finance.") : null,
-          h("div", { className: "row", style: { gap: 11 } },
-            h(Bar, { used: used, pending: pend, total: b.hours || 1, style: { flex: 1, height: 12 } }),
-            h("span", { className: "mono", style: { fontWeight: 700, minWidth: 52, textAlign: "end" } }, num(pct, 0), "%")),
-          h("div", { className: "cards" },
-            h("div", { className: "stat" }, h("div", { className: "k" }, "Budgeted"), h("div", { className: "v" }, num(b.hours), " h")),
-            h("div", { className: "stat" }, h("div", { className: "k" }, "Consumed"), h("div", { className: "v" }, num(used), " h")),
-            h("div", { className: "stat" }, h("div", { className: "k" }, "In approval"), h("div", { className: "v", style: { color: C.amber } }, num(pend), " h")),
-            h("div", { className: "stat" }, h("div", { className: "k" }, "Remaining"), h("div", { className: "v", style: { color: (b.hours - used) < 0 ? C.error : C.deep } }, num((b.hours || 0) - used), " h")),
-            b.basis === "Money" ? h("div", { className: "stat" }, h("div", { className: "k" }, "Value consumed"), h("div", { className: "v" }, money(Math.round(used * (b.rate || 0)), b.currency))) : null,
-            ["Pages", "Words", "Custom"].indexOf(b.basis) >= 0 ? h("div", { className: "stat" }, h("div", { className: "k" }, "Deliverables"), h("div", { className: "v" }, num(b.produced || 0)), h("div", { className: "s" }, "of ", num(b.units), " ", b.unitName)) : null,
-            h("div", { className: "stat" }, h("div", { className: "k" }, "Projected exhaustion"), h("div", { className: "v", style: { fontSize: 15 } }, proj === "exhausted" ? "now" : proj ? il(proj) : "—"), h("div", { className: "s" }, "last 30 days' burn"))));
-      })) : null,
+    tab === "budgets" ? h(BudgetList, { db: db, budgets: budgets, editable: editable, flt: bf, setFlt: setBf, blank: BF0, onEdit: function (b) { setEditing(Object.assign({}, b)); }, onHistory: setHistory }) : null,
 
     tab === "wos" ? h("div", { className: "panel scroll" },
       h(STable, { id: "mgmt-wos", grow: "Title", center: ["Status", "Dates", "Budget", "Consumed"], className: "tbl" },
@@ -21543,6 +21513,84 @@ function ManagementTab(p) {
             h("td", null, userName(db, x.by)), h("td", null, x.field),
             h("td", { className: "mono" }, String(x.from)), h("td", { className: "mono" }, String(x.to)));
         })))) : null);
+}
+
+/* Management → Budgets: one compact row per budget, with filters and totals for the view */
+function budgetLevel(pct) { return pct >= 100 ? "over" : pct >= 90 ? "90" : pct >= 75 ? "75" : "ok"; }
+function BudgetList(p) {
+  var db = p.db, flt = p.flt;
+  var setF = function (k, v) { var n = Object.assign({}, flt); n[k] = v; if (k === "clientId") n.projectId = ""; p.setFlt(n); };
+  var rows = p.budgets.map(function (b) {
+    var used = budgetConsumed(db, b), pend = budgetPending(db, b);
+    var pct = b.hours ? (used / b.hours) * 100 : 0;
+    return { b: b, used: used, pend: pend, pct: pct, proj: burnProjection(db, b),
+      client: nameOf(db.clients, b.clientId), project: b.projectId ? nameOf(db.projects, b.projectId) : "All projects",
+      wo: b.workOrderId ? nameOf(db.workOrders, b.workOrderId, "code") : "" };
+  }).filter(function (r) {
+    var b = r.b;
+    if (flt.clientId && b.clientId !== flt.clientId) return false;
+    if (flt.projectId && b.projectId !== flt.projectId) return false;
+    if (flt.basis && b.basis !== flt.basis) return false;
+    if (flt.level && budgetLevel(r.pct) !== flt.level) return false;
+    if (flt.q) {
+      var q = flt.q.toLowerCase();
+      if ([r.client, r.project, r.wo, b.notes || ""].join(" ").toLowerCase().indexOf(q) < 0) return false;
+    }
+    return true;
+  });
+  var tot = rows.reduce(function (a, r) { a.h += Number(r.b.hours) || 0; a.u += r.used; a.p += r.pend; return a; }, { h: 0, u: 0, p: 0 });
+  var clientIds = {}, projectIds = {};
+  p.budgets.forEach(function (b) { clientIds[b.clientId] = 1; if (b.projectId && (!flt.clientId || b.clientId === flt.clientId)) projectIds[b.projectId] = 1; });
+  var opt = function (list, ids) { return list.filter(function (x) { return ids[x.id]; }).map(function (x) { return { value: x.id, label: x.name }; }); };
+
+  return h("div", { className: "col", style: { gap: 10, flex: 1, minHeight: 0 } },
+    h("div", { className: "panel pad col", style: { gap: 8 } },
+      h("div", { className: "row", style: { gap: 8, alignItems: "flex-end" } },
+        h("div", { style: { flex: "1 1 220px", maxWidth: 300 } }, h(Inp, { label: "Search", value: flt.q, placeholder: "Client, project or work order", onChange: function (e) { setF("q", e.target.value); } })),
+        h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Client", value: flt.clientId, placeholder: "All", options: opt(db.clients, clientIds), onChange: function (e) { setF("clientId", e.target.value); } })),
+        h("div", { style: { minWidth: 190 } }, h(Sel, { label: "Project", value: flt.projectId, placeholder: "All", options: opt(db.projects, projectIds), onChange: function (e) { setF("projectId", e.target.value); } })),
+        h("div", { style: { minWidth: 110 } }, h(Sel, { label: "Basis", value: flt.basis, placeholder: "All", options: ["Hours", "Money", "Pages", "Words", "Custom"], onChange: function (e) { setF("basis", e.target.value); } })),
+        h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Used", value: flt.level, placeholder: "All", options: [{ value: "ok", label: "Under 75%" }, { value: "75", label: "75–90%" }, { value: "90", label: "90–100%" }, { value: "over", label: "Fully consumed" }], onChange: function (e) { setF("level", e.target.value); } })),
+        h(Btn, { kind: "t", onClick: function () { p.setFlt(p.blank); } }, "Clear"),
+        h("div", { className: "grow" }),
+        h("div", { className: "row", style: { gap: 6 } },
+          h(Chip, { k: "mut" }, rows.length === 1 ? "1 budget" : rows.length + " budgets"),
+          h(Chip, { k: "gr" }, "Budgeted ", num(tot.h), " h"),
+          h(Chip, { k: "yel" }, "Consumed ", num(tot.u), " h"),
+          tot.p ? h(Chip, { k: "amber" }, "In approval ", num(tot.p), " h") : null,
+          h(Chip, { k: tot.h - tot.u < 0 ? "red" : "teal" }, "Remaining ", num(tot.h - tot.u), " h")))),
+    h("div", { className: "panel scroll" },
+      rows.length === 0
+        ? h("div", { className: "empty" }, p.budgets.length ? "No budgets match these filters." : "No budgets in your scope.")
+        : h(STable, { id: "mgmt-budgets", grow: "Project", center: ["Basis", "Used", "Projected exhaustion"], className: "tbl mid" },
+            h("thead", null, h("tr", null, ["Client", "Project", "Work order", "Basis", "Budgeted", "Used", "Consumed", "In approval", "Remaining", "Value / output", "Projected exhaustion", ""].map(function (c, i) {
+              return h("th", { key: i, className: ["Budgeted", "Consumed", "In approval", "Remaining", "Value / output"].indexOf(c) >= 0 ? "num" : "" }, c);
+            }))),
+            h("tbody", null, rows.map(function (r) {
+              var b = r.b, lvl = budgetLevel(r.pct), rem = (b.hours || 0) - r.used;
+              return h("tr", { key: b.id, className: lvl === "over" ? "bover" : "" },
+                h("td", null, h("b", null, r.client)),
+                h("td", null, r.project),
+                h("td", null, r.wo ? h(CopyCell, { value: r.wo }) : h("span", { className: "cap" }, "—")),
+                h("td", { title: b.basis === "Money" ? money(b.amount, b.currency) + " at " + money(b.rate, b.currency) + "/h" : ["Pages", "Words", "Custom"].indexOf(b.basis) >= 0 ? num(b.units) + " " + (b.unitName || "units") : null },
+                  h(Chip, { k: "gr" }, b.basis)),
+                h("td", { className: "num" }, num(b.hours), " h"),
+                h("td", { "data-sort": r.pct, style: { minWidth: 150 } },
+                  h("div", { className: "row", style: { gap: 8, flexWrap: "nowrap" } },
+                    h(Bar, { used: r.used, pending: r.pend, total: b.hours || 1, style: { flex: 1, minWidth: 70, height: 9 } }),
+                    h("span", { className: "mono", style: { fontWeight: 700, minWidth: 38, textAlign: "end", color: lvl === "over" ? C.error : lvl === "90" ? C.amber : "inherit" } }, num(r.pct, 0), "%"))),
+                h("td", { className: "num" }, num(r.used), " h"),
+                h("td", { className: "num", style: { color: r.pend ? C.amber : C.muted } }, num(r.pend), " h"),
+                h("td", { className: "num", style: { color: rem < 0 ? C.error : C.deep, fontWeight: 700 } }, num(rem), " h"),
+                h("td", { className: "num" },
+                  b.basis === "Money" ? money(Math.round(r.used * (b.rate || 0)), b.currency)
+                    : ["Pages", "Words", "Custom"].indexOf(b.basis) >= 0 ? h("span", null, num(b.produced || 0), h("span", { className: "cap" }, " / ", num(b.units), " ", b.unitName))
+                    : h("span", { className: "cap" }, "—")),
+                h("td", { "data-sort": r.proj === "exhausted" ? "0000" : r.proj || "9999", className: "tnum", title: "last 30 days' burn", style: { whiteSpace: "nowrap", color: r.proj === "exhausted" ? C.error : null } }, r.proj === "exhausted" ? "now" : r.proj ? il(r.proj) : "—"),
+                h("td", { style: { whiteSpace: "nowrap" } },
+                  p.editable ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit", "aria-label": "Edit", onClick: function () { p.onEdit(b); } }, h(Icon, { n: "edit", size: 16 })) : null,
+                  (b.history || []).length ? h(Btn, { sm: true, kind: "t", title: "Budget change history", onClick: function () { p.onHistory(b); } }, "History (" + b.history.length + ")") : null));
+            })))));
 }
 
 function BudgetEditor(p) {
