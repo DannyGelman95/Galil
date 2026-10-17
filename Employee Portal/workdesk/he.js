@@ -569,6 +569,7 @@ WDI18N.add({
 "Edit & approve": "עריכה ואישור",
 "Decline": "דחייה",
 "Request information": "בקשת מידע",
+"Request info": "בקשת מידע",
 "by": "על ידי",
 "on": "ב-",
 "Bulk approve": "אישור מרוכז",

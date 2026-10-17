@@ -18392,6 +18392,12 @@ var CSS = [
 /* tabular figures without changing typeface — §14.1 one face across a table row */
 ".tnum{font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1}",
 ".sep{height:1px;background:var(--line);margin:8px 0}",
+/* Approvals: requests as tiles that fill the width */
+".apgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(380px,1fr));gap:10px;align-content:start}",
+".apgrid>.empty{grid-column:1/-1}",
+".apcard{min-width:0;font-size:13px}",
+".apcard .apgo{margin-top:auto;padding-top:4px}",
+"@media(max-width:680px){.apgrid{grid-template-columns:1fr}}",
 /* Time Log: the report form on the start side (~35%), filters and list beside it */
 ":root{--tlw:clamp(264px,18vw,330px)}",
 ".tlsplit{flex:1;min-height:0;display:grid;grid-template-columns:var(--tlw) minmax(0,1fr);gap:10px}",
@@ -20926,26 +20932,27 @@ function ApprovalsTab(p) {
     var pickable = a.status === "pending" && a.reason !== "Budget exceeded";
     var bud = e ? budgetFor(db, e.projectId, e.workOrderId) : null;
     var asg = e ? findAssignment(db, e.assignee, e.projectId, e.workOrderId) : null;
-    return h("div", { className: "panel pad col", style: { gap: 8, borderLeft: "4px solid " + (a.status === "pending" ? C.amber : a.status === "approved" ? C.vacation : C.error) } },
-      h("div", { className: "row", style: { gap: 8 } },
-        pickable ? h("input", { type: "checkbox", checked: picked.indexOf(a.id) >= 0, onChange: function () { var n = picked.slice(); var i = n.indexOf(a.id); if (i >= 0) n.splice(i, 1); else n.push(a.id); setPicked(n); }, "aria-label": "Select request" }) : null,
+    return h("div", { className: "panel pad col apcard", style: { gap: 8, borderInlineStart: "4px solid " + (a.status === "pending" ? C.amber : a.status === "approved" ? C.vacation : C.error) } },
+      h("div", { className: "row", style: { gap: 8, flexWrap: "nowrap", alignItems: "flex-start" } },
+        pickable ? h("input", { type: "checkbox", style: { marginTop: 8 }, checked: picked.indexOf(a.id) >= 0, onChange: function () { var n = picked.slice(); var i = n.indexOf(a.id); if (i >= 0) n.splice(i, 1); else n.push(a.id); setPicked(n); }, "aria-label": "Select request" }) : null,
         h("span", { className: "avatar" }, initialsOf(userName(db, a.requesterId))),
-        h("div", { className: "grow col", style: { gap: 1 } },
-          h("div", { className: "row", style: { gap: 6 } },
-            h("b", null, userName(db, a.requesterId)),
-            h(Chip, { k: "teal" }, a.type),
-            a.reason !== a.type ? h(Chip, { k: a.reason === "Budget exceeded" ? "err" : "amber" }, a.reason) : null,
-            a.status !== "pending" ? h(Chip, { k: a.status === "approved" ? "gr" : "err" }, a.status) : null),
-          h("div", { className: "cap" }, "Raised ", new Date(a.createdAt).toLocaleString("en-GB"), " · routed to ", userName(db, a.assignedTo))),
-        e ? h("div", { className: "col", style: { alignItems: "flex-end" } },
+        h("div", { className: "grow col", style: { gap: 2 } },
+          h("b", null, userName(db, a.requesterId)),
+          h("div", { className: "cap" }, new Date(a.createdAt).toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" }), " \u2192 ", userName(db, a.assignedTo))),
+        e ? h("div", { className: "col", style: { alignItems: "flex-end", gap: 1 } },
           h("b", { className: "mono", style: { fontSize: 17 } }, num((Number(e.red) || 0) + (Number(e.yellow) || 0) + (Number(e.blue) || 0)), " h"),
-          h("span", { className: "cap mono" }, il(e.date), e.start ? " · " + e.start + "–" + e.end : "")) : null,
-        lv ? h("div", { className: "col", style: { alignItems: "flex-end" } },
+          h("span", { className: "cap mono" }, il(e.date)),
+          e.start ? h("span", { className: "cap mono" }, e.start + "–" + e.end) : null) : null,
+        lv ? h("div", { className: "col", style: { alignItems: "flex-end", gap: 1 } },
           h("b", { className: "mono", style: { fontSize: 17 } }, num(lv.days || requestEntryIds(a).length), " d"),
           h("span", { className: "cap mono" }, il(lv.from), lv.to && lv.to !== lv.from ? " \u2192 " + il(lv.to) : "")) : null,
-        x ? h("div", { className: "col", style: { alignItems: "flex-end" } },
+        x ? h("div", { className: "col", style: { alignItems: "flex-end", gap: 1 } },
           h("b", { className: "mono", style: { fontSize: 17 } }, money(x.amount, x.currency)),
           h("span", { className: "cap mono" }, il(x.date))) : null),
+      h("div", { className: "row", style: { gap: 5 } },
+        h(Chip, { k: "teal" }, a.type),
+        a.reason !== a.type ? h(Chip, { k: a.reason === "Budget exceeded" ? "err" : "amber" }, a.reason) : null,
+        a.status !== "pending" ? h(Chip, { k: a.status === "approved" ? "gr" : "err" }, a.status) : null),
 
       e ? h("div", { className: "row", style: { gap: 6, fontSize: 13 } },
         hoursChips(e),
@@ -20989,17 +20996,17 @@ function ApprovalsTab(p) {
         h("span", { className: "cap" }, "Assignment allowance"),
         asg.allowanceHours === null || asg.allowanceHours === undefined || asg.allowanceHours === ""
           ? h(Chip, { k: "gr" }, "unlimited within the project budget")
-          : [h(Bar, { key: "b", used: consumedOn(db, a.requesterId, asg, e && e.id), pending: pendingOn(db, a.requesterId, asg), total: asg.allowanceHours, style: { width: 150 } }),
+          : [h(Bar, { key: "b", used: consumedOn(db, a.requesterId, asg, e && e.id), pending: pendingOn(db, a.requesterId, asg), total: asg.allowanceHours, style: { flex: "1 1 70px", minWidth: 60 } }),
              h("span", { key: "t", className: "cap mono" }, num(consumedOn(db, a.requesterId, asg, e && e.id)), " used · ", num(pendingOn(db, a.requesterId, asg)), " in approval · of ", num(asg.allowanceHours), " h")]) : null,
       bud && bud.hours ? h("div", { className: "row", style: { gap: 9 } },
         h("span", { className: "cap" }, "Budget"),
-        h(Bar, { used: budgetConsumed(db, bud), pending: budgetPending(db, bud), total: bud.hours, style: { width: 150 } }),
+        h(Bar, { used: budgetConsumed(db, bud), pending: budgetPending(db, bud), total: bud.hours, style: { flex: "1 1 70px", minWidth: 60 } }),
         h("span", { className: "cap mono" }, num(budgetConsumed(db, bud)), " of ", num(bud.hours), " h consumed")) : null,
 
       a.thread && a.thread.length ? h("div", { className: "col", style: { gap: 4, background: C.wash, borderRadius: 10, padding: 8 } },
         a.thread.map(function (t, i) { return h("div", { key: i, style: { fontSize: 13 } }, h("b", null, userName(db, t.userId), ": "), t.text); })) : null,
 
-      a.status === "pending" ? h("div", { className: "row", style: { gap: 6 } },
+      a.status === "pending" ? h("div", { className: "row apgo", style: { gap: 6 } },
         h(Btn, { kind: "p", sm: true, onClick: function () {
           if (a.type === "Account activation") {
             var el = document.getElementById("role-" + a.id);
@@ -21010,8 +21017,8 @@ function ApprovalsTab(p) {
         } }, "Approve"),
         e && !lv ? h(Btn, { sm: true, onClick: function () { setEditing({ a: a, form: toForm(e) }); } }, "Edit & approve") : null,
         h(Btn, { sm: true, kind: "d", onClick: function () { setDeclining(a); } }, "Decline"),
-        h(Btn, { sm: true, kind: "t", onClick: function () { setAsking(a); } }, "Request information"))
-        : h("div", { className: "cap" }, a.status === "approved" ? "Approved" : "Declined", " by ", userName(db, a.decidedBy), " on ", new Date(a.decidedAt).toLocaleString("en-GB"), a.decisionNote ? " — " + a.decisionNote : ""));
+        h(Btn, { sm: true, kind: "t", title: "Request information", onClick: function () { setAsking(a); } }, "Request info"))
+        : h("div", { className: "cap apgo" }, a.status === "approved" ? "Approved" : "Declined", " by ", userName(db, a.decidedBy), " on ", new Date(a.decidedAt).toLocaleString("en-GB"), a.decisionNote ? " — " + a.decisionNote : ""));
   }
 
   return h("div", { className: "page" },
@@ -21027,7 +21034,7 @@ function ApprovalsTab(p) {
       h("div", { style: { minWidth: 132 } }, h(Sel, { label: "Status", value: statusFlt, placeholder: "All", options: [{ value: "pending", label: "Pending" }, { value: "approved", label: "Approved" }, { value: "declined", label: "Declined" }], onChange: function (e) { setStatus(e.target.value); } })),
       picked.length ? h("div", { className: "fld", style: { flex: "0 0 auto" } }, h("label", null, " "), h(Btn, { kind: "p", onClick: bulkApprove }, "Bulk approve ", picked.length)) : null),
 
-    h("div", { className: "scroll col", style: { gap: 9 } },
+    h("div", { className: "scroll apgrid" },
       mine.length === 0 ? h("div", { className: "empty panel" }, "Nothing in the queue.")
         : mine.map(function (a) { return h(Card, { key: a.id, a: a }); })),
 
@@ -21285,7 +21292,7 @@ function ExpensesTab(p) {
         can(user, "approveExpenses") ? h(Sel, { label: "Assignee", value: f.userId, options: db.users.filter(function (u) { return u.isActive && (u.id === user.id || scope.indexOf(u.id) >= 0); }).map(function (u) { return { value: u.id, label: u.fullName }; }), onChange: function (e) { up("userId", e.target.value); } }) : null,
         h(Inp, { label: "Date", type: "date", cls: "date", value: f.date, onChange: function (e) { up("date", e.target.value); } }),
         h("div", { className: "fld", style: { flex: "0 0 74px" } }, h("label", null, " "), h(Btn, { className: "sm", style: { minHeight: 38 }, onClick: function () { up("date", todayStr()); } }, "Today")),
-        h(Inp, { label: "Time", type: "time", cls: "narrow", value: f.time, onChange: function (e) { up("time", e.target.value); } }),
+        h(Inp, { label: "Time", type: "time", cls: "timefld", value: f.time, onChange: function (e) { up("time", e.target.value); } }),
         h(Sel, { label: "Expense type", req: true, err: errs.etype, value: f.etype, placeholder: "Select…", options: db.expenseTypes.map(function (t) { return { value: t.name, label: t.name + (t.ceiling != null ? " (ceiling " + t.ceiling + ")" : "") }; }), onChange: function (e) { up("etype", e.target.value); } }),
         h(Sel, { label: "Value kind", cls: "narrow", value: f.vkind, options: [{ value: "money", label: "Money" }, { value: "hours", label: "Hours" }], onChange: function (e) { up("vkind", e.target.value); } }),
         f.vkind === "money" ? h(Sel, { key: "cur", label: "Currency", cls: "narrow", value: f.currency, options: CURRENCIES, onChange: function (e) { up("currency", e.target.value); } }) : null,
