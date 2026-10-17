@@ -19356,7 +19356,8 @@ function STable(p) {
   }
   function startResize(ev, cid) {
     ev.preventDefault(); ev.stopPropagation();
-    var base = Object.assign(measure(), widths || {});
+    /* start from the widths as drawn, so the edge follows the pointer */
+    var base = measure();
     var x0 = ev.clientX, w0 = base[cid] || 80;
     var handle = ev.currentTarget;
     handle.classList.add("on");
@@ -19413,9 +19414,12 @@ function STable(p) {
 
   var tStyle = Object.assign({}, p.style || {});
   if (sized) {
+    /* sized columns still fill the panel: narrower than the panel, the spare
+       width is shared out across the columns; wider, the panel scrolls */
     tStyle.tableLayout = "fixed";
-    tStyle.width = order.reduce(function (a, cid) { return a + (widths[cid] || 120); }, 0);
-    tStyle.minWidth = 0;
+    tStyle.width = "100%";
+    tStyle.minWidth = order.reduce(function (a, cid) { return a + (widths[cid] || 120); }, 0);
+    tStyle.maxWidth = "none";
   }
   /* every table fills its panel. Columns keep the width their content needs and
      the leftover space goes to one text column (p.grow, else the first text column),
@@ -19427,7 +19431,7 @@ function STable(p) {
     if (!t) return;
     var ths = headRef.current ? headRef.current.children : [];
     for (var i = 0; i < ths.length; i++) if (ths[i].dataset.fill) { ths[i].style.width = ""; delete ths[i].dataset.fill; }
-    t.style.width = "";
+    t.style.width = sized ? "100%" : "";
     if (sized || growAt < 0 || !ths[growAt]) return;
     var box = t.parentElement, cs = window.getComputedStyle(box);
     var avail = box.clientWidth - (parseFloat(cs.paddingLeft) || 0) - (parseFloat(cs.paddingRight) || 0);
