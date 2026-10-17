@@ -8,7 +8,8 @@ const data = page => page.evaluate(() => JSON.parse(localStorage.getItem("galil-
 const local = async page => {
   const errors = [];
   page.on("pageerror", e => errors.push(e.message));
-  await page.addInitScript(() => localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" })));
+  /* the work order preview is a blob: frame, where storage is off limits */
+  await page.addInitScript(() => { try { localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" })); } catch (e) {} });
   await page.goto(test.info().project.use.baseURL);
   await expect(page.locator("#si-email")).toBeVisible();
   return errors;
@@ -253,8 +254,85 @@ test.describe("Employee Portal", () => {
     await page.goto(base + "kb/index.html");
     await expect(page.getByText(/No access to/)).toBeVisible();
     await page.goto(base + "handbook/index.html");
-    await expect(page.locator("#ch-portal")).toBeVisible();
+    await expect(page.locator('a.tcard[href="#ch-portal"]')).toBeVisible();
     await expect(page.getByText(/No access to/)).toHaveCount(0);
+  });
+});
+
+/* ---------- icons, Back, email copy and the work order document ---------- */
+test.describe("WorkDesk tools", () => {
+  test("Back retraces tabs and Management sections, closes an open window first, then returns home", async ({ page }) => {
+    const errors = await local(page);
+    await signIn(page, "tamir@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    const back = page.locator("#wd-back");
+    await page.getByRole("tab", { name: /Management/ }).click();
+    await page.getByRole("button", { name: "Clients", exact: true }).click();
+    await page.getByRole("tab", { name: /Dashboard/ }).click();
+    await page.getByRole("button", { name: "System administration" }).click();
+    await page.keyboard.press("Alt+ArrowLeft");
+    await expect(page.getByRole("dialog")).toHaveCount(0);
+    await back.click();
+    await expect(page.getByRole("tab", { name: /Management/ })).toHaveAttribute("aria-selected", "true");
+    await expect(page.getByRole("button", { name: "Clients", exact: true })).toHaveClass(/on/);
+    await back.click();
+    await expect(page.getByRole("button", { name: "People", exact: true })).toHaveClass(/on/);
+    await back.click();
+    await expect(page.getByRole("tab", { name: /Time Log/ })).toHaveAttribute("aria-selected", "true");
+    await back.click();
+    await expect(page.locator("#portal-home")).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+
+  test("email addresses copy to the clipboard when clicked", async ({ page, context }) => {
+    await context.grantPermissions(["clipboard-read", "clipboard-write"]);
+    const errors = await local(page);
+    await signIn(page, "tamir@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await page.getByRole("tab", { name: /Management/ }).click();
+    await page.getByRole("button", { name: "Copy inon.kanner@galiltc.co.il" }).click();
+    await expect(page.getByText("inon.kanner@galiltc.co.il copied to the clipboard.")).toBeVisible();
+    expect(await page.evaluate(() => navigator.clipboard.readText())).toBe("inon.kanner@galiltc.co.il");
+    expect(errors).toEqual([]);
+  });
+
+  test("a work order carries its document fields and downloads as a branded PDF in English and Hebrew", async ({ page }) => {
+    const errors = await local(page);
+    await signIn(page, "tamir@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await page.getByRole("tab", { name: /Management/ }).click();
+    await page.getByRole("button", { name: "Work Orders", exact: true }).click();
+    await page.getByRole("button", { name: "+ New work order" }).click();
+    const dlg = page.getByRole("dialog", { name: "New work order" });
+    await dlg.locator("select").first().selectOption({ index: 2 });
+    await dlg.locator("#wo-title").fill("Operator manual — release 4");
+    await dlg.locator("#wo-scope").fill("Write and lay out the operator manual for release 4.");
+    await dlg.locator("#wo-deliv").fill("Operator manual, EN\nQuick-start card");
+    await dlg.getByRole("button", { name: "+ Add contact" }).click();
+    await dlg.getByLabel("Contact name").last().fill("Ruth Levi");
+    await dlg.getByLabel("Contact email").last().fill("ruth@client.example");
+    await dlg.locator("#wo-csig").fill("Ruth Levi");
+    await dlg.getByRole("button", { name: "Save work order" }).click();
+    const d = await data(page);
+    const wo = d.workOrders.find(w => w.title === "Operator manual — release 4");
+    expect(wo.scope).toContain("release 4");
+    expect(wo.clientContacts.some(c => c.email === "ruth@client.example")).toBe(true);
+    expect(wo.createdBy).toBe("u-tamir");
+
+    await page.getByRole("row", { name: new RegExp(wo.code) }).getByRole("button", { name: "Work order document (PDF)" }).click();
+    const doc = page.getByRole("dialog", { name: "Work order document — " + wo.code });
+    await expect(doc.locator("iframe.wodoc")).toBeVisible();
+    await expect(doc.getByLabel("Send to")).toHaveValue(/ruth@client\.example/);
+    const [dl] = await Promise.all([page.waitForEvent("download"), doc.getByRole("button", { name: "Download PDF" }).click()]);
+    expect(dl.suggestedFilename()).toBe("GALIL-" + wo.code + ".pdf");
+    expect(fs.readFileSync(await dl.path()).slice(0, 5).toString()).toBe("%PDF-");
+    await doc.getByRole("button", { name: "עברית" }).click();
+    await expect(doc.getByRole("button", { name: "עברית" })).toHaveAttribute("aria-pressed", "true");
+    await expect(doc.locator("iframe.wodoc")).toBeVisible();
+    const [he] = await Promise.all([page.waitForEvent("download"), doc.getByRole("button", { name: "Download PDF" }).click()]);
+    expect(he.suggestedFilename()).toBe("GALIL-" + wo.code + "-HE.pdf");
+    expect(fs.readFileSync(await he.path()).slice(0, 5).toString()).toBe("%PDF-");
+    expect(errors).toEqual([]);
   });
 });
 
