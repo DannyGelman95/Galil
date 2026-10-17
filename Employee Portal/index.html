@@ -18392,6 +18392,10 @@ var CSS = [
 /* tabular figures without changing typeface — §14.1 one face across a table row */
 ".tnum{font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1}",
 ".sep{height:1px;background:var(--line);margin:8px 0}",
+/* Time Log: the report form on the start side (~35%), filters and list beside it */
+".tlsplit{flex:1;min-height:0;display:grid;grid-template-columns:minmax(320px,35%) minmax(0,1fr);gap:10px}",
+".tlsplit>.tlform{min-height:0;max-height:100%;overflow:auto;align-self:start}",
+".tlsplit>.tlmain{min-height:0;min-width:0;display:flex;flex-direction:column;gap:10px}",
 /* Hebrew alongside English: bidi-correct but still left-aligned under the English name */
 ".he{direction:rtl;text-align:left;unicode-bidi:isolate}",
 
@@ -18750,6 +18754,9 @@ var CSS = [
 ".grid3,.grid4{grid-template-columns:1fr 1fr}",
 ".week{grid-template-columns:repeat(2,1fr);overflow:auto}",
 ".page{padding:10px}",
+".tlsplit{display:flex;flex-direction:column}",
+".tlsplit>.tlform{min-height:auto;max-height:none;overflow:visible;align-self:stretch}",
+".tlsplit>.tlmain{flex:1}",
 "}",
 "@media(max-width:680px){",
 ".band .fld{flex:1 1 100%}",
@@ -20365,9 +20372,9 @@ function TimeLogTab(p) {
     exportXLSX(sheets, "galil-time-" + (scope === "view" ? monthStr : "all") + ".xlsx");
   }
 
-  return h("div", { className: "page" },
+  return h("div", { className: "page" }, h("div", { className: "tlsplit" },
     /* ---- form band ---- */
-    can(user, "reportOwnTime") ? h("div", { className: "panel pad" },
+    can(user, "reportOwnTime") ? h("div", { className: "panel pad tlform" },
       h("div", { className: "row", style: { marginBottom: 8 } },
         h("div", { className: "h2 grow" }, editing ? "Edit entry" : "Report time"),
         editing ? h(Chip, { k: "amber" }, "editing ", il(editing.date)) : null),
@@ -20375,8 +20382,9 @@ function TimeLogTab(p) {
         db: db, viewer: user, value: editing ? toForm(editing) : (formKey === 0 ? preset : null), valueKey: editing ? editing.id + formKey : "new" + formKey,
         onSave: saveEntry, onCancel: editing ? function () { setEditing(null); } : null
       }))
-      : h("div", { className: "banner mut panel pad" }, "Your role does not carry time-reporting rights."),
+      : h("div", { className: "banner mut panel pad tlform" }, "Your role does not carry time-reporting rights."),
 
+    h("div", { className: "tlmain" },
     /* ---- filters ---- */
     h("div", { className: "panel pad" },
       h("div", { className: "row", style: { gap: 9 } },
@@ -20436,7 +20444,7 @@ function TimeLogTab(p) {
                   editable ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit", onClick: function () { setEditing(e); window.scrollTo(0, 0); } }, h(Icon, { n: "edit", size: 16 })) : null,
                   can(user, "reportOwnTime") && e.type === "Work" ? h(DupMenu, { base: e.date, onPick: function (dates) { dupEntry(e, dates); } }) : null,
                   editable ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Delete", onClick: function () { delEntry(e); } }, h(Icon, { n: "trash", size: 16 })) : null));
-            })))));
+            })))))));
 }
 </script>
 <script>"use strict";
