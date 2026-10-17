@@ -18393,13 +18393,34 @@ var CSS = [
 ".tnum{font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1}",
 ".sep{height:1px;background:var(--line);margin:8px 0}",
 /* Time Log: the report form on the start side (~35%), filters and list beside it */
-".tlsplit{flex:1;min-height:0;display:grid;grid-template-columns:minmax(280px,22%) minmax(0,1fr);gap:10px}",
-".tlsplit>.tlform{min-height:0;max-height:100%;overflow:auto;align-self:start}",
+":root{--tlw:clamp(264px,18vw,330px)}",
+".tlsplit{flex:1;min-height:0;display:grid;grid-template-columns:var(--tlw) minmax(0,1fr);gap:10px}",
+".tlsplit>.tlform{min-height:0;overflow:auto;display:flex;flex-direction:column;padding-bottom:0}",
+".tlsplit>.tlform.tlnone{align-self:start;padding-bottom:12px}",
+/* the sync pill runs the width of the form column, under it */
+"@media(min-width:1025px){body:has(.tlsplit #wd-sync-slot) #wd-sync{inset-inline-start:16px!important;bottom:14px!important;width:var(--tlw);max-width:none!important;justify-content:center;border-radius:12px!important;padding:9px 12px!important;box-shadow:0 1px 2px var(--shadow)!important}}",
+"body:has(#wd-sync) .tlsplit>.tlform{margin-bottom:46px}",
+/* the report form, one field under another */
+".eform.stack{flex:1;display:flex;flex-direction:column;gap:10px}",
+".eform.stack .band{flex-wrap:nowrap}",
+".eform.stack .band .fld{flex:1 1 0}",
+".eform.stack .band .fld.hours{flex:0 0 76px}",
+".eform.stack .timefld select{flex:1 1 0;min-width:0}",
+".eform.stack .fld.htype{flex:1 1 0!important}",
+".eform.stack .seg{display:flex;width:100%}",
+".eform.stack .seg button{flex:1;justify-content:center}",
+".eform.stack textarea{display:block;line-height:1.4}",
+".eform.stack>.band:has(>.banner){flex-wrap:wrap}",
+".eform.stack>.band>.banner{white-space:normal;flex-basis:100%!important}",
+".eform.stack>.band>.banner>span{overflow:visible}",
+".eform-go{position:sticky;bottom:0;margin-top:auto;display:flex;gap:8px;padding:10px 0 12px;background:var(--surface)}",
+".eform-go .btn{min-height:46px;font-size:15px}",
 ".tlsplit>.tlmain{min-height:0;min-width:0;display:flex;flex-direction:column;gap:10px}",
 /* the Time Log table fits beside the form: headings wrap, the weekday sits under the date */
 ".tbl.tlt th{white-space:normal;padding:8px 7px}",
 ".tbl.tlt td{padding:7px}",
-".tbl.tlt .btn.tap{min-width:34px;padding:5px 7px}",
+".tbl.tlt td:not(.hrs) .chip{white-space:normal;text-align:center;line-height:1.2}",
+".tbl.tlt .btn.tap{min-width:32px;padding:5px 6px}",
 /* Hebrew alongside English: bidi-correct but still left-aligned under the English name */
 ".he{direction:rtl;text-align:left;unicode-bidi:isolate}",
 
@@ -18759,7 +18780,10 @@ var CSS = [
 ".week{grid-template-columns:repeat(2,1fr);overflow:auto}",
 ".page{padding:10px}",
 ".tlsplit{display:flex;flex-direction:column}",
-".tlsplit>.tlform{min-height:auto;max-height:none;overflow:visible;align-self:stretch}",
+".tlsplit>.tlform{min-height:auto;overflow:visible;margin-bottom:0!important}",
+".eform.stack{flex-direction:row;flex-wrap:wrap;gap:9px}",
+".eform.stack>*{flex:1 1 260px}",
+".eform.stack>.eform-go{flex-basis:100%;position:static}",
 ".tlsplit>.tlmain{flex:1}",
 "}",
 "@media(max-width:680px){",
@@ -19964,88 +19988,116 @@ function EntryForm(p) {
     setErrs({});
   }
 
-  return h("div", { className: "col", style: { gap: 8 } },
-    warn ? h("div", { className: "banner " + warn.k }, h(Icon, { n: warn.k === "err" ? "stop" : warn.k === "amber" ? "warn" : "info", size: 15 }), warn.t) : null,
-    h("div", { className: "band" },
-      assignable.length > 1
-        ? h(Sel, { label: "Assignee", cls: "person", value: f.assignee, options: assignable.map(function (u) { return { value: u.id, label: u.fullName }; }), onChange: function (e) { up("assignee", e.target.value); } })
-        : null,
-      h(Field, { label: isDayType && !f.id ? "From" : "Date", err: errs.date, req: true, cls: "date" },
-        h("input", { type: "date", value: f.date, max: isDayType ? null : todayStr(), onChange: function (e) { up("date", e.target.value); } })),
-      h("div", { className: "fld", style: { flex: "0 0 74px" } },
-        h("label", null, " "),
-        h("button", { className: "btn sm", style: { minHeight: 38 }, onClick: function () { up("date", todayStr()); } }, "Today")),
-      isDayType && !f.id ? h(Field, { label: "To", err: errs.dateTo, req: true, cls: "date" },
-        h("input", { type: "date", value: f.dateTo || f.date, min: f.date, onChange: function (e) { up("dateTo", e.target.value); } })) : null,
-      h(Sel, { label: "Type", cls: "narrow", value: f.type, options: ["Work", "Sick", "Vacation"], onChange: function (e) { up("type", e.target.value); } }),
+  var tm = function (k, label, dflt, aria) {
+    var v = f[k] || dflt;
+    return h(Field, { key: k, label: label, err: errs[k], cls: "timefld" },
+      h("div", { className: "row", style: { gap: 4, flexWrap: "nowrap" } },
+        h(TimePart, { value: v.split(":")[0], opts: HOUR_OPTS, aria: aria + " hour", onChange: function (x) { up(k, x + ":" + v.split(":")[1]); } }),
+        h(TimePart, { value: v.split(":")[1], opts: MIN_OPTS, aria: aria + " minute", onChange: function (x) { up(k, v.split(":")[0] + ":" + x); } })));
+  };
+  var el = {
+    assignee: assignable.length > 1
+      ? h(Sel, { key: "as", label: "Assignee", cls: "person", value: f.assignee, options: assignable.map(function (u) { return { value: u.id, label: u.fullName }; }), onChange: function (e) { up("assignee", e.target.value); } })
+      : null,
+    date: h(Field, { key: "dt", label: isDayType && !f.id ? "From" : "Date", err: errs.date, req: true, cls: "date" },
+      h("input", { type: "date", value: f.date, max: isDayType ? null : todayStr(), onChange: function (e) { up("date", e.target.value); } })),
+    today: h("div", { key: "td", className: "fld", style: { flex: "0 0 74px" } },
+      h("label", null, " "),
+      h("button", { className: "btn sm", style: { minHeight: 38 }, onClick: function () { up("date", todayStr()); } }, "Today")),
+    dateTo: isDayType && !f.id ? h(Field, { key: "to", label: "To", err: errs.dateTo, req: true, cls: "date" },
+      h("input", { type: "date", value: f.dateTo || f.date, min: f.date, onChange: function (e) { up("dateTo", e.target.value); } })) : null,
+    type: h(Sel, { key: "ty", label: "Type", cls: "narrow", value: f.type, options: ["Work", "Sick", "Vacation"], onChange: function (e) { up("type", e.target.value); } }),
+    days: h(Field, { key: "dy", label: "Days", cls: "narrow" }, h("input", { className: "ro", readOnly: true, tabIndex: -1, value: leaveDayLabel(f) })),
+    start: tm("start", "Start", "09:00", "Start"),
+    end: tm("end", "End", "17:00", "End"),
+    hours: h(Field, { key: "hr", label: "Hours", cls: "hours" }, h("input", { className: "ro", readOnly: true, tabIndex: -1, value: num(hrs) })),
+    hourType: h("div", { key: "ht", className: "fld htype", style: { flex: "0 0 auto" } },
+      h("label", null, "Hour type"),
+      h("div", { className: "seg", role: "radiogroup", "aria-label": "Hour type" },
+        h("button", {
+          type: "button", role: "radio", "aria-checked": f.hourType === "red" ? "true" : "false",
+          className: f.hourType === "red" ? "on r" : "", title: "Red · Company — internal time, never billed to a client",
+          onClick: function () { up("hourType", "red"); }
+        }, h("span", { className: "dot", style: { background: f.hourType === "red" ? "#fff" : C.red } }), "Red"),
+        h("button", {
+          type: "button", role: "radio", "aria-checked": f.hourType === "yellow" ? "true" : "false",
+          className: f.hourType === "yellow" ? "on y" : "", title: "Yellow · Client — billable, drawn from the project budget",
+          onClick: function () { up("hourType", "yellow"); }
+        }, h("span", { className: "dot", style: { background: f.hourType === "yellow" ? "#3B2A05" : C.yellow } }), "Yellow"),
+        can(viewer, "reportBlueTime") ? h("button", {
+          type: "button", role: "radio", "aria-checked": f.hourType === "blue" ? "true" : "false",
+          className: f.hourType === "blue" ? "on b" : "", title: "Blue · Management — time spent managing a client's projects and tasks. Like Yellow, drawn from your allowance and the project budget.",
+          onClick: function () { up("hourType", "blue"); }
+        }, h("span", { className: "dot", style: { background: f.hourType === "blue" ? "#fff" : C.blue } }), "Blue") : null)),
+    client: h(ListOrFree, {
+      key: "cl", label: "Client", req: f.hourType !== "red", cls: "grow", err: errs.client,
+      free: f.freeClient, value: f.clientId, freeValue: f.client, options: opts.clients,
+      onFreeToggle: function (v) { set(Object.assign({}, f, { freeClient: v, clientId: "", client: "" })); },
+      onChange: function (v) { up("clientId", v); }, onFreeChange: function (v) { up("client", v); }
+    }),
+    project: h(ListOrFree, {
+      key: "pr", label: "Project", req: f.hourType !== "red", cls: "grow", err: errs.project,
+      free: f.freeProject, value: f.projectId, freeValue: f.project, options: opts.projects,
+      onFreeToggle: function (v) { set(Object.assign({}, f, { freeProject: v, projectId: "", project: "" })); },
+      onChange: function (v) { up("projectId", v); }, onFreeChange: function (v) { up("project", v); }
+    }),
+    workOrder: h(ListOrFree, {
+      key: "wo", label: "Work order", cls: "grow", err: errs.workOrder,
+      free: f.freeWO, value: f.workOrderId, freeValue: f.workOrder, options: opts.workOrders,
+      disabled: !f.projectId,
+      placeholder: opts.workOrders.length ? "Select…" : "— none on this project —",
+      onFreeToggle: function (v) { set(Object.assign({}, f, { freeWO: v, workOrderId: "", workOrder: "" })); },
+      onChange: function (v) { up("workOrderId", v); }, onFreeChange: function (v) { up("workOrder", v); }
+    }),
+    task: h(Sel, { key: "tk", label: "Taskana task (optional)", cls: "grow", value: f.taskId, placeholder: opts.tasks.length ? "— none —" : "— no open Taskana task —", options: opts.tasks, onChange: function (e) { up("taskId", e.target.value); } }),
+    leave: isDayType ? h(LeaveBand, { key: "lv", db: db, viewer: viewer, form: f, up: up }) : null
+  };
+  var descPh = f.type === "Sick" ? "Reason, if you wish to record one" : f.type === "Vacation" ? "Leave note" : "What did you work on?";
+  var saveText = p.saveLabel || (isDayType && leaveNeedsApproval(viewer) ? "Send request" : f.id ? "Save changes" : "Add entry");
+  var warnEl = warn ? h("div", { className: "banner " + warn.k }, h(Icon, { n: warn.k === "err" ? "stop" : warn.k === "amber" ? "warn" : "info", size: 15 }), warn.t) : null;
 
-      isDayType ? h(Field, { label: "Days", cls: "narrow" }, h("input", { className: "ro", readOnly: true, tabIndex: -1, value: leaveDayLabel(f) }))
-        : [
-          h(Field, { key: "st", label: "Start", err: errs.start, cls: "timefld" },
-            h("div", { className: "row", style: { gap: 4, flexWrap: "nowrap" } },
-              h(TimePart, { value: (f.start || "09:00").split(":")[0], opts: HOUR_OPTS, aria: "Start hour", onChange: function (v) { up("start", v + ":" + (f.start || "09:00").split(":")[1]); } }),
-              h(TimePart, { value: (f.start || "09:00").split(":")[1], opts: MIN_OPTS, aria: "Start minute", onChange: function (v) { up("start", (f.start || "09:00").split(":")[0] + ":" + v); } }))),
-          h(Field, { key: "en", label: "End", err: errs.end, cls: "timefld" },
-            h("div", { className: "row", style: { gap: 4, flexWrap: "nowrap" } },
-              h(TimePart, { value: (f.end || "17:00").split(":")[0], opts: HOUR_OPTS, aria: "End hour", onChange: function (v) { up("end", v + ":" + (f.end || "17:00").split(":")[1]); } }),
-              h(TimePart, { value: (f.end || "17:00").split(":")[1], opts: MIN_OPTS, aria: "End minute", onChange: function (v) { up("end", (f.end || "17:00").split(":")[0] + ":" + v); } }))),
-          h(Field, { key: "hr", label: "Hours", cls: "hours" }, h("input", { className: "ro", readOnly: true, tabIndex: -1, value: num(hrs) })),
-          h("div", { key: "ht", className: "fld", style: { flex: "0 0 auto" } },
-            h("label", null, "Hour type"),
-            h("div", { className: "seg", role: "radiogroup", "aria-label": "Hour type" },
-              h("button", {
-                type: "button", role: "radio", "aria-checked": f.hourType === "red" ? "true" : "false",
-                className: f.hourType === "red" ? "on r" : "", title: "Red · Company — internal time, never billed to a client",
-                onClick: function () { up("hourType", "red"); }
-              }, h("span", { className: "dot", style: { background: f.hourType === "red" ? "#fff" : C.red } }), "Red"),
-              h("button", {
-                type: "button", role: "radio", "aria-checked": f.hourType === "yellow" ? "true" : "false",
-                className: f.hourType === "yellow" ? "on y" : "", title: "Yellow · Client — billable, drawn from the project budget",
-                onClick: function () { up("hourType", "yellow"); }
-              }, h("span", { className: "dot", style: { background: f.hourType === "yellow" ? "#3B2A05" : C.yellow } }), "Yellow"),
-              can(viewer, "reportBlueTime") ? h("button", {
-                type: "button", role: "radio", "aria-checked": f.hourType === "blue" ? "true" : "false",
-                className: f.hourType === "blue" ? "on b" : "", title: "Blue · Management — time spent managing a client's projects and tasks. Like Yellow, drawn from your allowance and the project budget.",
-                onClick: function () { up("hourType", "blue"); }
-              }, h("span", { className: "dot", style: { background: f.hourType === "blue" ? "#fff" : C.blue } }), "Blue") : null))
-        ]
+  /* the Time Log side column: one field under another, the save button across the bottom */
+  if (p.stacked) {
+    var line = function () { return h("div", { className: "band" }, [].slice.call(arguments)); };
+    return h("div", { className: "eform stack" },
+      warnEl,
+      el.assignee ? line(el.assignee) : null,
+      line(el.date, el.today),
+      el.dateTo ? line(el.dateTo) : null,
+      line(el.type, isDayType ? el.days : el.hours),
+      isDayType ? null : line(el.start, el.end),
+      isDayType ? null : line(el.hourType),
+      el.leave,
+      isDayType ? null : [line(el.client), line(el.project), line(el.workOrder), line(el.task)].map(function (x, i) { return React.cloneElement(x, { key: "l" + i }); }),
+      h(Field, { label: "Description", req: true, err: errs.description },
+        h("textarea", { rows: 4, value: f.description, placeholder: descPh, "aria-invalid": errs.description ? "true" : null, onChange: function (e) { up("description", e.target.value); } })),
+      h(Field, { label: "Notes" },
+        h("textarea", { rows: 2, value: f.notes, placeholder: "Optional", onChange: function (e) { up("notes", e.target.value); } })),
+      h("div", { className: "eform-go" },
+        p.onCancel ? h(Btn, { onClick: p.onCancel }, "Cancel") : null,
+        h(Btn, { kind: "p", className: "grow", onClick: save }, saveText)));
+  }
+
+  return h("div", { className: "col", style: { gap: 8 } },
+    warnEl,
+    h("div", { className: "band" },
+      el.assignee, el.date, el.today, el.dateTo, el.type,
+      isDayType ? el.days : [el.start, el.end, el.hours, el.hourType]
     ),
-    isDayType ? h(LeaveBand, { db: db, viewer: viewer, form: f, up: up }) : null,
-    isDayType ? null : h("div", { className: "band" },
-      h(ListOrFree, {
-        label: "Client", req: f.hourType !== "red", cls: "grow", err: errs.client,
-        free: f.freeClient, value: f.clientId, freeValue: f.client, options: opts.clients,
-        onFreeToggle: function (v) { set(Object.assign({}, f, { freeClient: v, clientId: "", client: "" })); },
-        onChange: function (v) { up("clientId", v); }, onFreeChange: function (v) { up("client", v); }
-      }),
-      h(ListOrFree, {
-        label: "Project", req: f.hourType !== "red", cls: "grow", err: errs.project,
-        free: f.freeProject, value: f.projectId, freeValue: f.project, options: opts.projects,
-        onFreeToggle: function (v) { set(Object.assign({}, f, { freeProject: v, projectId: "", project: "" })); },
-        onChange: function (v) { up("projectId", v); }, onFreeChange: function (v) { up("project", v); }
-      }),
-      h(ListOrFree, {
-        label: "Work order", cls: "grow", err: errs.workOrder,
-        free: f.freeWO, value: f.workOrderId, freeValue: f.workOrder, options: opts.workOrders,
-        disabled: !f.projectId,
-        placeholder: opts.workOrders.length ? "Select…" : "— none on this project —",
-        onFreeToggle: function (v) { set(Object.assign({}, f, { freeWO: v, workOrderId: "", workOrder: "" })); },
-        onChange: function (v) { up("workOrderId", v); }, onFreeChange: function (v) { up("workOrder", v); }
-      }),
-      h(Sel, { label: "Taskana task (optional)", cls: "grow", value: f.taskId, placeholder: opts.tasks.length ? "— none —" : "— no open Taskana task —", options: opts.tasks, onChange: function (e) { up("taskId", e.target.value); } })
-    ),
+    el.leave,
+    isDayType ? null : h("div", { className: "band" }, el.client, el.project, el.workOrder, el.task),
     h("div", { className: "band" },
       h(Inp, {
         label: "Description", req: true, cls: "wide grow", err: errs.description, value: f.description,
-        placeholder: f.type === "Sick" ? "Reason, if you wish to record one" : f.type === "Vacation" ? "Leave note" : "What did you work on?",
+        placeholder: descPh,
         onChange: function (e) { up("description", e.target.value); }
       }),
       h(Inp, { label: "Notes", cls: "grow", value: f.notes, placeholder: "Optional", onChange: function (e) { up("notes", e.target.value); } }),
       h("div", { className: "fld", style: { flex: "0 0 auto" } },
-        h("label", null, " "),
+        h("label", null, " "),
         h("div", { className: "row", style: { gap: 6 } },
           p.onCancel ? h(Btn, { onClick: p.onCancel }, "Cancel") : null,
-          h(Btn, { kind: "p", onClick: save }, p.saveLabel || (isDayType && leaveNeedsApproval(viewer) ? "Send request" : f.id ? "Save changes" : "Add entry"))))));
+          h(Btn, { kind: "p", onClick: save }, saveText)))));
 }
 
 /* Sick / Vacation: working days in the chosen range */
@@ -20378,15 +20430,15 @@ function TimeLogTab(p) {
 
   return h("div", { className: "page" }, h("div", { className: "tlsplit" },
     /* ---- form band ---- */
-    can(user, "reportOwnTime") ? h("div", { className: "panel pad tlform" },
+    can(user, "reportOwnTime") ? h("div", { className: "panel pad tlform" }, h("i", { id: "wd-sync-slot", hidden: true }),
       h("div", { className: "row", style: { marginBottom: 8 } },
         h("div", { className: "h2 grow" }, editing ? "Edit entry" : "Report time"),
         editing ? h(Chip, { k: "amber" }, "editing ", il(editing.date)) : null),
       h(EntryForm, {
-        db: db, viewer: user, value: editing ? toForm(editing) : (formKey === 0 ? preset : null), valueKey: editing ? editing.id + formKey : "new" + formKey,
+        stacked: true, db: db, viewer: user, value: editing ? toForm(editing) : (formKey === 0 ? preset : null), valueKey: editing ? editing.id + formKey : "new" + formKey,
         onSave: saveEntry, onCancel: editing ? function () { setEditing(null); } : null
       }))
-      : h("div", { className: "banner mut panel pad tlform" }, "Your role does not carry time-reporting rights."),
+      : h("div", { className: "banner mut panel pad tlform tlnone" }, "Your role does not carry time-reporting rights."),
 
     h("div", { className: "tlmain" },
     /* ---- filters ---- */
