@@ -67,7 +67,8 @@ var ICONS = {
   download: "M12 4v12M7 11l5 5 5-5M5 20h14",
   upload: "M12 20V8M7 13l5-5 5 5M5 4h14",
   logout: "M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3M10 17l-5-5 5-5M5 12h11",
-  cloud: "M7 18a5 5 0 01-.5-10A6 6 0 0118 9a4.5 4.5 0 01-1 9z"
+  cloud: "M7 18a5 5 0 01-.5-10A6 6 0 0118 9a4.5 4.5 0 01-1 9z",
+  book: "M5 4h9a3 3 0 013 3v13H8a3 3 0 01-3-3zM5 17a3 3 0 013-3h9M9 8h5"
 };
 function icon(name, label) {
   var s = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -192,6 +193,7 @@ function sidebar() {
       item("my", "me", tr("My work"), mine, trn(mine, "{n} open task", "{n} open tasks")),
       item("board", "board", tr("Board")),
       item("tasks", "list", tr("All tasks")),
+      all ? item("library", "book", tr("Library")) : null,
       all ? item("insights", "chart", tr("Insights")) : null,
       all ? item("clients", "folder", tr("Clients & projects")) : null,
       all ? item("people", "people", tr("People")) : null),

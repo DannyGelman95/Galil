@@ -375,6 +375,7 @@ WDI18N.add({
 "Approvals": "אישורים",
 "Dashboard": "לוח בקרה",
 "Library": "ספרייה",
+"Library in Taskana": "הספרייה בטסקנה",
 "Plan": "תכנון",
 "More": "עוד",
 "Outstanding requests": "בקשות פתוחות",

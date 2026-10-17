@@ -22825,94 +22825,6 @@ function DashboardTab(p) {
       } }) : null
   );
 }
-
-/* =====================================================================
-   §12.4 — Library
-   ===================================================================== */
-function LibraryTab(p) {
-  var db = p.db, user = p.user;
-  var qs = useState(""), q = qs[0], setQ = qs[1];
-  var ts = useState(""), tag = ts[0], setTag = ts[1];
-  var es = useState(null), editing = es[0], setEditing = es[1];
-
-  var items = db.library.filter(function (l) {
-    if (l.isPrivate && l.authorUserId !== user.id) return false;
-    if (tag && (l.tags || []).indexOf(tag) < 0) return false;
-    if (q) {
-      var hay = (l.title + " " + l.body + " " + (l.tags || []).join(" ")).toLowerCase();
-      if (hay.indexOf(q.toLowerCase()) < 0) return false;
-    }
-    return true;
-  });
-  var allTags = [];
-  db.library.forEach(function (l) { (l.tags || []).forEach(function (t) { if (allTags.indexOf(t) < 0) allTags.push(t); }); });
-
-  function save(f) {
-    p.mutate(function (d) {
-      var rec = {
-        id: f.id || uid("l"), title: f.title.trim(), body: f.body, authorUserId: f.authorUserId || user.id,
-        isPrivate: !!f.isPrivate, tags: String(f.tagsText || "").split(",").map(function (s) { return s.trim(); }).filter(Boolean),
-        projectId: f.projectId || null, link: f.link || "", imageUrl: f.imageUrl || "",
-        createdAt: f.createdAt || nowISO()
-      };
-      var i = d.library.findIndex(function (x) { return x.id === rec.id; });
-      if (i >= 0) d.library[i] = rec; else d.library.unshift(rec);
-      audit(d, user.id, i >= 0 ? "Library item edited" : "Library item created", "library_items", rec.id, null, null);
-    });
-    setEditing(null); toast("Saved to the Library.", "ok");
-  }
-
-  if (!can(user, "libraryRead")) return h("div", { className: "page" }, h("div", { className: "banner mut panel pad" }, "The Library is not available to your role."));
-
-  return h("div", { className: "page" },
-    h("div", { className: "panel pad row", style: { gap: 9 } },
-      h("div", { style: { minWidth: 260 }, className: "grow" }, h(Inp, { label: "Search", value: q, placeholder: "Full-text search across titles, bodies and tags", onChange: function (e) { setQ(e.target.value); } })),
-      h("div", { style: { minWidth: 150 } }, h(Sel, { label: "Tag", value: tag, placeholder: "All tags", options: allTags, onChange: function (e) { setTag(e.target.value); } })),
-      can(user, "libraryWrite") ? h("div", { className: "fld", style: { flex: "0 0 auto" } }, h("label", null, " "),
-        h(Btn, { kind: "p", onClick: function () { setEditing({ id: null, title: "", body: "", isPrivate: false, tagsText: "", projectId: "", link: "", imageUrl: "" }); } }, "+ New item")) : null),
-
-    h("div", { className: "scroll", style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(290px,1fr))", gap: 10, alignContent: "start" } },
-      items.length === 0 ? h("div", { className: "empty panel" }, "Nothing matches.") : null,
-      items.map(function (l) {
-        return h("div", { key: l.id, className: "panel pad col", style: { gap: 6 } },
-          l.imageUrl ? h("img", { src: l.imageUrl, alt: "", style: { width: "100%", borderRadius: 9, maxHeight: 130, objectFit: "cover" } }) : null,
-          h("div", { className: "row", style: { gap: 6 } },
-            h("b", { className: "grow" }, l.title),
-            l.isPrivate ? h(Chip, { k: "mut" }, "private") : null),
-          h("div", { style: { fontSize: 13, whiteSpace: "pre-wrap" } }, l.body),
-          l.link ? h("a", { href: l.link, target: "_blank", rel: "noreferrer", style: { fontSize: 12.5 } }, l.link) : null,
-          h("div", { className: "row", style: { gap: 5 } }, (l.tags || []).map(function (t) { return h(Chip, { key: t, k: "gr" }, "#", t); })),
-          l.projectId ? h("div", { className: "row", style: { gap: 5 } },
-            h(Chip, { k: "teal" }, nameOf(db.projects, l.projectId))) : null,
-          h("div", { className: "row cap" },
-            h("span", { className: "grow" }, userName(db, l.authorUserId), " · ", il(String(l.createdAt).slice(0, 10))),
-            (l.authorUserId === user.id || ["OPS", "CEO"].indexOf(user.role) >= 0) && can(user, "libraryWrite")
-              ? h(Btn, { title: "Edit", "aria-label": "Edit", sm: true, kind: "t", onClick: function () { setEditing(Object.assign({}, l, { tagsText: (l.tags || []).join(", ") })); } }, h(Icon, { n: "edit", size: 16 })) : null));
-      })),
-
-    editing ? h(Modal, {
-      title: editing.id ? "Edit library item" : "New library item", size: "md", onClose: function () { setEditing(null); },
-      footer: [editing.id ? h(Btn, { key: "d", kind: "d", onClick: function () { p.mutate(function (d) { d.library = d.library.filter(function (x) { return x.id !== editing.id; }); }); setEditing(null); } }, "Delete") : null,
-               h("div", { key: "g", className: "grow" }), h(Btn, { key: "c", onClick: function () { setEditing(null); } }, "Cancel"),
-               h(Btn, { key: "s", kind: "p", onClick: function () { if (!editing.title.trim()) { toast("Give the item a title.", "error"); return; } save(editing); } }, "Save")]
-    },
-      h("div", { className: "col", style: { gap: 9 } },
-        h(Inp, { label: "Title", req: true, value: editing.title, onChange: function (e) { setEditing(Object.assign({}, editing, { title: e.target.value })); } }),
-        h(Txt, { label: "Body", rows: 7, value: editing.body, onChange: function (e) { setEditing(Object.assign({}, editing, { body: e.target.value })); } }),
-        h("div", { className: "grid2" },
-          h(Inp, { label: "Tags (comma separated)", value: editing.tagsText, onChange: function (e) { setEditing(Object.assign({}, editing, { tagsText: e.target.value })); } }),
-          h(Inp, { label: "Link", value: editing.link, placeholder: "https://…", onChange: function (e) { setEditing(Object.assign({}, editing, { link: e.target.value })); } })),
-        h("div", { className: "grid2" },
-          h(Sel, { label: "Attach to project", value: editing.projectId || "", placeholder: "—", options: db.projects.map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { setEditing(Object.assign({}, editing, { projectId: e.target.value })); } })),
-        h("div", { className: "row", style: { gap: 14 } },
-          h("label", { className: "row", style: { gap: 7, minHeight: 44 } },
-            h("input", { type: "checkbox", checked: !!editing.isPrivate, onChange: function (e) { setEditing(Object.assign({}, editing, { isPrivate: e.target.checked })); } }), "Private to me"),
-          h("div", { className: "fld grow" }, h("label", null, "Image"),
-            h("input", { type: "file", accept: "image/*", onChange: function (e) {
-              var file = e.target.files && e.target.files[0]; if (!file) return;
-              var r = new FileReader(); r.onload = function () { setEditing(Object.assign({}, editing, { imageUrl: r.result })); }; r.readAsDataURL(file);
-            } }))))) : null);
-}
 </script>
 <script>"use strict";
 /* =====================================================================
@@ -24273,29 +24185,6 @@ function MobileExpenseSheet(p) {
     etype && etype.requiresEvidence ? h("div", { className: "banner amber" }, h(Icon, { n: "warn", size: 15 }), etype.name, " requires an evidence attachment.") : null);
 }
 
-/* ---------- Library ---------- */
-function MobileLibrary(p) {
-  var db = p.db, user = p.user;
-  if (!can(user, "libraryRead")) return h("div", { className: "mcard" }, h("span", { className: "cap" }, "The Library is not available to your role."));
-  var qs = useState(""), q = qs[0], setQ = qs[1];
-  var items = db.library.filter(function (x) {
-    if (!q) return true;
-    var s2 = (x.title + " " + (x.body || "") + " " + (x.tags || []).join(" ")).toLowerCase();
-    return s2.indexOf(q.toLowerCase()) >= 0;
-  });
-  return h(React.Fragment, null,
-    h(Inp, { label: "Search the library", value: q, placeholder: "Title, body or tag", onChange: function (e) { setQ(e.target.value); } }),
-    items.length === 0 ? h("div", { className: "mcard" }, h("span", { className: "cap" }, db.library.length === 0 ? "No library items yet." : "Nothing matches your search.")) : null,
-    items.map(function (x) {
-      return h("div", { key: x.id, className: "mcard" },
-        h("div", { className: "mt" }, x.title),
-        h("div", { className: "mrow" },
-          (x.tags || []).map(function (t, i) { return h(Chip, { key: i, k: "mut" }, t); }),
-          h("span", { className: "tnum" }, il(String(x.updatedAt || x.createdAt || todayStr()).slice(0, 10)))),
-        h("div", { style: { fontSize: 13, whiteSpace: "pre-wrap" } }, String(x.body || "").slice(0, 600)));
-    }));
-}
-
 /* ---------- the mobile shell ---------- */
 var MOBILE_TABS = [
   { k: "time", label: "Time", icon: "timer" },
@@ -24315,10 +24204,9 @@ function MobileApp(p) {
     if (t.k === "expenses") return can(user, "reportExpenses") || can(user, "approveExpenses");
     return true;
   });
-  /* "approvals" and "library" are reached through the More sheet, not the bottom
-     bar, so they are never in MOBILE_TABS — but a valid tab all the same. */
+  /* "approvals" is reached through the More sheet, not the bottom bar, so it is
+     never in MOBILE_TABS — but a valid tab all the same. (The Library is in Taskana.) */
   var moreTabs = [];
-  if (can(user, "libraryRead")) moreTabs.push("library");
   if (can(user, "approveTime") || can(user, "approveExpenses")) moreTabs.push("approvals");
   if (allowed.concat(moreTabs.map(function (k) { return { k: k }; })).every(function (t) { return t.k !== tab; })) {
     tab = allowed.length ? allowed[0].k : "more";
@@ -24345,7 +24233,6 @@ function MobileApp(p) {
     tab === "planner" ? h(MobilePlanner, common) :
     tab === "expenses" ? h(MobileExpenses, common) :
     tab === "approvals" ? h(ApprovalsTab, common) :
-    tab === "library" ? h(MobileLibrary, common) :
     h("div", { className: "mcard" }, h("span", { className: "cap" }, "Choose something from the More menu."));
 
   return h("div", { className: "mob" },
@@ -24363,17 +24250,15 @@ function MobileApp(p) {
         h("span", { className: "avatar", style: { width: 28, height: 28, fontSize: 11 } }, initialsOf(user.fullName)))),
 
     h("div", { className: "mbody" },
-      tab === "approvals" || tab === "library" ? h("div", { className: "mrow" },
-        h(Btn, { sm: true, kind: "t", onClick: function () { setTab("more"); } }, "‹ More"),
-        /* ApprovalsTab (reused from the desktop build) already renders its own
-           "Approvals" heading, so this row only adds one for Library. */
-        tab === "library" ? h("h2", { className: "mtitle" }, "Library") : null) : null,
+      tab === "approvals" ? h("div", { className: "mrow" },
+        /* ApprovalsTab (reused from the desktop build) renders its own heading */
+        h(Btn, { sm: true, kind: "t", onClick: function () { setTab("more"); } }, "‹ More")) : null,
       body),
 
     h("div", { className: "mnav", role: "tablist" },
       allowed.map(function (t) {
         var badge = t.k === "more" ? approvals : 0;
-        var on = tab === t.k || (t.k === "more" && ["approvals", "library", "more"].indexOf(tab) >= 0);
+        var on = tab === t.k || (t.k === "more" && ["approvals", "more"].indexOf(tab) >= 0);
         return h("button", {
           key: t.k, role: "tab", "aria-selected": on ? "true" : "false", className: on ? "on" : "",
           onClick: function () { if (t.k === "more") setSheet("more"); else setTab(t.k); }
@@ -24384,7 +24269,7 @@ function MobileApp(p) {
     sheet === "more" ? h(Sheet, { title: "More", onClose: function () { setSheet(null); } },
       h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); p.onHome(); } }, IconLabel("home", "Employee Portal home")),
       acc.taskana !== "none" ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "taskana/index.html#/my" }, IconLabel("tasks", "My tasks in Taskana")) : null,
-      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); setTab("library"); } }, IconLabel("library", "Library")),
+      acc.taskana !== "none" ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "taskana/index.html#/library" }, IconLabel("library", "Library in Taskana")) : null,
       can(user, "approveTime") || can(user, "approveExpenses") ? h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); setTab("approvals"); } }, IconLabel("approve", "Approvals"), approvals ? h(Chip, { k: "amber" }, approvals) : null) : null,
       h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet("mywork"); } }, IconLabel("assignments", "My assignments and allowances")),
       h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet("profile"); } }, IconLabel("user", "My profile")),
@@ -24412,8 +24297,7 @@ var TABS = [
   { k: "expenses", label: "Expenses",    need: null },
   { k: "management", label: "Management", need: null },
   { k: "approvals",label: "Approvals",   need: "approveTime" },
-  { k: "dashboard",label: "Dashboard",   need: "dashboardOwn" },
-  { k: "library",  label: "Library",     need: "libraryRead" }
+  { k: "dashboard",label: "Dashboard",   need: "dashboardOwn" }
 ];
 
 function MyWork(p) {
@@ -24765,7 +24649,6 @@ function App() {
     tab === "management" ? h(ManagementTab, Object.assign({ section: secs.management, onSection: function (k) { go("management", { management: k }); } }, common)) : null,
     tab === "approvals" ? h(ApprovalsTab, common) : null,
     tab === "dashboard" ? h(DashboardTab, common) : null,
-    tab === "library"   ? h(LibraryTab, common) : null,
 
     admin ? h(AdminModal, Object.assign({ onClose: function () { setAdmin(false); } }, common)) : null,
     profile ? h(Profile, { db: db, user: user, viewPref: viewPref, setViewPref: setViewPref, onClose: function () { setProfile(false); }, onSignOut: signOut }) : null,
