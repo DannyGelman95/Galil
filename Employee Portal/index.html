@@ -18672,7 +18672,7 @@ var CSS = [
 /* ================= §14.4 mobile shell — phones and small tablets ================= */
 ".mob{display:flex;flex-direction:column;height:100%;overflow:hidden;background:var(--paper)}",
 ".mob>.mtop{display:flex;align-items:center;gap:8px;padding:8px 12px;background:var(--chrome);color:var(--chrometx);flex:0 0 auto}",
-".mob>.mbody{flex:1;min-height:0;overflow:auto;padding:12px 12px 18px;display:flex;flex-direction:column;gap:10px;-webkit-overflow-scrolling:touch}",
+".mob>.mbody{flex:1;min-height:0;overflow:auto;padding:12px 12px 18px;display:flex;flex-direction:column;gap:10px}",
 /* every direct child of the scrolling mbody must keep its natural height —
    otherwise a child with its own overflow (like the .mseg filter row, a
    scroll container) gets an automatic min-height of 0 and the flex layout
@@ -18718,7 +18718,8 @@ var CSS = [
 "input,select,textarea{font-size:16px!important;max-width:100%}",
 "input[type=date],input[type=time],input[type=month],input[type=datetime-local]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;box-sizing:border-box;text-align:start}",
 "input::-webkit-date-and-time-value{text-align:start;margin:0}",
-".sheet .fld,.sheet .row>*,.mob .fld{min-width:0}",
+".sheet .fld,.sheet .row>*,.mob .fld,.modal .fld,.modal .row>*{min-width:0;max-width:100%}",
+".modal input,.modal select,.modal textarea,.sheet input,.sheet select,.sheet textarea{width:100%;box-sizing:border-box}",
 ".sheet .row{flex-wrap:nowrap}",
 /* dialogs open as sheets from the bottom, inside the visible screen, clear of the home indicator */
 ".ovl{place-items:end center;padding:calc(10px + env(safe-area-inset-top)) 0 0}",
@@ -18814,17 +18815,21 @@ function CopyCell(p) {
 }
 function StatusDot(p) { return h("span", { className: "dot", style: { background: p.color } }); }
 
+/* dialogs and sheets are drawn at the top of the page (straight under <body>), not inside
+   the scrolling area they were opened from: iPhone Safari otherwise draws the phone's bottom
+   bar over them */
+function onTop(el) { return ReactDOM.createPortal ? ReactDOM.createPortal(el, document.body) : el; }
 function Modal(p) {
   useEffect(function () {
     var f = function (e) { if (e.key === "Escape" && p.onClose) p.onClose(); };
     window.addEventListener("keydown", f); return function () { window.removeEventListener("keydown", f); };
   }, [p.onClose]);
-  return h("div", { className: "ovl", onMouseDown: function (e) { if (e.target === e.currentTarget && p.onClose) p.onClose(); } },
+  return onTop(h("div", { className: "ovl", onMouseDown: function (e) { if (e.target === e.currentTarget && p.onClose) p.onClose(); } },
     h("div", { className: "modal " + (p.size || ""), role: "dialog", "aria-modal": "true", "aria-label": p.title },
       h("header", null, h("div", { className: "h2 grow" }, p.title), p.head,
         h("button", { className: "iconbtn", style: { color: C.muted }, onClick: p.onClose, "aria-label": "Close" }, "✕")),
       h("div", { className: "body" }, p.children),
-      p.footer ? h("footer", null, p.footer) : null));
+      p.footer ? h("footer", null, p.footer) : null)));
 }
 
 function Toasts(p) {
@@ -18874,7 +18879,7 @@ function AskHost() {
     return function () { clearTimeout(t); window.removeEventListener("keydown", key, true); };
   }, [req]);
   if (!req) return null;
-  return h("div", { className: "ovl", style: { zIndex: 95 }, onMouseDown: function (e) { if (e.target === e.currentTarget) done(null); } },
+  return onTop(h("div", { className: "ovl", style: { zIndex: 95 }, onMouseDown: function (e) { if (e.target === e.currentTarget) done(null); } },
     h("div", { className: "modal sm", role: "dialog", "aria-modal": "true", "aria-label": req.title, ref: boxRef },
       h("header", null, h("div", { className: "h2 grow" }, req.title),
         h("button", { className: "iconbtn", style: { color: C.muted }, onClick: function () { done(null); }, "aria-label": "Close" }, "\u2715")),
@@ -18888,7 +18893,7 @@ function AskHost() {
       h("footer", null,
         h("div", { className: "grow" }),
         h(Btn, { onClick: function () { done(null); } }, "Cancel"),
-        h("button", { ref: okRef, type: "button", className: "btn " + (req.danger ? "d" : "p"), disabled: !!req.input && !val.trim(), onClick: ok }, req.okLabel || "OK"))));
+        h("button", { ref: okRef, type: "button", className: "btn " + (req.danger ? "d" : "p"), disabled: !!req.input && !val.trim(), onClick: ok }, req.okLabel || "OK")))));
 }
 
 /* multi-select dropdown — §7.1 "a compact multi-select dropdown replaces the older chip row" */
@@ -22686,13 +22691,13 @@ function Sheet(p) {
     var f = function (e) { if (e.key === "Escape" && p.onClose) p.onClose(); };
     window.addEventListener("keydown", f); return function () { window.removeEventListener("keydown", f); };
   }, [p.onClose]);
-  return h("div", { className: "sheet", onMouseDown: function (e) { if (e.target === e.currentTarget && p.onClose) p.onClose(); } },
+  return onTop(h("div", { className: "sheet", onMouseDown: function (e) { if (e.target === e.currentTarget && p.onClose) p.onClose(); } },
     h("div", { className: "sh", role: "dialog", "aria-modal": "true", "aria-label": p.title },
       h("div", { className: "grab", "aria-hidden": "true" }),
       h("header", null, h("div", { className: "h2 grow" }, p.title),
         h("button", { className: "iconbtn ink", onClick: p.onClose, "aria-label": "Close" }, "✕")),
       h("div", { className: "sb mfld" }, p.children),
-      p.footer ? h("footer", null, p.footer) : null));
+      p.footer ? h("footer", null, p.footer) : null)));
 }
 
 /* ---------- the report-time sheet ---------- */
