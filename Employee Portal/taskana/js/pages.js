@@ -5,13 +5,14 @@
 "use strict";
 
 function pageFor(r) {
-  if (!can.seeEverything() && /^(insights|clients|project|people)$/.test(r[0])) return notFound(tr("No access"), tr("Outsourced accounts see the tasks they work on. Ask a Manager if you need more."));
+  if (!can.seeEverything() && /^(insights|clients|project|people|library)$/.test(r[0])) return notFound(tr("No access"), tr("Outsourced accounts see the tasks they work on. Ask a Manager if you need more."));
   switch (r[0]) {
     case "inbox": return pageInbox();
     case "my": return pageMy();
     case "board": return pageBoard();
     case "tasks": return pageTasks();
     case "insights": return pageInsights();
+    case "library": return pageLibrary(r[1]);
     case "view": return pageView(r[1]);
     case "clients": return r[1] ? pageClient(r[1]) : pageClients();
     case "project": return pageProject(r[1]);

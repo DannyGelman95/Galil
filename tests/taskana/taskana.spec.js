@@ -545,3 +545,28 @@ test.describe("GitHub storage", () => {
     await expect(page.locator(".banner.err")).toContainText("Read and write");
   });
 });
+
+test("the Library turns pasted SME notes into a structured document and saves it", async ({ page }) => {
+  const errors = await open(page, "library");
+  await expect(page.locator(".lib-item", { hasText: "SME interview" }).first()).toBeVisible();
+  await page.getByRole("button", { name: "New document" }).click();
+  await page.locator(".lib-menu button", { hasText: "Blank document" }).click();
+  await page.locator("#lib-ed").click();
+  const notes = ["POWER-UP PROCEDURE", "1. Switch on the main breaker", "2. Turn the console key", "Q: What if BIT fails?", "A: Call maintenance.",
+    "Error codes:", "- E12 cooling loop", "todo: get the amber codes", "{\"mode\":\"standby\",\"checks\":[\"tx\"]}"].join("\n");
+  await page.evaluate(t => { const dt = new DataTransfer(); dt.setData("text/plain", t); document.getElementById("lib-ed").dispatchEvent(new ClipboardEvent("paste", { clipboardData: dt, bubbles: true, cancelable: true })); }, notes);
+  await page.getByRole("button", { name: "Writer tools" }).click();
+  await page.locator(".lib-menu button", { hasText: "Organize pasted notes" }).click();
+  const ed = page.locator("#lib-ed");
+  await expect(ed.locator("div.toc a")).toHaveCount(2);
+  await expect(ed.locator("h1")).toHaveText("Power-up procedure");
+  await expect(ed.locator("ol > li")).toHaveCount(2);
+  await expect(ed.locator(".qa .q")).toHaveText("What if BIT fails?");
+  await expect(ed.locator("mark.fu")).toHaveText("get the amber codes");
+  await expect(ed.locator("pre.lang-json")).toContainText('"mode": "standby"');
+  await expect(page.locator("#lib-foot")).toContainText("Saved");
+  const doc = (await store(page)).library.find(d => /<h1/.test(d.html) && /class="toc"/.test(d.html));
+  expect(doc).toBeTruthy();
+  expect(doc.html).not.toMatch(/<script|onerror/i);
+  expect(errors).toEqual([]);
+});
