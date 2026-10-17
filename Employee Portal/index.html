@@ -18392,6 +18392,14 @@ var CSS = [
 /* tabular figures without changing typeface — §14.1 one face across a table row */
 ".tnum{font-variant-numeric:tabular-nums;font-feature-settings:'tnum' 1}",
 ".sep{height:1px;background:var(--line);margin:8px 0}",
+/* Time Log: the report form on the start side (~35%), filters and list beside it */
+".tlsplit{flex:1;min-height:0;display:grid;grid-template-columns:minmax(280px,22%) minmax(0,1fr);gap:10px}",
+".tlsplit>.tlform{min-height:0;max-height:100%;overflow:auto;align-self:start}",
+".tlsplit>.tlmain{min-height:0;min-width:0;display:flex;flex-direction:column;gap:10px}",
+/* the Time Log table fits beside the form: headings wrap, the weekday sits under the date */
+".tbl.tlt th{white-space:normal;padding:8px 7px}",
+".tbl.tlt td{padding:7px}",
+".tbl.tlt .btn.tap{min-width:34px;padding:5px 7px}",
 /* Hebrew alongside English: bidi-correct but still left-aligned under the English name */
 ".he{direction:rtl;text-align:left;unicode-bidi:isolate}",
 
@@ -18750,6 +18758,9 @@ var CSS = [
 ".grid3,.grid4{grid-template-columns:1fr 1fr}",
 ".week{grid-template-columns:repeat(2,1fr);overflow:auto}",
 ".page{padding:10px}",
+".tlsplit{display:flex;flex-direction:column}",
+".tlsplit>.tlform{min-height:auto;max-height:none;overflow:visible;align-self:stretch}",
+".tlsplit>.tlmain{flex:1}",
 "}",
 "@media(max-width:680px){",
 ".band .fld{flex:1 1 100%}",
@@ -20365,9 +20376,9 @@ function TimeLogTab(p) {
     exportXLSX(sheets, "galil-time-" + (scope === "view" ? monthStr : "all") + ".xlsx");
   }
 
-  return h("div", { className: "page" },
+  return h("div", { className: "page" }, h("div", { className: "tlsplit" },
     /* ---- form band ---- */
-    can(user, "reportOwnTime") ? h("div", { className: "panel pad" },
+    can(user, "reportOwnTime") ? h("div", { className: "panel pad tlform" },
       h("div", { className: "row", style: { marginBottom: 8 } },
         h("div", { className: "h2 grow" }, editing ? "Edit entry" : "Report time"),
         editing ? h(Chip, { k: "amber" }, "editing ", il(editing.date)) : null),
@@ -20375,8 +20386,9 @@ function TimeLogTab(p) {
         db: db, viewer: user, value: editing ? toForm(editing) : (formKey === 0 ? preset : null), valueKey: editing ? editing.id + formKey : "new" + formKey,
         onSave: saveEntry, onCancel: editing ? function () { setEditing(null); } : null
       }))
-      : h("div", { className: "banner mut panel pad" }, "Your role does not carry time-reporting rights."),
+      : h("div", { className: "banner mut panel pad tlform" }, "Your role does not carry time-reporting rights."),
 
+    h("div", { className: "tlmain" },
     /* ---- filters ---- */
     h("div", { className: "panel pad" },
       h("div", { className: "row", style: { gap: 9 } },
@@ -20407,7 +20419,7 @@ function TimeLogTab(p) {
     h("div", { className: "panel scroll" },
       rows.length === 0
         ? h("div", { className: "empty" }, "No entries for ", MONTHS_FULL[m], " ", y, " with these filters.")
-        : h(STable, { id: "time-log", grow: "Description", center: ["Type", "Time", "Hours", "Project status"], className: "tbl mid" },
+        : h(STable, { id: "time-log", grow: "Description", center: ["Type", "Time", "Hours", "Project status"], className: "tbl mid tlt" },
             h("thead", null, h("tr", null,
               ["Date", "Employee", "Type", "Time", "Hours", "Client", "Project", "Work order", "Taskana task", "Project status", "Description", ""].map(function (c, i) {
                 return h("th", { key: i, className: c === "Hours" ? "hrs" : "" }, c);
@@ -20416,11 +20428,11 @@ function TimeLogTab(p) {
               var editable = canEditEntry(db, user, e);
               return h("tr", { key: e.id, className: e.status === "pending" ? "pend" : e.status === "cancelled" ? "canc" : "" },
                 h("td", { style: { whiteSpace: "nowrap" } },
-                  h("span", { className: "tnum" }, il(e.date)),
-                  h("span", { className: "cap", style: { marginInlineStart: 6 } }, DOW[s2d(e.date).getDay()])),
+                  h("div", { className: "tnum" }, il(e.date)),
+                  h("div", { className: "cap" }, DOW[s2d(e.date).getDay()])),
                 h("td", null, userName(db, e.assignee)),
                 h("td", null, e.type === "Work" ? h("span", { className: "cap" }, "Work") : h(Chip, { k: "mut", style: { background: e.type === "Sick" ? "var(--sickbg)" : "var(--vacbg)", color: e.type === "Sick" ? "var(--sicktx)" : "var(--vactx)", borderColor: e.type === "Sick" ? "var(--sickline)" : "var(--vacline)" } }, e.type)),
-                h("td", { className: "tnum", style: { whiteSpace: "nowrap" } }, e.start ? e.start + "–" + e.end : "—"),
+                h("td", { className: "tnum", style: { whiteSpace: "nowrap" }, "data-sort": e.start || "" }, e.start ? [e.start + "–", h("br", { key: "b" }), e.end] : "—"),
                 h("td", { className: "hrs", "data-sort": (Number(e.red) || 0) + (Number(e.yellow) || 0) + (Number(e.blue) || 0) + (Number(e.day) || 0) }, hoursChips(e)),
                 h("td", null, e.clientId ? nameOf(db.clients, e.clientId) : e.client ? h("span", { title: "Typed by the employee — not in the master list" }, e.client, " ", h(Chip, { k: "amber" }, "new")) : "—"),
                 h("td", null, e.projectId ? nameOf(db.projects, e.projectId) : e.project ? h("span", null, e.project, " ", h(Chip, { k: "amber" }, "new")) : "—"),
@@ -20436,7 +20448,7 @@ function TimeLogTab(p) {
                   editable ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit", onClick: function () { setEditing(e); window.scrollTo(0, 0); } }, h(Icon, { n: "edit", size: 16 })) : null,
                   can(user, "reportOwnTime") && e.type === "Work" ? h(DupMenu, { base: e.date, onPick: function (dates) { dupEntry(e, dates); } }) : null,
                   editable ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Delete", onClick: function () { delEntry(e); } }, h(Icon, { n: "trash", size: 16 })) : null));
-            })))));
+            })))))));
 }
 </script>
 <script>"use strict";
