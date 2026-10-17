@@ -18634,7 +18634,7 @@ var CSS = [
 ".band .fld.wide{flex:2 1 240px}",
 ".band .fld.narrow{flex:0 0 104px}",
 ".band .fld.person{flex:0 0 190px}",
-".band .fld.date{flex:0 0 138px}",
+".band .fld.date{flex:0 0 150px}",
 /* start / end: two selects side by side, wide enough to read the numbers */
 ".band .fld.timefld{flex:0 0 118px}",
 ".timefld select{padding:7px 18px 7px 8px;background-position:right 5px center;background-size:9px 6px;text-align:center;font-family:var(--mono);font-weight:600;min-width:0}",
@@ -21283,7 +21283,7 @@ function ExpensesTab(p) {
       h("div", { className: "h2", style: { marginBottom: 8 } }, f.id ? "Edit expense" : "Report an expense"),
       h("div", { className: "band" },
         can(user, "approveExpenses") ? h(Sel, { label: "Assignee", value: f.userId, options: db.users.filter(function (u) { return u.isActive && (u.id === user.id || scope.indexOf(u.id) >= 0); }).map(function (u) { return { value: u.id, label: u.fullName }; }), onChange: function (e) { up("userId", e.target.value); } }) : null,
-        h(Inp, { label: "Date", type: "date", cls: "narrow", value: f.date, onChange: function (e) { up("date", e.target.value); } }),
+        h(Inp, { label: "Date", type: "date", cls: "date", value: f.date, onChange: function (e) { up("date", e.target.value); } }),
         h("div", { className: "fld", style: { flex: "0 0 74px" } }, h("label", null, " "), h(Btn, { className: "sm", style: { minHeight: 38 }, onClick: function () { up("date", todayStr()); } }, "Today")),
         h(Inp, { label: "Time", type: "time", cls: "narrow", value: f.time, onChange: function (e) { up("time", e.target.value); } }),
         h(Sel, { label: "Expense type", req: true, err: errs.etype, value: f.etype, placeholder: "Select…", options: db.expenseTypes.map(function (t) { return { value: t.name, label: t.name + (t.ceiling != null ? " (ceiling " + t.ceiling + ")" : "") }; }), onChange: function (e) { up("etype", e.target.value); } }),
@@ -21746,7 +21746,7 @@ var WO_TX = {
     contacts: "אנשי קשר מטעם הלקוח", name: "שם", roleOn: "תפקיד בפרויקט", email: "דוא״ל", phone: "טלפון",
     noContact: "לא הוגדר איש קשר מטעם הלקוח.", primary: "איש קשר ראשי",
     team: "צוות הפרויקט מטעם גליל", position: "תפקיד", lead: "מוביל/ת הפרויקט", member: "חבר/ת צוות", noTeam: "טרם שובצו אנשי צוות מגליל.",
-    notes: "הערות", sign: "אישור וחתימות", titleEn: "שם ההזמנה (כפי שנמסר)",
+    notes: "הערות", sign: "אישור וחתימות", titleEn: "שם ההזמנה",
     terms: "תנאי ההתקשרות",
     signNote: "בחתימתם מאשרים הצדדים את היקף העבודה, התקציב, לוח הזמנים והתנאים של הזמנת עבודה זו כמפורט לעיל.",
     forClient: "בשם הלקוח — ", forGalil: "בשם ", title: "תפקיד", signature: "חתימה", date: "תאריך",
@@ -21844,9 +21844,9 @@ function woDocData(db, wo, by, lang) {
   var signer = byId(db.users, wo.galilSignatoryId || "") || db.users.filter(function (u) { return u.role === "CEO" && u.isActive; })[0] || null;
   var owner = byId(db.users, pr.ownerUserId || "");
   var deliverables = String(wo.deliverables || "").split(/\n+/).map(function (x) { return x.replace(/^\s*[-•*]\s*/, "").trim(); }).filter(Boolean);
-  /* the Hebrew document is titled in Hebrew; an English-only title moves into the details */
-  var title = wo.title || "", titleNote = "";
-  if (he && !/[\u0590-\u05FF]/.test(title)) { titleNote = title; title = (wo.titleHe || "").trim() || T.untitled + " " + (wo.code || ""); }
+  /* both documents are headed "Work order <code>"; the order's own title (in Hebrew,
+     its Hebrew title when there is one) is listed in the details */
+  var title = T.untitled + " " + (wo.code || ""), titleNote = (he && (wo.titleHe || "").trim()) || wo.title || "";
   return {
     lang: he ? "he" : "en",
     code: wo.code || "", title: title, titleNote: titleNote, status: T.statuses[wo.status] || wo.status || "", contractRef: wo.contractRef || "",
@@ -21887,6 +21887,7 @@ function buildWOPdf(db, wo, by, lang) {
       o = o || {};
       (Array.isArray(t) ? t : [t]).forEach(function (ln, i) {
         ln = pdfSafe(ln);
+        if (rtlOf(ln)) ln = ln.replace(/[()[\]]/g, function (ch) { return { "(": ")", ")": "(", "[": "]", "]": "[" }[ch]; });
         doc.text(ln, X(x), yy + i * doc.getLineHeight() / doc.internal.scaleFactor, {
           align: flip(o.align || "left"), isInputVisual: false, isOutputVisual: true, isInputRtl: rtlOf(ln), isOutputRtl: false
         });
@@ -22054,7 +22055,13 @@ function buildWOPdf(db, wo, by, lang) {
     var next = sn + 2;
     if (d.notes) { section(String(next), T.notes); para(d.notes, 9.5); next++; }
 
-    /* standard terms, numbered n.1, n.2 … with the heading in bold */
+    /* standard terms, numbered n.1, n.2 … with the heading in bold; they share
+       the signatures' page, so they start a new page when both don't fit here */
+    font("normal", 8.5, MUTED);
+    var signNeed = H - 21 - (H - 21 - 40 - 3 - split(T.signNote, CW).length * 4.2 - 8);
+    font("normal", 8.8, INK);
+    var termsNeed = 8 + WO_TERMS[d.lang].reduce(function (a, c) { return a + split(c[0] + ". " + c[1], CW - 13).length * 4.1 + 1.5; }, 0);
+    if (y + termsNeed + signNeed + 6 > H - 21) { doc.addPage(); head(false); }
     section(String(next), T.terms);
     WO_TERMS[d.lang].forEach(function (c, i) {
       var no = next + "." + (i + 1), body = c[1].replace("{start}", dt(d.startDate)).replace("{end}", dt(d.endDate));
@@ -22111,7 +22118,7 @@ function buildWOPdf(db, wo, by, lang) {
       font("normal", 6.5, MUTED);
       txt(T.generated(d.generatedBy, stamp(d.generatedAt)), M, H - 6.5);
     }
-    doc.setProperties({ title: T.untitled + " " + d.code + " — " + d.title, subject: d.client + " · " + d.project, author: CO.name, creator: "GALIL WorkDesk" });
+    doc.setProperties({ title: T.untitled + " " + d.code + " — " + d.titleNote, subject: d.client + " · " + d.project, author: CO.name, creator: "GALIL WorkDesk" });
     return doc.output("blob");
   });
 }
@@ -22148,12 +22155,12 @@ function WODocModal(p) {
     var sched = d.startDate || d.endDate ? (d.startDate ? il(d.startDate) : "—") + (lang === "he" ? " עד " : " to ") + (d.endDate ? il(d.endDate) : "—") : "";
     var me = p.user ? (lang === "he" && p.user.fullNameHe ? p.user.fullNameHe : p.user.fullName) + "\n" : "";
     var subject = lang === "he"
-      ? "הזמנת עבודה " + d.code + " — " + d.title + " (" + d.client + ")"
-      : "Work order " + d.code + " — " + d.title + " (" + d.client + ")";
+      ? "הזמנת עבודה " + d.code + " — " + d.titleNote + " (" + d.client + ")"
+      : "Work order " + d.code + " — " + d.titleNote + " (" + d.client + ")";
     var body = lang === "he"
-      ? "שלום,\n\nמצורפת הזמנת עבודה " + d.code + " עבור " + d.project + ".\n\n" + "היקף העבודה: " + (d.scope || d.title) + "\n" +
+      ? "שלום,\n\nמצורפת הזמנת עבודה " + d.code + " עבור " + d.project + ".\n\n" + "היקף העבודה: " + (d.scope || d.titleNote) + "\n" +
         (sched ? "לוח זמנים: " + sched + "\n" : "") + "\nבברכה,\n" + me + CO.name
-      : "Hello,\n\nPlease find attached work order " + d.code + " for " + d.project + ".\n\n" + "Scope: " + (d.scope || d.title) + "\n" +
+      : "Hello,\n\nPlease find attached work order " + d.code + " for " + d.project + ".\n\n" + "Scope: " + (d.scope || d.titleNote) + "\n" +
         (sched ? "Schedule: " + sched + "\n" : "") + "\nKind regards,\n" + me + CO.name;
     var file = null;
     try { file = new File([blob], name, { type: "application/pdf" }); } catch (e) {}
