@@ -121,6 +121,16 @@ test("a person deactivated in WorkDesk is turned away and led back to the portal
   await expect(page.locator("#to-portal")).toHaveAttribute("href", "../index.html");
 });
 
+test("saved views are personal: other people don't see them", async ({ page }) => {
+  await open(page, "home", "u-tamir");
+  const r = await page.evaluate(() => ({ all: db.views.length, mine: visibleViews().length, others: db.views.filter(v => v.ownerId !== me().id).length }));
+  expect(r.others).toBeGreaterThan(0);
+  expect(r.mine).toBe(r.all - r.others);
+  const other = await page.evaluate(() => db.views.find(v => v.ownerId !== me().id).id);
+  await go(page, "view/" + other);
+  await expect(page.locator(".top h1")).toHaveText("View not found");
+});
+
 test("leaving a saved view clears the filters it applied", async ({ page }) => {
   await open(page, "view/v-3");
   await expect(page.locator("#f-clientId")).toHaveValue("c-iai");

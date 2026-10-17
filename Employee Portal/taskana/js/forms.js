@@ -121,19 +121,17 @@ var FORMS = {
   },
   view: function (m) {
     var v = m.item;
-    if (!m.values) m.values = v ? { name: v.name, mode: v.mode, shared: v.shared ? "yes" : "no" } : { name: "", mode: (m.defaults && m.defaults.mode) || "tasks", shared: "no" };
+    if (!m.values) m.values = v ? { name: v.name, mode: v.mode } : { name: "", mode: (m.defaults && m.defaults.mode) || "tasks" };
     return {
       title: v ? tr("Edit saved view") : tr("Save view"), createLabel: tr("Save"),
       fields: [
         { k: "name", label: tr("Name"), req: true, first: true, max: 60, ph: tr("e.g. IAI — waiting on SME"), help: v ? tr("Shows: {f}", { f: describeFilters(v.filters || {}) }) : tr("Saves the current filters: {f}", { f: describeFilters(currentFilters()) }) },
-        { k: "mode", label: tr("Open as"), t: "select", options: function () { return [{ value: "tasks", label: tr("Task list") }, { value: "board", label: tr("Board") }]; }, half: 1 },
-        { k: "shared", label: tr("Who sees it"), t: "select", options: function () { return [{ value: "yes", label: tr("Everyone") }, { value: "no", label: tr("Only me") }]; }, half: 2 }
+        { k: "mode", label: tr("Open as"), t: "select", options: function () { return [{ value: "tasks", label: tr("Task list") }, { value: "board", label: tr("Board") }]; }, help: tr("Saved views are yours alone — nobody else sees them.") }
       ],
       validate: function (val, e) { if (db.views.some(function (x) { return x !== v && x.ownerId === me().id && x.name.toLowerCase() === val.name.toLowerCase(); })) e.name = tr("You already have a view with this name."); },
       save: function (val) {
-        var shared = val.shared === "yes";
-        if (v) { v.name = val.name; v.mode = val.mode; v.shared = shared; }
-        else { v = { id: uid("v"), name: val.name, mode: val.mode, shared: shared, ownerId: me().id, filters: currentFilters(), sort: { k: ui.sort.k, dir: ui.sort.dir } }; db.views.push(v); }
+        if (v) { v.name = val.name; v.mode = val.mode; v.shared = false; }
+        else { v = { id: uid("v"), name: val.name, mode: val.mode, shared: false, ownerId: me().id, filters: currentFilters(), sort: { k: ui.sort.k, dir: ui.sort.dir } }; db.views.push(v); }
         save(); finish(); toast(tr("View saved")); go("view/" + v.id); render();
       },
       remove: v ? function () { confirmBox(tr("Delete “{n}”?", { n: v.name }), tr("Only the saved view is removed. The tasks stay as they are."), tr("Delete"), function () { db.views = db.views.filter(function (x) { return x !== v; }); save(); finish(); clearFilters(); go(v.mode === "board" ? "board" : "tasks"); }); } : null

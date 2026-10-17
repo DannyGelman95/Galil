@@ -257,3 +257,52 @@ test.describe("Employee Portal", () => {
     await expect(page.getByText(/No access to/)).toHaveCount(0);
   });
 });
+
+/* ---------- the phone layout ---------- */
+test.describe("phone layout", () => {
+  test.use({ viewport: { width: 390, height: 844 } });
+
+  test("the Time tab lists my own time, and my team's only when I ask, each card naming who reported", async ({ page }) => {
+    const errors = await local(page);
+    await signIn(page, "danny.gelman@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await expect(page.locator("#m-time-bar")).toBeVisible();
+    const r = await page.evaluate(() => {
+      const raw = JSON.parse(localStorage.getItem("galil-workdesk-v1")).data;
+      const me = raw.users.find(u => u.id === "u-danny");
+      return { team: managedUserIds(raw, me).sort(), everyone: raw.users.length };
+    });
+    expect(r.team).toContain("u-eitan");
+    expect(r.team).not.toContain("u-tamir");
+    expect(r.team.length).toBeLessThan(r.everyone - 1);
+    await expect(page.locator(".mwho")).toHaveCount(0);
+    await page.getByRole("button", { name: "Me and my team" }).click();
+    const names = await page.locator(".mwho").allTextContents();
+    expect(names.length).toBeGreaterThan(0);
+    expect(names.some(n => /Tamir Nisman|Inon Kanner/.test(n))).toBe(false);
+    expect(errors).toEqual([]);
+  });
+
+  test("Filter & sort narrows the list", async ({ page }) => {
+    await local(page);
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await page.click("#m-filter");
+    await page.selectOption("#mf-status", "pending");
+    await page.getByRole("button", { name: "Show entries" }).click();
+    await expect(page.locator("#m-filter")).toContainText("(1)");
+    const statuses = await page.evaluate(() => [...document.querySelectorAll(".mcard")].length);
+    expect(statuses).toBeGreaterThanOrEqual(1);
+  });
+
+  test("the page can't be zoomed and nothing runs off the screen", async ({ page }) => {
+    await local(page);
+    await signIn(page, "danny.gelman@galiltc.co.il");
+    expect(await page.getAttribute('meta[name="viewport"]', "content")).toContain("user-scalable=no");
+    await page.click("#tile-workdesk");
+    await page.getByRole("button", { name: "Report without the timer" }).click();
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
+    const off = await page.evaluate(() => [...document.querySelectorAll(".sheet input,.sheet select,.sheet button")].filter(el => { const b = el.getBoundingClientRect(); return b.width && (b.left < 0 || b.right > innerWidth); }).length);
+    expect(off).toBe(0);
+  });
+});

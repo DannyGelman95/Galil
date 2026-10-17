@@ -235,9 +235,9 @@ function addDemo(d) {
       d.notifications.push({ id: uid("n"), demo: true, userId: x.reporterId, kind: "question", taskId: c.taskId, byId: c.authorId, at: c.createdAt, read: false });
   });
   d.views.push(
-    { id: X("v-1"), demo: true, name: "My overdue work", ownerId: who("u-danny"), shared: true, mode: "tasks", filters: { assigneeId: "me", overdue: "1" }, sort: { k: "dueDate", dir: 1 } },
-    { id: X("v-2"), demo: true, name: "Waiting on SME", ownerId: who("u-danny"), shared: true, mode: "tasks", filters: { status: "SME Review" }, sort: { k: "dueDate", dir: 1 } },
-    { id: X("v-3"), demo: true, name: "IAI board", ownerId: who("u-danny"), shared: true, mode: "board", filters: { clientId: "c-iai" } },
-    { id: X("v-4"), demo: true, name: "Unanswered questions", ownerId: who("u-inon"), shared: true, mode: "tasks", filters: { questions: "1" }, sort: { k: "updatedAt", dir: -1 } });
+    { id: X("v-1"), demo: true, name: "My overdue work", ownerId: who("u-danny"), shared: false, mode: "tasks", filters: { assigneeId: "me", overdue: "1" }, sort: { k: "dueDate", dir: 1 } },
+    { id: X("v-2"), demo: true, name: "Waiting on SME", ownerId: who("u-danny"), shared: false, mode: "tasks", filters: { status: "SME Review" }, sort: { k: "dueDate", dir: 1 } },
+    { id: X("v-3"), demo: true, name: "IAI board", ownerId: who("u-danny"), shared: false, mode: "board", filters: { clientId: "c-iai" } },
+    { id: X("v-4"), demo: true, name: "Unanswered questions", ownerId: who("u-inon"), shared: false, mode: "tasks", filters: { questions: "1" }, sort: { k: "updatedAt", dir: -1 } });
   return d;
 }

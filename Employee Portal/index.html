@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <meta name="theme-color" content="#1B2A18">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
@@ -17938,6 +17938,29 @@ function canEditEntry(db, user, e) {
   if (!can(user, "editOthersTime")) return false;
   return visibleUserIds(db, user, "editOthersTime").indexOf(e.assignee) >= 0;
 }
+/* the people someone manages: everyone who reports to them, directly or further down,
+   and the members of the teams they lead (and their reports in turn) */
+function entryHours(e) { return (Number(e.red) || 0) + (Number(e.yellow) || 0) + (Number(e.blue) || 0) + (Number(e.days) || 0) * 8.4; }
+function managedUserIds(db, user) {
+  var out = {}, queue = [user.id];
+  while (queue.length) {
+    var id = queue.shift();
+    db.users.forEach(function (u) {
+      if (out[u.id] || u.id === user.id) return;
+      var team = u.teamId ? byId(db.teams, u.teamId) : null;
+      if (u.managerId === id || (team && team.leadUserId === id)) { out[u.id] = 1; queue.push(u.id); }
+    });
+  }
+  return Object.keys(out);
+}
+/* whose time the phone's Time tab lists besides the person's own: the people they manage
+   (within what they may see); a read-only role with no reports sees what its role allows */
+function mobileTimePeople(db, user) {
+  var vis = visibleUserIds(db, user, "viewOthersTime");
+  var ids = managedUserIds(db, user).filter(function (id) { return vis.indexOf(id) >= 0; });
+  if (!ids.length && !can(user, "reportOwnTime")) ids = vis.filter(function (id) { return id !== user.id; });
+  return ids;
+}
 function isMonthClosed(db, dateStr) {
   return ((db.settings || {}).closedMonths || []).indexOf(String(dateStr || "").slice(0, 7)) >= 0;
 }
@@ -18309,6 +18332,14 @@ var CSS = [
 
 "*{box-sizing:border-box}",
 "html,body,#root{height:100%;margin:0}",
+/* the page doesn't zoom: no pinch, no double-tap zoom */
+"html,body{touch-action:pan-x pan-y;overscroll-behavior:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}",
+/* screens with rounded corners and a home indicator: keep the top bar and bottom bar clear of them */
+".mob>.mtop{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));padding-top:max(8px,env(safe-area-inset-top))}",
+".mob>.mbody{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}",
+/* the save-status pill sits above the bottom bar, and steps aside while a sheet or dialog is open */
+"body:has(.mnav){--wdsync-bottom:calc(66px + env(safe-area-inset-bottom))}",
+"body:has(.sheet) #wd-sync,body:has(.ovl) #wd-sync{display:none!important}",
 "body{background:var(--paper);color:var(--ink);font:400 14px/1.45 var(--font);-webkit-font-smoothing:antialiased}",
 "button,input,select,textarea{font:inherit;color:inherit}",
 "a{color:var(--deep)}",
@@ -18670,14 +18701,33 @@ var CSS = [
 ".bigbtn.gh{background:var(--surface);border:1px solid var(--line);color:var(--ink)}",
 /* bottom sheet */
 ".sheet{position:fixed;inset:0;z-index:120;display:flex;flex-direction:column;justify-content:flex-end;background:var(--ovl)}",
-".sheet>.sh{background:var(--surface);border-radius:20px 20px 0 0;max-height:92vh;display:flex;flex-direction:column;overflow:hidden}",
+".sheet>.sh{background:var(--surface);border-radius:20px 20px 0 0;max-height:92vh;max-height:calc(100dvh - 24px - env(safe-area-inset-top));display:flex;flex-direction:column;overflow:hidden;width:100%}",
 ".sheet>.sh>header{display:flex;align-items:center;gap:9px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--wash);flex:0 0 auto}",
 ".sheet>.sh>.sb{padding:13px 14px;overflow:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}",
 ".sheet>.sh>footer{display:flex;gap:8px;padding:11px 14px calc(11px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--surface2);flex:0 0 auto}",
 ".sheet .grab{width:38px;height:4px;border-radius:999px;background:var(--line);margin:7px auto 0}",
 ".mseg{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}",
 ".mseg::-webkit-scrollbar{display:none}",
+".chipbtn{flex:0 0 auto;min-height:38px;padding:0 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);font:600 13px var(--font);cursor:pointer;white-space:nowrap}",
+".chipbtn.on{background:var(--deep);border-color:var(--deep);color:var(--deepfg)}",
+".mfbar{display:flex;align-items:center;gap:6px}",
+".mwho{color:var(--ink)}",
 ".mfld input,.mfld select,.mfld textarea{min-height:46px;font-size:16px}",
+/* phones: fields keep inside the screen (iOS draws date and time fields wider than asked), text fields at 16px so the browser doesn't zoom in on focus */
+"@media(max-width:820px){",
+"input,select,textarea{font-size:16px!important;max-width:100%}",
+"input[type=date],input[type=time],input[type=month],input[type=datetime-local]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;box-sizing:border-box;text-align:start}",
+"input::-webkit-date-and-time-value{text-align:start;margin:0}",
+".sheet .fld,.sheet .row>*,.mob .fld{min-width:0}",
+".sheet .row{flex-wrap:nowrap}",
+/* dialogs open as sheets from the bottom, inside the visible screen, clear of the home indicator */
+".ovl{place-items:end center;padding:calc(10px + env(safe-area-inset-top)) 0 0}",
+".modal,.modal.sm,.modal.md,.modal.lg{width:100%;border-radius:18px 18px 0 0;max-height:calc(100dvh - 10px - env(safe-area-inset-top))}",
+".modal>footer{padding-bottom:calc(11px + env(safe-area-inset-bottom));flex-wrap:wrap}",
+".modal>.body{padding-left:max(14px,env(safe-area-inset-left));padding-right:max(14px,env(safe-area-inset-right))}",
+"body:has(.mnav) .toasts{bottom:calc(74px + env(safe-area-inset-bottom))}",
+".toasts{bottom:calc(18px + env(safe-area-inset-bottom));max-width:calc(100vw - 24px)}",
+"}",
 ".mday{display:flex;flex-direction:column;gap:6px}",
 ".mday>h5{margin:0;font:700 12.5px var(--font);color:var(--muted);display:flex;justify-content:space-between;align-items:center;letter-spacing:.02em}",
 
@@ -22768,14 +22818,36 @@ function MobileTime(p) {
     setSheet(form);
   }
 
-  var mine = db.entries.filter(function (e) { return canSeeEntry(db, user, e); })
-    .filter(function (e) { return String(e.date).slice(0, 7) === todayStr().slice(0, 7); })
-    .sort(function (a, b) { return a.date === b.date ? String(b.start).localeCompare(String(a.start)) : b.date.localeCompare(a.date); });
-  var today = mine.filter(function (e) { return e.date === todayStr(); });
+  /* month, whose time, filters and sort */
+  var fs = useState(function () { return { month: todayStr().slice(0, 7), who: "me", type: "", status: "", projectId: "", sort: "new" }; });
+  var f = fs[0], setF = fs[1];
+  var fos = useState(false), filtersOpen = fos[0], setFiltersOpen = fos[1];
+  var upF = function (k, v) { var n = Object.assign({}, f); n[k] = v; setF(n); };
+  var people = mobileTimePeople(db, user);
+  var reportsOwn = can(user, "reportOwnTime");
+  var who = f.who === "me" && !reportsOwn ? "all" : f.who;
+  var whoIds = who === "me" ? [user.id] : who === "all" ? (reportsOwn ? [user.id] : []).concat(people) : [who];
+  var monthEntries = db.entries.filter(function (e) {
+    return whoIds.indexOf(e.assignee) >= 0 && canSeeEntry(db, user, e) && String(e.date).slice(0, 7) === f.month;
+  });
+  var mine = monthEntries.filter(function (e) {
+    return (!f.type || e.type === f.type) && (!f.status || e.status === f.status) && (!f.projectId || e.projectId === f.projectId);
+  }).sort(function (a, b) {
+    if (f.sort === "hours") return entryHours(b) - entryHours(a);
+    var c = a.date === b.date ? String(b.start || "").localeCompare(String(a.start || "")) : b.date.localeCompare(a.date);
+    return f.sort === "old" ? -c : c;
+  });
+  var nFilters = (f.type ? 1 : 0) + (f.status ? 1 : 0) + (f.projectId ? 1 : 0) + (f.sort !== "new" ? 1 : 0);
+  var showWho = whoIds.length > 1 || whoIds[0] !== user.id;
+  var shiftMonth = function (n) { var d = s2d(f.month + "-01"); d.setMonth(d.getMonth() + n); upF("month", d2s(d).slice(0, 7)); };
+  var mDate = s2d(f.month + "-01");
+  var today = db.entries.filter(function (e) { return e.assignee === user.id && e.date === todayStr(); });
   var tot = mine.filter(function (e) { return e.status === "registered" || e.status === "locked"; })
     .reduce(function (a, e) { a.r += Number(e.red) || 0; a.y += Number(e.yellow) || 0; a.b += Number(e.blue) || 0; return a; }, { r: 0, y: 0, b: 0 });
   var todayTot = today.filter(function (e) { return e.status !== "cancelled"; })
     .reduce(function (a, e) { return a + (Number(e.red) || 0) + (Number(e.yellow) || 0) + (Number(e.blue) || 0); }, 0);
+  var projOpts = [];
+  monthEntries.forEach(function (e) { if (e.projectId && !projOpts.some(function (o) { return o.value === e.projectId; })) projOpts.push({ value: e.projectId, label: nameOf(db.projects, e.projectId) }); });
 
   var reportRights = can(user, "reportOwnTime");
 
@@ -22793,20 +22865,29 @@ function MobileTime(p) {
             h("button", { className: "bigbtn go", onClick: start }, "▶ Start the timer"),
             h("button", { className: "bigbtn gh", style: { minHeight: 44, fontSize: 14 }, onClick: function () { setSheet(blankEntry(user.id)); } }, "Report without the timer"))) : null,
 
+    h("div", { className: "mfbar", id: "m-time-bar" },
+      h("button", { type: "button", className: "iconbtn ink", onClick: function () { shiftMonth(-1); }, "aria-label": "Previous month" }, WDI18N.he ? "›" : "‹"),
+      h("h2", { className: "mtitle grow", style: { textAlign: "center" } }, MONTHS_FULL[mDate.getMonth()], " ", mDate.getFullYear()),
+      h("button", { type: "button", className: "iconbtn ink", onClick: function () { shiftMonth(1); }, "aria-label": "Next month", disabled: f.month >= todayStr().slice(0, 7) }, WDI18N.he ? "‹" : "›")),
+    h("div", { className: "mseg" },
+      reportsOwn ? h("button", { type: "button", className: "chipbtn" + (who === "me" ? " on" : ""), onClick: function () { upF("who", "me"); } }, "Mine") : null,
+      people.length ? h("button", { type: "button", className: "chipbtn" + (who === "all" ? " on" : ""), onClick: function () { upF("who", "all"); } }, reportsOwn ? "Me and my team" : "Everyone I can see") : null,
+      h("button", { type: "button", className: "chipbtn" + (nFilters || (who !== "me" && who !== "all") ? " on" : ""), id: "m-filter", onClick: function () { setFiltersOpen(true); } }, "⚙ ", nFilters ? tr("Filter & sort ({n})", { n: nFilters }) : "Filter & sort")),
     h("div", { className: "mrow", style: { justifyContent: "space-between" } },
-      h("h2", { className: "mtitle" }, MONTHS_FULL[new Date().getMonth()]),
+      h("span", null, tr("{n} entries", { n: mine.length })),
       h("div", { className: "row", style: { gap: 5 } },
         h(Chip, { k: "red" }, num(tot.r), " R"),
         h(Chip, { k: "yel" }, num(tot.y), " Y"),
         tot.b ? h(Chip, { k: "blue" }, num(tot.b), " B") : null)),
 
-    mine.length === 0 ? h("div", { className: "mcard" }, h("span", { className: "cap" }, "Nothing reported this month yet.")) : null,
+    mine.length === 0 ? h("div", { className: "mcard" }, h("span", { className: "cap" }, nFilters ? "No entries match these filters." : "Nothing reported this month yet.")) : null,
     mine.map(function (e) {
       var editable = canEditEntry(db, user, e);
       return h("div", { key: e.id, className: "mcard" },
         h("div", { className: "mhead" },
           h("div", { className: "mt" }, e.description || h("span", { className: "cap" }, "—")),
           hoursChips(e)),
+        showWho ? h("div", { className: "mrow mwho" }, h("b", null, e.assignee === user.id ? tr("{name} (you)", { name: userName(db, e.assignee) }) : userName(db, e.assignee))) : null,
         h("div", { className: "mrow" },
           h("span", { className: "tnum" }, il(e.date)), h("span", null, DOW[s2d(e.date).getDay()]),
           e.start ? h("span", { className: "tnum" }, e.start, "–", e.end) : null,
@@ -22826,6 +22907,22 @@ function MobileTime(p) {
       db: db, user: user, mutate: p.mutate, value: sheet,
       onClose: function () { setSheet(null); }, onSaved: function () { setSheet(null); }
     }) : null,
+    filtersOpen ? h(Sheet, { title: "Filter & sort", onClose: function () { setFiltersOpen(false); },
+      footer: [
+        h(Btn, { key: "c", kind: "t", onClick: function () { setF({ month: f.month, who: f.who, type: "", status: "", projectId: "", sort: "new" }); } }, "Clear"),
+        h("div", { key: "g", className: "grow" }),
+        h(Btn, { key: "d", kind: "p", onClick: function () { setFiltersOpen(false); } }, "Show entries")] },
+      people.length ? h(Sel, { label: "Whose time", id: "mf-who", value: who, onChange: function (e) { upF("who", e.target.value); },
+        options: (reportsOwn ? [{ value: "me", label: "Mine" }] : []).concat([{ value: "all", label: reportsOwn ? "Me and my team" : "Everyone I can see" }])
+          .concat(people.map(function (id) { return { value: id, label: userName(db, id) }; }).sort(function (a, b) { return a.label.localeCompare(b.label); })) }) : null,
+      h(Sel, { label: "Type", id: "mf-type", value: f.type, onChange: function (e) { upF("type", e.target.value); },
+        options: [{ value: "", label: "All types" }, { value: "Work", label: "Work" }, { value: "Sick", label: "Sick" }, { value: "Vacation", label: "Vacation" }] }),
+      h(Sel, { label: "Status", id: "mf-status", value: f.status, onChange: function (e) { upF("status", e.target.value); },
+        options: [{ value: "", label: "All statuses" }, { value: "registered", label: "Registered" }, { value: "pending", label: "Pending" }, { value: "cancelled", label: "Cancelled" }, { value: "locked", label: "Locked" }] }),
+      h(Sel, { label: "Project", id: "mf-project", value: f.projectId, onChange: function (e) { upF("projectId", e.target.value); },
+        options: [{ value: "", label: "All projects" }].concat(projOpts) }),
+      h(Sel, { label: "Sort", id: "mf-sort", value: f.sort, onChange: function (e) { upF("sort", e.target.value); },
+        options: [{ value: "new", label: "Newest first" }, { value: "old", label: "Oldest first" }, { value: "hours", label: "Most hours first" }] })) : null,
     dup ? h(Sheet, { title: "Duplicate entry", onClose: function () { setDup(null); } },
       h("div", { className: "cap" }, il(dup.date), dup.start ? " \u00b7 " + dup.start + "\u2013" + dup.end : "", " \u00b7 ", dup.description),
       h(DupOptions, { base: dup.date, onPick: function (dates) { var e = dup; setDup(null); p.onDuplicate(e, dates); } })) : null);

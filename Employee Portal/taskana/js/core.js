@@ -235,7 +235,7 @@ var can = {
     var u = me(), p = projectOf(t);
     return isManager() || c.authorId === u.id || t.assigneeId === u.id || t.reporterId === u.id || (p && p.leadUserId === u.id);
   },
-  editView: function (v) { return v.ownerId === me().id || roleOf() === "Admin"; }
+  editView: function (v) { return v.ownerId === me().id; }
 };
 
 /* ================= history ================= */

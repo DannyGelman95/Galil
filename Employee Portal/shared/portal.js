@@ -12,6 +12,17 @@
    access. Without an explicit setting, access follows the WorkDesk role.
    ===================================================================== */
 "use strict";
+/* the portal's pages don't zoom: no pinch (Safari ignores user-scalable=no in the browser), no double-tap zoom */
+(function () {
+  try {
+    var st = document.createElement("style");
+    st.textContent = "html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}";
+    (document.head || document.documentElement).appendChild(st);
+    ["gesturestart", "gesturechange", "gestureend"].forEach(function (ev) { document.addEventListener(ev, function (e) { e.preventDefault(); }, { passive: false }); });
+    document.addEventListener("touchmove", function (e) { if (e.touches && e.touches.length > 1) e.preventDefault(); }, { passive: false });
+  } catch (e) {}
+})();
+
 var GalilPortal = (function () {
   var LANG_KEY = "galil-portal-lang", THEME_KEY = "galil-workdesk-theme", SESSION_KEY = "galil-workdesk-session",
       WD_KEY = "galil-workdesk-v1", TK_LOCAL_KEY = "galil-taskana-v1", TK_CACHE_KEY = "galil-taskana-cache:data";

@@ -252,6 +252,7 @@ HE = {
 "Only the saved view is removed. The tasks stay as they are.": "רק התצוגה השמורה תוסר. המשימות יישארו כמו שהן.",
 "Open": "פתוחות",
 "Open as": "פתיחה כ־",
+"Saved views are yours alone — nobody else sees them.": "תצוגות שמורות הן שלכם בלבד — אף אחד אחר לא רואה אותן.",
 "Open now": "פתוחות עכשיו",
 "Open questions": "שאלות פתוחות",
 "Open tasks": "משימות פתוחות",

@@ -459,3 +459,21 @@ table.t th.num,table.t td.num{text-align:center;padding-inline:10px}
 .wd-mini{display:inline-flex;align-items:center;gap:6px;font-size:12px}
 .wd-mini .trk{width:70px;height:6px}
 [dir=rtl] .wd-line .mono,[dir=rtl] .wd-line .small{unicode-bidi:plaintext}
+
+/* ---------- phones: no zoom, nothing under the notch or the home indicator, fields inside the screen ---------- */
+html,body{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%;overscroll-behavior:none}
+@media (max-width:760px){
+  input,select,textarea{font-size:16px!important;max-width:100%}
+  input[type=date],input[type=time],input[type=month],input[type=datetime-local]{-webkit-appearance:none;appearance:none;display:block;width:100%;min-width:0;box-sizing:border-box;text-align:start}
+  input::-webkit-date-and-time-value{text-align:start;margin:0}
+  .field,.fields>*{min-width:0}
+  .side{padding-top:max(16px,env(safe-area-inset-top));padding-bottom:max(12px,env(safe-area-inset-bottom));padding-inline-start:max(12px,env(safe-area-inset-left))}
+  .top{padding-top:max(12px,env(safe-area-inset-top));padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right))}
+  .content{padding-inline:max(16px,env(safe-area-inset-left)) max(16px,env(safe-area-inset-right));padding-bottom:calc(16px + env(safe-area-inset-bottom))}
+  /* dialogs open as sheets from the bottom, with the title and the buttons always in view */
+  .scrim{align-items:flex-end;padding:calc(10px + env(safe-area-inset-top)) 0 0}
+  .modal,.modal.wide{max-width:none;border-radius:16px 16px 0 0;max-height:calc(100vh - 10px);max-height:calc(100dvh - 10px - env(safe-area-inset-top));overflow:auto;overscroll-behavior:contain}
+  .modal-h{position:sticky;top:0;z-index:3;background:var(--panel);border-radius:16px 16px 0 0}
+  .modal-f{position:sticky;bottom:0;z-index:3;background:var(--panel);padding-bottom:calc(12px + env(safe-area-inset-bottom))}
+  .toast,.toasts{bottom:calc(16px + env(safe-area-inset-bottom))}
+}

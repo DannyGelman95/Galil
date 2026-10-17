@@ -310,7 +310,7 @@ var WDCloud = (function () {
   function paintStatus() {
     if (!api.remote || !document.body) return;
     if (!pill) {
-      pill = el("button", { id: "wd-sync", title: "", style: "position:fixed;inset-inline-start:12px;bottom:12px;z-index:900;display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#D9E4D0);background:var(--surface,#fff);color:var(--muted,#5F6E62);font:600 11.5px system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12);max-width:60vw", onclick: function () { api.showInfo(); } });
+      pill = el("button", { id: "wd-sync", title: "", style: "position:fixed;inset-inline-start:max(12px,env(safe-area-inset-left));bottom:var(--wdsync-bottom,calc(12px + env(safe-area-inset-bottom)));z-index:900;display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#D9E4D0);background:var(--surface,#fff);color:var(--muted,#5F6E62);font:600 11.5px system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12);max-width:60vw", onclick: function () { api.showInfo(); } });
       document.body.appendChild(pill);
     }
     var s = S.state, w = where();

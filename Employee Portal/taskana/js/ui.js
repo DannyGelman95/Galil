@@ -198,7 +198,7 @@ function sidebar() {
     h("div", { class: "nav-h", id: "views-h" }, tr("Saved views"), h("span", { class: "small" }, views.length || "")),
     h("nav", { class: "nav", "aria-labelledby": "views-h" }, views.length ? views.map(function (v) {
       var on = (ui.route[0] === "view" || (ui.route[0] === "task" && ui.bg[0] === "view")) && (ui.route[1] === v.id || ui.bg[1] === v.id);
-      return h("button", { class: "vw" + (on ? " on" : ""), title: v.name + " · " + (v.shared ? tr("shared with everyone") : tr("only you")), onclick: function () { go("view/" + v.id); } },
+      return h("button", { class: "vw" + (on ? " on" : ""), title: v.name, onclick: function () { go("view/" + v.id); } },
         h("span", { class: "star" + (v.ownerId === u.id ? " mine" : "") }, icon("star")), h("span", { class: "lbl" }, v.name),
         h("span", { class: "who" }, icon(v.mode === "board" ? "board" : "list", v.mode === "board" ? tr("Board") : tr("List"))));
     }) : h("div", { class: "small hint" }, tr("Filter the board or task list, then choose Save view."))),

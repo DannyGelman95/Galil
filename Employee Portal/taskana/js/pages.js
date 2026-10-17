@@ -21,7 +21,8 @@ function pageFor(r) {
 }
 
 /* ---------- saved views ---------- */
-function visibleViews() { var u = me(); return (db.views || []).filter(function (v) { return v.ownerId === u.id || v.shared; }); }
+/* saved views are personal: each person sees only the views they saved */
+function visibleViews() { var u = me(); return (db.views || []).filter(function (v) { return v.ownerId === u.id; }); }
 function applyView(v) {
   clearFilters(); Object.keys(v.filters || {}).forEach(function (k) { if (k in ui.filters) ui.filters[k] = v.filters[k]; });
   if (v.sort) ui.sort = { k: v.sort.k, dir: v.sort.dir };
@@ -33,7 +34,7 @@ function viewChanged(v) {
   if (keys.some(function (k) { return (a[k] || "") !== (b[k] || ""); })) return true;
   return v.mode === "tasks" && !!v.sort && (v.sort.k !== ui.sort.k || v.sort.dir !== ui.sort.dir);
 }
-function viewCrumb(v, kind) { return tr("Saved view") + " · " + kind + " · " + (v.shared ? tr("shared") : tr("private")) + (v.ownerId !== me().id ? " · " + tr("by {name}", { name: userName(v.ownerId) }) : ""); }
+function viewCrumb(v, kind) { return tr("Saved view") + " · " + kind; }
 function describeFilters(f) {
   var out = [];
   if (f.q) out.push("“" + f.q + "”");
@@ -46,6 +47,7 @@ function describeFilters(f) {
 }
 function pageView(id) {
   var v = byId(db.views, id);
+  if (v && v.ownerId !== me().id) v = null;
   if (!v) return notFound(tr("View not found"), tr("This saved view was deleted."));
   return v.mode === "board" ? pageBoard(v) : pageTasks(v);
 }

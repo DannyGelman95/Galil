@@ -541,7 +541,7 @@ var ARTICLES = [
   '<li><strong>Duplicate</strong> an entry with the ⧉ button — to the previous or next day or week, a number of days back or forward (optionally onto every working day in between), or a specific date.</li>' +
   '<li>Click a work order code anywhere in a table to copy it.</li>' +
   '<li>Click a column heading to sort the table, drag a heading to move it, or drag its edge to resize it. Use <strong>＋ Save</strong> above the table to keep that layout as a view.</li>' +
-  '<li>On your phone, use the running timer in the mobile layout.</li></ul>' +
+  '<li>On your phone, use the running timer in the mobile layout. Below it, <strong>‹ ›</strong> change the month and <strong>⚙ Filter &amp; sort</strong> narrows and sorts your entries; managers can switch to <strong>Me and my team</strong> to see the time of the people who report to them.</li></ul>' +
   '<div class="callout note"><b>Out of allowance?</b> Use <strong>Request hours</strong> under ◱ My assignments and allowances — your Team Lead or Project Manager approves or declines it.</div>',
   he:
   '<ol class="steps">' +
@@ -555,7 +555,7 @@ var ARTICLES = [
   '<li><strong>שכפלו</strong> רישום עם הכפתור ⧉ — ליום או לשבוע הקודם או הבא, למספר ימים אחורה או קדימה (ואפשר לכל יום עבודה שביניהם), או לתאריך מסוים.</li>' +
   '<li>לחיצה על קוד הזמנת עבודה בכל טבלה מעתיקה אותו.</li>' +
   '<li>לחצו על כותרת עמודה למיון, גררו כותרת להזזה או גררו את הקצה לשינוי הרוחב. <strong>＋ שמירה</strong> מעל הטבלה שומר את הפריסה כתצוגה.</li>' +
-  '<li>בטלפון, השתמשו בטיימר שבתצוגת הטלפון.</li></ul>' +
+  '<li>בטלפון, השתמשו בטיימר שבתצוגת הטלפון. מתחתיו, <strong>‹ ›</strong> מחליפים חודש ו<strong>⚙ סינון ומיון</strong> מצמצם וממיין את הרישומים; מנהלים יכולים לעבור ל<strong>אני והצוות שלי</strong> כדי לראות את השעות של מי שכפוף להם.</li></ul>' +
   '<div class="callout note"><b>נגמרה המכסה?</b> השתמשו ב<strong>בקשת שעות</strong> תחת ◱ השיבוצים והמכסות שלי — ראש הצוות או מנהל/ת הפרויקט מאשרים או דוחים.</div>'
   } },
 

@@ -28,7 +28,8 @@ var PORTAL_CSS = [
 "transition:transform .2s,box-shadow .2s,border-color .2s}",
 ".tile:hover{transform:translateY(-3px);border-color:var(--tc,var(--deep));box-shadow:0 1px 2px var(--shadow),0 22px 40px -20px var(--shadow2)}",
 ".tile:focus-visible{outline:3px solid var(--tc,var(--deep));outline-offset:3px}",
-".tile::before{content:'';position:absolute;inset:0 0 auto 0;height:5px;border-radius:20px 20px 0 0;background:var(--tc,var(--green))}",
+".tile{overflow:hidden}",
+".tile::before{content:'';position:absolute;inset:0 0 auto 0;height:5px;background:var(--tc,var(--green))}",
 ".tile .ticon{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:var(--tbg,var(--wash));color:var(--tc,var(--deep));flex:0 0 auto}",
 ".tile .ticon svg{width:30px;height:30px}",
 ".tile .tname{font:700 19px/1.2 var(--font)}",
@@ -55,7 +56,8 @@ var PORTAL_CSS = [
 ".iconbtn.who{display:flex;align-items:center}",
 ".acc{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center}",
 ".acc .chip{font-size:11px;padding:1px 7px}",
-"@media(max-width:680px){.hubwrap{padding:18px 14px 30px}.hubtop{padding:8px 12px}.tile{min-height:0}.hubtop .brand small{display:none}}"
+".hubwrap{padding-left:max(22px,env(safe-area-inset-left));padding-right:max(22px,env(safe-area-inset-right));padding-bottom:calc(40px + env(safe-area-inset-bottom))}",
+"@media(max-width:680px){.hubwrap{padding:18px max(16px,env(safe-area-inset-right)) calc(70px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}.hubtop{padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left))}.tile{min-height:0}.hubtop .brand small{display:none}}"
 ].join("\n");
 
 /* Hebrew: the layout mirrors. Most of the stylesheet already lays out with flex and
