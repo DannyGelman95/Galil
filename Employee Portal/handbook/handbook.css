@@ -117,25 +117,64 @@ a:hover{color:var(--accent)}
 .rolenote{font-family:var(--sans); font-size:13px; color:var(--muted); flex:1 1 200px; min-width:0}
 .rolenote b{color:var(--ink); font-weight:600}
 
-/* ---------- shell ---------- */
-.shell{
-  max-width:1180px; margin:0 auto; padding-inline:20px; padding-block:0 64px;
-  display:grid; grid-template-columns:224px minmax(0,1fr); gap:44px; align-items:start;
+/* ---------- shell: topic cards on the home screen, one chapter at a time when reading ---------- */
+.shell{max-width:1180px; margin:0 auto; padding-inline:20px; padding-block:0 64px}
+[hidden]{display:none !important}
+.search{flex:1 1 260px; max-width:400px; position:relative; align-self:flex-end}
+.search input{
+  width:100%; font-family:var(--sans); font-size:15px; padding-block:11px; padding-inline:38px 14px;
+  border-radius:10px; border:1px solid #33462C; background:#16210F; color:#EAF3E0;
 }
-.toc{position:sticky; top:60px; padding-block:30px; max-height:calc(100vh - 76px); overflow:auto; font-family:var(--sans); font-size:13.5px}
-.toc h2{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); margin:0 0 10px; font-weight:600}
-.toc ol{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:1px}
-.toc a{display:grid; grid-template-columns:22px 1fr; gap:6px; align-items:baseline; padding:4px 7px; border-radius:6px; color:var(--muted); text-decoration:none; line-height:1.35}
-.toc a:hover{background:var(--wash); color:var(--ink)}
-.toc a .n{font-family:var(--mono); font-size:11px; color:var(--faint)}
-.toc a.on{background:var(--wash); color:var(--ink); font-weight:600}
-.toc a.on .n{color:var(--accent)}
+.search input::placeholder{color:#8FA87A}
+.search input:focus{outline:2px solid var(--accent-bright); outline-offset:1px}
+.search .ic{position:absolute; inset-inline-start:13px; top:50%; transform:translateY(-50%); color:#8FA87A; pointer-events:none; display:flex}
+body.reading .masthead{padding-block:16px 14px}
+body.reading .masthead h1, body.reading .masthead .standfirst, body.reading .stamp{display:none}
+body.reading .masthead-in{align-items:center}
+body.reading .wordmark{margin-bottom:0}
+
+.home-h{font-family:var(--sans); font-weight:600; font-size:22px; color:var(--ink); margin:0 0 4px}
+.home-sub{font-family:var(--sans); color:var(--muted); margin:0 0 24px; font-size:15px}
+.group{margin:0 0 30px}
+.group-h{font-family:var(--sans); font-weight:600; font-size:17px; color:var(--ink); margin:0 0 12px}
+.tcards{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px}
+.tcard{
+  display:flex; flex-direction:column; gap:6px; padding:16px; border-radius:12px; text-decoration:none;
+  background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); color:var(--body);
+  transition:border-color .15s, transform .15s;
+}
+.tcard:hover{border-color:var(--accent); transform:translateY(-1px); color:var(--body)}
+.tcard .top{display:flex; justify-content:space-between; align-items:center}
+.tcard svg{width:22px; height:22px; color:var(--accent)}
+.tcard .n{font-family:var(--mono); font-size:11px; color:var(--faint)}
+.tcard b{font-family:var(--sans); font-weight:600; font-size:15.5px; color:var(--ink); line-height:1.3}
+.tcard span.s{font-family:var(--sans); font-size:13.5px; color:var(--muted); line-height:1.45}
+.tcard em{font-style:normal; font-family:var(--mono); font-size:11.5px; color:var(--accent-ink); margin-top:auto; padding-top:4px}
+.tcard.locked{opacity:.55; box-shadow:none; background:var(--sunk)}
+.tcard.locked em{color:var(--faint)}
+
+.ch{max-width:820px; margin-inline:auto}
+.chbar{display:flex; flex-wrap:wrap; align-items:center; gap:8px 14px; margin-bottom:18px}
+.backbtn{
+  display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-weight:600; font-size:13.5px;
+  padding:6px 13px; border-radius:999px; border:1px solid var(--line); background:var(--surface); color:var(--ink); text-decoration:none;
+}
+.backbtn:hover{border-color:var(--accent); color:var(--accent-ink)}
+.backbtn svg{width:15px; height:15px}
+[dir="rtl"] .backbtn svg{transform:scaleX(-1)}
+.crumbs{font-family:var(--sans); font-size:12.5px; color:var(--faint)}
+.crumbs a{color:var(--muted); text-decoration:none}
+.pager{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:40px; padding-top:18px; border-top:1px solid var(--line-soft); font-family:var(--sans); font-size:14px}
+.pager a{display:flex; flex-direction:column; gap:2px; padding:10px 14px; border:1px solid var(--line); border-radius:10px; text-decoration:none; color:var(--ink); background:var(--surface)}
+.pager a:hover{border-color:var(--accent)}
+.pager a small{font-size:11.5px; color:var(--muted)}
+.pager a.next{text-align:end; grid-column:2}
 
 main{padding-block:30px; min-width:0}
 
 /* ---------- chapters ---------- */
 .ch{padding-block:0 8px; scroll-margin-top:72px}
-.ch + .ch{margin-top:56px; border-top:1px solid var(--line-soft); padding-top:46px}
+.ch [id]{scroll-margin-top:72px}
 .ch-head{display:flex; gap:16px; align-items:baseline; flex-wrap:wrap; margin-bottom:6px}
 .ch-num{font-family:var(--mono); font-size:13px; font-weight:500; color:var(--accent); border:1px solid var(--line); border-radius:6px; padding:2px 8px; background:var(--wash); flex:0 0 auto}
 .ch h2{font-family:var(--sans); font-weight:600; font-size:clamp(22px,3vw,29px); line-height:1.15; margin:0; color:var(--ink); letter-spacing:-.015em; text-wrap:balance}
@@ -266,17 +305,13 @@ table code{background:transparent; padding:0}
 .foot a{color:var(--accent-ink)}
 
 @media (max-width:900px){
-  .shell{grid-template-columns:minmax(0,1fr); gap:0}
-  .toc{position:static; max-height:none; padding-block:22px 0; border-bottom:1px solid var(--line-soft)}
-  .toc ol{display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:1px}
+  .stamp{display:none}
   main{padding-block:22px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
 
 /* ---------- portal additions ---------- */
 .part{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin:0 0 10px}
-.toc .toc-part{font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--accent); font-weight:700; margin:14px 7px 4px}
-.toc .toc-part:first-child{margin-top:0}
 .utility .langbtn{flex:0 0 auto; border:1px solid var(--chrome-fg-soft); background:transparent; color:var(--chrome-fg); border-radius:999px; padding:3px 10px; font:inherit; font-size:12px; cursor:pointer}
 .utility .langbtn:hover{border-color:var(--accent-bright); color:var(--accent-bright)}
 .tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:0 0 24px}
@@ -285,4 +320,5 @@ table code{background:transparent; padding:0}
 [dir="rtl"] .tnum, [dir="rtl"] code, [dir="rtl"] .mono, [dir="rtl"] td.num{unicode-bidi:plaintext}
 [dir="rtl"] .rolebtn, [dir="rtl"] .rc, [dir="rtl"] .stamp, [dir="rtl"] .ch-num{direction:ltr}
 [dir="rtl"] .masthead h1, [dir="rtl"] .ch h2, [dir="rtl"] h3{letter-spacing:0}
-[dir="rtl"] .rolebar .lead, [dir="rtl"] h4, [dir="rtl"] .toc h2, [dir="rtl"] .part{letter-spacing:0; text-transform:none}
+[dir="rtl"] .rolebar .lead, [dir="rtl"] h4, [dir="rtl"] .part{letter-spacing:0; text-transform:none}
+@media (prefers-reduced-motion:reduce){ .tcard{transition:none} }

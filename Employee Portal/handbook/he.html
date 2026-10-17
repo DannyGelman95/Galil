@@ -21,7 +21,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
 <div class="utility">
   <div class="utility-in">
-    <a href="../index.html">⌂ פורטל העובדים</a>
+    <a href="../index.html"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-1px"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg> פורטל העובדים</a>
     <a href="../index.html#/workdesk/time">WorkDesk</a>
     <a href="../taskana/index.html">Taskana</a>
     <a href="../kb/index.html">מאגר הידע</a>
@@ -42,6 +42,10 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <h1 style="margin-top:22px">המדריך לפורטל העובדים</h1>
       <p class="standfirst">כל פונקציה בפורטל העובדים של GALIL — כניסה, הרשאות פורטל, WorkDesk ו-Taskana — מה היא עושה, איך עושים אותה ואילו תפקידים רשאים. בחרו את התפקיד שלכם בסרגל שלמטה, והמדריך יסמן את מה שרלוונטי לכם.</p>
     </div>
+    <div class="search">
+      <span class="ic" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span>
+      <input type="search" id="q" placeholder="חיפוש במדריך" aria-label="חיפוש במדריך" autocomplete="off">
+    </div>
     <div class="stamp">
       <span>יישום <b>פורטל העובדים של GALIL</b></span>
       <span>מכסה <b>פורטל · WorkDesk · Taskana</b></span>
@@ -60,12 +64,9 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 </nav>
 
 <div class="shell">
-  <nav class="toc" aria-label="תוכן העניינים">
-    <h2>תוכן העניינים</h2>
-    <ol id="toclist"></ol>
-  </nav>
+  <main id="main">
 
-  <main>
+  <div id="home"></div>
 
   <!-- ============ Part A · the Employee Portal ============ -->
   <section class="ch" id="ch-portal" data-part="פורטל העובדים" data-title="פורטל העובדים">

@@ -99,29 +99,45 @@ a:hover{color:var(--accent)}
 .search input:focus{outline:2px solid var(--accent-bright); outline-offset:1px}
 .search .ic{position:absolute; inset-inline-start:13px; top:50%; transform:translateY(-50%); color:#8FA87A; font-family:var(--sans); pointer-events:none}
 
-/* ---------- shell ---------- */
-.shell{max-width:1180px; margin:0 auto; padding:0 20px 64px; display:grid; grid-template-columns:250px minmax(0,1fr); gap:44px; align-items:start}
-.toc{position:sticky; top:0; padding-block:28px; max-height:100vh; overflow:auto; font-family:var(--sans); font-size:13.5px}
-.toc h2{font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--faint); margin:18px 0 6px; font-weight:600}
-.toc h2:first-child{margin-top:0}
-.toc ul{list-style:none; margin:0; padding:0}
-.toc a{display:block; padding:4px 8px; border-radius:6px; color:var(--muted); text-decoration:none; line-height:1.35}
-.toc a:hover{background:var(--wash); color:var(--ink)}
-.toc a.on{background:var(--wash); color:var(--ink); font-weight:600}
+/* ---------- shell: topic cards on the home screen, one focused article when reading ---------- */
+.shell{max-width:1180px; margin:0 auto; padding:0 20px 64px}
 main{padding-block:28px; min-width:0}
+body.reading .masthead{padding-block:16px 14px}
+body.reading .masthead h1, body.reading .masthead .standfirst{display:none}
+body.reading .wordmark{margin-bottom:0}
+body.reading .masthead-in{align-items:center}
 
 /* ---------- home ---------- */
-.cats{display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-top:8px}
-.cat{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:18px 18px 12px; box-shadow:var(--shadow)}
-.cat .ico{font-size:22px}
-.cat h2{font-family:var(--sans); font-weight:600; font-size:18px; color:var(--ink); margin:6px 0 2px}
-.cat p{font-size:14.5px; color:var(--muted); margin:0 0 10px}
-.cat ul{list-style:none; margin:0; padding:0; font-family:var(--sans); font-size:14px}
-.cat li{border-top:1px solid var(--line-soft)}
-.cat li a{display:block; padding:7px 0; text-decoration:none}
-.cat li a:hover{text-decoration:underline}
 .home-h{font-family:var(--sans); font-weight:600; font-size:22px; color:var(--ink); margin:0 0 4px}
 .home-sub{color:var(--muted); margin:0 0 20px}
+.group{margin:0 0 30px}
+.group-h{display:flex; align-items:center; flex-wrap:wrap; gap:4px 10px; margin:0 0 12px}
+.group-h svg{width:20px; height:20px; color:var(--accent); flex:0 0 auto}
+.group-h h2{font-family:var(--sans); font-weight:600; font-size:17px; color:var(--ink); margin:0}
+.group-h span{font-family:var(--sans); font-size:13.5px; color:var(--muted)}
+.tcards{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px}
+.tcard{
+  display:flex; flex-direction:column; gap:6px; padding:16px; border-radius:12px; text-decoration:none;
+  background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); color:var(--body);
+  transition:border-color .15s, transform .15s;
+}
+.tcard:hover{border-color:var(--accent); transform:translateY(-1px); color:var(--body)}
+.tcard svg{width:22px; height:22px; color:var(--accent)}
+.tcard b{font-family:var(--sans); font-weight:600; font-size:15.5px; color:var(--ink); line-height:1.3}
+.tcard span{font-family:var(--sans); font-size:13.5px; color:var(--muted); line-height:1.45}
+.tcard em{font-style:normal; font-family:var(--mono); font-size:11.5px; color:var(--accent-ink); margin-top:auto; padding-top:4px}
+.tcard.start{border-color:var(--accent); background:var(--wash)}
+
+/* ---------- reader ---------- */
+.reader{max-width:760px; margin:0 auto}
+.backbtn{
+  display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-weight:600; font-size:13.5px;
+  padding:6px 13px; border-radius:999px; border:1px solid var(--line); background:var(--surface); color:var(--ink);
+  text-decoration:none; margin-bottom:14px;
+}
+.backbtn:hover{border-color:var(--accent); color:var(--accent-ink)}
+.backbtn svg{width:15px; height:15px}
+[dir="rtl"] .backbtn svg{transform:scaleX(-1)}
 
 /* ---------- article ---------- */
 .crumbs{font-family:var(--sans); font-size:12.5px; color:var(--faint); margin-bottom:10px}
@@ -153,8 +169,11 @@ code{font-family:var(--mono); font-size:.87em; background:var(--sunk); padding:1
 table{border-collapse:collapse; width:100%; font-family:var(--sans); font-size:14px; margin:0 0 18px}
 th,td{text-align:start; padding:8px 10px; border-bottom:1px solid var(--line)}
 th{font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); font-weight:600}
-.pager{display:flex; justify-content:space-between; gap:12px; margin-top:40px; padding-top:18px; border-top:1px solid var(--line-soft); font-family:var(--sans); font-size:14px; flex-wrap:wrap}
-.pager a{text-decoration:none}
+.pager{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:40px; padding-top:18px; border-top:1px solid var(--line-soft); font-family:var(--sans); font-size:14px}
+.pager a{display:flex; flex-direction:column; gap:2px; padding:10px 14px; border:1px solid var(--line); border-radius:10px; text-decoration:none; color:var(--ink); background:var(--surface)}
+.pager a:hover{border-color:var(--accent)}
+.pager a small{font-size:11.5px; color:var(--muted)}
+.pager a.next{text-align:end; grid-column:2}
 
 /* ---------- search results ---------- */
 .results{list-style:none; padding:0; margin:0}
@@ -175,18 +194,9 @@ th{font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--m
 }
 .btn:hover{background:var(--accent-bright); color:#0E1509}
 
-.menu-toggle{display:none}
-@media (max-width:860px){
-  .shell{grid-template-columns:1fr; gap:0}
-  .toc{position:static; max-height:none; padding-block:14px 0; border-bottom:1px solid var(--line)}
-  .toc nav[data-collapsed="true"]{display:none}
-  .menu-toggle{
-    display:block; width:100%; text-align:start; font-family:var(--sans); font-size:14px; font-weight:600;
-    background:var(--surface); color:var(--ink); border:1px solid var(--line); border-radius:8px; padding:9px 12px; cursor:pointer; margin-bottom:10px;
-  }
-  .utility .who{margin-inline-start:0}
-}
-@media print{ .utility,.toc,.search,.pager,.menu-toggle{display:none} .shell{display:block} }
+@media (max-width:860px){ .utility .who{margin-inline-start:0} }
+@media (prefers-reduced-motion:reduce){ .tcard{transition:none} }
+@media print{ .utility,.search,.pager,.backbtn{display:none} }
 .lang{display:inline-flex; border:1px solid var(--chrome-fg-soft); border-radius:999px; overflow:hidden; flex:0 0 auto}
 .lang button{border:0; background:transparent; color:var(--chrome-fg); font:600 11.5px var(--sans); padding:3px 9px; cursor:pointer}
 .lang button[aria-pressed="true"]{background:var(--accent-bright); color:#0E1509}
@@ -217,17 +227,13 @@ th{font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--m
       <p class="standfirst" data-t="standfirst">Onboarding, company rules and step-by-step training — everything you need to work at GALIL, in one place.</p>
     </div>
     <div class="search" id="searchwrap" hidden>
-      <span class="ic" aria-hidden="true">⌕</span>
+      <span class="ic" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="display:block"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span>
       <input type="search" id="q" autocomplete="off">
     </div>
   </div>
 </header>
 
 <div class="shell" id="shell" hidden>
-  <aside class="toc">
-    <button type="button" class="menu-toggle" id="menutoggle" aria-expanded="false"></button>
-    <nav id="nav" data-collapsed="true"></nav>
-  </aside>
   <main id="main" tabindex="-1"></main>
 </div>
 
@@ -251,10 +257,11 @@ var UI = {
   kicker: ["Employee Portal · Knowledge Base", "פורטל העובדים · מאגר ידע"], title: ["Knowledge Base", "מאגר ידע"],
   standfirst: ["Onboarding, company rules and step-by-step training — everything you need to work at GALIL, in one place.", "קליטה, כללי החברה והדרכות צעד אחר צעד — כל מה שצריך כדי לעבוד בגליל, במקום אחד."],
   search: ["Search articles (e.g. VPN, leave, Taskana)", "חיפוש מאמרים (למשל VPN, חופשה, Taskana)"], searchLabel: ["Search the knowledge base", "חיפוש במאגר הידע"],
-  browse: ["☰ Browse articles", "☰ עיון במאמרים"], navLabel: ["Knowledge base articles", "מאמרי מאגר הידע"], home: ["🏠 Home", "🏠 דף הבית"],
-  homeH: ["Browse by topic", "עיון לפי נושא"], homeSub: ["New here? Start with <a href=\"#/first-week\">Your first week checklist</a>.", "חדשים כאן? התחילו ב<a href=\"#/first-week\">רשימת המשימות לשבוע הראשון</a>."],
+  homeH: ["What do you need to know?", "מה תרצו לדעת?"], homeSub: ["Pick a topic, or search above. New here? Start with the first-week checklist.", "בחרו נושא, או חפשו למעלה. חדשים כאן? התחילו ברשימת המשימות לשבוע הראשון."],
+  allTopics: ["All topics", "כל הנושאים"], prev: ["‹ Previous", "הקודם ›"], next: ["Next ›", "‹ הבא"], minRead: ["{n} min read", "{n} דק׳ קריאה"],
+  clear: ["Clear the search", "ניקוי החיפוש"],
   updated: ["Last updated", "עודכן לאחרונה"], results1: ["1 result for", "תוצאה אחת עבור"], resultsN: ["{n} results for", "{n} תוצאות עבור"],
-  none: ["No articles match. Try a different word, or <a href=\"#/\">browse all topics</a>.", "לא נמצאו מאמרים. נסו מילה אחרת, או <a href=\"#/\">עיינו בכל הנושאים</a>."],
+  none: ["No articles match. Try a different word, or <a href=\"#/\" data-clear>browse all topics</a>.", "לא נמצאו מאמרים. נסו מילה אחרת, או <a href=\"#/\" data-clear>עיינו בכל הנושאים</a>."],
   signedIn: ["Signed in as", "מחובר/ת בתור"], siteTitle: ["GALIL Knowledge Base", "מאגר הידע של גליל"], searchTitle: ["Search", "חיפוש"],
   dark: ["Switch to the dark theme", "מעבר לערכת נושא כהה"], light: ["Switch to the light theme", "מעבר לערכת נושא בהירה"]
 };
@@ -275,37 +282,44 @@ function esc(s) { return String(s).replace(/[&<>"']/g, function (c) { return { "
 function textOf(html) { var d = document.createElement("div"); d.innerHTML = html; return d.textContent || ""; }
 
 var main = document.getElementById("main");
-var nav = document.getElementById("nav");
 var q = document.getElementById("q");
 
-function renderNav(activeId) {
-  nav.innerHTML = '<ul><li><a href="#/" class="' + (activeId ? "" : "on") + '">' + T("home") + '</a></li></ul>' +
-    CATS.map(function (c) {
-      return '<h2>' + esc(L(c.title)) + '</h2><ul>' + inCat(c.k).map(function (a) {
-        return '<li><a href="#/' + a.id + '" class="' + (a.id === activeId ? "on" : "") + '">' + esc(L(a.title)) + '</a></li>';
-      }).join("") + '</ul>';
-    }).join("");
+/* line icons, drawn in currentColor like the portal's own */
+var ICONS = {
+  onboarding: '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>',
+  portal: '<path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/>',
+  rules: '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M9 15l2 2 4-4"/>',
+  training: '<path d="M22 10L12 5 2 10l10 5 10-5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+  back: '<path d="M19 12H5M12 19l-7-7 7-7"/>'
+};
+function icon(k) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (ICONS[k] || ICONS.rules) + '</svg>'; }
+function minutes(a) { return Math.max(1, Math.round(textOf(L(a.body)).split(/\s+/).length / 200)); }
+function card(a, cls) {
+  return '<a class="tcard' + (cls ? " " + cls : "") + '" href="#/' + a.id + '">' + icon(a.cat) +
+    '<b>' + esc(L(a.title)) + '</b><span>' + esc(L(a.summary)) + '</span><em>' + T("minRead").replace("{n}", minutes(a)) + '</em></a>';
 }
+function setReading(on) { document.body.classList.toggle("reading", on); }
+
 function renderHome() {
   document.title = T("siteTitle");
+  setReading(false);
   main.innerHTML = '<h2 class="home-h">' + T("homeH") + '</h2><p class="home-sub">' + T("homeSub") + '</p>' +
-    '<div class="cats">' + CATS.map(function (c) {
-      return '<section class="cat"><div class="ico" aria-hidden="true">' + c.icon + '</div><h2>' + esc(L(c.title)) + '</h2><p>' + esc(L(c.desc)) + '</p><ul>' +
-        inCat(c.k).map(function (a) { return '<li><a href="#/' + a.id + '">' + esc(L(a.title)) + '</a></li>'; }).join("") + '</ul></section>';
-    }).join("") + '</div>';
-  renderNav(null);
+    CATS.map(function (c) {
+      return '<section class="group"><div class="group-h">' + icon(c.k) + '<h2>' + esc(L(c.title)) + '</h2><span>' + esc(L(c.desc)) + '</span></div>' +
+        '<div class="tcards">' + inCat(c.k).map(function (a) { return card(a, a.id === "first-week" ? "start" : ""); }).join("") + '</div></section>';
+    }).join("");
 }
 function renderArticle(a) {
   var list = ARTICLES, i = list.indexOf(a), prev = list[i - 1], next = list[i + 1], c = catOf(a.cat);
-  var back = LANG === "he" ? "→ " : "← ", fwd = LANG === "he" ? " ←" : " →";
   document.title = L(a.title) + " · " + T("siteTitle");
-  main.innerHTML = '<div class="crumbs"><a href="#/">' + T("title") + '</a> › ' + esc(L(c.title)) + '</div>' +
-    '<article><h1>' + esc(L(a.title)) + '</h1><div class="meta">' + T("updated") + ' ' + esc(when(a.updated)) + '</div>' + L(a.body) + '</article>' +
+  setReading(true);
+  main.innerHTML = '<div class="reader"><a class="backbtn" href="#/">' + icon("back") + T("allTopics") + '</a>' +
+    '<div class="crumbs"><a href="#/">' + T("title") + '</a> › ' + esc(L(c.title)) + '</div>' +
+    '<article><h1>' + esc(L(a.title)) + '</h1><div class="meta">' + T("minRead").replace("{n}", minutes(a)) + ' · ' + T("updated") + ' ' + esc(when(a.updated)) + '</div>' + L(a.body) + '</article>' +
     '<div class="pager">' +
-      (prev ? '<a href="#/' + prev.id + '">' + back + esc(L(prev.title)) + '</a>' : '<span></span>') +
-      (next ? '<a href="#/' + next.id + '">' + esc(L(next.title)) + fwd + '</a>' : '<span></span>') +
-    '</div>';
-  renderNav(a.id);
+      (prev ? '<a href="#/' + prev.id + '"><small>' + T("prev") + '</small>' + esc(L(prev.title)) + '</a>' : '') +
+      (next ? '<a class="next" href="#/' + next.id + '"><small>' + T("next") + '</small>' + esc(L(next.title)) + '</a>' : '') +
+    '</div></div>';
 }
 function renderSearch(term) {
   var t = term.trim().toLowerCase();
@@ -314,11 +328,10 @@ function renderSearch(term) {
     return [a.title.en, a.title.he, a.summary.en, a.summary.he, textOf(a.body.en), textOf(a.body.he)].join(" ").toLowerCase().indexOf(t) >= 0;
   });
   document.title = T("searchTitle") + " · " + T("siteTitle");
+  setReading(false);
   main.innerHTML = '<h2 class="home-h">' + (hits.length === 1 ? T("results1") : T("resultsN").replace("{n}", hits.length)) + ' “' + esc(term.trim()) + '”</h2>' +
-    (hits.length ? '<ul class="results">' + hits.map(function (a) {
-      return '<li><a href="#/' + a.id + '">' + esc(L(a.title)) + '</a><span class="c">' + esc(L(catOf(a.cat).title)) + '</span><p>' + esc(L(a.summary)) + '</p></li>';
-    }).join("") + '</ul>' : '<p class="home-sub">' + T("none") + '</p>');
-  renderNav(null);
+    (hits.length ? '<p class="home-sub"><a href="#/" data-clear>' + T("clear") + '</a></p><div class="tcards">' + hits.map(function (a) { return card(a); }).join("") + '</div>'
+      : '<p class="home-sub">' + T("none") + '</p>');
 }
 function route() {
   var id = (location.hash || "").replace(/^#\/?/, "");
@@ -331,8 +344,6 @@ function route() {
 /* ---- interface words, language switch ---- */
 document.querySelectorAll("[data-t]").forEach(function (el) { el.textContent = T(el.getAttribute("data-t")); });
 q.placeholder = T("search"); q.setAttribute("aria-label", T("searchLabel"));
-document.getElementById("menutoggle").textContent = T("browse");
-nav.setAttribute("aria-label", T("navLabel"));
 document.querySelectorAll(".lang button").forEach(function (b) {
   b.setAttribute("aria-pressed", b.getAttribute("data-lang") === LANG ? "true" : "false");
   b.addEventListener("click", function () { if (b.getAttribute("data-lang") !== LANG) GalilPortal.setLang(b.getAttribute("data-lang")); });
@@ -351,14 +362,8 @@ document.querySelectorAll(".lang button").forEach(function (b) {
     if (q.value.trim()) { if (location.hash && location.hash !== "#/") history.replaceState(null, "", "#/"); renderSearch(q.value); }
     else route();
   });
-  var toggle = document.getElementById("menutoggle");
-  toggle.addEventListener("click", function () {
-    var open = nav.getAttribute("data-collapsed") === "true";
-    nav.setAttribute("data-collapsed", open ? "false" : "true");
-    toggle.setAttribute("aria-expanded", String(open));
-  });
-  nav.addEventListener("click", function (e) {
-    if (e.target.tagName === "A") { nav.setAttribute("data-collapsed", "true"); toggle.setAttribute("aria-expanded", "false"); }
+  main.addEventListener("click", function (e) {
+    if (e.target.closest("[data-clear]")) { e.preventDefault(); q.value = ""; history.replaceState(null, "", "#/"); route(); }
   });
   route();
 })();
@@ -368,7 +373,9 @@ document.querySelectorAll(".lang button").forEach(function (b) {
   var btn = document.getElementById("themebtn");
   function paint(t) {
     document.documentElement.setAttribute("data-theme", t);
-    btn.textContent = t === "dark" ? "☀" : "◐";
+    btn.innerHTML = t === "dark"
+      ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>'
+      : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9z"/></svg>';
     btn.setAttribute("aria-label", t === "dark" ? T("light") : T("dark"));
     btn.title = btn.getAttribute("aria-label");
   }

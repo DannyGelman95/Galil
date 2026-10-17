@@ -206,7 +206,7 @@ function PortalHome(p) {
         className: "iconbtn", onClick: function () { p.setTheme(p.theme === "dark" ? "light" : "dark"); },
         title: p.theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme",
         "aria-label": p.theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme"
-      }, p.theme === "dark" ? "☀" : "☾"),
+      }, h(Icon, { n: p.theme === "dark" ? "sun" : "moon" })),
       h("button", { className: "who iconbtn", style: { minWidth: 0, padding: "0 8px", gap: 9 }, onClick: p.onProfile, title: "My profile" },
         h("span", { className: "avatar", style: user.photoUrl ? { backgroundImage: "url(" + user.photoUrl + ")", backgroundSize: "cover" } : null }, user.photoUrl ? "" : initialsOf(user.fullName)),
         h("span", { className: "nm col", style: { alignItems: "center", gap: 0 } },
@@ -230,16 +230,16 @@ function PortalHome(p) {
             h("span", { className: "ticon" }, h(AppGlyph, { kind: t.k })),
             h("div", { className: "tname" }, t.name)),
           h("div", { className: "tdesc" }, t.desc),
-          h("div", { className: "tstats" }, t.on ? t.stats : h(Chip, { k: "mut" }, "🔒 No access")),
+          h("div", { className: "tstats" }, t.on ? t.stats : h(Chip, { k: "mut" }, h(Icon, { n: "lock", size: 12, style: { display: "inline-block", verticalAlign: "-1px", marginInlineEnd: 4 } }), "No access")),
           t.on ? h("span", { className: "tgo" }, tr("Open {app}", { app: tr(t.name) }), h("span", { "aria-hidden": "true" }, WDI18N.he ? "←" : "→")) : null);
       })),
 
       h("div", { className: "quick", "aria-label": "Shortcuts" },
-        acc.workdesk && can(user, "reportOwnTime") ? h("button", { type: "button", onClick: function () { p.onOpen("time"); } }, "⏱ ", "Report time") : null,
-        acc.workdesk && can(user, "reportOwnTime") ? h("button", { type: "button", onClick: function () { p.onOpen("time"); } }, "🌴 ", "Request sick or vacation days") : null,
-        acc.workdesk && (can(user, "reportExpenses") || can(user, "approveExpenses")) ? h("button", { type: "button", onClick: function () { p.onOpen("expenses"); } }, "🧾 ", "Expenses") : null,
-        acc.workdesk && p.approvals ? h("button", { type: "button", onClick: function () { p.onOpen("approvals"); } }, "✔ ", "Approvals") : null,
-        acc.taskana !== "none" ? h("a", { href: "taskana/index.html#/my" }, "☑ ", "My tasks") : null,
+        acc.workdesk && can(user, "reportOwnTime") ? h("button", { type: "button", onClick: function () { p.onOpen("time"); } }, h(Icon, { n: "timer", size: 16 }), "Report time") : null,
+        acc.workdesk && can(user, "reportOwnTime") ? h("button", { type: "button", onClick: function () { p.onOpen("time"); } }, h(Icon, { n: "leave", size: 16 }), "Request sick or vacation days") : null,
+        acc.workdesk && (can(user, "reportExpenses") || can(user, "approveExpenses")) ? h("button", { type: "button", onClick: function () { p.onOpen("expenses"); } }, h(Icon, { n: "receipt", size: 16 }), "Expenses") : null,
+        acc.workdesk && p.approvals ? h("button", { type: "button", onClick: function () { p.onOpen("approvals"); } }, h(Icon, { n: "approve", size: 16 }), "Approvals") : null,
+        acc.taskana !== "none" ? h("a", { href: "taskana/index.html#/my" }, h(Icon, { n: "tasks", size: 16 }), "My tasks") : null,
         h("a", { href: "install/index.html" }, h(AppGlyph, { kind: "install", style: { width: 16, height: 16 } }), "Install on your phone")),
 
       h("div", { className: "hubfoot" },

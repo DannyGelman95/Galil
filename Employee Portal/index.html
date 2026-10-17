@@ -45,7 +45,11 @@ window.__bootFail = function (e) {
   var p = document.createElement("pre"); p.textContent = (e && (e.stack || e.message)) || String(e);
   b.appendChild(p);
 };
-window.addEventListener("error", function (ev) { window.__bootFail(ev.error || ev.message); });
+window.addEventListener("error", function (ev) {
+  /* the browser's "ResizeObserver loop" notice is harmless (a table re-measured its columns twice in a frame) */
+  if (/ResizeObserver loop/.test(ev.message || "")) return;
+  window.__bootFail(ev.error || ev.message);
+});
 </script>
 <!-- React 19 (MIT, Meta) + scheduler, inlined so this file needs no network -->
 <script>var __reg={},__cache={};
@@ -18357,6 +18361,9 @@ var CSS = [
 ".rolechip{background:rgba(140,198,62,.18);color:var(--green);border:1px solid rgba(140,198,62,.45);padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600}",
 ".iconbtn{min-width:44px;min-height:44px;display:grid;place-items:center;background:transparent;border:0;color:#D9E8C6;border-radius:10px;cursor:pointer;font-size:16px}",
 ".iconbtn:hover{background:rgba(255,255,255,.1);color:#fff}",
+".iconbtn:disabled{opacity:.3;cursor:default;background:transparent}",
+".ico{display:block;flex:0 0 auto}",
+"[dir=rtl] .backbtn .ico{transform:scaleX(-1)}",
 ".iconbtn.ink{color:var(--muted)}",
 ".iconbtn.ink:hover{background:var(--wash);color:var(--ink)}",
 
@@ -18523,6 +18530,8 @@ var CSS = [
 ".copy:hover{color:var(--deep);text-decoration:underline;text-underline-offset:2px}",
 ".copy .ci{opacity:0;font-size:10px}",
 ".copy:hover .ci,.copy:focus-visible .ci{opacity:.75}",
+".copy.email{color:var(--deep);font-size:12.5px;text-decoration:underline dotted;text-underline-offset:3px}",
+".copy.email .ci{opacity:.45}",
 ".empty{padding:34px;text-align:center;color:var(--muted);font-size:13.5px}",
 
 /* ---- cards / stat ---- */
@@ -18550,6 +18559,8 @@ var CSS = [
 ".modal.sm{width:min(560px,100%)}",
 ".modal.md{width:min(820px,100%)}",
 ".modal.lg{width:min(1040px,100%)}",
+".wosec{font:700 11px var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--deep);border-bottom:1px solid var(--line);padding:8px 0 4px;margin-top:4px}",
+".wodoc{width:100%;height:70vh;border:1px solid var(--line);border-radius:10px;background:#fff}",
 ".modal>header{display:flex;align-items:center;gap:10px;padding:13px 16px;border-bottom:1px solid var(--line);background:var(--wash)}",
 ".modal>.body{padding:14px 16px;overflow:auto;flex:1;min-height:0}",
 ".modal>footer{display:flex;gap:8px;justify-content:flex-end;padding:11px 16px;border-top:1px solid var(--line);background:var(--surface2)}",
@@ -18782,6 +18793,52 @@ function Btn(p) {
 }
 function Chip(p) { return h("span", { className: "chip " + (p.k || "gr"), title: p.title, style: p.style }, p.children); }
 
+/* line icons, drawn in currentColor on a 24-unit grid so they match in both themes.
+   Each entry is a list of shapes: a string is a path, an object is a circle or a rect. */
+var ICONS = {
+  sun: [{ c: [12, 12, 4] }, "M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"],
+  moon: ["M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"],
+  settings: ["M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z", { c: [12, 12, 3] }],
+  assignments: [{ r: [8, 2, 8, 4, 1] }, "M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2", "M12 11h4M12 16h4M8 11h.01M8 16h.01"],
+  book: ["M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z", "M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"],
+  help: [{ c: [12, 12, 10] }, "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", "M12 17h.01"],
+  phone: [{ r: [5, 2, 14, 20, 2] }, "M12 18h.01"],
+  monitor: [{ r: [2, 3, 20, 14, 2] }, "M8 21h8M12 17v4"],
+  back: ["M19 12H5M12 19l-7-7 7-7"],
+  edit: ["M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z", "M15 5l4 4"],
+  trash: ["M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6"],
+  copy: [{ r: [8, 8, 14, 14, 2] }, "M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"],
+  download: ["M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"],
+  mail: [{ r: [2, 4, 20, 16, 2] }, "M22 7l-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"],
+  file: ["M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z", "M14 2v4a2 2 0 0 0 2 2h4", "M16 13H8M16 17H8M10 9H8"],
+  timer: [{ c: [12, 13, 8] }, "M12 9v4l2 2M10 2h4"],
+  calendar: [{ r: [3, 4, 18, 18, 2] }, "M16 2v4M8 2v4M3 10h18"],
+  tasks: ["M9 11l3 3L22 4", "M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"],
+  receipt: ["M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1z", "M16 8h-6a2 2 0 1 0 0 4h4a2 2 0 1 1 0 4H8M12 17.5v-11"],
+  menu: ["M4 6h16M4 12h16M4 18h16"],
+  library: ["M16 6l4 14M12 6v14M8 8v12M4 4v16"],
+  approve: [{ c: [12, 12, 10] }, "M9 12l2 2 4-4"],
+  user: ["M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2", { c: [12, 7, 4] }],
+  close: ["M18 6L6 18M6 6l12 12"],
+  home: ["M3 10.5L12 3l9 7.5", "M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"],
+  leave: [{ c: [12, 12, 4] }, "M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"],
+  lock: [{ r: [3, 11, 18, 11, 2] }, "M7 11V7a5 5 0 0 1 10 0v4"],
+  install: ["M12 3v12M7 10l5 5 5-5", { r: [5, 17, 14, 4, 1] }]
+};
+function Icon(p) {
+  var s = p.size || 18;
+  return h("svg", {
+    className: "ico" + (p.className ? " " + p.className : ""), width: s, height: s, viewBox: "0 0 24 24", fill: "none",
+    stroke: "currentColor", strokeWidth: p.sw || 1.9, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", style: p.style
+  }, (ICONS[p.n] || []).map(function (x, i) {
+    return typeof x === "string" ? h("path", { key: i, d: x })
+      : x.c ? h("circle", { key: i, cx: x.c[0], cy: x.c[1], r: x.c[2] })
+      : h("rect", { key: i, x: x.r[0], y: x.r[1], width: x.r[2], height: x.r[3], rx: x.r[4] });
+  }));
+}
+/* an icon followed by its label, for buttons that carry both */
+function IconLabel(n, label) { return [h(Icon, { key: "i", n: n, size: 15 }), h("span", { key: "l" }, label)]; }
+
 /* §7.2 — click a work-order code to copy it. execCommand is the fallback for
    browsers that refuse the async clipboard outside a secure context (file://). */
 function fallbackCopy(t, done) {
@@ -18811,7 +18868,15 @@ function CopyCell(p) {
   return h("button", {
     className: "copy", title: "Click to copy " + p.value,
     onClick: function (ev) { ev.stopPropagation(); copyText(p.value); }
-  }, h("span", { className: "tnum" }, p.value), h("span", { className: "ci", "aria-hidden": "true" }, "\u29c9"));
+  }, h("span", { className: "tnum" }, p.value), h(Icon, { n: "copy", size: 12, className: "ci" }));
+}
+/* an email address reads as a link; clicking it copies the address */
+function EmailCopy(p) {
+  if (!p.value) return h("span", { className: "cap" }, "\u2014");
+  return h("button", {
+    className: "copy email", title: "Click to copy " + p.value, "aria-label": "Copy " + p.value, style: p.style,
+    onClick: function (ev) { ev.stopPropagation(); copyText(p.value); }
+  }, h("span", { dir: "ltr" }, p.value), h(Icon, { n: "copy", size: 12, className: "ci" }));
 }
 function StatusDot(p) { return h("span", { className: "dot", style: { background: p.color } }); }
 
@@ -19379,7 +19444,7 @@ function STable(p) {
         saved.views.map(function (v) { return h("option", { key: v.name, value: v.name }, v.name + (saved.dflt === v.name ? " ★" : "")); })),
       h("button", { className: "tblbtn", title: "Save the current sort, column order and widths as a view", onClick: saveView }, "＋ Save"),
       h("button", { className: "tblbtn ic" + (isD ? " on" : ""), disabled: !cur, title: !cur ? "Choose a saved view first" : isD ? "Stop opening this view by default" : "Open this table with this view", "aria-label": isD ? "Unset default view" : "Set as default view", onClick: function () { toggleDefault(cur); } }, isD ? "★" : "☆"),
-      h("button", { className: "tblbtn ic", disabled: !cur, title: cur ? "Delete this saved view" : "Choose a saved view first", "aria-label": "Delete saved view", onClick: function () { delView(cur); } }, "🗑")),
+      h("button", { className: "tblbtn ic", disabled: !cur, title: cur ? "Delete this saved view" : "Choose a saved view first", "aria-label": "Delete saved view", onClick: function () { delView(cur); } }, h(Icon, { n: "trash", size: 16 }))),
     h("div", { className: "tbg" },
       h("span", { className: "tbl-l" }, "Sort"),
       h("select", {
@@ -19672,7 +19737,7 @@ function PendingActivation(p) {
         "An Operations Manager or the CEO will confirm your role, assign you to a team and to your initial projects, and activate the account. You will receive an email when that is done."),
       h("div", { className: "panel pad col", style: { gap: 3, background: C.wash, marginBottom: 12 } },
         h("div", { className: "row" }, h("span", { className: "cap", style: { width: 110 } }, "Name"), h("b", null, p.user.fullName)),
-        h("div", { className: "row" }, h("span", { className: "cap", style: { width: 110 } }, "Email"), h("b", null, p.user.email)),
+        h("div", { className: "row" }, h("span", { className: "cap", style: { width: 110 } }, "Email"), h(EmailCopy, { value: p.user.email })),
         h("div", { className: "row" }, h("span", { className: "cap", style: { width: 110 } }, "Requested role"), h("b", null, roleName(p.user.requestedRole || p.user.role)))),
       h(Btn, { style: { width: "100%" }, onClick: p.onSignOut }, "Sign out")));
 }
@@ -20173,7 +20238,7 @@ function DupMenu(p) {
       sm: true, kind: "t", className: "tap", title: "Duplicate this entry",
       "aria-expanded": open ? "true" : "false", "aria-haspopup": "dialog",
       onClick: function () { setOpen(!open); }
-    }, "\u29c9")),
+    }, h(Icon, { n: "copy", size: 16 }))),
     open ? h("div", {
       ref: popRef, className: "pop duppop", role: "dialog", "aria-label": "Duplicate to",
       style: { position: "fixed", right: "auto", zIndex: 90, left: pos ? pos.left : -9999, top: pos ? pos.top : 0, maxHeight: pos ? pos.maxH : null, overflow: "auto", visibility: pos ? "visible" : "hidden" }
@@ -20309,8 +20374,8 @@ function TimeLogTab(p) {
         tot.vac ? h(Chip, { k: "mut" }, "Vacation ", num(tot.vac), " d") : null,
         pendHrs ? h(Chip, { k: "amber", title: "Excluded from the totals until approved" }, "In approval ", num(pendHrs), " h") : null,
         can(user, "excelExport") ? h("div", { className: "row", style: { gap: 5 } },
-          h(Btn, { sm: true, onClick: function () { doExport("view"); } }, "⬇ This view"),
-          h(Btn, { sm: true, onClick: function () { doExport("all"); } }, "⬇ Everything")) : null),
+          h(Btn, { sm: true, onClick: function () { doExport("view"); } }, IconLabel("download", "This view")),
+          h(Btn, { sm: true, onClick: function () { doExport("all"); } }, IconLabel("download", "Everything"))) : null),
       h("div", { className: "sep" }),
       h("div", { className: "row", style: { gap: 8, alignItems: "flex-end" } },
         teamOpts.length > 1 ? h("div", { style: { minWidth: 168 } }, h(MultiSelect, { label: "Employee", allLabel: "All employees", avatars: true, value: flt.employees, options: teamOpts, onChange: function (v) { setFlt(Object.assign({}, flt, { employees: v })); } })) : null,
@@ -20352,9 +20417,9 @@ function TimeLogTab(p) {
                   e.status === "pending" && e.statusReason ? h("div", { className: "cap", style: { color: C.amber, fontWeight: 600 } }, "Reason: ", e.statusReason) : null,
                   e.status === "cancelled" && e.decisionNote ? h("div", { className: "cap", style: { color: C.error, fontWeight: 600 } }, "Declined: ", e.decisionNote) : null),
                 h("td", { style: { whiteSpace: "nowrap" } },
-                  editable ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit", onClick: function () { setEditing(e); window.scrollTo(0, 0); } }, "✎") : null,
+                  editable ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit", onClick: function () { setEditing(e); window.scrollTo(0, 0); } }, h(Icon, { n: "edit", size: 16 })) : null,
                   can(user, "reportOwnTime") && e.type === "Work" ? h(DupMenu, { base: e.date, onPick: function (dates) { dupEntry(e, dates); } }) : null,
-                  editable ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Delete", onClick: function () { delEntry(e); } }, "🗑") : null));
+                  editable ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Delete", onClick: function () { delEntry(e); } }, h(Icon, { n: "trash", size: 16 })) : null));
             })))));
 }
 </script>
@@ -20513,7 +20578,7 @@ function PlannerTab(p) {
       h(Chip, { k: (actualTotal - plannedTotal) >= 0 ? "gr" : "amber" }, "Variance ", (actualTotal - plannedTotal >= 0 ? "+" : ""), num(actualTotal - plannedTotal), " h"),
       h(Chip, { k: plannedTotal > capacity ? "amber" : "gr", title: "Contracted " + num(capacity) + " h" }, "Capacity ", num(plannedTotal), "/", num(capacity), " h")),
       h(Btn, { onClick: copyWeek }, "Copy week"),
-      can(user, "excelExport") ? h(Btn, { onClick: doExport }, "⬇ Export") : null),
+      can(user, "excelExport") ? h(Btn, { onClick: doExport }, IconLabel("download", "Export")) : null),
 
     plannedTotal > capacity ? h("div", { className: "banner amber" }, "⚠ ", userName(db, who), " is planned above contracted capacity for this period.") : null,
 
@@ -21166,8 +21231,8 @@ function ExpensesTab(p) {
       Object.keys(totals).map(function (c) { return h(Chip, { key: c, k: "teal" }, money(totals[c], c)); }),
       totalHours ? h(Chip, { k: "red" }, num(totalHours), " h") : null,
       can(user, "excelExport") ? h("div", { className: "row", style: { gap: 5 } },
-        h(Btn, { sm: true, onClick: function () { doExport("view"); } }, "⬇ This view"),
-        h(Btn, { sm: true, onClick: function () { doExport("all"); } }, "⬇ Everything")) : null),
+        h(Btn, { sm: true, onClick: function () { doExport("view"); } }, IconLabel("download", "This view")),
+        h(Btn, { sm: true, onClick: function () { doExport("all"); } }, IconLabel("download", "Everything"))) : null),
 
     h("div", { className: "panel scroll" },
       rows.length === 0 ? h("div", { className: "empty" }, "No expenses this month.")
@@ -21190,8 +21255,8 @@ function ExpensesTab(p) {
                   : h(Chip, { k: x.status === "Paid" ? "gr" : x.status === "Rejected" ? "err" : x.status === "Approved" ? "teal" : "amber" }, x.status)),
                 h("td", null, x.description, x.notes ? h("div", { className: "cap" }, x.notes) : null),
                 h("td", { style: { whiteSpace: "nowrap" } },
-                  own || can(user, "approveExpenses") ? h(Btn, { sm: true, kind: "t", className: "tap", onClick: function () { set(Object.assign({}, x)); } }, "✎") : null,
-                  own || can(user, "approveExpenses") ? h(Btn, { sm: true, kind: "t", className: "tap", onClick: function () { remove(x); } }, "🗑") : null));
+                  own || can(user, "approveExpenses") ? h(Btn, { title: "Edit", "aria-label": "Edit", sm: true, kind: "t", className: "tap", onClick: function () { set(Object.assign({}, x)); } }, h(Icon, { n: "edit", size: 16 })) : null,
+                  own || can(user, "approveExpenses") ? h(Btn, { title: "Delete", "aria-label": "Delete", sm: true, kind: "t", className: "tap", onClick: function () { remove(x); } }, h(Icon, { n: "trash", size: 16 })) : null));
             })))));
 }
 
@@ -21206,10 +21271,13 @@ function ManagementTab(p) {
   var db = p.db, user = p.user;
   var sections = mgmtSectionsFor(user);
   var ts = useState(sections.length ? sections[0].k : "budgets"), tab = ts[0], setTab = ts[1];
+  /* the shell owns the section when it keeps the Back history */
+  if (p.onSection) { tab = p.section || (sections.length ? sections[0].k : "budgets"); setTab = p.onSection; }
   if (!sections.some(function (x) { return x.k === tab; })) tab = sections.length ? sections[0].k : "budgets";
   var es = useState(null), editing = es[0], setEditing = es[1];
   var ws = useState(null), woEdit = ws[0], setWoEdit = ws[1];
   var hs = useState(null), history = hs[0], setHistory = hs[1];
+  var dcs = useState(null), docWO = dcs[0], setDocWO = dcs[1];
 
   var scopeP = scopeOf(user.role, "viewBudgets");
   var pids = scopeP === "P" ? ownedProjectIds(db, user) : null;
@@ -21244,7 +21312,12 @@ function ManagementTab(p) {
     p.mutate(function (d) {
       var rec = {
         id: f.id || uid("w"), projectId: f.projectId, code: f.code, title: f.title, status: f.status,
-        contractRef: f.contractRef, startDate: f.startDate || null, endDate: f.endDate || null, notes: f.notes || ""
+        contractRef: f.contractRef, startDate: f.startDate || null, endDate: f.endDate || null, notes: f.notes || "",
+        scope: f.scope || "", deliverables: f.deliverables || "",
+        clientContacts: (f.clientContacts || []).filter(function (c) { return c.name || c.email || c.phone; }),
+        galilLeadId: f.galilLeadId || null, galilTeam: f.galilTeam || [], galilSignatoryId: f.galilSignatoryId || null,
+        clientSignatoryName: f.clientSignatoryName || "", clientSignatoryTitle: f.clientSignatoryTitle || "",
+        createdAt: f.createdAt || nowISO(), createdBy: f.createdBy || user.id, issuedAt: f.issuedAt || f.createdAt || nowISO()
       };
       var i = d.workOrders.findIndex(function (x) { return x.id === rec.id; });
       if (i >= 0) { audit(d, user.id, "Work order edited", "work_orders", rec.id, d.workOrders[i], rec); d.workOrders[i] = rec; }
@@ -21310,7 +21383,7 @@ function ManagementTab(p) {
             sc.label, bdg ? h("span", { className: "badge" }, bdg) : null);
         })),
       h("div", { className: "grow" }),
-      can(user, "excelExport") && (tab === "budgets" || tab === "wos") ? h(Btn, { sm: true, onClick: doExport }, "⬇ Export") : null,
+      can(user, "excelExport") && (tab === "budgets" || tab === "wos") ? h(Btn, { sm: true, onClick: doExport }, IconLabel("download", "Export")) : null,
       editable && tab === "budgets" ? h(Btn, { kind: "p", sm: true, onClick: function () { setEditing({ id: null, clientId: "", projectId: "", workOrderId: "", basis: "Hours", currency: "₪", amount: "", rate: "", hours: "", units: "", unitName: "", produced: 0, notes: "", history: [] }); } }, "+ New budget") : null,
       can(user, "createWorkOrders") && tab === "wos" ? h(Btn, { kind: "p", sm: true, onClick: function () { setWoEdit({ id: null, projectId: "", code: "", title: "", status: "Active", contractRef: "", startDate: todayStr(), endDate: "", notes: "", budgetHours: "" }); } }, "+ New work order") : null),
 
@@ -21333,7 +21406,7 @@ function ManagementTab(p) {
                 b.basis === "Money" ? money(b.amount, b.currency) + " at " + money(b.rate, b.currency) + "/h → " + num(b.hours) + " budgeted hours" :
                 b.basis === "Hours" ? num(b.hours) + " budgeted hours" :
                 num(b.units) + " " + (b.unitName || "units") + " · " + num(b.hours) + " budgeted hours")),
-            editable ? h(Btn, { sm: true, kind: "t", onClick: function () { setEditing(Object.assign({}, b)); } }, "✎ Edit") : null,
+            editable ? h(Btn, { sm: true, kind: "t", onClick: function () { setEditing(Object.assign({}, b)); } }, IconLabel("edit", "Edit")) : null,
             (b.history || []).length ? h(Btn, { sm: true, kind: "t", onClick: function () { setHistory(b); } }, "History (" + b.history.length + ")") : null),
           pct >= 100 ? h("div", { className: "banner err" }, "⛔ Budget fully consumed. All further Yellow entries on this project route to approval.")
             : pct >= 90 ? h("div", { className: "banner amber" }, "⚠ Budget at ", num(pct, 0), "% — visible to the project owner and Finance.") : null,
@@ -21367,7 +21440,9 @@ function ManagementTab(p) {
             h("td", { className: "num" }, b && b.hours ? num(b.hours) + " h" : "—"),
             h("td", { className: "num" }, h("div", { className: "row", style: { gap: 6, flexWrap: "nowrap" } },
               b && b.hours ? h(Bar, { used: used, total: b.hours, style: { width: 76 } }) : null, num(used), " h")),
-            h("td", null, can(user, "createWorkOrders") ? h(Btn, { sm: true, kind: "t", className: "tap", onClick: function () { setWoEdit(Object.assign({ budgetHours: b ? b.hours : "" }, w)); } }, "✎") : null));
+            h("td", { style: { whiteSpace: "nowrap" } },
+              h(Btn, { title: "Work order document (PDF)", "aria-label": "Work order document (PDF)", sm: true, kind: "t", className: "tap", onClick: function () { setDocWO(Object.assign({ budgetHours: b ? b.hours : "" }, w)); } }, h(Icon, { n: "file", size: 16 })),
+              can(user, "createWorkOrders") ? h(Btn, { title: "Edit", "aria-label": "Edit", sm: true, kind: "t", className: "tap", onClick: function () { setWoEdit(Object.assign({ budgetHours: b ? b.hours : "" }, w)); } }, h(Icon, { n: "edit", size: 16 })) : null));
         })))) : null,
 
     ["budgets", "wos"].indexOf(tab) < 0
@@ -21376,7 +21451,9 @@ function ManagementTab(p) {
 
     editing ? h(BudgetEditor, { db: db, value: editing, onSave: saveBudget, onClose: function () { setEditing(null); },
       onDelete: function (f) { p.mutate(function (d) { d.budgets = d.budgets.filter(function (x) { return x.id !== f.id; }); audit(d, user.id, "Budget deleted", "budgets", f.id, f, null); }); setEditing(null); } }) : null,
-    woEdit ? h(WOEditor, { db: db, value: woEdit, nextCode: nextCode, onSave: saveWO, onClose: function () { setWoEdit(null); } }) : null,
+    woEdit ? h(WOEditor, { db: db, user: user, value: woEdit, nextCode: nextCode, onSave: saveWO, onClose: function () { setWoEdit(null); },
+      onDocument: function (f) { setDocWO(f); } }) : null,
+    docWO ? h(WODocModal, { db: db, user: user, wo: docWO, onClose: function () { setDocWO(null); } }) : null,
     history ? h(Modal, { title: "Budget change history", size: "md", onClose: function () { setHistory(null); } },
       h(STable, { id: "budget-history", grow: "Field", className: "tbl" },
         h("thead", null, h("tr", null, ["When", "Actor", "Field", "From", "To"].map(function (c, i) { return h("th", { key: i }, c); }))),
@@ -21417,27 +21494,47 @@ function BudgetEditor(p) {
 }
 
 function WOEditor(p) {
-  var db = p.db, s = useState(p.value), f = s[0], set = s[1];
+  var db = p.db, s = useState(function () {
+    /* an order saved before the document fields existed starts from what the records know */
+    var v = Object.assign({}, p.value), pr = byId(db.projects, v.projectId), cl = pr ? byId(db.clients, pr.clientId) : null;
+    if (pr && v.galilLeadId === undefined) v.galilLeadId = pr.ownerUserId || "";
+    if (cl && !v.clientContacts && (cl.contactName || cl.contactEmail))
+      v.clientContacts = [{ name: cl.contactName || "", role: "Primary contact", email: cl.contactEmail || "", phone: "" }];
+    return v;
+  }), f = s[0], set = s[1];
   var up = function (k, v) {
     var n = Object.assign({}, f); n[k] = v;
-    if (k === "projectId" && !f.id) n.code = p.nextCode(v);
+    if (k === "projectId" && !f.id) {
+      n.code = p.nextCode(v);
+      var pr = byId(db.projects, v), cl = pr ? byId(db.clients, pr.clientId) : null;
+      if (pr && !f.galilLeadId) n.galilLeadId = pr.ownerUserId || "";
+      if (cl && !(f.clientContacts || []).length && (cl.contactName || cl.contactEmail))
+        n.clientContacts = [{ name: cl.contactName || "", role: "Primary contact", email: cl.contactEmail || "", phone: "" }];
+    }
     set(n);
   };
+  var contacts = f.clientContacts || [];
+  var upContact = function (i, k, v) { var list = contacts.map(function (c) { return Object.assign({}, c); }); list[i][k] = v; up("clientContacts", list); };
+  var staff = db.users.filter(function (u) { return u.isActive && !u.pendingActivation; }).map(function (u) { return { value: u.id, label: u.fullName }; });
+  var signers = db.users.filter(function (u) { return u.isActive && ["CEO", "OPS", "PM", "FIN"].indexOf(u.role) >= 0; }).map(function (u) { return { value: u.id, label: u.fullName + " — " + roleName(u.role) }; });
+  var valid = function () {
+    if (!f.projectId) { toast("Select a project.", "error"); return false; }
+    if (!/^WO-[A-Z]{2,5}-\d{6,7}$/.test(f.code)) { toast("Code must be WO-[client initials]-[6 or 7 digits], e.g. WO-IAI-004182.", "error"); return false; }
+    if (!f.title.trim()) { toast("Give the work order a title.", "error"); return false; }
+    return true;
+  };
   return h(Modal, {
-    title: f.id ? "Edit work order" : "New work order", size: "md", onClose: p.onClose,
-    footer: [h(Btn, { key: "c", onClick: p.onClose }, "Cancel"),
-             h(Btn, { key: "s", kind: "p", onClick: function () {
-               if (!f.projectId) { toast("Select a project.", "error"); return; }
-               if (!/^WO-[A-Z]{2,5}-\d{6}$/.test(f.code)) { toast("Code must be WO-[client initials]-[6 digits], e.g. WO-IAI-004182.", "error"); return; }
-               if (!f.title.trim()) { toast("Give the work order a title.", "error"); return; }
-               p.onSave(f);
-             } }, "Save work order")]
+    title: f.id ? "Edit work order" : "New work order", size: "lg", onClose: p.onClose,
+    footer: [h(Btn, { key: "doc", title: "Preview, download or email the official work order document", onClick: function () { if (!f.projectId) { toast("Select a project.", "error"); return; } p.onDocument(f); } }, IconLabel("file", "Document (PDF)")),
+             h("div", { key: "g", className: "grow" }),
+             h(Btn, { key: "c", onClick: p.onClose }, "Cancel"),
+             h(Btn, { key: "s", kind: "p", onClick: function () { if (valid()) p.onSave(f); } }, "Save work order")]
   },
     h("div", { className: "col", style: { gap: 10 } },
       h(Sel, { label: "Project", req: true, value: f.projectId, placeholder: "Select…", options: db.projects.map(function (x) { return { value: x.id, label: nameOf(db.clients, x.clientId) + " — " + x.name }; }), onChange: function (e) { up("projectId", e.target.value); } }),
       h("div", { className: "grid2" },
         h(Inp, { label: "Code", req: true, className: "mono", value: f.code, placeholder: "WO-XXX-000000", onChange: function (e) { up("code", e.target.value.toUpperCase()); } }),
-        h(Inp, { label: "Title", req: true, value: f.title, onChange: function (e) { up("title", e.target.value); } })),
+        h(Inp, { label: "Title", req: true, id: "wo-title", value: f.title, onChange: function (e) { up("title", e.target.value); } })),
       h("div", { className: "cap" }, "The system proposes WO-[client initials]-[6 digits]; you may override the digits."),
       h("div", { className: "grid4" },
         h(Sel, { label: "Status", value: f.status, options: ["Active", "On hold", "Closed"], onChange: function (e) { up("status", e.target.value); } }),
@@ -21445,8 +21542,429 @@ function WOEditor(p) {
         h(Inp, { label: "Start date", type: "date", value: f.startDate || "", onChange: function (e) { up("startDate", e.target.value); } }),
         h(Inp, { label: "End date", type: "date", value: f.endDate || "", onChange: function (e) { up("endDate", e.target.value); } })),
       h(Inp, { label: "Budgeted hours for this work order", type: "number", value: f.budgetHours, onChange: function (e) { up("budgetHours", e.target.value); } }),
-      h(Txt, { label: "Notes", rows: 2, value: f.notes, onChange: function (e) { up("notes", e.target.value); } })));
+
+      h("div", { className: "wosec" }, "What the work order includes"),
+      h(Txt, { label: "Scope of work", id: "wo-scope", rows: 3, value: f.scope || "", placeholder: "What GALIL will do for the client under this order", onChange: function (e) { up("scope", e.target.value); } }),
+      h(Txt, { label: "Deliverables — one per line", id: "wo-deliv", rows: 3, value: f.deliverables || "", placeholder: "User manual, 120 pages (EN)\nQuick-start guide\nOnline help, HTML5", onChange: function (e) { up("deliverables", e.target.value); } }),
+
+      h("div", { className: "wosec" }, "Client points of contact"),
+      contacts.map(function (c, i) {
+        return h("div", { key: i, className: "row woc", style: { gap: 8, alignItems: "flex-end" } },
+          h(Inp, { label: i ? null : "Name", cls: "grow", value: c.name || "", "aria-label": "Contact name", onChange: function (e) { upContact(i, "name", e.target.value); } }),
+          h(Inp, { label: i ? null : "Role on this project", cls: "grow", value: c.role || "", "aria-label": "Contact role", placeholder: "e.g. Project manager", onChange: function (e) { upContact(i, "role", e.target.value); } }),
+          h(Inp, { label: i ? null : "Email", cls: "grow", type: "email", value: c.email || "", "aria-label": "Contact email", onChange: function (e) { upContact(i, "email", e.target.value); } }),
+          h(Inp, { label: i ? null : "Phone", value: c.phone || "", "aria-label": "Contact phone", style: { width: 140 }, onChange: function (e) { upContact(i, "phone", e.target.value); } }),
+          h(Btn, { kind: "t", className: "tap", title: "Remove this contact", "aria-label": "Remove this contact", onClick: function () { up("clientContacts", contacts.filter(function (x, j) { return j !== i; })); } }, h(Icon, { n: "trash", size: 16 })));
+      }),
+      h("div", null, h(Btn, { sm: true, onClick: function () { up("clientContacts", contacts.concat([{ name: "", role: "", email: "", phone: "" }])); } }, "+ Add contact")),
+
+      h("div", { className: "wosec" }, "Designated from GALIL"),
+      h("div", { className: "grid2" },
+        h(Sel, { label: "Project lead", value: f.galilLeadId || "", placeholder: "—", options: staff, onChange: function (e) { up("galilLeadId", e.target.value); } }),
+        h(MultiSelect, { label: "Team members", value: f.galilTeam || [], options: staff.filter(function (o) { return o.value !== f.galilLeadId; }), allLabel: "From the assignments", avatars: true, onChange: function (v) { up("galilTeam", v); } })),
+
+      h("div", { className: "wosec" }, "Signatures"),
+      h("div", { className: "grid3" },
+        h(Inp, { label: "Client signatory", id: "wo-csig", value: f.clientSignatoryName || "", placeholder: "Name", onChange: function (e) { up("clientSignatoryName", e.target.value); } }),
+        h(Inp, { label: "Client signatory title", id: "wo-csigt", value: f.clientSignatoryTitle || "", placeholder: "e.g. Procurement manager", onChange: function (e) { up("clientSignatoryTitle", e.target.value); } }),
+        h(Sel, { label: "Signs for GALIL", value: f.galilSignatoryId || "", placeholder: "The CEO", options: signers, onChange: function (e) { up("galilSignatoryId", e.target.value); } })),
+      h(Txt, { label: "Notes and terms (printed on the document)", rows: 2, value: f.notes, onChange: function (e) { up("notes", e.target.value); } })));
 }
+
+/* =====================================================================
+   Work order document — the official GALIL PDF for a work order: what it
+   covers, for which client and project, the budget, the client's points of
+   contact, GALIL's team, dates and signature blocks, in English or Hebrew.
+   Drawn with jsPDF and the Heebo font (vendor/, both loaded on first use) so
+   it downloads as a real .pdf file.
+   ===================================================================== */
+var GALIL_CO = {
+  en: { name: "GALIL Technical Writing Ltd.", addr: "Atzmon Segev, Derech Ha Duchifat 360, 2017000", phone: "+972 3 999 9999", web: "galiltc.co.il" },
+  he: { name: "גליל כתיבה טכנית בע״מ", addr: "עצמון שגב, דרך הדוכיפת 360, 2017000", phone: "+972 3 999 9999", web: "galiltc.co.il" }
+};
+
+/* the document's own words, in English and Hebrew */
+var WO_TX = {
+  en: {
+    docTitle: "WORK ORDER", issued: "Issued", continued: "continued", untitled: "Work order",
+    details: "Order details", client: "Client", project: "Project", workOrder: "Work order", status: "Status",
+    contract: "Contract / PO reference", owner: "Project owner", start: "Start date", end: "End date",
+    scope: "Scope of work", scopeDefault: "The scope is set out by the deliverables below and the referenced contract.",
+    deliverables: "Deliverables", budget: "Budget", basis: "Pricing basis", notSet: "Not set", hours: "Budgeted hours",
+    amount: "Amount", rate: "Hourly rate", perHour: " / h", units: "Budgeted units", consumed: "Consumed to date", h: " h",
+    contacts: "Client points of contact", name: "Name", roleOn: "Role on this project", email: "Email", phone: "Phone",
+    noContact: "No client contact recorded.", primary: "Primary contact",
+    team: "GALIL project team", position: "Position", lead: "Project lead", member: "Team member", noTeam: "No GALIL team member assigned yet.",
+    notes: "Notes and terms", sign: "Approval and signatures",
+    signNote: "By signing, both parties confirm the scope, budget and schedule of this work order as set out above.",
+    forClient: "For the client — ", forGalil: "For ", title: "Title", signature: "Signature", date: "Date",
+    page: function (a, b) { return "Page " + a + " of " + b; },
+    generated: function (who, when) { return "Official company document · generated by GALIL WorkDesk" + (who ? " for " + who : "") + " on " + when; },
+    statuses: {}, bases: {}
+  },
+  he: {
+    docTitle: "הזמנת עבודה", issued: "הונפקה", continued: "המשך", untitled: "הזמנת עבודה",
+    details: "פרטי ההזמנה", client: "לקוח", project: "פרויקט", workOrder: "מספר הזמנה", status: "סטטוס",
+    contract: "אסמכתת חוזה / הזמנת רכש", owner: "מנהל/ת הפרויקט", start: "תאריך התחלה", end: "תאריך סיום",
+    scope: "היקף העבודה", scopeDefault: "היקף העבודה מפורט בתוצרים שלהלן ובחוזה המוזכר.",
+    deliverables: "תוצרים", budget: "תקציב", basis: "בסיס תמחור", notSet: "לא הוגדר", hours: "שעות מתוקצבות",
+    amount: "סכום", rate: "תעריף שעתי", perHour: " לשעה", units: "יחידות מתוקצבות", consumed: "נוצל עד כה", h: " ש׳",
+    contacts: "אנשי קשר מטעם הלקוח", name: "שם", roleOn: "תפקיד בפרויקט", email: "דוא״ל", phone: "טלפון",
+    noContact: "לא הוגדר איש קשר מטעם הלקוח.", primary: "איש קשר ראשי",
+    team: "צוות הפרויקט מטעם גליל", position: "תפקיד", lead: "מוביל/ת הפרויקט", member: "חבר/ת צוות", noTeam: "טרם שובצו אנשי צוות מגליל.",
+    notes: "הערות ותנאים", sign: "אישור וחתימות",
+    signNote: "בחתימתם מאשרים הצדדים את היקף העבודה, התקציב ולוח הזמנים של הזמנת עבודה זו כמפורט לעיל.",
+    forClient: "בשם הלקוח — ", forGalil: "בשם ", title: "תפקיד", signature: "חתימה", date: "תאריך",
+    page: function (a, b) { return "עמוד " + a + " מתוך " + b; },
+    generated: function (who, when) { return "מסמך רשמי של החברה · הופק במערכת WorkDesk של גליל" + (who ? " עבור " + who : "") + " בתאריך " + when; },
+    statuses: { "Active": "פעילה", "On hold": "בהמתנה", "Closed": "סגורה" },
+    bases: { "Money": "כספי", "Hours": "שעות", "Pages": "עמודים", "Words": "מילים", "Custom": "מותאם" }
+  }
+};
+
+/* jsPDF and the Heebo font (Hebrew and Latin in one face) load on first use */
+var _pdfWait = null;
+function loadScriptOnce(src) {
+  return new Promise(function (ok, fail) {
+    var sc = document.createElement("script");
+    sc.src = src; sc.onload = ok;
+    sc.onerror = function () { fail(new Error("Could not load " + src + ".")); };
+    document.head.appendChild(sc);
+  });
+}
+function loadJsPDF() {
+  if (window.jspdf && window.jspdf.jsPDF && window.HEEBO_FONTS) return Promise.resolve(window.jspdf.jsPDF);
+  if (_pdfWait) return _pdfWait;
+  _pdfWait = Promise.all([
+    window.jspdf ? null : loadScriptOnce("vendor/jspdf.umd.min.js"),
+    window.HEEBO_FONTS ? null : loadScriptOnce("vendor/heebo-fonts.js")
+  ]).then(function () {
+    if (!(window.jspdf && window.jspdf.jsPDF && window.HEEBO_FONTS)) throw new Error("The PDF library did not load.");
+    return window.jspdf.jsPDF;
+  }, function (e) { _pdfWait = null; throw e; });
+  return _pdfWait;
+}
+
+/* the few app symbols Heebo has no glyph for */
+var PDF_MAP = { "→": "–", "←": "–", "∞": "∞", "✓": "✓" };
+function pdfSafe(t) {
+  return String(t == null ? "" : t).replace(/[→←]/g, function (ch) { return PDF_MAP[ch]; }).replace(/\s+$/, "");
+}
+
+/* everything the document says, resolved from the work order and its surroundings.
+   Older work orders carry none of the document fields, so each falls back to what
+   the records already know: the client's contact, the people assigned, the owner. */
+function woDocData(db, wo, by, lang) {
+  var he = lang === "he", T = WO_TX[he ? "he" : "en"];
+  var pr = byId(db.projects, wo.projectId) || {};
+  var cl = byId(db.clients, pr.clientId) || {};
+  var b = db.budgets.filter(function (x) { return x.workOrderId === wo.id; })[0] || null;
+  var hours = b && b.hours != null ? b.hours : (wo.budgetHours !== "" && wo.budgetHours != null ? Number(wo.budgetHours) : null);
+  var contacts = (wo.clientContacts || []).filter(function (c) { return c.name || c.email; });
+  if (!contacts.length && (cl.contactName || cl.contactEmail)) contacts = [{ name: cl.contactName || "", role: T.primary, email: cl.contactEmail || "", phone: "" }];
+  var leadId = wo.galilLeadId || pr.ownerUserId || null;
+  var teamIds = (wo.galilTeam && wo.galilTeam.length) ? wo.galilTeam.slice()
+    : db.assignments.filter(function (a) { return a.workOrderId === wo.id || (!a.workOrderId && a.projectId === wo.projectId); })
+        .map(function (a) { return a.userId; });
+  teamIds = teamIds.filter(function (id, i) { return id !== leadId && teamIds.indexOf(id) === i; });
+  var nm = function (u) { return he && u.fullNameHe ? u.fullNameHe : u.fullName; };
+  var person = function (id, part) {
+    var u = byId(db.users, id); if (!u) return null;
+    return { name: nm(u), part: part, title: u.jobTitle || roleName(u.role), email: u.email, phone: u.mobile || "" };
+  };
+  var team = [leadId ? person(leadId, T.lead) : null].concat(teamIds.map(function (id) { return person(id, T.member); })).filter(Boolean);
+  var signer = byId(db.users, wo.galilSignatoryId || "") || db.users.filter(function (u) { return u.role === "CEO" && u.isActive; })[0] || null;
+  var owner = byId(db.users, pr.ownerUserId || "");
+  var deliverables = String(wo.deliverables || "").split(/\n+/).map(function (x) { return x.replace(/^\s*[-•*]\s*/, "").trim(); }).filter(Boolean);
+  return {
+    lang: he ? "he" : "en",
+    code: wo.code || "", title: wo.title || "", status: T.statuses[wo.status] || wo.status || "", contractRef: wo.contractRef || "",
+    startDate: wo.startDate, endDate: wo.endDate, issuedAt: wo.issuedAt || wo.createdAt || nowISO(),
+    client: cl.name || "", project: pr.name || "", owner: owner ? nm(owner) : "",
+    scope: wo.scope || "", deliverables: deliverables, notes: wo.notes || "",
+    budget: {
+      basis: b ? b.basis : (hours != null ? "Hours" : ""), hours: hours, currency: b ? b.currency : "",
+      amount: b ? b.amount : null, rate: b ? b.rate : null, units: b ? b.units : null, unitName: b ? b.unitName : "",
+      consumed: b ? budgetConsumed(db, b) : null
+    },
+    contacts: contacts, team: team,
+    clientSigner: { name: wo.clientSignatoryName || (contacts[0] || {}).name || "", title: wo.clientSignatoryTitle || "" },
+    galilSigner: signer ? { name: nm(signer), title: signer.jobTitle || roleName(signer.role) } : { name: "", title: "" },
+    generatedBy: by ? nm(by) : "", generatedAt: new Date()
+  };
+}
+
+function woFileName(wo, lang) { return "GALIL-" + (wo.code || "work-order") + (lang === "he" ? "-HE" : "") + ".pdf"; }
+
+/* builds the PDF and resolves to a Blob. The Hebrew document is the English one
+   mirrored: every x is measured from the right edge and text runs right to left. */
+function buildWOPdf(db, wo, by, lang) {
+  return loadJsPDF().then(function (JsPDF) {
+    var d = woDocData(db, wo, by, lang), T = WO_TX[d.lang], CO = GALIL_CO[d.lang], RTL = d.lang === "he";
+    var doc = new JsPDF({ unit: "mm", format: "a4" });
+    doc.addFileToVFS("Heebo-Regular.ttf", window.HEEBO_FONTS.regular); doc.addFont("Heebo-Regular.ttf", "Heebo", "normal");
+    doc.addFileToVFS("Heebo-Bold.ttf", window.HEEBO_FONTS.bold); doc.addFont("Heebo-Bold.ttf", "Heebo", "bold");
+    var W = 210, H = 297, M = 16, CW = W - 2 * M;
+    var INK = [27, 42, 24], GREEN = [140, 198, 62], DEEP = [92, 139, 34], MUTED = [91, 107, 87], LINE = [216, 231, 196], WASH = [242, 248, 233];
+    /* each string runs in the direction of its first letter, so English typed into the
+       Hebrew document keeps its punctuation where it belongs */
+    var rtlOf = function (t) { var m = String(t).match(/[A-Za-z\u0590-\u05FF]/); return m ? /[\u0590-\u05FF]/.test(m[0]) : RTL; };
+    var y = 0;
+    var X = function (x) { return RTL ? W - x : x; };
+    var flip = function (a) { return !RTL ? a : a === "right" ? "left" : a === "center" ? "center" : "right"; };
+    var txt = function (t, x, yy, o) {
+      o = o || {};
+      (Array.isArray(t) ? t : [t]).forEach(function (ln, i) {
+        ln = pdfSafe(ln);
+        doc.text(ln, X(x), yy + i * doc.getLineHeight() / doc.internal.scaleFactor, {
+          align: flip(o.align || "left"), isInputVisual: false, isOutputVisual: true, isInputRtl: rtlOf(ln), isOutputRtl: false
+        });
+      });
+    };
+    var rect = function (x, yy, w, hh, st) { doc.rect(RTL ? W - x - w : x, yy, w, hh, st); };
+    var line = function (x1, y1, x2, y2) { doc.line(X(x1), y1, X(x2), y2); };
+    var font = function (style, size, col) { doc.setFont("Heebo", style === "italic" ? "normal" : style); doc.setFontSize(size); doc.setTextColor.apply(doc, col || INK); };
+    var split = function (t, w) { return doc.splitTextToSize(pdfSafe(t), w); };
+    var dt = function (s) { return s ? il(s) : "—"; };
+    var stamp = function (d0) { return il(d0.toISOString().slice(0, 10)) + " " + pad(d0.getHours()) + ":" + pad(d0.getMinutes()); };
+
+    function mark(x, yy, s, col) {
+      /* the GALIL wave, as in the app's mark: one S-curve on a 40 x 34 box; never mirrored */
+      var k = s * 0.3, x0 = RTL ? W - x - 40 * k : x;
+      doc.setDrawColor.apply(doc, col); doc.setLineWidth(1.25 * s); doc.setLineCap("round");
+      doc.lines([[6 * k, -12 * k, 12 * k, -12 * k, 17 * k, 0], [5 * k, 12 * k, 11 * k, 12 * k, 17 * k, 0]], x0 + 3 * k, yy + 24 * k, [1, 1], "S");
+    }
+    /* the wordmark stays Latin and left to right in both languages */
+    function wordmark(x, yy, size, sp) {
+      font("bold", size, [255, 255, 255]); doc.setCharSpace(sp);
+      doc.text("GALIL", X(x), yy, { align: RTL ? "right" : "left" });
+      doc.setCharSpace(0);
+    }
+    function head(first) {
+      doc.setFillColor.apply(doc, INK); doc.rect(0, 0, W, first ? 34 : 16, "F");
+      doc.setFillColor.apply(doc, GREEN); doc.rect(0, first ? 34 : 16, W, 1.4, "F");
+      if (first) {
+        mark(M, 6, 2.1, GREEN);
+        wordmark(M + 29, 16.5, 17, 1.6);
+        font("normal", 8.5, [185, 207, 162]); txt(CO.name, M + 29, 22);
+        font("bold", 9, GREEN); txt(RTL ? T.docTitle : T.docTitle.split("").join(" "), W - M, 13, { align: "right" });
+        font("bold", 15, [255, 255, 255]); txt(d.code, W - M, 21, { align: "right" });
+        font("normal", 8.5, [185, 207, 162]); txt(T.issued + " " + stamp(new Date(d.issuedAt)), W - M, 27, { align: "right" });
+        y = 46;
+      } else {
+        mark(M, 2.4, 1.05, GREEN);
+        wordmark(M + 15, 10, 10, 1);
+        font("normal", 8.5, [185, 207, 162]); txt(T.untitled + " " + d.code + " — " + T.continued, W - M, 10, { align: "right" });
+        y = 26;
+      }
+    }
+    function room(need) { if (y + need > H - 22) { doc.addPage(); head(false); } }
+    function section(n, title) {
+      room(18);
+      font("bold", 8.5, DEEP); txt(RTL ? n + "  " + title : n + "  " + title.toUpperCase(), M, y);
+      doc.setDrawColor.apply(doc, LINE); doc.setLineWidth(0.35); line(M, y + 2, W - M, y + 2);
+      y += 8;
+    }
+    function para(t, size) {
+      font("normal", size || 10, INK);
+      split(t, CW).forEach(function (ln) { room(6); txt(ln, M, y); y += 5; });
+      y += 2;
+    }
+    /* label/value pairs laid out in columns */
+    function facts(pairs, cols) {
+      var cw = CW / cols;
+      for (var i = 0; i < pairs.length; i += cols) {
+        var row = pairs.slice(i, i + cols), tall = 0;
+        font("bold", 10, INK);
+        row.forEach(function (pv) { tall = Math.max(tall, split(pv[1] || "—", cw - 4).length); });
+        room(9 + tall * 4.6);
+        row.forEach(function (pv, j) {
+          var x = M + j * cw;
+          font("normal", 7.5, MUTED); txt(pv[0], x, y);
+          font("bold", 10, INK); txt(split(pv[1] || "—", cw - 4), x, y + 5);
+        });
+        y += 9 + tall * 4.6;
+      }
+      y += 1;
+    }
+    function table(cols, rows, empty) {
+      var widths = cols.map(function (c) { return c[1] * CW; });
+      var drawHead = function () {
+        doc.setFillColor.apply(doc, WASH); rect(M, y - 4.6, CW, 7, "F");
+        font("bold", 8, DEEP);
+        var x = M; cols.forEach(function (c, i) { txt(c[0], x + 2, y); x += widths[i]; });
+        y += 6;
+      };
+      room(16); drawHead();
+      if (!rows.length) { font("normal", 9, MUTED); txt(empty, M + 2, y); y += 7; return; }
+      rows.forEach(function (r, ri) {
+        font("normal", 9, INK);
+        var cells = r.map(function (v, i) { return split(v || "—", widths[i] - 4); });
+        var lines = Math.max.apply(null, cells.map(function (c) { return c.length; }));
+        var hh = lines * 4.2 + 2.6;
+        if (y + hh > H - 22) { doc.addPage(); head(false); drawHead(); font("normal", 9, INK); }
+        if (ri % 2) { doc.setFillColor(251, 253, 247); rect(M, y - 4, CW, hh, "F"); }
+        var x = M; cells.forEach(function (c, i) { txt(c, x + 2, y); x += widths[i]; });
+        doc.setDrawColor.apply(doc, LINE); doc.setLineWidth(0.2); line(M, y - 4 + hh, W - M, y - 4 + hh);
+        y += hh;
+      });
+      y += 4;
+    }
+
+    head(true);
+
+    /* title block */
+    font("bold", 16, INK);
+    split(d.title || T.untitled, CW).forEach(function (ln) { txt(ln, M, y); y += 7; });
+    font("normal", 10, MUTED); txt(d.client + (d.project ? "  ·  " + d.project : ""), M, y); y += 9;
+
+    section("1", T.details);
+    facts([[T.client, d.client], [T.project, d.project], [T.workOrder, d.code],
+           [T.status, d.status], [T.contract, d.contractRef], [T.owner, d.owner],
+           [T.start, dt(d.startDate)], [T.end, dt(d.endDate)], [T.issued, stamp(new Date(d.issuedAt))]], 3);
+
+    section("2", T.scope);
+    para(d.scope || T.scopeDefault);
+
+    if (d.deliverables.length) {
+      section("3", T.deliverables);
+      d.deliverables.forEach(function (x, i) {
+        font("normal", 10, INK);
+        var lines = split(x, CW - 9);
+        room(lines.length * 5 + 1);
+        font("bold", 9, DEEP); txt(String(i + 1) + ".", M + 1, y);
+        font("normal", 10, INK); txt(lines, M + 8, y);
+        y += lines.length * 5 + 1.2;
+      });
+      y += 3;
+    }
+
+    section(d.deliverables.length ? "4" : "3", T.budget);
+    var bg = d.budget, cur = bg.currency || "";
+    var bp = [[T.basis, bg.basis ? (T.bases[bg.basis] || bg.basis) : T.notSet], [T.hours, bg.hours != null ? num(bg.hours) + T.h : "—"]];
+    if (bg.basis === "Money") bp.push([T.amount, bg.amount != null ? money(bg.amount, cur) : "—"], [T.rate, bg.rate != null ? money(bg.rate, cur) + T.perHour : "—"]);
+    if (["Pages", "Words", "Custom"].indexOf(bg.basis) >= 0) bp.push([T.units, num(bg.units) + " " + (bg.unitName || (T.bases[bg.basis] || bg.basis).toLowerCase())]);
+    if (bg.consumed != null) bp.push([T.consumed, num(bg.consumed) + T.h]);
+    facts(bp, 3);
+
+    var sn = d.deliverables.length ? 5 : 4;
+    section(String(sn), T.contacts);
+    table([[T.name, .26], [T.roleOn, .24], [T.email, .32], [T.phone, .18]],
+      d.contacts.map(function (c) { return [c.name, c.role, c.email, c.phone]; }), T.noContact);
+
+    section(String(sn + 1), T.team);
+    table([[T.name, .24], [T.roleOn, .2], [T.position, .24], [T.email, .32]],
+      d.team.map(function (t) { return [t.name, t.part, t.title, t.email]; }), T.noTeam);
+
+    var next = sn + 2;
+    if (d.notes) { section(String(next), T.notes); para(d.notes, 9.5); next++; }
+
+    /* signatures — the heading, the note and both boxes stay on one page */
+    room(70);
+    section(String(next), T.sign);
+    font("normal", 8.5, MUTED);
+    split(T.signNote, CW).forEach(function (ln) { txt(ln, M, y); y += 4.2; });
+    y += 3;
+    room(44);
+    var bw = (CW - 8) / 2;
+    [[T.forClient + (d.client || ""), d.clientSigner], [T.forGalil + CO.name, d.galilSigner]].forEach(function (s, i) {
+      var x = M + i * (bw + 8), top = y, lx = x + 5, vx = x + 17;
+      doc.setDrawColor.apply(doc, LINE); doc.setLineWidth(0.4); doc.roundedRect(RTL ? W - x - bw : x, top, bw, 40, 2, 2, "S");
+      doc.setFillColor.apply(doc, GREEN); rect(x, top, 1.4, 40, "F");
+      font("bold", 8, DEEP); txt(split(s[0], bw - 8)[0], lx, top + 6);
+      font("normal", 7.5, MUTED); txt(T.name, lx, top + 13); txt(T.title, lx, top + 20);
+      font("bold", 9.5, INK); txt(s[1].name || "", vx, top + 13);
+      font("normal", 9.5, INK); txt(s[1].title || "", vx, top + 20);
+      doc.setDrawColor.apply(doc, MUTED); doc.setLineWidth(0.25);
+      line(lx, top + 32, x + bw * 0.6, top + 32); line(x + bw * 0.66, top + 32, x + bw - 5, top + 32);
+      font("normal", 7.5, MUTED); txt(T.signature, lx, top + 36); txt(T.date, x + bw * 0.66, top + 36);
+    });
+    y += 46;
+
+    /* footer on every page */
+    var pages = doc.getNumberOfPages();
+    for (var pg = 1; pg <= pages; pg++) {
+      doc.setPage(pg);
+      doc.setDrawColor.apply(doc, LINE); doc.setLineWidth(0.3); line(M, H - 15, W - M, H - 15);
+      font("bold", 7.5, INK); txt(CO.name, M, H - 10.5);
+      var nameW = doc.getTextWidth(CO.name);
+      font("normal", 7.5, MUTED); txt(CO.addr + "  ·  " + CO.phone + "  ·  " + CO.web, M + nameW + 3, H - 10.5);
+      txt(RTL ? T.page(pg, pages) + "  ·  " + d.code : d.code + "  ·  " + T.page(pg, pages), W - M, H - 10.5, { align: "right" });
+      font("normal", 6.5, MUTED);
+      txt(T.generated(d.generatedBy, stamp(d.generatedAt)), M, H - 6.5);
+    }
+    doc.setProperties({ title: T.untitled + " " + d.code + " — " + d.title, subject: d.client + " · " + d.project, author: CO.name, creator: "GALIL WorkDesk" });
+    return doc.output("blob");
+  });
+}
+
+function saveBlob(blob, name) {
+  var url = URL.createObjectURL(blob), a = document.createElement("a");
+  a.href = url; a.download = name; document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+}
+
+/* preview, download and email the document, in English or Hebrew */
+function WODocModal(p) {
+  var db = p.db, wo = p.wo;
+  var ls = useState(WDI18N.he ? "he" : "en"), lang = ls[0], setLang = ls[1];
+  /* the built file remembers its language, so a switch never offers the other one */
+  var bs = useState(null), built = bs[0], setBuilt = bs[1];
+  var es = useState(""), err = es[0], setErr = es[1];
+  var blob = built && built.lang === lang ? built.blob : null, url = blob ? built.url : "";
+  var d = woDocData(db, wo, p.user, lang), CO = GALIL_CO[lang];
+  var to = d.contacts.map(function (c) { return c.email; }).filter(Boolean);
+  var ts = useState(to.join(", ")), rcpt = ts[0], setRcpt = ts[1];
+  useEffect(function () {
+    var u = "", alive = true;
+    setErr("");
+    buildWOPdf(db, wo, p.user, lang).then(function (b) {
+      if (!alive) return;
+      u = URL.createObjectURL(b); setBuilt({ lang: lang, blob: b, url: u });
+    }, function (e) { if (alive) setErr(e.message || String(e)); });
+    return function () { alive = false; if (u) URL.revokeObjectURL(u); };
+  }, [lang]);
+  var name = woFileName(wo, lang);
+  function download() { saveBlob(blob, name); toast(name + " downloaded.", "ok"); }
+  function email() {
+    var sched = d.startDate || d.endDate ? (d.startDate ? il(d.startDate) : "—") + (lang === "he" ? " עד " : " to ") + (d.endDate ? il(d.endDate) : "—") : "";
+    var me = p.user ? (lang === "he" && p.user.fullNameHe ? p.user.fullNameHe : p.user.fullName) + "\n" : "";
+    var subject = lang === "he"
+      ? "הזמנת עבודה " + d.code + " — " + d.title + " (" + d.client + ")"
+      : "Work order " + d.code + " — " + d.title + " (" + d.client + ")";
+    var body = lang === "he"
+      ? "שלום,\n\nמצורפת הזמנת עבודה " + d.code + " עבור " + d.project + ".\n\n" + "היקף העבודה: " + (d.scope || d.title) + "\n" +
+        (sched ? "לוח זמנים: " + sched + "\n" : "") + "\nבברכה,\n" + me + CO.name
+      : "Hello,\n\nPlease find attached work order " + d.code + " for " + d.project + ".\n\n" + "Scope: " + (d.scope || d.title) + "\n" +
+        (sched ? "Schedule: " + sched + "\n" : "") + "\nKind regards,\n" + me + CO.name;
+    var file = null;
+    try { file = new File([blob], name, { type: "application/pdf" }); } catch (e) {}
+    /* where the device can hand the file to a mail app (phones, Edge, Safari), it goes attached */
+    if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+      navigator.share({ files: [file], title: subject, text: body }).catch(function () {});
+      return;
+    }
+    saveBlob(blob, name);
+    var a = document.createElement("a");
+    a.href = "mailto:" + encodeURIComponent(rcpt.replace(/\s+/g, "")).replace(/%2C/g, ",") + "?subject=" + encodeURIComponent(subject) + "&body=" + encodeURIComponent(body);
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    toast("Your mail app is opening — " + name + " was downloaded, attach it to the message.", "ok");
+  }
+  return h(Modal, {
+    title: "Work order document — " + (wo.code || "draft"), size: "lg", onClose: p.onClose,
+    head: h("div", { className: "pillbar", role: "group", "aria-label": "Document language" },
+      h("button", { className: "pill" + (lang === "en" ? " on" : ""), "aria-pressed": lang === "en" ? "true" : "false", onClick: function () { setLang("en"); } }, "English"),
+      h("button", { className: "pill" + (lang === "he" ? " on" : ""), lang: "he", "aria-pressed": lang === "he" ? "true" : "false", onClick: function () { setLang("he"); } }, "עברית")),
+    footer: h("div", { className: "row grow", style: { gap: 8, alignItems: "flex-end" } },
+      h(Inp, { label: "Send to", id: "wodoc-to", value: rcpt, placeholder: "client@example.com", cls: "grow", onChange: function (e) { setRcpt(e.target.value); } }),
+      h(Btn, { disabled: !blob, onClick: email }, IconLabel("mail", "Email")),
+      h(Btn, { kind: "p", disabled: !blob, onClick: download }, IconLabel("download", "Download PDF")))
+  },
+    err ? h("div", { className: "banner err" }, "The document could not be built: ", err)
+      : url ? h("iframe", { key: url, className: "wodoc", src: url, title: "Work order " + wo.code })
+      : h("div", { className: "empty" }, "Preparing the document…"));
+}
+
 
 /* =====================================================================
    §12.3 — Dashboard
@@ -21583,7 +22101,7 @@ function DashboardTab(p) {
       h("div", { className: "pillbar" },
         h("button", { className: "pill" + (!pctMode ? " on" : ""), onClick: function () { setPct(false); } }, "Values"),
         h("button", { className: "pill" + (pctMode ? " on" : ""), onClick: function () { setPct(true); } }, "%")),
-      can(user, "excelExport") ? h(Btn, { sm: true, onClick: doExport }, "⬇ Export") : null),
+      can(user, "excelExport") ? h(Btn, { sm: true, onClick: doExport }, IconLabel("download", "Export")) : null),
 
     h("div", { className: "panel pad row", style: { gap: 8, alignItems: "flex-end" } },
       companyView ? h("div", { style: { minWidth: 190 } }, h(MultiSelect, { label: "Employee", allLabel: "All in scope", avatars: true, value: flt.employees, options: db.users.filter(function (u) { return allowed.indexOf(u.id) >= 0; }).map(function (u) { return { value: u.id, label: u.fullName }; }), onChange: function (v) { setFlt(Object.assign({}, flt, { employees: v })); } })) : null,
@@ -21706,7 +22224,7 @@ function LibraryTab(p) {
           h("div", { className: "row cap" },
             h("span", { className: "grow" }, userName(db, l.authorUserId), " · ", il(String(l.createdAt).slice(0, 10))),
             (l.authorUserId === user.id || ["OPS", "CEO"].indexOf(user.role) >= 0) && can(user, "libraryWrite")
-              ? h(Btn, { sm: true, kind: "t", onClick: function () { setEditing(Object.assign({}, l, { tagsText: (l.tags || []).join(", ") })); } }, "✎") : null));
+              ? h(Btn, { title: "Edit", "aria-label": "Edit", sm: true, kind: "t", onClick: function () { setEditing(Object.assign({}, l, { tagsText: (l.tags || []).join(", ") })); } }, h(Icon, { n: "edit", size: 16 })) : null));
       })),
 
     editing ? h(Modal, {
@@ -21797,8 +22315,8 @@ function ListEditor(pp) {
                 ask({ title: "Rename " + (pp.itemLabel || "item"), input: true, label: "New name", value: old, okLabel: "Rename" }).then(function (v) {
                   if (v && v !== old) { renameItem(o.id, field, v); toast("Renamed to \u201c" + v + "\u201d.", "ok"); }
                 });
-              } }, "✎"),
-              h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove", onClick: function () { removeItem(o.id); } }, "🗑")) : null);
+              } }, h(Icon, { n: "edit", size: 16 })),
+              h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove", onClick: function () { removeItem(o.id); } }, h(Icon, { n: "trash", size: 16 }))) : null);
         })))));
 }
 
@@ -22126,7 +22644,7 @@ function TeamsPanel(p) {
             t.code ? h(Chip, { k: "mut" }, t.code) : null))),
       h("p", { className: "teamdesc" }, t.description || h("span", { className: "cap" }, "No description yet.")),
       h("div", { className: "cap" }, "Lead ", h("b", null, t.leadUserId ? userName(db, t.leadUserId) : "—"),
-        t.location ? " · " + t.location : "", t.contact ? " · " + t.contact : ""),
+        t.location ? " · " + t.location : "", t.contact ? " · " : "", t.contact ? (t.contact.indexOf("@") > 0 ? h(EmailCopy, { value: t.contact }) : t.contact) : ""),
       (t.clientIds || []).length ? h("div", { className: "row", style: { gap: 4 } }, t.clientIds.map(function (c) { return h(Chip, { key: c, k: "teal" }, nameOf(db.clients, c)); })) : null,
       h("div", { className: "row", style: { gap: 4, marginTop: "auto" } },
         members.slice(0, 9).map(function (u) { return h("span", { key: u.id, className: "avatar", style: { width: 26, height: 26, fontSize: 10 }, title: u.fullName + " · " + roleName(u.role) }, initialsOf(u.fullName)); }),
@@ -22261,7 +22779,7 @@ function PeoplePanel(p) {
     row: function (u) {
       return [
         h("div", null, h("b", null, u.fullName), u.fullNameHe ? h("div", { className: "cap he" }, u.fullNameHe) : null),
-        h("span", { className: "cap" }, u.email),
+        h(EmailCopy, { value: u.email }),
         isAdmin && u.id !== user.id ? h("select", { value: u.role, onChange: function (e) {
             var v = e.target.value;
             p.mutate(function (d) { var t = byId(d.users, u.id); if (t) { var b = t.role; t.role = v; audit(d, user.id, "Role change " + b + " → " + v + " for " + t.fullName, "users", u.id, null, null); } });
@@ -22301,7 +22819,7 @@ function MgmtPanel(p) {
         h("div", { className: "row" },
           h("span", { className: "avatar" }, initialsOf(u.fullName)),
           h("div", { className: "grow col", style: { gap: 1 } },
-            h("b", null, u.fullName), h("span", { className: "cap" }, u.email),
+            h("b", null, u.fullName), h(EmailCopy, { value: u.email }),
             h("span", { className: "cap" }, u.jobTitle, " · ", u.department, " · from ", il(u.startDate))),
           h(Chip, { k: "amber" }, "requested ", roleName(u.requestedRole || u.role))),
         h("div", { className: "band" },
@@ -22381,14 +22899,14 @@ function MgmtPanel(p) {
                     pct >= 75 ? h(Chip, { k: pct >= 100 ? "err" : pct >= 90 ? "amber" : "gr" }, num(pct, 0), "%") : null))),
             h("td", null, canLists || can(user, "assignPeople") ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove assignment", onClick: function () {
               p.mutate(function (d) { d.assignments = d.assignments.filter(function (x) { return x.id !== a.id; }); audit(d, user.id, "Assignment removed", "assignments", a.id, null, null); });
-            } }, "🗑") : null));
+            } }, h(Icon, { n: "trash", size: 16 })) : null));
         })))));
 
   if (section === "clients") return h(ListEditor, { itemLabel: "client",
     db: db, user: user, mutate: p.mutate, kind: "clients", canEdit: canLists, nameField: "name",
     cols: ["Name", "Initials", "Contact", "Verified"],
     row: function (c) {
-      return [c.name, h("span", { className: "tnum" }, c.initials), c.contactName ? c.contactName + " · " + c.contactEmail : "—",
+      return [c.name, h("span", { className: "tnum" }, c.initials), c.contactName || c.contactEmail ? h("div", { className: "col", style: { gap: 1, alignItems: "flex-start" } }, c.contactName ? h("span", null, c.contactName) : null, c.contactEmail ? h(EmailCopy, { value: c.contactEmail }) : null) : "—",
         c.isVerified ? h(Chip, { k: "gr" }, "verified") : h(Chip, { k: "amber" }, "unverified")];
     },
     fields: [{ key: "name", label: "Client name" }, { key: "initials", label: "Initials" }, { key: "contactName", label: "Contact" }, { key: "contactEmail", label: "Contact email" }],
@@ -22586,7 +23104,7 @@ function AdminModal(p) {
             h("div", { className: "panel pad col", style: { gap: 8 } },
               h("div", { className: "h3" }, "Backup"),
               h("div", { className: "cap" }, "Everything: entries, plans, budgets, expenses, library, approvals, audit log and lists. (Tasks are in Taskana, which keeps its own backup.)"),
-              h(Btn, { kind: "p", onClick: downloadBackup }, "⬇ Download backup")),
+              h(Btn, { kind: "p", onClick: downloadBackup }, IconLabel("download", "Download backup"))),
             h("div", { className: "panel pad col", style: { gap: 8 } },
               h("div", { className: "h3" }, "Restore Backup"),
               h("div", { className: "cap" }, "Loads everything, including entries. Replaces what is here."),
@@ -22903,9 +23421,9 @@ function MobileTime(p) {
           e.workOrderId ? h(CopyCell, { value: nameOf(db.workOrders, e.workOrderId, "code") }) : null) : null,
         e.status === "pending" && e.statusReason ? h("div", { className: "mrow", style: { color: C.amber, fontWeight: 600 } }, "Reason: ", e.statusReason) : null,
         h("div", { className: "row", style: { gap: 6 } },
-          editable ? h(Btn, { sm: true, onClick: function () { setSheet(toForm(e)); } }, "✎ Edit") : null,
+          editable ? h(Btn, { sm: true, onClick: function () { setSheet(toForm(e)); } }, IconLabel("edit", "Edit")) : null,
           reportRights && e.type === "Work" ? h(Btn, { sm: true, onClick: function () { setDup(e); } }, "⧉ Duplicate…") : null,
-          editable ? h(Btn, { sm: true, kind: "d", onClick: function () { p.onDelete(e); } }, "🗑") : null));
+          editable ? h(Btn, { title: "Delete", "aria-label": "Delete", sm: true, kind: "d", onClick: function () { p.onDelete(e); } }, h(Icon, { n: "trash", size: 16 })) : null));
     }),
 
     sheet ? h(MobileEntrySheet, {
@@ -23021,12 +23539,12 @@ function MobileExpenses(p) {
           h(Chip, { k: x.status === "Paid" ? "gr" : x.status === "Rejected" ? "err" : x.status === "Approved" ? "teal" : "amber" }, x.status),
           (x.attachments || []).length ? h(Chip, { k: "mut" }, "📎 ", String(x.attachments.length)) : null),
         own || can(user, "approveExpenses") ? h("div", { className: "row", style: { gap: 6 } },
-          h(Btn, { sm: true, onClick: function () { setSheet(Object.assign({}, x)); } }, "✎ Edit"),
-          h(Btn, { sm: true, kind: "d", onClick: function () {
+          h(Btn, { sm: true, onClick: function () { setSheet(Object.assign({}, x)); } }, IconLabel("edit", "Edit")),
+          h(Btn, { title: "Delete", "aria-label": "Delete", sm: true, kind: "d", onClick: function () {
             var snap = JSON.parse(JSON.stringify(x));
             p.mutate(function (d) { d.expenses = d.expenses.filter(function (z) { return z.id !== x.id; }); audit(d, user.id, "Expense deleted", "expenses", x.id, snap, null); });
             toast("Expense deleted.", "", { label: "Undo", fn: function () { p.mutate(function (d) { d.expenses.unshift(snap); }); } });
-          } }, "🗑")) : null);
+          } }, h(Icon, { n: "trash", size: 16 }))) : null);
     }),
     sheet ? h(MobileExpenseSheet, { db: db, user: user, mutate: p.mutate, value: sheet, onClose: function () { setSheet(null); } }) : null);
 }
@@ -23117,10 +23635,10 @@ function MobileLibrary(p) {
 
 /* ---------- the mobile shell ---------- */
 var MOBILE_TABS = [
-  { k: "time", label: "Time", icon: "⏱" },
-  { k: "planner", label: "Plan", icon: "🗓" },
-  { k: "expenses", label: "Expenses", icon: "🧾" },
-  { k: "more", label: "More", icon: "☰" }
+  { k: "time", label: "Time", icon: "timer" },
+  { k: "planner", label: "Plan", icon: "calendar" },
+  { k: "expenses", label: "Expenses", icon: "receipt" },
+  { k: "more", label: "More", icon: "menu" }
 ];
 
 function MobileApp(p) {
@@ -23169,7 +23687,7 @@ function MobileApp(p) {
 
   return h("div", { className: "mob" },
     h("div", { className: "mtop" },
-      h("button", { className: "iconbtn", id: "to-portal", onClick: p.onHome, "aria-label": "Back to the Employee Portal home", style: { fontSize: 19, minWidth: 38 } }, "\u2302"),
+      h("button", { className: "iconbtn", id: "to-portal", onClick: p.onHome, "aria-label": "Back to the Employee Portal home", style: { minWidth: 38 } }, h(Icon, { n: "home", size: 20 })),
       h(Mark, { style: { width: 26, height: 22 } }),
       h("div", { className: "grow", style: { lineHeight: 1.1 } },
         h("b", { style: { letterSpacing: ".14em", fontSize: 13 } }, "GALIL"),
@@ -23177,7 +23695,7 @@ function MobileApp(p) {
       h("button", {
         className: "iconbtn", onClick: function () { p.setTheme(p.theme === "dark" ? "light" : "dark"); },
         "aria-label": p.theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme"
-      }, p.theme === "dark" ? "☀" : "☾"),
+      }, h(Icon, { n: p.theme === "dark" ? "sun" : "moon" })),
       h("button", { className: "iconbtn", onClick: function () { setSheet("profile"); }, "aria-label": "My profile" },
         h("span", { className: "avatar", style: { width: 28, height: 28, fontSize: 11 } }, initialsOf(user.fullName)))),
 
@@ -23196,23 +23714,23 @@ function MobileApp(p) {
         return h("button", {
           key: t.k, role: "tab", "aria-selected": on ? "true" : "false", className: on ? "on" : "",
           onClick: function () { if (t.k === "more") setSheet("more"); else setTab(t.k); }
-        }, h("span", { className: "ic", "aria-hidden": "true" }, t.icon), t.label,
+        }, h("span", { className: "ic", "aria-hidden": "true" }, h(Icon, { n: t.icon, size: 20 })), t.label,
            badge ? h("span", { className: "badge" }, badge) : null);
       })),
 
     sheet === "more" ? h(Sheet, { title: "More", onClose: function () { setSheet(null); } },
       h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); p.onHome(); } }, "\u2302  Employee Portal home"),
       acc.taskana !== "none" ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "taskana/index.html#/my" }, "\u2611  My tasks in Taskana") : null,
-      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); setTab("library"); } }, "📚  Library"),
-      can(user, "approveTime") || can(user, "approveExpenses") ? h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); setTab("approvals"); } }, "✔  Approvals", approvals ? h(Chip, { k: "amber" }, approvals) : null) : null,
-      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet("mywork"); } }, "◱  My assignments and allowances"),
-      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet("profile"); } }, "👤  My profile"),
-      acc.kb ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "kb/index.html" }, "📖  Knowledge Base") : null,
-      acc.handbook ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "handbook/index.html#workdesk" }, "❓  Help — the Handbook") : null,
+      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); setTab("library"); } }, IconLabel("library", "Library")),
+      can(user, "approveTime") || can(user, "approveExpenses") ? h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); setTab("approvals"); } }, IconLabel("approve", "Approvals"), approvals ? h(Chip, { k: "amber" }, approvals) : null) : null,
+      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet("mywork"); } }, IconLabel("assignments", "My assignments and allowances")),
+      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet("profile"); } }, IconLabel("user", "My profile")),
+      acc.kb ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "kb/index.html" }, IconLabel("book", "Knowledge Base")) : null,
+      acc.handbook ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "handbook/index.html#workdesk" }, IconLabel("help", "Help — the Handbook")) : null,
       h("div", { className: "row", style: { justifyContent: "space-between" } }, h("span", { className: "cap" }, "Language"), h(LangSwitch, { light: true })),
       h("div", { className: "sep" }),
       h("div", { className: "cap" }, "The Dashboard, Management and System administration are laid out for a larger screen. Switch to the desktop layout to reach them — this phone will keep that choice."),
-      h(Btn, { kind: "p", style: { minHeight: 48 }, onClick: function () { p.onForceDesktop(); } }, "🖥  Switch to the desktop layout")) : null,
+      h(Btn, { kind: "p", style: { minHeight: 48 }, onClick: function () { p.onForceDesktop(); } }, IconLabel("monitor", "Switch to the desktop layout"))) : null,
 
     sheet === "mywork" ? h(MyWork, Object.assign({ onClose: function () { setSheet(null); } }, common)) : null,
     sheet === "profile" ? h(Profile, { db: db, user: user, onClose: function () { setSheet(null); }, onSignOut: p.onSignOut }) : null);
@@ -23289,7 +23807,7 @@ function Profile(p) {
         h("div", { className: "col", style: { gap: 1 } },
           h("b", { style: { fontSize: 16 } }, user.fullName),
           user.fullNameHe ? h("span", { className: "cap he" }, user.fullNameHe) : null,
-          h("span", { className: "cap mono" }, user.email),
+          h(EmailCopy, { value: user.email }),
           h("div", { className: "row", style: { gap: 5, marginTop: 3 } }, h(Chip, { k: "gr" }, roleName(user.role)), h(Chip, { k: "mut" }, user.jobTitle)))),
       h("div", { className: "panel pad col", style: { gap: 3, background: C.wash } },
         [["Department", user.department], ["Team", user.teamId ? nameOf(db.teams, user.teamId) : "—"],
@@ -23357,6 +23875,12 @@ function App() {
   var thS = useState(readTheme), theme = thS[0], setTheme = thS[1];
   var vpS = useState(readViewPref), viewPref = vpS[0], setViewPrefState = vpS[1];
   var nwS = useState(isNarrow), narrow = nwS[0], setNarrow = nwS[1];
+  /* desktop Back — every move between tabs and Management sections is kept, so
+     Back retraces it; an open window (⚙, profile, assignments) closes first, and
+     with nothing left to retrace Back returns to the portal home */
+  var scS = useState({}), secs = scS[0], setSecs = scS[1];
+  var hiS = useState([]), hist = hiS[0], setHist = hiS[1];
+  var backRef = useRef(null);
   var setViewPref = function (v) { writeViewPref(v); setViewPrefState(v); };
 
   /* §14.2 — the theme is applied to the document element, so every panel,
@@ -23395,6 +23919,17 @@ function App() {
 
   var dismiss = function (id) { setToasts(function (l) { return l.filter(function (x) { return x.id !== id; }); }); };
 
+  /* Alt+← (Alt+→ in Hebrew) and the mouse's back button step back inside WorkDesk */
+  useEffect(function () {
+    var onKey = function (e) {
+      if (e.altKey && e.key === (WDI18N.he ? "ArrowRight" : "ArrowLeft") && backRef.current) { e.preventDefault(); backRef.current(); }
+    };
+    var onMouse = function (e) { if (e.button === 3 && backRef.current) { e.preventDefault(); backRef.current(); } };
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("mouseup", onMouse);
+    return function () { window.removeEventListener("keydown", onKey); window.removeEventListener("mouseup", onMouse); };
+  }, []);
+
   /* single mutation entry point — writes through to the frozen storage key */
   var mutate = useCallback(function (fn, after) {
     setDb(function (cur) {
@@ -23416,6 +23951,7 @@ function App() {
     });
     try { localStorage.setItem(SESSION_KEY, u.id); } catch (e) {}
     setSession(u.id);
+    setHist([]); setSecs({});
     setTab(can(u, "reportOwnTime") ? "time" : can(u, "dashboardOwn") ? "dashboard" : "time");
     toast("Signed in as " + displayName(u) + " · " + roleName(u.role), "ok");
   }
@@ -23500,9 +24036,31 @@ function App() {
 
   var common = { db: db, user: user, mutate: mutate };
 
+  function go(t, sub) {
+    var nextSecs = sub ? Object.assign({}, secs, sub) : secs;
+    if (t === tab && nextSecs[t] === secs[t]) return;
+    setHist(function (hh) { return hh.concat([{ tab: tab, secs: secs }]).slice(-60); });
+    setTab(t); setSecs(nextSecs);
+    if (t !== tab) writeRoute("workdesk", t);
+  }
+  function back() {
+    if (admin) { setAdmin(false); return; }
+    if (profile) { setProfile(false); return; }
+    if (mywork) { setMyWork(false); return; }
+    if (!hist.length) { goHome(); return; }
+    var last = hist[hist.length - 1];
+    setHist(hist.slice(0, -1)); setTab(last.tab); setSecs(last.secs);
+    try { history.replaceState(null, "", "#/workdesk/" + last.tab); } catch (e) {}
+  }
+  backRef.current = back;
+
   return h("div", { className: "app" },
     h("div", { className: "topbar" },
-      h("button", { className: "iconbtn", id: "to-portal", onClick: goHome, title: "Back to the Employee Portal home", "aria-label": "Back to the Employee Portal home", style: { fontSize: 19 } }, "\u2302"),
+      h("button", {
+        className: "iconbtn backbtn", id: "wd-back", onClick: back,
+        title: hist.length || admin || profile || mywork ? (WDI18N.he ? "Back (Alt+→)" : "Back (Alt+←)") : "Back to the Employee Portal home", "aria-label": "Back"
+      }, h(Icon, { n: "back", size: 20 })),
+      h("button", { className: "iconbtn", id: "to-portal", onClick: goHome, title: "Back to the Employee Portal home", "aria-label": "Back to the Employee Portal home" }, h(Icon, { n: "home", size: 20 })),
       h("div", { className: "brand" },
         h(Mark, null),
         h("div", null, "GALIL", h("small", null, "WorkDesk")),
@@ -23513,16 +24071,16 @@ function App() {
         className: "iconbtn", onClick: function () { setTheme(theme === "dark" ? "light" : "dark"); },
         title: theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme",
         "aria-label": theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme"
-      }, theme === "dark" ? "\u2600" : "\u263e"),
+      }, h(Icon, { n: theme === "dark" ? "sun" : "moon" })),
       narrow ? h("button", {
-        className: "iconbtn", title: "Switch to the mobile layout",
+        className: "iconbtn", title: "Switch to the mobile layout", "aria-label": "Switch to the mobile layout",
         onClick: function () { setViewPref("auto"); }
-      }, "\ud83d\udcf1") : null,
-      h("button", { className: "iconbtn", title: "My assignments and allowances", onClick: function () { setMyWork(true); } }, "◱"),
-      h("button", { className: "iconbtn", title: "System administration", onClick: function () { setAdmin(true); } }, "⚙"),
+      }, h(Icon, { n: "phone" })) : null,
+      h("button", { className: "iconbtn", title: "My assignments and allowances", "aria-label": "My assignments and allowances", onClick: function () { setMyWork(true); } }, h(Icon, { n: "assignments" })),
+      h("button", { className: "iconbtn", title: "System administration", "aria-label": "System administration", onClick: function () { setAdmin(true); } }, h(Icon, { n: "settings" })),
       h(LangSwitch, null),
-      portalAccess.kb ? h("a", { className: "iconbtn", style: { textDecoration: "none" }, href: "kb/index.html", target: "_blank", rel: "noopener", title: "Knowledge Base — onboarding, company rules and training", "aria-label": "Open the Employee Knowledge Base" }, h(KbIcon)) : null,
-      portalAccess.handbook ? h("a", { className: "iconbtn", style: { textDecoration: "none", fontWeight: 700 }, href: "handbook/index.html#workdesk", target: "_blank", rel: "noopener", title: "Help — open the Handbook" }, "?") : null,
+      portalAccess.kb ? h("a", { className: "iconbtn", style: { textDecoration: "none" }, href: "kb/index.html", target: "_blank", rel: "noopener", title: "Knowledge Base — onboarding, company rules and training", "aria-label": "Open the Employee Knowledge Base" }, h(Icon, { n: "book" })) : null,
+      portalAccess.handbook ? h("a", { className: "iconbtn", style: { textDecoration: "none" }, href: "handbook/index.html#workdesk", target: "_blank", rel: "noopener", title: "Help — open the Handbook", "aria-label": "Help — open the Handbook" }, h(Icon, { n: "help" })) : null,
       h("button", { className: "who iconbtn", style: { minWidth: 0, padding: "0 8px", gap: 9 }, onClick: function () { setProfile(true); }, title: "My profile" },
         h("span", { className: "avatar", style: user.photoUrl ? { backgroundImage: "url(" + user.photoUrl + ")", backgroundSize: "cover" } : null }, user.photoUrl ? "" : initialsOf(user.fullName)),
         h("span", { className: "nm col", style: { alignItems: "center", gap: 0 } },
@@ -23534,14 +24092,14 @@ function App() {
         var badge = t.k === "approvals" ? approvalCount : 0;
         return h("button", {
           key: t.k, role: "tab", "aria-selected": tab === t.k ? "true" : "false",
-          className: "tab" + (tab === t.k ? " on" : ""), onClick: function () { setTab(t.k); writeRoute("workdesk", t.k); }
+          className: "tab" + (tab === t.k ? " on" : ""), onClick: function () { go(t.k); }
         }, t.label, badge ? h("span", { className: "badge", title: "Outstanding requests" }, badge) : null);
       })),
 
     tab === "time"      ? h(TimeLogTab, common) : null,
     tab === "planner"   ? h(PlannerTab, common) : null,
     tab === "expenses"  ? h(ExpensesTab, common) : null,
-    tab === "management" ? h(ManagementTab, common) : null,
+    tab === "management" ? h(ManagementTab, Object.assign({ section: secs.management, onSection: function (k) { go("management", { management: k }); } }, common)) : null,
     tab === "approvals" ? h(ApprovalsTab, common) : null,
     tab === "dashboard" ? h(DashboardTab, common) : null,
     tab === "library"   ? h(LibraryTab, common) : null,
@@ -23550,13 +24108,6 @@ function App() {
     profile ? h(Profile, { db: db, user: user, viewPref: viewPref, setViewPref: setViewPref, onClose: function () { setProfile(false); }, onSignOut: signOut }) : null,
     mywork ? h(MyWork, Object.assign({ onClose: function () { setMyWork(false); } }, common)) : null,
     h(Toasts, { items: toasts, dismiss: dismiss }), h(AskHost));
-}
-
-/* open-book line icon, drawn in currentColor like the other top-bar glyphs */
-function KbIcon() {
-  return h("svg", { width: 18, height: 18, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.9, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true" },
-    h("path", { d: "M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z" }),
-    h("path", { d: "M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z" }));
 }
 
 /* ---- boot ---- */
