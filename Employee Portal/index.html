@@ -18362,7 +18362,8 @@ var CSS = [
 ".iconbtn{min-width:44px;min-height:44px;display:grid;place-items:center;background:transparent;border:0;color:#D9E8C6;border-radius:10px;cursor:pointer;font-size:16px}",
 ".iconbtn:hover{background:rgba(255,255,255,.1);color:#fff}",
 ".iconbtn:disabled{opacity:.3;cursor:default;background:transparent}",
-".ico{display:block;flex:0 0 auto}",
+".ico{display:inline-block;vertical-align:-0.2em;flex:0 0 auto}",
+".chip .ico,.banner .ico,.errmsg .ico,.tblbtn .ico,.bigbtn .ico,.chipbtn .ico{margin-inline-end:5px}",
 "[dir=rtl] .backbtn .ico{transform:scaleX(-1)}",
 ".iconbtn.ink{color:var(--muted)}",
 ".iconbtn.ink:hover{background:var(--wash);color:var(--ink)}",
@@ -18765,7 +18766,7 @@ function Field(p) {
   return h("div", { className: "fld" + (p.err ? " bad" : "") + (p.cls ? " " + p.cls : "") },
     p.label ? h("label", { htmlFor: p.id }, p.label, p.req ? h("span", { style: { color: C.error } }, " *") : null) : null,
     p.children,
-    p.err ? h("div", { className: "errmsg", id: (p.id || "") + "-err" }, h("span", null, "⚠"), p.err) : null);
+    p.err ? h("div", { className: "errmsg", id: (p.id || "") + "-err" }, h(Icon, { n: "warn", size: 14 }), p.err) : null);
 }
 function Inp(p) {
   var o = Object.assign({}, p); delete o.err; delete o.label; delete o.req; delete o.cls;
@@ -18823,12 +18824,27 @@ var ICONS = {
   home: ["M3 10.5L12 3l9 7.5", "M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"],
   leave: [{ c: [12, 12, 4] }, "M12 2v2M12 20v2M2 12h2M20 12h2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"],
   lock: [{ r: [3, 11, 18, 11, 2] }, "M7 11V7a5 5 0 0 1 10 0v4"],
-  install: ["M12 3v12M7 10l5 5 5-5", { r: [5, 17, 14, 4, 1] }]
+  install: ["M12 3v12M7 10l5 5 5-5", { r: [5, 17, 14, 4, 1] }],
+  warn: ["M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z", "M12 9v4M12 17h.01"],
+  stop: ["M7.86 2h8.28L22 7.86v8.28L16.14 22H7.86L2 16.14V7.86z", "M15 9l-6 6M9 9l6 6"],
+  info: [{ c: [12, 12, 10] }, "M12 16v-4M12 8h.01"],
+  check: ["M20 6L9 17l-5-5"],
+  pending: [{ c: [12, 12, 10] }, "M12 6v6l4 2"],
+  flag: ["M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z", "M4 22v-7"],
+  star: ["M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"],
+  clip: ["M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"],
+  play: ["M6 3l14 9-14 9z"],
+  square: [{ r: [5, 5, 14, 14, 2] }],
+  sliders: ["M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"],
+  widths: ["M8 7l-5 5 5 5M16 7l5 5-5 5M3 12h18"],
+  order: ["M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"],
+  reset: ["M3 12a9 9 0 1 0 3-6.7L3 8", "M3 3v5h5"],
+  chevron: ["M6 9l6 6 6-6"]
 };
 function Icon(p) {
   var s = p.size || 18;
   return h("svg", {
-    className: "ico" + (p.className ? " " + p.className : ""), width: s, height: s, viewBox: "0 0 24 24", fill: "none",
+    className: "ico" + (p.className ? " " + p.className : ""), width: s, height: s, viewBox: "0 0 24 24", fill: p.fill ? "currentColor" : "none",
     stroke: "currentColor", strokeWidth: p.sw || 1.9, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true", style: p.style
   }, (ICONS[p.n] || []).map(function (x, i) {
     return typeof x === "string" ? h("path", { key: i, d: x })
@@ -18892,7 +18908,7 @@ function Modal(p) {
   return onTop(h("div", { className: "ovl", onMouseDown: function (e) { if (e.target === e.currentTarget && p.onClose) p.onClose(); } },
     h("div", { className: "modal " + (p.size || ""), role: "dialog", "aria-modal": "true", "aria-label": p.title },
       h("header", null, h("div", { className: "h2 grow" }, p.title), p.head,
-        h("button", { className: "iconbtn", style: { color: C.muted }, onClick: p.onClose, "aria-label": "Close" }, "✕")),
+        h("button", { className: "iconbtn", style: { color: C.muted }, onClick: p.onClose, "aria-label": "Close" }, h(Icon, { n: "close", size: 18 }))),
       h("div", { className: "body" }, p.children),
       p.footer ? h("footer", null, p.footer) : null)));
 }
@@ -18947,7 +18963,7 @@ function AskHost() {
   return onTop(h("div", { className: "ovl", style: { zIndex: 95 }, onMouseDown: function (e) { if (e.target === e.currentTarget) done(null); } },
     h("div", { className: "modal sm", role: "dialog", "aria-modal": "true", "aria-label": req.title, ref: boxRef },
       h("header", null, h("div", { className: "h2 grow" }, req.title),
-        h("button", { className: "iconbtn", style: { color: C.muted }, onClick: function () { done(null); }, "aria-label": "Close" }, "\u2715")),
+        h("button", { className: "iconbtn", style: { color: C.muted }, onClick: function () { done(null); }, "aria-label": "Close" }, h(Icon, { n: "close", size: 18 }))),
       h("div", { className: "body col", style: { gap: 10 } },
         req.message ? h("p", { style: { margin: 0 } }, req.message) : null,
         req.input ? h(Inp, {
@@ -18983,19 +18999,19 @@ function MultiSelect(p) {
         type: "button", className: "btn", style: { width: "100%", justifyContent: "space-between", borderColor: open ? C.deep : C.line },
         "aria-expanded": open ? "true" : "false", "aria-haspopup": "listbox", onClick: function () { setOpen(!open); }
       }, h("span", { style: { overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, label),
-         h("span", { style: { color: C.deep, fontSize: 11, transform: open ? "rotate(180deg)" : "none" } }, "▾")),
+         h("span", { style: { color: C.deep, display: "inline-flex", transform: open ? "rotate(180deg)" : "none" } }, h(Icon, { n: "chevron", size: 14 }))),
       open ? h("div", { className: "ms-list", role: "listbox" },
         h("button", {
           type: "button", className: "ms-opt" + (sel.length === 0 ? " on" : ""), style: { fontWeight: 700 },
           onClick: function () { p.onChange([]); }
-        }, h("span", { className: "tick" }, "✓"), p.allLabel || "All"),
+        }, h("span", { className: "tick" }, h(Icon, { n: "check", size: 12 })), p.allLabel || "All"),
         h("div", { className: "ms-sep" }),
         p.options.map(function (o) {
           var on = sel.indexOf(o.value) >= 0;
           return h("button", {
             key: o.value, type: "button", role: "option", "aria-selected": on ? "true" : "false",
             className: "ms-opt" + (on ? " on" : ""), onClick: function () { toggle(o.value); }
-          }, h("span", { className: "tick" }, "✓"),
+          }, h("span", { className: "tick" }, h(Icon, { n: "check", size: 12 })),
              p.avatars ? h("span", { className: "av", style: { width: 22, height: 22, borderRadius: "50%", background: C.green, color: "#14260A", display: "grid", placeItems: "center", font: "700 9px inherit", flex: "0 0 auto" } }, initialsOf(o.label)) : null,
              h("span", { style: { overflow: "hidden", textOverflow: "ellipsis" } }, o.label));
         })) : null));
@@ -19020,7 +19036,7 @@ function Picker(p) {
           className: "pk" + (on ? " on" : "") + (p.avatars ? "" : " plain"),
           onClick: function () { toggle(o.value); }
         },
-          p.avatars ? h("span", { className: "av" }, initialsOf(o.label)) : h("span", { className: "tick" }, "✓"),
+          p.avatars ? h("span", { className: "av" }, initialsOf(o.label)) : h("span", { className: "tick" }, h(Icon, { n: "check", size: 12 })),
           h("span", null, o.label),
           o.meta ? h("span", { className: "rl" }, o.meta) : null);
       })),
@@ -19041,7 +19057,7 @@ function ListOrFree(p) {
       : h("select", { value: p.value || "", onChange: function (e) { p.onChange(e.target.value); }, disabled: p.disabled },
           h("option", { value: "" }, p.placeholder || "Select…"),
           (p.options || []).map(function (o) { return h("option", { key: o.value, value: o.value }, o.label); })),
-    p.err ? h("div", { className: "errmsg" }, h("span", null, "⚠"), p.err) : null);
+    p.err ? h("div", { className: "errmsg" }, h(Icon, { n: "warn", size: 14 }), p.err) : null);
 }
 
 /* one half of a start/end time — wheel up steps forward, wheel down steps back */
@@ -19109,10 +19125,10 @@ function hoursChips(e) {
     Number(e.day) ? h(Chip, { k: e.type === "Sick" ? "mut" : "gr", style: { background: e.type === "Sick" ? "rgba(156,140,232,.15)" : "rgba(63,169,126,.14)", color: e.type === "Sick" ? "#5A48B8" : "#1F7A57", borderColor: e.type === "Sick" ? "rgba(156,140,232,.4)" : "rgba(63,169,126,.4)" } }, num(e.day), " d") : null);
 }
 function statusBadge(e) {
-  if (e.status === "pending") return h(Chip, { k: "amber", title: e.statusReason }, "⏳ Pending");
-  if (e.status === "cancelled") return h(Chip, { k: "err", title: e.decisionNote }, "✕ Cancelled");
-  if (e.status === "locked") return h(Chip, { k: "mut", title: "Month closed" }, "🔒 Locked");
-  if (e.softFlag) return h(Chip, { k: "amber", title: "Over the daily soft limit — registered, flagged for review" }, "⚑ Long day");
+  if (e.status === "pending") return h(Chip, { k: "amber", title: e.statusReason }, h(Icon, { n: "pending", size: 12 }), "Pending");
+  if (e.status === "cancelled") return h(Chip, { k: "err", title: e.decisionNote }, h(Icon, { n: "close", size: 12 }), "Cancelled");
+  if (e.status === "locked") return h(Chip, { k: "mut", title: "Month closed" }, h(Icon, { n: "lock", size: 12 }), "Locked");
+  if (e.softFlag) return h(Chip, { k: "amber", title: "Over the daily soft limit — registered, flagged for review" }, h(Icon, { n: "flag", size: 12 }), "Long day");
   return null;
 }
 function psChip(status) {
@@ -19443,7 +19459,7 @@ function STable(p) {
       }, h("option", { value: "" }, saved.views.length ? "— choose a saved view —" : "— no saved views —"),
         saved.views.map(function (v) { return h("option", { key: v.name, value: v.name }, v.name + (saved.dflt === v.name ? " ★" : "")); })),
       h("button", { className: "tblbtn", title: "Save the current sort, column order and widths as a view", onClick: saveView }, "＋ Save"),
-      h("button", { className: "tblbtn ic" + (isD ? " on" : ""), disabled: !cur, title: !cur ? "Choose a saved view first" : isD ? "Stop opening this view by default" : "Open this table with this view", "aria-label": isD ? "Unset default view" : "Set as default view", onClick: function () { toggleDefault(cur); } }, isD ? "★" : "☆"),
+      h("button", { className: "tblbtn ic" + (isD ? " on" : ""), disabled: !cur, title: !cur ? "Choose a saved view first" : isD ? "Stop opening this view by default" : "Open this table with this view", "aria-label": isD ? "Unset default view" : "Set as default view", onClick: function () { toggleDefault(cur); } }, h(Icon, { n: "star", size: 15, fill: isD })),
       h("button", { className: "tblbtn ic", disabled: !cur, title: cur ? "Delete this saved view" : "Choose a saved view first", "aria-label": "Delete saved view", onClick: function () { delView(cur); } }, h(Icon, { n: "trash", size: 16 }))),
     h("div", { className: "tbg" },
       h("span", { className: "tbl-l" }, "Sort"),
@@ -19454,7 +19470,7 @@ function STable(p) {
         cols.filter(function (c) { return c.label; }).map(function (c) { return h("option", { key: c.id, value: c.id }, c.label); })),
       h("button", { className: "tblbtn ic" + (sort && sort.dir === "asc" ? " on" : ""), disabled: !sort, title: "A→Z / lowest first", onClick: function () { tvSet(id, { sort: { col: sort.col, dir: "asc" }, view: null }); } }, "A→Z"),
       h("button", { className: "tblbtn ic" + (sort && sort.dir === "desc" ? " on" : ""), disabled: !sort, title: "Z→A / highest first", onClick: function () { tvSet(id, { sort: { col: sort.col, dir: "desc" }, view: null }); } }, "Z→A"),
-      h("button", { className: "tblbtn ic", disabled: !sort, title: "Clear the sort", "aria-label": "Clear the sort", onClick: function () { tvSet(id, { sort: null, view: null }); } }, "✕")),
+      h("button", { className: "tblbtn ic", disabled: !sort, title: "Clear the sort", "aria-label": "Clear the sort", onClick: function () { tvSet(id, { sort: null, view: null }); } }, h(Icon, { n: "close", size: 14 }))),
     h("div", { className: "tbg" },
       h("span", { className: "tbl-l" }, "Move column"),
       h("select", { className: "minisel", "aria-label": "Column to move", value: mv, onChange: function (e) { setMoveSel(e.target.value); } },
@@ -19464,9 +19480,9 @@ function STable(p) {
       h("button", { className: "tblbtn ic", disabled: !mv || mvAt >= order.length - 1, title: "Move right", "aria-label": "Move column right", onClick: function () { moveCol(mv, mvAt + 1); } }, "→")),
     h("div", { className: "tbg" },
       h("span", { className: "tbl-l" }, "Reset"),
-      h("button", { className: "tblbtn", disabled: !sized, title: "Automatic widths that fit the content", onClick: function () { tvSet(id, { widths: null, view: null }); } }, "↔ Widths"),
-      h("button", { className: "tblbtn", disabled: !live.order, title: "Original column order", onClick: function () { tvSet(id, { order: null, view: null }); } }, "⇄ Order"),
-      h("button", { className: "tblbtn", disabled: !sort && !sized && !live.order && !live.view, title: "Reset the sort, order and widths", onClick: function () { tvSet(id, tvBlank()); } }, "↺ All")));
+      h("button", { className: "tblbtn", disabled: !sized, title: "Automatic widths that fit the content", onClick: function () { tvSet(id, { widths: null, view: null }); } }, h(Icon, { n: "widths", size: 13 }), "Widths"),
+      h("button", { className: "tblbtn", disabled: !live.order, title: "Original column order", onClick: function () { tvSet(id, { order: null, view: null }); } }, h(Icon, { n: "order", size: 13 }), "Order"),
+      h("button", { className: "tblbtn", disabled: !sort && !sized && !live.order && !live.view, title: "Reset the sort, order and widths", onClick: function () { tvSet(id, tvBlank()); } }, h(Icon, { n: "reset", size: 13 }), "All")));
 
   return h(React.Fragment, null, bar, table);
 }
@@ -19542,7 +19558,7 @@ function SignIn(p) {
               className: "ms", style: { width: "100%", minHeight: 44 },
               onClick: function () { if (WDCloud.entra) WDCloud.login(); else set(Object.assign({}, st, { mode: "ms", err: "" })); }
             }, "⊞  Sign in with Microsoft"),
-            WDCloud.signInError ? h("div", { className: "banner err" }, "⚠ ", WDCloud.signInError) : null,
+            WDCloud.signInError ? h("div", { className: "banner err" }, h(Icon, { n: "warn", size: 15 }), WDCloud.signInError) : null,
             h("div", { className: "cap", style: { textAlign: "center" } }, "Microsoft Authenticator enforces the company MFA policy."),
 
             st.mode === "ms"
@@ -19569,7 +19585,7 @@ function SignIn(p) {
             h(Inp, { label: "Company email", id: "si-email", value: st.email, autoComplete: "username", placeholder: "name" + DOMAIN, onChange: function (e) { set(Object.assign({}, st, { email: e.target.value, err: "" })); } }),
             WDCloud.entra ? h("div", { className: "cap" }, "You'll type your password on the Microsoft sign-in page.")
               : h(Inp, { label: "Password", id: "si-pw", type: "password", value: st.pw, autoComplete: "current-password", onChange: function (e) { set(Object.assign({}, st, { pw: e.target.value, err: "" })); }, onKeyDown: function (e) { if (e.key === "Enter") tryPassword(); } }),
-            st.err ? h("div", { className: "banner err" }, "⚠ ", st.err) : null,
+            st.err ? h("div", { className: "banner err" }, h(Icon, { n: "warn", size: 15 }), st.err) : null,
             h(Btn, { kind: "p", style: { width: "100%", minHeight: 44 }, onClick: tryPassword }, WDCloud.entra ? "Continue" : "Sign in"),
 
             WDCloud.entra ? null : h("div", { className: "row", style: { justifyContent: "space-between" } },
@@ -19717,7 +19733,7 @@ function SignUp(p) {
         h("label", { className: "row", style: { gap: 8, minHeight: 44, alignItems: "flex-start" } },
           h("input", { type: "checkbox", checked: st.accepted, onChange: function (e) { up("accepted", e.target.checked); }, style: { marginTop: 4 } }),
           h("span", { style: { fontSize: 13 } }, "I accept the GALIL internal usage policy. I understand that time, expenses and approvals recorded here are auditable company records.")),
-        st.errs.accepted ? h("div", { className: "errmsg" }, "⚠ ", st.errs.accepted) : null,
+        st.errs.accepted ? h("div", { className: "errmsg" }, h(Icon, { n: "warn", size: 14 }), st.errs.accepted) : null,
         h("div", { className: "banner amber" }, "The account is created immediately but held in Pending activation until an Operations Manager or the CEO approves it.")
       ) : null,
 
@@ -19732,7 +19748,7 @@ function PendingActivation(p) {
   return h("div", { className: "auth" },
     h("div", { className: "authcard" },
       h(AuthLogo, { sub: "Activation pending" }),
-      h("div", { className: "banner amber", style: { marginBottom: 12 } }, "⏳ Your account is awaiting activation."),
+      h("div", { className: "banner amber", style: { marginBottom: 12 } }, h(Icon, { n: "pending", size: 15 }), "Your account is awaiting activation."),
       h("p", { style: { fontSize: 13.5, color: C.muted, marginTop: 0 } },
         "An Operations Manager or the CEO will confirm your role, assign you to a team and to your initial projects, and activate the account. You will receive an email when that is done."),
       h("div", { className: "panel pad col", style: { gap: 3, background: C.wash, marginBottom: 12 } },
@@ -19938,7 +19954,7 @@ function EntryForm(p) {
   }
 
   return h("div", { className: "col", style: { gap: 8 } },
-    warn ? h("div", { className: "banner " + warn.k }, warn.k === "err" ? "⛔" : warn.k === "amber" ? "⚠" : "ℹ", " ", warn.t) : null,
+    warn ? h("div", { className: "banner " + warn.k }, h(Icon, { n: warn.k === "err" ? "stop" : warn.k === "amber" ? "warn" : "info", size: 15 }), warn.t) : null,
     h("div", { className: "band" },
       assignable.length > 1
         ? h(Sel, { label: "Assignee", cls: "person", value: f.assignee, options: assignable.map(function (u) { return { value: u.id, label: u.fullName }; }), onChange: function (e) { up("assignee", e.target.value); } })
@@ -20037,7 +20053,7 @@ function LeaveBand(p) {
       value: f.attachments || [], onChange: function (v) { p.up("attachments", v); }
     }) : null,
     h("div", { className: "banner " + (direct ? "gr" : "teal"), style: { flex: "1 1 280px" } },
-      direct ? h("span", null, "\u2713 As CEO, your entry is registered directly — no request is sent.")
+      direct ? h("span", null, h(Icon, { n: "check", size: 14 }), "As CEO, your entry is registered directly — no request is sent.")
         : h("span", { title: "The days are pending, and not counted, until " + userName(p.db, to) + " approves." },
             "\u2709 Sent for approval to ", h("b", null, userName(p.db, to)), " — pending until approved.")));
 }
@@ -20580,7 +20596,7 @@ function PlannerTab(p) {
       h(Btn, { onClick: copyWeek }, "Copy week"),
       can(user, "excelExport") ? h(Btn, { onClick: doExport }, IconLabel("download", "Export")) : null),
 
-    plannedTotal > capacity ? h("div", { className: "banner amber" }, "⚠ ", userName(db, who), " is planned above contracted capacity for this period.") : null,
+    plannedTotal > capacity ? h("div", { className: "banner amber" }, h(Icon, { n: "warn", size: 15 }), userName(db, who), " is planned above contracted capacity for this period.") : null,
 
     h("div", { className: "row", style: { gap: 8, flex: "0 0 auto" } },
       suggestions.length ? h("div", { className: "panel pad row", style: { gap: 7, flex: 1, overflowX: "auto" } },
@@ -21221,7 +21237,7 @@ function ExpensesTab(p) {
           h("div", { className: "row", style: { gap: 6 } },
             f.id ? h(Btn, { onClick: function () { set(blank); setErrs({}); } }, "Cancel") : null,
             h(Btn, { kind: "p", onClick: save }, f.id ? "Save changes" : "Add expense")))),
-      etype && etype.requiresEvidence ? h("div", { className: "banner amber", style: { marginTop: 8 } }, "⚠ ", etype.name, " requires an evidence attachment; the form will not submit without one.") : null)
+      etype && etype.requiresEvidence ? h("div", { className: "banner amber", style: { marginTop: 8 } }, h(Icon, { n: "warn", size: 15 }), etype.name, " requires an evidence attachment; the form will not submit without one.") : null)
       : h("div", { className: "banner mut panel pad" }, "Your role does not carry expense-reporting rights."),
 
     h("div", { className: "panel pad row", style: { gap: 9 } },
@@ -21408,8 +21424,8 @@ function ManagementTab(p) {
                 num(b.units) + " " + (b.unitName || "units") + " · " + num(b.hours) + " budgeted hours")),
             editable ? h(Btn, { sm: true, kind: "t", onClick: function () { setEditing(Object.assign({}, b)); } }, IconLabel("edit", "Edit")) : null,
             (b.history || []).length ? h(Btn, { sm: true, kind: "t", onClick: function () { setHistory(b); } }, "History (" + b.history.length + ")") : null),
-          pct >= 100 ? h("div", { className: "banner err" }, "⛔ Budget fully consumed. All further Yellow entries on this project route to approval.")
-            : pct >= 90 ? h("div", { className: "banner amber" }, "⚠ Budget at ", num(pct, 0), "% — visible to the project owner and Finance.") : null,
+          pct >= 100 ? h("div", { className: "banner err" }, h(Icon, { n: "stop", size: 15 }), "Budget fully consumed. All further Yellow entries on this project route to approval.")
+            : pct >= 90 ? h("div", { className: "banner amber" }, h(Icon, { n: "warn", size: 15 }), "Budget at ", num(pct, 0), "% — visible to the project owner and Finance.") : null,
           h("div", { className: "row", style: { gap: 11 } },
             h(Bar, { used: used, pending: pend, total: b.hours || 1, style: { flex: 1, height: 12 } }),
             h("span", { className: "mono", style: { fontWeight: 700, minWidth: 52, textAlign: "end" } }, num(pct, 0), "%")),
@@ -22535,8 +22551,8 @@ function TeamRequestModal(p) {
           return { value: id, label: u.fullName + " — " + why };
         }), onChange: function (e) { up("approverId", e.target.value); } }),
       h("div", { className: "banner teal" }, f.kind === "loan"
-        ? "✉ On approval the person joins your team for these dates, is assigned to the project with the allowance you set, and keeps their own team and manager."
-        : "✉ On approval the person moves to your team and your team lead becomes their direct manager.")));
+        ? "On approval the person joins your team for these dates, is assigned to the project with the allowance you set, and keeps their own team and manager."
+        : "On approval the person moves to your team and your team lead becomes their direct manager.")));
 }
 
 function TeamsPanel(p) {
@@ -23077,7 +23093,7 @@ function AdminModal(p) {
               toast("Month closed and entries locked.", "ok");
             } }, "Close month"),
             (db.settings.closedMonths || []).map(function (m) {
-              return h(Chip, { key: m, k: "mut" }, "🔒 ", m, " ",
+              return h(Chip, { key: m, k: "mut" }, h(Icon, { n: "lock", size: 12 }), m, " ",
                 h("button", { className: "btn t sm", style: { minHeight: 18, padding: "0 4px" }, onClick: function () {
                   p.mutate(function (d) {
                     d.settings.closedMonths = d.settings.closedMonths.filter(function (x) { return x !== m; });
@@ -23213,7 +23229,7 @@ function Sheet(p) {
     h("div", { className: "sh", role: "dialog", "aria-modal": "true", "aria-label": p.title },
       h("div", { className: "grab", "aria-hidden": "true" }),
       h("header", null, h("div", { className: "h2 grow" }, p.title),
-        h("button", { className: "iconbtn ink", onClick: p.onClose, "aria-label": "Close" }, "✕")),
+        h("button", { className: "iconbtn ink", onClick: p.onClose, "aria-label": "Close" }, h(Icon, { n: "close", size: 18 }))),
       h("div", { className: "sb mfld" }, p.children),
       p.footer ? h("footer", null, p.footer) : null)));
 }
@@ -23380,12 +23396,12 @@ function MobileTime(p) {
         ? h(React.Fragment, null,
             h("div", { className: "clock" }, hhmmss(now - timer.at)),
             h("div", { className: "sub" }, "Running since ", timer.start, " on ", il(timer.date)),
-            h("button", { className: "bigbtn stop", onClick: stop }, "■ Stop and report"),
+            h("button", { className: "bigbtn stop", onClick: stop }, h(Icon, { n: "square", size: 16 }), "Stop and report"),
             h("button", { className: "bigbtn gh", style: { minHeight: 44, fontSize: 14 }, onClick: function () { persistTimer(null); toast("Timer discarded.", ""); } }, "Discard the timer"))
         : h(React.Fragment, null,
             h("div", { className: "clock", style: { color: "var(--muted)" } }, num(todayTot), " h"),
             h("div", { className: "sub" }, "reported today · ", ilLong(todayStr())),
-            h("button", { className: "bigbtn go", onClick: start }, "▶ Start the timer"),
+            h("button", { className: "bigbtn go", onClick: start }, h(Icon, { n: "play", size: 16 }), "Start the timer"),
             h("button", { className: "bigbtn gh", style: { minHeight: 44, fontSize: 14 }, onClick: function () { setSheet(blankEntry(user.id)); } }, "Report without the timer"))) : null,
 
     h("div", { className: "mfbar", id: "m-time-bar" },
@@ -23395,7 +23411,7 @@ function MobileTime(p) {
     h("div", { className: "mseg" },
       reportsOwn ? h("button", { type: "button", className: "chipbtn" + (who === "me" ? " on" : ""), onClick: function () { upF("who", "me"); } }, "Mine") : null,
       people.length ? h("button", { type: "button", className: "chipbtn" + (who === "all" ? " on" : ""), onClick: function () { upF("who", "all"); } }, reportsOwn ? "Me and my team" : "Everyone I can see") : null,
-      h("button", { type: "button", className: "chipbtn" + (nFilters || (who !== "me" && who !== "all") ? " on" : ""), id: "m-filter", onClick: function () { setFiltersOpen(true); } }, "⚙ ", nFilters ? tr("Filter & sort ({n})", { n: nFilters }) : "Filter & sort")),
+      h("button", { type: "button", className: "chipbtn" + (nFilters || (who !== "me" && who !== "all") ? " on" : ""), id: "m-filter", onClick: function () { setFiltersOpen(true); } }, h(Icon, { n: "sliders", size: 14 }), nFilters ? tr("Filter & sort ({n})", { n: nFilters }) : "Filter & sort")),
     h("div", { className: "mrow", style: { justifyContent: "space-between" } },
       h("span", null, tr("{n} entries", { n: mine.length })),
       h("div", { className: "row", style: { gap: 5 } },
@@ -23422,7 +23438,7 @@ function MobileTime(p) {
         e.status === "pending" && e.statusReason ? h("div", { className: "mrow", style: { color: C.amber, fontWeight: 600 } }, "Reason: ", e.statusReason) : null,
         h("div", { className: "row", style: { gap: 6 } },
           editable ? h(Btn, { sm: true, onClick: function () { setSheet(toForm(e)); } }, IconLabel("edit", "Edit")) : null,
-          reportRights && e.type === "Work" ? h(Btn, { sm: true, onClick: function () { setDup(e); } }, "⧉ Duplicate…") : null,
+          reportRights && e.type === "Work" ? h(Btn, { sm: true, onClick: function () { setDup(e); } }, h(Icon, { n: "copy", size: 14 }), "Duplicate…") : null,
           editable ? h(Btn, { title: "Delete", "aria-label": "Delete", sm: true, kind: "d", onClick: function () { p.onDelete(e); } }, h(Icon, { n: "trash", size: 16 })) : null));
     }),
 
@@ -23477,7 +23493,7 @@ function MobilePlanner(p) {
       h(Chip, { k: "teal" }, "Planned ", num(planned), " h"),
       h(Chip, { k: "gr" }, "Actual ", num(actual), " h"),
       h(Chip, { k: planned > cap ? "amber" : "mut" }, "Capacity ", num(cap), " h")),
-    planned > cap ? h("div", { className: "banner amber" }, "⚠ This week is planned past your contracted hours.") : null,
+    planned > cap ? h("div", { className: "banner amber" }, h(Icon, { n: "warn", size: 15 }), "This week is planned past your contracted hours.") : null,
 
     days.map(function (ds) {
       var dayPlans = plans.filter(function (x) { return x.date === ds; });
@@ -23537,7 +23553,7 @@ function MobileExpenses(p) {
           h("span", null, x.etype),
           x.projectId ? h("span", null, nameOf(db.projects, x.projectId)) : null,
           h(Chip, { k: x.status === "Paid" ? "gr" : x.status === "Rejected" ? "err" : x.status === "Approved" ? "teal" : "amber" }, x.status),
-          (x.attachments || []).length ? h(Chip, { k: "mut" }, "📎 ", String(x.attachments.length)) : null),
+          (x.attachments || []).length ? h(Chip, { k: "mut" }, h(Icon, { n: "clip", size: 12 }), String(x.attachments.length)) : null),
         own || can(user, "approveExpenses") ? h("div", { className: "row", style: { gap: 6 } },
           h(Btn, { sm: true, onClick: function () { setSheet(Object.assign({}, x)); } }, IconLabel("edit", "Edit")),
           h(Btn, { title: "Delete", "aria-label": "Delete", sm: true, kind: "d", onClick: function () {
@@ -23607,7 +23623,7 @@ function MobileExpenseSheet(p) {
       label: "Evidence" + (etype && etype.requiresEvidence ? " (required)" : ""), err: errs.attachments,
       value: f.attachments || [], onChange: function (v) { up("attachments", v); }
     }),
-    etype && etype.requiresEvidence ? h("div", { className: "banner amber" }, "⚠ ", etype.name, " requires an evidence attachment.") : null);
+    etype && etype.requiresEvidence ? h("div", { className: "banner amber" }, h(Icon, { n: "warn", size: 15 }), etype.name, " requires an evidence attachment.") : null);
 }
 
 /* ---------- Library ---------- */
@@ -23719,8 +23735,8 @@ function MobileApp(p) {
       })),
 
     sheet === "more" ? h(Sheet, { title: "More", onClose: function () { setSheet(null); } },
-      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); p.onHome(); } }, "\u2302  Employee Portal home"),
-      acc.taskana !== "none" ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "taskana/index.html#/my" }, "\u2611  My tasks in Taskana") : null,
+      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); p.onHome(); } }, IconLabel("home", "Employee Portal home")),
+      acc.taskana !== "none" ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "taskana/index.html#/my" }, IconLabel("tasks", "My tasks in Taskana")) : null,
       h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); setTab("library"); } }, IconLabel("library", "Library")),
       can(user, "approveTime") || can(user, "approveExpenses") ? h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); setTab("approvals"); } }, IconLabel("approve", "Approvals"), approvals ? h(Chip, { k: "amber" }, approvals) : null) : null,
       h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet("mywork"); } }, IconLabel("assignments", "My assignments and allowances")),

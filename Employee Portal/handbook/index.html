@@ -49,7 +49,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <div class="stamp">
       <span>Application <b>GALIL Employee Portal</b></span>
       <span>Covers <b>Portal · WorkDesk · Taskana</b></span>
-      <span>Handbook revised <b>16/10/2026</b></span>
+      <span>Handbook revised <b>17/10/2026</b></span>
       <span>Language <b>English · עברית</b></span>
     </div>
   </div>
@@ -83,8 +83,8 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <div class="tiles">
       <div class="tile"><b>WorkDesk</b>Report work, sick and vacation time and expenses. Managers follow budgets against recorded hours and run people, clients, projects and work orders. <a href="#workdesk">Part B</a>.</div>
       <div class="tile"><b>Taskana</b>Tasks, boards and reviews for every client project. People, clients, projects and work orders come straight from WorkDesk, with budget and hours-bank indicators. <a href="#taskana">Part C</a>.</div>
-      <div class="tile"><b>Handbook</b>This guide: every function of the portal, WorkDesk and Taskana, and which roles may use it.</div>
-      <div class="tile"><b>Knowledge Base</b>Onboarding, company rules and policies, security and training how-to's. Opens from its own tile and from <a href="../kb/index.html">kb/</a>.</div>
+      <div class="tile"><b>Handbook</b>This guide: every function of the portal, WorkDesk and Taskana, and which roles may use it. It opens on a search box and a card for every chapter; a chapter opens on its own page with <strong>All topics</strong>, <strong>Previous</strong> and <strong>Next</strong>.</div>
+      <div class="tile"><b>Knowledge Base</b>Onboarding, company rules and policies, security and training how-to's, laid out the same way: search, topic cards, one article at a time. Opens from its own tile and from <a href="../kb/index.html">kb/</a>.</div>
     </div>
 
     <h3>Who keeps what</h3>
@@ -106,7 +106,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <p>The <strong>EN / עב</strong> switch — on the home page, in WorkDesk's top bar, in Taskana's sidebar, and at the top of this Handbook and the Knowledge Base — changes the language of the whole portal at once. In Hebrew every screen is laid out right to left; names, codes, dates and numbers keep their own direction. The choice is remembered on this device. Data people type — names, descriptions, comments — stays as typed.</p>
 
     <h3>Light and dark</h3>
-    <p>The ☾ / ☀ button switches the theme. Like the language, it is one setting for the whole portal on this device.</p>
+    <p>The <i class="ui-ic" data-ic="moon"></i> / <i class="ui-ic" data-ic="sun"></i> button switches the theme. Like the language, it is one setting for the whole portal on this device.</p>
 
     <h3>Where the data is kept</h3>
     <p>The portal has no server. It is a set of web pages, and its data lives in two files — one for WorkDesk, one for Taskana — wherever <code>config.js</code> says:</p>
@@ -197,7 +197,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <div class="perm" data-perm="setPortalAccess"></div>
     <ol class="steps">
       <li>Open <strong>WorkDesk → Management → People</strong>. The <strong>Portal access</strong> column shows each person's access as chips.</li>
-      <li>Click <strong>✎</strong> beside the chips.</li>
+      <li>Click <strong><i class="ui-ic" data-ic="edit"></i></strong> beside the chips.</li>
       <li>Tick or clear <strong>WorkDesk</strong>, <strong>Handbook</strong> and <strong>Knowledge Base</strong>, and choose the <strong>Taskana role</strong> — or <em>No access</em>.</li>
       <li><strong>Save</strong>. <strong>Use the role defaults</strong> returns the person to the table above.</li>
     </ol>
@@ -445,11 +445,11 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <p><strong>T · own team</strong> means: people sharing your team, people who report to you, and everyone in a team you lead. <strong>P · own projects</strong> means: projects you own, plus projects you are assigned to, and everyone who has reported time or holds an assignment on them.</p>
 
     <h3>The full permission matrix</h3>
-    <p>This is the same matrix WorkDesk shows under <strong>⚙ → Roles &amp; permissions</strong>. Tasks are not in it: what a person may do in Taskana is their Taskana role — see <a href="#ch-access">Portal access</a>.</p>
+    <p>This is the same matrix WorkDesk shows under <strong><i class="ui-ic" data-ic="settings"></i> → Roles &amp; permissions</strong>. Tasks are not in it: what a person may do in Taskana is their Taskana role — see <a href="#ch-access">Portal access</a>.</p>
     <div class="tw"><table class="matrix" id="matrix"></table></div>
     <figure>
       <img src="img/58-admin-roles.png" alt="The Roles and permissions section inside the System administration modal, showing the permission matrix.">
-      <figcaption><span class="fno">Fig 6.1</span><span>The same matrix inside the application, under <strong>⚙ → Roles &amp; permissions</strong>.</span></figcaption>
+      <figcaption><span class="fno">Fig 6.1</span><span>The same matrix inside the application, under <strong><i class="ui-ic" data-ic="settings"></i> → Roles &amp; permissions</strong>.</span></figcaption>
     </figure>
 
     <h3>Which tabs each role sees</h3>
@@ -489,7 +489,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <!-- ============ 5 ============ -->
   <section class="ch" id="ch-screen" data-title="Finding your way around">
     <div class="ch-head"><span class="ch-num">05</span><h2>Finding your way around</h2></div>
-    <p class="lede">One dark top bar, one row of tabs, and a few icon buttons that open everything that is not a tab. The ⌂ button takes you back to the portal home page.</p>
+    <p class="lede">One dark top bar, one row of tabs, and a few icon buttons that open everything that is not a tab. The ← button steps back to the screen you were on; the <i class="ui-ic" data-ic="home"></i> button takes you to the portal home page.</p>
 
     <figure>
       <img src="img/50-ops-timelog.png" alt="The full WorkDesk window: dark top bar with brand, icon buttons and user chip; tab row; Time Log page beneath.">
@@ -499,14 +499,15 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <div class="tw"><table>
       <thead><tr><th style="width:150px">Element</th><th>What it does</th></tr></thead>
       <tbody>
-        <tr><td><strong>⌂</strong></td><td>Back to the Employee Portal home page, where Taskana, the Handbook and the Knowledge Base are.</td></tr>
+        <tr><td><strong><i class="ui-ic" data-ic="back"></i> Back</strong></td><td>Steps back through the tabs and Management sections you opened, one at a time. If a window is open (System administration, My profile, My assignments) it closes that first; with nothing left to step back through it returns to the portal home page. <kbd>Alt</kbd>+<kbd>←</kbd> (<kbd>Alt</kbd>+<kbd>→</kbd> in Hebrew) and the mouse's back button do the same.</td></tr>
+        <tr><td><strong><i class="ui-ic" data-ic="home"></i></strong></td><td>Back to the Employee Portal home page, where Taskana, the Handbook and the Knowledge Base are.</td></tr>
         <tr><td><strong>GALIL · WorkDesk</strong></td><td>Brand. The chip beside it shows where the data is kept and whether the last change has been saved there.</td></tr>
         <tr><td><strong>EN / עב</strong></td><td>Switches the whole Employee Portal between English and Hebrew. Hebrew lays every screen out right to left. The choice is remembered on this device.</td></tr>
-        <tr><td><strong>KB · ?</strong></td><td>Open the Knowledge Base and this handbook in a new tab.</td></tr>
+        <tr><td><strong><i class="ui-ic" data-ic="book"></i> · <i class="ui-ic" data-ic="help"></i></strong></td><td>The book opens the Knowledge Base and the question mark opens this handbook, each in a new tab.</td></tr>
         <tr><td><strong>Offline chip</strong></td><td>Appears when the browser goes offline. Changes are still written locally.</td></tr>
-        <tr><td><strong>◱ icon</strong></td><td><em>My assignments and allowances</em> — your funded work and the button that requests more hours. See <a href="#ch-mywork">My assignments and allowances</a>.</td></tr>
-        <tr><td><strong>⚙ icon</strong></td><td><em>System administration</em> — Roles &amp; permissions, Company settings, Backup &amp; restore and the Audit log. Shown to anyone who can back up data or read the audit log. Day-to-day record-keeping lives on the <a href="#ch-budgets">Management</a> tab instead.</td></tr>
-        <tr><td><strong>☾ / ☀ icon</strong></td><td>Switches between the light and dark theme. The choice is remembered on this device and applies everywhere in the portal, including the mobile shell below.</td></tr>
+        <tr><td><strong><i class="ui-ic" data-ic="assignments"></i> icon</strong></td><td><em>My assignments and allowances</em> — your funded work and the button that requests more hours. See <a href="#ch-mywork">My assignments and allowances</a>.</td></tr>
+        <tr><td><strong><i class="ui-ic" data-ic="settings"></i> icon</strong></td><td><em>System administration</em> — Roles &amp; permissions, Company settings, Backup &amp; restore and the Audit log. Shown to anyone who can back up data or read the audit log. Day-to-day record-keeping lives on the <a href="#ch-budgets">Management</a> tab instead.</td></tr>
+        <tr><td><strong><i class="ui-ic" data-ic="moon"></i> / <i class="ui-ic" data-ic="sun"></i> icon</strong></td><td>Switches between the light and dark theme. The choice is remembered on this device and applies everywhere in the portal, including the mobile shell below.</td></tr>
         <tr><td><strong>Your name chip</strong></td><td>Opens your profile — contracted hours, manager, sign-in method, sessions, and <strong>Sign out</strong>.</td></tr>
         <tr><td><strong>Tab badges</strong></td><td>Amber on <strong>Approvals</strong> counts outstanding requests waiting on you.</td></tr>
         <tr><td><strong>Toasts</strong></td><td>Confirmations appear bottom-of-screen for a few seconds. Deletions carry an <strong>Undo</strong> button — use it before it fades.</td></tr>
@@ -526,20 +527,20 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <figcaption><span class="fno">Fig 7.3</span><span>The table toolbar, above the Time Log table.</span></figcaption>
     </figure>
     <ul>
-      <li><strong>Sort</strong> — click a column heading to sort A→Z (lowest first), again for Z→A (highest first), and a third time to clear it. A ▲ or ▼ beside the heading shows the sort in use. The <strong>Sort</strong> picker and its <strong>A→Z</strong>, <strong>Z→A</strong> and <strong>✕</strong> buttons in the toolbar do the same. Dates and numbers sort by value, and empty cells always go last.</li>
+      <li><strong>Sort</strong> — click a column heading to sort A→Z (lowest first), again for Z→A (highest first), and a third time to clear it. A ▲ or ▼ beside the heading shows the sort in use. The <strong>Sort</strong> picker and its <strong>A→Z</strong>, <strong>Z→A</strong> and <strong><i class="ui-ic" data-ic="close"></i></strong> buttons in the toolbar do the same. Dates and numbers sort by value, and empty cells always go last.</li>
       <li><strong>Move a column</strong> — drag its heading onto another column, or choose it in <strong>Move column</strong> and use <strong>←</strong> and <strong>→</strong>.</li>
-      <li><strong>Resize a column</strong> — drag the right edge of its heading. Double-click that edge, or click <strong>↔ Widths</strong>, to return to automatic widths that fit the content.</li>
-      <li><strong>Reset</strong> — <strong>⇄ Order</strong> restores the original column order; <strong>↺ All</strong> clears the sort, order and widths together.</li>
+      <li><strong>Resize a column</strong> — drag the right edge of its heading. Double-click that edge, or click <strong><i class="ui-ic" data-ic="widths"></i> Widths</strong>, to return to automatic widths that fit the content.</li>
+      <li><strong>Reset</strong> — <strong><i class="ui-ic" data-ic="order"></i> Order</strong> restores the original column order; <strong><i class="ui-ic" data-ic="reset"></i> All</strong> clears the sort, order and widths together.</li>
     </ul>
-    <p><strong>Saved views.</strong> Click <strong>＋ Save</strong> to keep the current sort, column order and widths under a name; saving under an existing name replaces it. Pick a view from the <strong>View</strong> list to apply it. With a view chosen, <strong>☆</strong> makes it open automatically every time you open that table (it turns to <strong>★</strong>, and the view is marked ★ in the list); click again to stop. <strong>🗑</strong> deletes the chosen view. Views belong to you and to that one table — each person keeps their own, and a view saved on the Time Log is not offered on Expenses.</p>
-    <div class="note">Saved views are stored in this browser under <code>galil-workdesk-table-views</code>, separately from your WorkDesk data, so they are not part of a backup and do not follow you to another computer. A sort or column change you have not saved lasts until the page is reloaded; after that the table opens with your ★ default view, or in its original layout.</div>
+    <p><strong>Saved views.</strong> Click <strong>＋ Save</strong> to keep the current sort, column order and widths under a name; saving under an existing name replaces it. Pick a view from the <strong>View</strong> list to apply it. With a view chosen, <strong><i class="ui-ic" data-ic="star"></i></strong> makes it open automatically every time you open that table (it turns to <strong><i class="ui-ic" data-ic="star-on"></i></strong>, and the view is marked <i class="ui-ic" data-ic="star-on"></i> in the list); click again to stop. <strong><i class="ui-ic" data-ic="trash"></i></strong> deletes the chosen view. Views belong to you and to that one table — each person keeps their own, and a view saved on the Time Log is not offered on Expenses.</p>
+    <div class="note">Saved views are stored in this browser under <code>galil-workdesk-table-views</code>, separately from your WorkDesk data, so they are not part of a backup and do not follow you to another computer. A sort or column change you have not saved lasts until the page is reloaded; after that the table opens with your <i class="ui-ic" data-ic="star-on"></i> default view, or in its original layout.</div>
 
     <h3>On a phone</h3>
     <p>Below 820 px WorkDesk swaps the whole shell for a dedicated mobile build, rather than just squeezing the desktop layout into a narrow column: one page at a time, a bottom navigation bar, native date and time pickers, and every tap target at least 44 px tall. It is the same data and the same rules underneath — every entry still runs through the entitlement engine — just laid out for a thumb instead of a mouse.</p>
     <div class="tw"><table>
       <thead><tr><th style="width:120px">Bottom tab</th><th>What it holds</th></tr></thead>
       <tbody>
-        <tr><td><strong>Time</strong></td><td>A running <strong>timer</strong> — <strong>▶ Start the timer</strong>, then <strong>■ Stop and report</strong> when you're done, which opens the entry form pre-filled with the start and end times. <strong>Report without the timer</strong> skips straight to that form. Below it, <strong>‹ ›</strong> move between months; <strong>Mine</strong> shows your own entries and, for managers, <strong>Me and my team</strong> adds the people who report to you (directly or through your teams) — each card then names who reported it. <strong>⚙ Filter &amp; sort</strong> narrows the list by person, type, status and project and sorts it newest first, oldest first or by most hours. Each entry can be edited, duplicated with <strong>⧉ Duplicate…</strong> (the same choices as on the desktop — see <a href="#ch-time">Duplicating an entry</a>), or deleted, the same as on the desktop Time Log.</td></tr>
+        <tr><td><strong>Time</strong></td><td>A running <strong>timer</strong> — <strong><i class="ui-ic" data-ic="play"></i> Start the timer</strong>, then <strong><i class="ui-ic" data-ic="square"></i> Stop and report</strong> when you're done, which opens the entry form pre-filled with the start and end times. <strong>Report without the timer</strong> skips straight to that form. Below it, <strong>‹ ›</strong> move between months; <strong>Mine</strong> shows your own entries and, for managers, <strong>Me and my team</strong> adds the people who report to you (directly or through your teams) — each card then names who reported it. <strong><i class="ui-ic" data-ic="settings"></i> Filter &amp; sort</strong> narrows the list by person, type, status and project and sorts it newest first, oldest first or by most hours. Each entry can be edited, duplicated with <strong><i class="ui-ic" data-ic="copy"></i> Duplicate…</strong> (the same choices as on the desktop — see <a href="#ch-time">Duplicating an entry</a>), or deleted, the same as on the desktop Time Log.</td></tr>
         <tr><td><strong>Plan</strong></td><td>The Week Planner, one day at a time.</td></tr>
         <tr><td><strong>Expenses</strong></td><td><strong>+ Report an expense</strong> opens a bottom sheet with the same fields — and the same evidence attachment control — as the desktop form.</td></tr>
         <tr><td><strong>More</strong></td><td>Library, Approvals (if you approve anything), My assignments and allowances, My profile, the portal home, Taskana, the Handbook and the Knowledge Base.</td></tr>
@@ -603,7 +604,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </ol>
     <p>The form shows who the request goes to: <strong>your direct manager</strong>, or — if you have none — the usual approval chain. Every day in the range is saved as <strong>Pending</strong> and stays out of the totals until your manager approves or declines the whole request at once. A decline cancels every day in it, and the reason is shown on each.</p>
     <p>The <strong>CEO</strong> is the only role whose sick and vacation days register directly, without a request — for their own leave or anyone else's.</p>
-    <p>An attached confirmation appears as a 📎 button on each day in the Time Log and on the request card in Approvals; click it to open the document.</p>
+    <p>An attached confirmation appears as a <i class="ui-ic" data-ic="clip"></i> button on each day in the Time Log and on the request card in Approvals; click it to open the document.</p>
 
     <h3>What the form refuses to save</h3>
     <ul>
@@ -654,8 +655,8 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
     <h3>Editing, deleting and correcting</h3>
     <ul>
-      <li><strong>✎</strong> loads an entry back into the form band. Saving a pending entry re-runs the engine; saving a registered entry as an approver leaves it registered.</li>
-      <li><strong>🗑</strong> deletes it and cancels any pending approval attached. The toast offers <strong>Undo</strong>.</li>
+      <li><strong><i class="ui-ic" data-ic="edit"></i></strong> loads an entry back into the form band. Saving a pending entry re-runs the engine; saving a registered entry as an approver leaves it registered.</li>
+      <li><strong><i class="ui-ic" data-ic="trash"></i></strong> deletes it and cancels any pending approval attached. The toast offers <strong>Undo</strong>.</li>
       <li>The <strong>Project status</strong> column shows the project's current status as set under <a href="#ch-budgets">Management → Projects</a>. It is read-only here; the project status filter uses the same value.</li>
       <li>You may always edit your own entries. Editing someone else's needs <code>editOthersTime</code> — Team Lead within their team, Project Manager within their projects, Operations Manager and CEO anywhere.</li>
       <li>Opening <strong>Report time on this task in WorkDesk</strong> from a task in Taskana brings you here with the form already set to that task's client, project, work order and task.</li>
@@ -663,7 +664,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </ul>
 
     <h3>Duplicating an entry</h3>
-    <p>The <strong>⧉</strong> button next to a Work entry (<strong>⧉ Duplicate…</strong> on the phone) opens the duplicate options:</p>
+    <p>The <strong><i class="ui-ic" data-ic="copy"></i></strong> button next to a Work entry (<strong><i class="ui-ic" data-ic="copy"></i> Duplicate…</strong> on the phone) opens the duplicate options:</p>
     <ul>
       <li><strong>← Previous day</strong>, <strong>Next day →</strong>, <strong>← Previous week</strong>, <strong>Next week →</strong> — one copy, one day or seven days away.</li>
       <li><strong>Custom</strong> — type a number of days and choose <strong>days back</strong> or <strong>days forward</strong>. On its own this makes one copy that many days away. Tick <strong>Copy to every working day in between</strong> to copy the entry onto every Sunday-to-Thursday in that range instead — for example 5 days back copies it onto each working day of the past five days. The line under the field shows the date, or how many days, before you click <strong>Duplicate</strong>.</li>
@@ -675,7 +676,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <p>The month navigator moves one month at a time; <strong>Today</strong> returns to the current one. Below it, filter by employee, client, project, work order, Taskana task, entry type, project status and entry status. <strong>Clear</strong> resets every filter at once. Totals always describe the filtered view. To sort the entries, rearrange or resize columns, or save the layout as a view, see <a href="#h-tables">Working with tables</a>.</p>
 
     <h3>Exporting</h3>
-    <p><strong>⬇ This view</strong> exports the filtered month. <strong>⬇ Everything</strong> exports everything within your permission scope — which for an Employee, Senior Employee or External Contractor means their own records only. Pending entries are moved to a second worksheet so they can never be mistaken for reported time. See <a href="#ch-export">Excel exports</a>.</p>
+    <p><strong><i class="ui-ic" data-ic="download"></i> This view</strong> exports the filtered month. <strong><i class="ui-ic" data-ic="download"></i> Everything</strong> exports everything within your permission scope — which for an Employee, Senior Employee or External Contractor means their own records only. Pending entries are moved to a second worksheet so they can never be mistaken for reported time. See <a href="#ch-export">Excel exports</a>.</p>
   </section>
 
   <!-- ============ 7 ============ -->
@@ -706,7 +707,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <li><strong>Planned</strong>, <strong>Actual</strong> and <strong>Variance</strong> chips compare the plan with registered time over the same span.</li>
       <li><strong>Capacity</strong> compares the plan against contracted hours (weekly hours, scaled to the visible span). Planning past capacity turns the chip amber and adds a banner.</li>
       <li><strong>Copy week</strong> duplicates every visible planned entry forward by seven days.</li>
-      <li><strong>⬇ Export</strong> produces a plan-against-actual worksheet with a variance column.</li>
+      <li><strong><i class="ui-ic" data-ic="download"></i> Export</strong> produces a plan-against-actual worksheet with a variance column.</li>
     </ul>
 
     <h3>Planning for someone else</h3>
@@ -747,10 +748,10 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <p>With <code>approveExpenses</code> an <strong>Assignee</strong> selector appears on the form, scoped to the people you can see. The same people appear in the month filter.</p>
 
     <h3>Editing, deleting and exporting</h3>
-    <p><strong>✎</strong> loads the expense back into the form; <strong>🗑</strong> deletes it, with Undo. You may act on your own expenses always, and on other people's if you may approve expenses. <strong>⬇ This view</strong> and <strong>⬇ Everything</strong> export with evidence filenames listed in their own column.</p>
+    <p><strong><i class="ui-ic" data-ic="edit"></i></strong> loads the expense back into the form; <strong><i class="ui-ic" data-ic="trash"></i></strong> deletes it, with Undo. You may act on your own expenses always, and on other people's if you may approve expenses. <strong><i class="ui-ic" data-ic="download"></i> This view</strong> and <strong><i class="ui-ic" data-ic="download"></i> Everything</strong> export with evidence filenames listed in their own column.</p>
 
     <h3>Replacing or removing an evidence attachment</h3>
-    <p>Once a file is attached, it appears as a chip beside the <strong>Choose file</strong> button with its own two controls: a small replace icon that opens the file picker again and swaps the file in place, and an <strong>✕</strong> that removes it — the expense stays otherwise unchanged. The <strong>📎</strong> count in the table is itself a button: click it to reopen that expense's row in the form so you can replace or remove its attachment.</p>
+    <p>Once a file is attached, it appears as a chip beside the <strong>Choose file</strong> button with its own two controls: a small replace icon that opens the file picker again and swaps the file in place, and an <strong><i class="ui-ic" data-ic="close"></i></strong> that removes it — the expense stays otherwise unchanged. The <strong><i class="ui-ic" data-ic="clip"></i></strong> count in the table is itself a button: click it to reopen that expense's row in the form so you can replace or remove its attachment.</p>
     <figure class="fig-narrow">
       <img src="img/16b-emp-expense-attach.png" alt="The Edit expense form with an attached receipt shown as a chip carrying a replace icon and a remove (×) button.">
       <figcaption><span class="fno">Fig 10.2</span><span>An attached receipt, ready to be replaced or removed.</span></figcaption>
@@ -764,7 +765,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <!-- ============ 10 ============ -->
   <section class="ch" id="ch-budgets" data-title="Management" data-caps="viewBudgets,editBudgets,createWorkOrders,assignPeople,manageClientsProjects,manageEmployeesRoles">
     <div class="ch-head"><span class="ch-num">10</span><h2>Management</h2></div>
-    <p class="lede">The day-to-day operational tab — budgets, work orders and the company's master records — behind one <strong>Management</strong> tab in the top bar. Up to V7, budgets and work orders lived on their own tab while people, assignments, clients, projects, expense types and the verification queue lived behind the ⚙ button; V7.1 brings all of it together here. Its sub-tabs run, left to right: <strong>People · Teams · Clients · Projects · Work Orders · Budgets · Assignments &amp; Allowances · Expense Types · Verification Queue</strong>, with <strong>Pending Activation</strong> last for Operations and the CEO. Which of them you see depends on your role. For how these records relate to each other, see <a href="#ch-model">How WorkDesk fits together</a>. Everything kept here — people, clients, projects and work orders — also appears in Taskana, read-only, as soon as it is saved.</p>
+    <p class="lede">The day-to-day operational tab — budgets, work orders and the company's master records — behind one <strong>Management</strong> tab in the top bar. Up to V7, budgets and work orders lived on their own tab while people, assignments, clients, projects, expense types and the verification queue lived behind the <i class="ui-ic" data-ic="settings"></i> button; V7.1 brings all of it together here. Its sub-tabs run, left to right: <strong>People · Teams · Clients · Projects · Work Orders · Budgets · Assignments &amp; Allowances · Expense Types · Verification Queue</strong>, with <strong>Pending Activation</strong> last for Operations and the CEO. Which of them you see depends on your role. For how these records relate to each other, see <a href="#ch-model">How WorkDesk fits together</a>. Everything kept here — people, clients, projects and work orders — also appears in Taskana, read-only, as soon as it is saved.</p>
     <div class="locked-note"></div>
     <div class="perm" data-perm="viewBudgets,editBudgets,createWorkOrders,assignPeople,manageTeams,manageClientsProjects,manageEmployeesRoles"></div>
 
@@ -825,10 +826,27 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <li>Pick the project — WorkDesk proposes a code in the form <code>WO-[client initials]-[6 digits]</code>. You may override the digits, but the shape is enforced.</li>
       <li>Give it a title, a status (<strong>Active</strong>, <strong>On hold</strong>, <strong>Closed</strong>), a contract reference and dates.</li>
       <li>Enter <strong>Budgeted hours for this work order</strong> and a budget record is created or updated for you.</li>
+      <li>Under <strong>What the work order includes</strong>, describe the <strong>Scope of work</strong> and list the <strong>Deliverables</strong>, one per line.</li>
+      <li>Under <strong>Client points of contact</strong>, add the people on the client's side — name, role on the project, email and phone. The client's main contact is filled in for you.</li>
+      <li>Under <strong>Designated from GALIL</strong>, pick the <strong>Project lead</strong> (the project owner by default) and the <strong>Team members</strong>. Left empty, the team is taken from the people assigned to the work order.</li>
+      <li>Under <strong>Signatures</strong>, name the client's signatory and choose who signs for GALIL (the CEO by default). <strong>Notes and terms</strong> are printed on the document.</li>
     </ol>
     <figure class="fig-narrow">
-      <img src="img/42-pm-new-work-order.png" alt="The New work order dialog showing the proposed code, title, status, contract reference, dates and budgeted hours.">
-      <figcaption><span class="fno">Fig 11.4</span><span>The work-order editor.</span></figcaption>
+      <img src="img/42-pm-new-work-order.png" alt="The New work order dialog: project, proposed code, title, status, contract reference, dates and budgeted hours, then the scope of work, deliverables and client points of contact.">
+      <figcaption><span class="fno">Fig 11.4</span><span>The work-order editor. The lower part holds what goes on the official document.</span></figcaption>
+    </figure>
+
+    <h4>The work order document</h4>
+    <p>Every work order produces an official GALIL document as a PDF: the <i class="ui-ic" data-ic="file"></i> button on its row in the register, or <strong>Document (PDF)</strong> at the foot of the editor. The document carries the GALIL letterhead and footer with the company address, and sets out the order details, scope of work, deliverables, budget, the client's points of contact, GALIL's project team, notes and terms, and two signature blocks — one for the client and one for GALIL.</p>
+    <ol class="steps">
+      <li>Open the document. A preview appears in the window.</li>
+      <li>Choose <strong>English</strong> or <strong>עברית</strong> at the top. The Hebrew document is laid out right to left, with people's Hebrew names; it opens first when the portal is in Hebrew.</li>
+      <li><strong>Download PDF</strong> saves it as <code>GALIL-&lt;code&gt;.pdf</code> (<code>GALIL-&lt;code&gt;-HE.pdf</code> in Hebrew).</li>
+      <li><strong>Email</strong> sends it to the addresses in <strong>Send to</strong> — the client's contacts, unless you change them. On a phone, and in Edge and Safari, the PDF goes attached; elsewhere it downloads and your mail app opens with the message written, ready for you to attach the file.</li>
+    </ol>
+    <figure class="fig-narrow">
+      <img src="img/45-pm-wo-document.png" alt="The first page of a work order document: the GALIL letterhead with the work order code, the title, order details, scope, deliverables, budget, client contacts and the GALIL project team.">
+      <figcaption><span class="fno">Fig 11.5</span><span>The first page of the work order document. The signature blocks follow the team.</span></figcaption>
     </figure>
     <div class="note warn">
       <span class="tag">Side effect worth knowing</span>
@@ -836,7 +854,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </div>
 
     <h3>People</h3>
-    <p>Everyone, with email, role, team, manager and status. Operations Managers and the CEO change roles from the dropdown here and can <strong>Deactivate</strong> or <strong>Reactivate</strong> an account — except their own, which another administrator changes. Everyone else sees the same list read-only. The <strong>Used by</strong> column counts the records each person is attached to. The <strong>Portal access</strong> column shows which parts of the portal the person can open and their Taskana role; Operations Managers and the CEO change it with <strong>✎</strong> — see <a href="#ch-access">Portal access</a>.</p>
+    <p>Everyone, with email, role, team, manager and status. Operations Managers and the CEO change roles from the dropdown here and can <strong>Deactivate</strong> or <strong>Reactivate</strong> an account — except their own, which another administrator changes. Everyone else sees the same list read-only. Click an email address to copy it — every email address in WorkDesk works the same way. The <strong>Used by</strong> column counts the records each person is attached to. The <strong>Portal access</strong> column shows which parts of the portal the person can open and their Taskana role; Operations Managers and the CEO change it with <strong><i class="ui-ic" data-ic="edit"></i></strong> — see <a href="#ch-access">Portal access</a>.</p>
     <figure>
       <img src="img/51-admin-people.png" alt="The Management tab's People section listing staff with role dropdowns, team, manager and active status.">
       <figcaption><span class="fno">Fig 11.5</span><span>People. Deactivating keeps the person's history intact; it only stops them signing in.</span></figcaption>
@@ -904,14 +922,14 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
         <tr><td><strong>A number</strong></td><td>Hours that person may report on that assignment before approval is required.</td></tr>
       </tbody>
     </table></div>
-    <p>Allowance is set <em>per assignment</em>, not per person: the same writer can hold 40 hours on one work order and 200 on another. Edit a number in place and it saves when you leave the field. Your own allowance is shown read-only here — raise it through <a href="#ch-mywork">My assignments → Request hours</a>, like anyone else; <strong>🗑</strong> removes the assignment. Blue hours draw on the allowance and the budget just like Yellow hours.</p>
+    <p>Allowance is set <em>per assignment</em>, not per person: the same writer can hold 40 hours on one work order and 200 on another. Edit a number in place and it saves when you leave the field. Your own allowance is shown read-only here — raise it through <a href="#ch-mywork">My assignments → Request hours</a>, like anyone else; <strong><i class="ui-ic" data-ic="trash"></i></strong> removes the assignment. Blue hours draw on the allowance and the budget just like Yellow hours.</p>
     <figure>
       <img src="img/53-admin-assignments.png" alt="The Assignments and allowances section: a form band to create an assignment above a table of person, project, work order, allowance, consumed, in approval and remaining.">
       <figcaption><span class="fno">Fig 11.7</span><span>Assignments. Leaving <b>Work order</b> blank creates a project-level assignment that covers every work order on it.</span></figcaption>
     </figure>
 
     <h3>Clients, Projects and Expense types</h3>
-    <p>Each is a table with an add band above it. Rename with <strong>✎</strong>, remove with <strong>🗑</strong>.</p>
+    <p>Each is a table with an add band above it. Rename with <strong><i class="ui-ic" data-ic="edit"></i></strong>, remove with <strong><i class="ui-ic" data-ic="trash"></i></strong>.</p>
     <div class="note stop">
       <span class="tag">Nothing in use can be deleted</span>
       <p>The <strong>Used by</strong> column counts the saved records that reference an item. If it is above zero, removal is refused. Deactivate or close it instead.</p>
@@ -1037,7 +1055,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </figure>
 
     <h3>Filters and export</h3>
-    <p>Filter by employee, client, project and work order; <strong>Clear</strong> resets them. <strong>⬇ Export</strong> writes the underlying entries — not the chart — so the numbers can be checked.</p>
+    <p>Filter by employee, client, project and work order; <strong>Clear</strong> resets them. <strong><i class="ui-ic" data-ic="download"></i> Export</strong> writes the underlying entries — not the chart — so the numbers can be checked.</p>
   </section>
 
   <!-- ============ 13 ============ -->
@@ -1073,7 +1091,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <!-- ============ 14 ============ -->
   <section class="ch" id="ch-mywork" data-title="My assignments and allowances" data-caps="reportOwnTime">
     <div class="ch-head"><span class="ch-num">14</span><h2>My assignments and allowances</h2></div>
-    <p class="lede">The ◱ button in the top bar. Where your funded work lives, and where you ask for more hours before you run out. Taskana shows the same figures as <em>My hours banks</em> on My work.</p>
+    <p class="lede">The <i class="ui-ic" data-ic="assignments"></i> button in the top bar. Where your funded work lives, and where you ask for more hours before you run out. Taskana shows the same figures as <em>My hours banks</em> on My work.</p>
     <div class="locked-note"></div>
 
     <figure>
@@ -1095,14 +1113,14 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <p>The request appears in the approval queue as an <strong>Allowance increase</strong>, showing the hours asked for and your justification. On approval, the allowance is raised automatically.</p>
     <div class="note">
       <span class="tag">If you hold no assignments at all</span>
-      <p>The ◱ button still opens, but shows <em>"You hold no project or work-order assignments yet"</em> in place of the table. Ask an Operations Manager to assign you to a project — until then, every Yellow or Blue hour you report will route to approval as <em>Not assigned</em>.</p>
+      <p>The <i class="ui-ic" data-ic="assignments"></i> button still opens, but shows <em>"You hold no project or work-order assignments yet"</em> in place of the table. Ask an Operations Manager to assign you to a project — until then, every Yellow or Blue hour you report will route to approval as <em>Not assigned</em>.</p>
     </div>
   </section>
 
   <!-- ============ 15 ============ -->
   <section class="ch" id="ch-admin" data-title="System administration" data-caps="backupRestore,viewAuditLog">
     <div class="ch-head"><span class="ch-num">15</span><h2>System administration</h2></div>
-    <p class="lede">One modal behind the ⚙ button, with sections down its left side. Up to V7 this was called <strong>Lists &amp; data administration</strong> and held everything from people to the audit log; in V7.1 the day-to-day record-keeping (people, activation, assignments, clients, projects, expense types, verification) moved to the <a href="#ch-budgets">Management</a> tab, so this modal now holds only the settings a company runs once and rarely touches.</p>
+    <p class="lede">One modal behind the <i class="ui-ic" data-ic="settings"></i> button, with sections down its left side. Up to V7 this was called <strong>Lists &amp; data administration</strong> and held everything from people to the audit log; in V7.1 the day-to-day record-keeping (people, activation, assignments, clients, projects, expense types, verification) moved to the <a href="#ch-budgets">Management</a> tab, so this modal now holds only the settings a company runs once and rarely touches.</p>
     <div class="locked-note"></div>
     <div class="perm" data-perm="backupRestore,viewAuditLog"></div>
 
@@ -1121,7 +1139,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <li>Pick the month and click <strong>Close month</strong>.</li>
       <li>If the month still holds pending requests, WorkDesk refuses and says how many. Clear the queue first.</li>
       <li>On close, every registered entry in that month becomes <strong>Locked</strong> and can no longer be edited.</li>
-      <li>A closed month appears as a <code>🔒</code> chip with a <strong>reopen</strong> link, which unlocks its entries again.</li>
+      <li>A closed month appears as a <i class="ui-ic" data-ic="lock"></i> chip with a <strong>reopen</strong> link, which unlocks its entries again.</li>
     </ol>
     <figure>
       <img src="img/60-admin-settings.png" alt="The Company settings section with soft and hard daily limits, default weekly hours and the month-close control.">
@@ -1197,7 +1215,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </table></div>
 
     <h3>Scope</h3>
-    <p>Export scope follows the permission matrix, not the screen. <strong>⬇ Everything</strong> gives an Employee, Senior Employee or External Contractor their own records; a Team Lead their team; a Project Manager their projects; and Operations, Finance, the CEO and Viewers everything.</p>
+    <p>Export scope follows the permission matrix, not the screen. <strong><i class="ui-ic" data-ic="download"></i> Everything</strong> gives an Employee, Senior Employee or External Contractor their own records; a Team Lead their team; a Project Manager their projects; and Operations, Finance, the CEO and Viewers everything.</p>
     <p>Date columns carry real Excel dates formatted <code>Sunday, 26/07/2026</code>, so they sort and filter properly. Red and Yellow columns are accent-coloured to match the application.</p>
   </section>
 
@@ -1333,7 +1351,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <ul>
       <li><strong>Everyone</strong> sees their own hours bank — on My work under <strong>My hours banks</strong>, on the project page as <strong>Your hours bank</strong>, and on their own tasks.</li>
       <li><strong>Managers and Admins</strong> also see budgets and every team member's hours bank, as WorkDesk's Project Managers, Operations Managers and the CEO see them.</li>
-      <li>The figures are read-only. Budgets, allowances and assignments are changed in WorkDesk — Management → Budgets and Assignments &amp; Allowances; more hours are requested from WorkDesk's ◱ <em>My assignments</em>.</li>
+      <li>The figures are read-only. Budgets, allowances and assignments are changed in WorkDesk — Management → Budgets and Assignments &amp; Allowances; more hours are requested from WorkDesk's <i class="ui-ic" data-ic="assignments"></i> <em>My assignments</em>.</li>
     </ul>
   </section>
 

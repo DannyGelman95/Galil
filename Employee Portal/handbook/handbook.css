@@ -322,3 +322,7 @@ table code{background:transparent; padding:0}
 [dir="rtl"] .masthead h1, [dir="rtl"] .ch h2, [dir="rtl"] h3{letter-spacing:0}
 [dir="rtl"] .rolebar .lead, [dir="rtl"] h4, [dir="rtl"] .part{letter-spacing:0; text-transform:none}
 @media (prefers-reduced-motion:reduce){ .tcard{transition:none} }
+.ui-ic{display:inline-block; width:1.05em; height:1.05em; vertical-align:-.17em; color:var(--accent-ink)}
+.ui-ic svg{width:100%; height:100%; display:block}
+[dir="rtl"] .ui-ic[data-ic="back"] svg{transform:scaleX(-1)}
+kbd{font-family:var(--mono); font-size:.82em; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:0 5px; background:var(--surface)}
