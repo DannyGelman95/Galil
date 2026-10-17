@@ -7,7 +7,7 @@ Website/            The public website — React + Material UI, English and Hebr
 Employee Portal/    The Employee Portal — WorkDesk, Taskana, the Handbook and the
                     Knowledge Base behind one sign-in, English and Hebrew.
 tests/              Browser tests for the Employee Portal (Playwright).
-docs/               Specifications, Microsoft 365 rollout guides and demo videos.
+docs/               Brand material; deprecated documents and films of the old apps.
 ```
 
 ## Website

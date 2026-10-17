@@ -12,7 +12,7 @@
    entra     fill in clientId and sign-in goes through Microsoft Entra ID;
              leave it empty for email + demo password (GalilWorkdesk1).
 
-   See docs/ for the Microsoft 365 rollout guides.
+   Setting it up: the administrator section of install/index.html.
    ===================================================================== */
 var PORTAL_CONFIG = {
   domain: "@galiltc.co.il",
