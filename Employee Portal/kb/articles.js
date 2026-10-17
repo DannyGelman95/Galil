@@ -171,7 +171,7 @@ var ARTICLES = [
   '<div class="callout tip"><b>טיפ:</b> התקינו את הפורטל בטלפון — ראו <a href="#/portal-install">התקנת הפורטל בטלפון</a>.</div>'
   } },
 
-{ id: "portal-access", cat: "portal", updated: "16 Oct 2026",
+{ id: "portal-access", cat: "portal", updated: "17 Oct 2026",
   title: { en: "Portal access and roles", he: "גישה לפורטל ותפקידים" },
   summary: { en: "Who can open which app, and what each person's Taskana role is.", he: "מי יכול לפתוח איזה יישום, ומה התפקיד של כל אחד ב-Taskana." },
   body: {
@@ -188,7 +188,7 @@ var ARTICLES = [
   '<h2>Changing someone\'s access (Operations, CEO)</h2>' +
   '<ol class="steps">' +
   '<li>In WorkDesk, open <strong>Management → People</strong>.</li>' +
-  '<li>In the person\'s <strong>Portal access</strong> column, click <strong>✎</strong>.</li>' +
+  '<li>In the person\'s <strong>Portal access</strong> column, click <strong><i class="ui-ic" data-ic="edit"></i></strong>.</li>' +
   '<li>Tick or untick WorkDesk, the Handbook and the Knowledge Base, and choose their Taskana role — or <em>No access</em>.</li>' +
   '<li>Save. <strong>Use the role defaults</strong> puts the person back on the defaults above.</li>' +
   '</ol>' +
@@ -211,7 +211,7 @@ var ARTICLES = [
   '<h2>שינוי הגישה של מישהו (תפעול, מנכ"ל)</h2>' +
   '<ol class="steps">' +
   '<li>ב-WorkDesk, פתחו את <strong>ניהול ← אנשים</strong>.</li>' +
-  '<li>בעמודה <strong>גישה לפורטל</strong> של האדם, לחצו על <strong>✎</strong>.</li>' +
+  '<li>בעמודה <strong>גישה לפורטל</strong> של האדם, לחצו על <strong><i class="ui-ic" data-ic="edit"></i></strong>.</li>' +
   '<li>סמנו או בטלו את WorkDesk, המדריך למשתמש ומאגר הידע, ובחרו את התפקיד ב-Taskana — או <em>אין גישה</em>.</li>' +
   '<li>שמרו. <strong>ברירות המחדל של התפקיד</strong> מחזיר את האדם לברירות המחדל שלמעלה.</li>' +
   '</ol>' +
@@ -253,6 +253,44 @@ var ARTICLES = [
   '<p>ל-WorkDesk אין יותר לשונית משימות. מתכננים, מקצים, סוקרים ודנים במשימות ב-Taskana. כשמדווחים שעות ב-WorkDesk אפשר לציין את המשימה ב-Taskana שהזמן הוקדש לה (רשות) — והמשימה מציגה את השעות האלה תחת <strong>שעות ב-WorkDesk</strong>.</p>' +
   '<h2>השעות נמצאות ב-WorkDesk</h2>' +
   '<p>שעות, ימי מחלה וחופשה והוצאות מדווחים רק ב-WorkDesk. ממשימה ב-Taskana, <strong>דיווח שעות על המשימה ב-WorkDesk</strong> פותח את יומן השעות כשהפרויקט, הזמנת העבודה והמשימה כבר ממולאים.</p>'
+  } },
+
+{ id: "portal-around", cat: "portal", updated: "17 Oct 2026",
+  title: { en: "Getting around WorkDesk", he: "התמצאות ב-WorkDesk" },
+  summary: { en: "The top-bar buttons, the Back button, copying email addresses, and how the Handbook and this Knowledge Base are laid out.", he: "כפתורי הסרגל העליון, כפתור החזרה, העתקת כתובות דוא״ל, ואיך בנויים המדריך ומאגר הידע." },
+  body: {
+  en:
+  '<p class="lede">WorkDesk keeps everything that is not a tab behind a few icon buttons in the dark top bar. This is what each one does.</p>' +
+  '<table><thead><tr><th>Button</th><th>What it does</th></tr></thead><tbody>' +
+  '<tr><td><i class="ui-ic" data-ic="back"></i> Back</td><td>Steps back to the tab or Management section you were on. An open window closes first; with nothing left, it returns to the portal home page. <code>Alt</code>+<code>←</code> and the mouse\'s back button do the same.</td></tr>' +
+  '<tr><td><i class="ui-ic" data-ic="home"></i> Home</td><td>The Employee Portal home page — Taskana, the Handbook and this Knowledge Base are there.</td></tr>' +
+  '<tr><td><i class="ui-ic" data-ic="moon"></i> / <i class="ui-ic" data-ic="sun"></i></td><td>Dark or light theme, for the whole portal on this device.</td></tr>' +
+  '<tr><td><i class="ui-ic" data-ic="assignments"></i></td><td>My assignments and allowances — your funded work, and <strong>Request hours</strong> when you are running out.</td></tr>' +
+  '<tr><td><i class="ui-ic" data-ic="settings"></i></td><td>System administration (roles, company settings, backup, audit log) — for administrators.</td></tr>' +
+  '<tr><td>EN / עב</td><td>English or Hebrew, for the whole portal.</td></tr>' +
+  '<tr><td><i class="ui-ic" data-ic="book"></i> · <i class="ui-ic" data-ic="help"></i></td><td>This Knowledge Base, and the Handbook, each in a new tab.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>Copying an email address</h2>' +
+  '<p>Every email address in WorkDesk — in People, Clients, Teams, Pending activation and your profile — is a link. Click it and the address is copied, ready to paste into a message.</p>' +
+  '<h2>Reading the Handbook and this Knowledge Base</h2>' +
+  '<ol class="steps"><li>Search at the top, or pick a topic card.</li><li>The chapter or article opens on its own page.</li><li><strong>All topics</strong> takes you back to the cards; <strong>Previous</strong> and <strong>Next</strong> at the bottom move through them in order.</li></ol>' +
+  '<div class="callout tip"><b>Tip:</b> In the Handbook, choose your role in the <strong>Read as</strong> bar — the cards you cannot use are dimmed.</div>',
+  he:
+  '<p class="lede">ב-WorkDesk כל מה שאינו לשונית נמצא מאחורי כמה כפתורי סמל בסרגל העליון הכהה. זה מה שכל אחד עושה.</p>' +
+  '<table><thead><tr><th>כפתור</th><th>מה הוא עושה</th></tr></thead><tbody>' +
+  '<tr><td><i class="ui-ic" data-ic="back"></i> חזרה</td><td>חוזר ללשונית או לחלק הניהול הקודם. חלון פתוח נסגר קודם; כשאין לאן לחזור, הכפתור מחזיר לדף הבית של הפורטל. <code>Alt</code>+<code>→</code> וכפתור החזרה של העכבר עושים אותו דבר.</td></tr>' +
+  '<tr><td><i class="ui-ic" data-ic="home"></i> בית</td><td>דף הבית של פורטל העובדים — שם נמצאים Taskana, המדריך ומאגר הידע הזה.</td></tr>' +
+  '<tr><td><i class="ui-ic" data-ic="moon"></i> / <i class="ui-ic" data-ic="sun"></i></td><td>ערכת נושא כהה או בהירה, לכל הפורטל במכשיר הזה.</td></tr>' +
+  '<tr><td><i class="ui-ic" data-ic="assignments"></i></td><td>השיבוצים והמכסות שלי — העבודה הממומנת שלכם, ו<strong>בקשת שעות</strong> כשהמכסה עומדת להיגמר.</td></tr>' +
+  '<tr><td><i class="ui-ic" data-ic="settings"></i></td><td>ניהול המערכת (תפקידים, הגדרות החברה, גיבוי, יומן ביקורת) — למנהלי המערכת.</td></tr>' +
+  '<tr><td>EN / עב</td><td>אנגלית או עברית, לכל הפורטל.</td></tr>' +
+  '<tr><td><i class="ui-ic" data-ic="book"></i> · <i class="ui-ic" data-ic="help"></i></td><td>מאגר הידע הזה והמדריך, כל אחד בלשונית חדשה.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>העתקת כתובת דוא״ל</h2>' +
+  '<p>כל כתובת דוא״ל ב-WorkDesk — באנשים, בלקוחות, בצוותים, בהמתנה להפעלה ובפרופיל שלכם — היא קישור. לחיצה עליה מעתיקה את הכתובת, מוכנה להדבקה בהודעה.</p>' +
+  '<h2>קריאה במדריך ובמאגר הידע</h2>' +
+  '<ol class="steps"><li>חפשו למעלה, או בחרו כרטיס נושא.</li><li>הפרק או המאמר נפתח בעמוד משלו.</li><li><strong>כל הנושאים</strong> מחזיר לכרטיסים; <strong>הקודם</strong> ו<strong>הבא</strong> בתחתית עוברים ביניהם לפי הסדר.</li></ol>' +
+  '<div class="callout tip"><b>טיפ:</b> במדריך, בחרו את התפקיד שלכם בסרגל <strong>קריאה בתור</strong> — הכרטיסים שאינם רלוונטיים לכם מעומעמים.</div>'
   } },
 
 { id: "portal-install", cat: "portal", updated: "16 Oct 2026",
@@ -525,7 +563,7 @@ var ARTICLES = [
   '<p>מחליפים טלפון? הודיעו לתפעול <strong>לפני</strong> שאתם מוחקים את הישן, כדי שיעבירו את האימות.</p>'
   } },
 
-{ id: "workdesk-time", cat: "training", updated: "16 Oct 2026",
+{ id: "workdesk-time", cat: "training", updated: "17 Oct 2026",
   title: { en: "Logging your time in WorkDesk", he: "דיווח שעות ב-WorkDesk" },
   summary: { en: "Report hours against the right work order, every day.", he: "דיווח שעות על הזמנת העבודה הנכונה, כל יום." },
   body: {
@@ -538,11 +576,11 @@ var ARTICLES = [
   '</ol>' +
   '<h2>Useful shortcuts</h2>' +
   '<ul><li>From a task in Taskana, <strong>Report time on this task in WorkDesk</strong> opens the form with the project, work order and task already filled in.</li>' +
-  '<li><strong>Duplicate</strong> an entry with the ⧉ button — to the previous or next day or week, a number of days back or forward (optionally onto every working day in between), or a specific date.</li>' +
+  '<li><strong>Duplicate</strong> an entry with the <i class="ui-ic" data-ic="copy"></i> button — to the previous or next day or week, a number of days back or forward (optionally onto every working day in between), or a specific date.</li>' +
   '<li>Click a work order code anywhere in a table to copy it.</li>' +
   '<li>Click a column heading to sort the table, drag a heading to move it, or drag its edge to resize it. Use <strong>＋ Save</strong> above the table to keep that layout as a view.</li>' +
-  '<li>On your phone, use the running timer in the mobile layout. Below it, <strong>‹ ›</strong> change the month and <strong>⚙ Filter &amp; sort</strong> narrows and sorts your entries; managers can switch to <strong>Me and my team</strong> to see the time of the people who report to them.</li></ul>' +
-  '<div class="callout note"><b>Out of allowance?</b> Use <strong>Request hours</strong> under ◱ My assignments and allowances — your Team Lead or Project Manager approves or declines it.</div>',
+  '<li>On your phone, use the running timer in the mobile layout. Below it, <strong>‹ ›</strong> change the month and <strong><i class="ui-ic" data-ic="sliders"></i> Filter &amp; sort</strong> narrows and sorts your entries; managers can switch to <strong>Me and my team</strong> to see the time of the people who report to them.</li></ul>' +
+  '<div class="callout note"><b>Out of allowance?</b> Use <strong>Request hours</strong> under <i class="ui-ic" data-ic="assignments"></i> My assignments and allowances — your Team Lead or Project Manager approves or declines it.</div>',
   he:
   '<ol class="steps">' +
   '<li>בדף הבית של הפורטל, פתחו את <strong>WorkDesk</strong> (או בחרו <strong>דיווח שעות</strong>). ‏WorkDesk נפתח ב<strong>יומן השעות</strong>.</li>' +
@@ -552,11 +590,11 @@ var ARTICLES = [
   '</ol>' +
   '<h2>קיצורי דרך שימושיים</h2>' +
   '<ul><li>ממשימה ב-Taskana, <strong>דיווח שעות על המשימה ב-WorkDesk</strong> פותח את הטופס כשהפרויקט, הזמנת העבודה והמשימה כבר ממולאים.</li>' +
-  '<li><strong>שכפלו</strong> רישום עם הכפתור ⧉ — ליום או לשבוע הקודם או הבא, למספר ימים אחורה או קדימה (ואפשר לכל יום עבודה שביניהם), או לתאריך מסוים.</li>' +
+  '<li><strong>שכפלו</strong> רישום עם הכפתור <i class="ui-ic" data-ic="copy"></i> — ליום או לשבוע הקודם או הבא, למספר ימים אחורה או קדימה (ואפשר לכל יום עבודה שביניהם), או לתאריך מסוים.</li>' +
   '<li>לחיצה על קוד הזמנת עבודה בכל טבלה מעתיקה אותו.</li>' +
   '<li>לחצו על כותרת עמודה למיון, גררו כותרת להזזה או גררו את הקצה לשינוי הרוחב. <strong>＋ שמירה</strong> מעל הטבלה שומר את הפריסה כתצוגה.</li>' +
-  '<li>בטלפון, השתמשו בטיימר שבתצוגת הטלפון. מתחתיו, <strong>‹ ›</strong> מחליפים חודש ו<strong>⚙ סינון ומיון</strong> מצמצם וממיין את הרישומים; מנהלים יכולים לעבור ל<strong>אני והצוות שלי</strong> כדי לראות את השעות של מי שכפוף להם.</li></ul>' +
-  '<div class="callout note"><b>נגמרה המכסה?</b> השתמשו ב<strong>בקשת שעות</strong> תחת ◱ השיבוצים והמכסות שלי — ראש הצוות או מנהל/ת הפרויקט מאשרים או דוחים.</div>'
+  '<li>בטלפון, השתמשו בטיימר שבתצוגת הטלפון. מתחתיו, <strong>‹ ›</strong> מחליפים חודש ו<strong><i class="ui-ic" data-ic="sliders"></i> סינון ומיון</strong> מצמצם וממיין את הרישומים; מנהלים יכולים לעבור ל<strong>אני והצוות שלי</strong> כדי לראות את השעות של מי שכפוף להם.</li></ul>' +
+  '<div class="callout note"><b>נגמרה המכסה?</b> השתמשו ב<strong>בקשת שעות</strong> תחת <i class="ui-ic" data-ic="assignments"></i> השיבוצים והמכסות שלי — ראש הצוות או מנהל/ת הפרויקט מאשרים או דוחים.</div>'
   } },
 
 { id: "workdesk-plan", cat: "training", updated: "16 Oct 2026",
@@ -627,6 +665,40 @@ var ARTICLES = [
   '<li>לחצו <strong>הוספת הוצאה</strong>. התביעה עוברת למאשר/ת, והסטטוס שלה מתעדכן ברשימה.</li>' +
   '</ol>' +
   '<p>מה אפשר לתבוע — ב<a href="#/expenses-policy">נוהל ההוצאות</a>.</p>'
+  } },
+
+{ id: "workdesk-wo-document", cat: "training", updated: "17 Oct 2026",
+  title: { en: "Work order documents for clients", he: "מסמכי הזמנת עבודה ללקוחות" },
+  summary: { en: "Fill in a work order and send the client an official GALIL PDF, in English or Hebrew.", he: "ממלאים הזמנת עבודה ושולחים ללקוח מסמך PDF רשמי של גליל, באנגלית או בעברית." },
+  body: {
+  en:
+  '<p class="lede">Project Managers, Operations and the CEO can turn any work order into an official GALIL document — letterhead, scope, budget, contacts and signature blocks — and send it to the client.</p>' +
+  '<h2>Fill in the work order</h2>' +
+  '<ol class="steps">' +
+  '<li>In WorkDesk, open <strong>Management → Work Orders</strong> and click <strong>+ New work order</strong>, or the <i class="ui-ic" data-ic="edit"></i> on an existing one.</li>' +
+  '<li>Besides the code, title, dates and budgeted hours, fill in <strong>Scope of work</strong>, the <strong>Deliverables</strong> (one per line), the <strong>Client points of contact</strong>, GALIL\'s <strong>Project lead</strong> and <strong>Team members</strong>, and the <strong>Signatures</strong>.</li>' +
+  '<li>Save.</li></ol>' +
+  '<h2>Create and send the document</h2>' +
+  '<ol class="steps">' +
+  '<li>Click <i class="ui-ic" data-ic="file"></i> on the work order\'s row (or <strong>Document (PDF)</strong> in the editor).</li>' +
+  '<li>Choose <strong>English</strong> or <strong>עברית</strong>. The preview updates.</li>' +
+  '<li><strong>Download PDF</strong> to keep a copy, or <strong>Email</strong> to send it to the addresses in <strong>Send to</strong>.</li></ol>' +
+  '<div class="callout note"><b>Attaching on a computer:</b> on a phone, and in Edge and Safari, the PDF is attached for you. In other browsers it downloads and your mail app opens with the message written — attach the downloaded file before sending.</div>' +
+  '<div class="callout tip"><b>Tip:</b> Fill in the client\'s contacts on the work order — the document lists them, and <strong>Send to</strong> uses their addresses.</div>',
+  he:
+  '<p class="lede">מנהלי פרויקטים, התפעול והמנכ"ל יכולים להפוך כל הזמנת עבודה למסמך רשמי של גליל — נייר מכתבים, היקף עבודה, תקציב, אנשי קשר ואזורי חתימה — ולשלוח אותו ללקוח.</p>' +
+  '<h2>ממלאים את הזמנת העבודה</h2>' +
+  '<ol class="steps">' +
+  '<li>ב-WorkDesk, פתחו <strong>ניהול ← הזמנות עבודה</strong> ולחצו <strong>+ הזמנת עבודה חדשה</strong>, או <i class="ui-ic" data-ic="edit"></i> בהזמנה קיימת.</li>' +
+  '<li>מלבד הקוד, הכותרת, התאריכים והשעות המתוקצבות, מלאו את <strong>היקף העבודה</strong>, את <strong>התוצרים</strong> (אחד בכל שורה), את <strong>אנשי הקשר מטעם הלקוח</strong>, את <strong>מוביל/ת הפרויקט</strong> ו<strong>חברי הצוות</strong> מגליל, ואת <strong>החתימות</strong>.</li>' +
+  '<li>שמרו.</li></ol>' +
+  '<h2>מפיקים ושולחים את המסמך</h2>' +
+  '<ol class="steps">' +
+  '<li>לחצו <i class="ui-ic" data-ic="file"></i> בשורה של ההזמנה (או <strong>מסמך (PDF)</strong> בעורך).</li>' +
+  '<li>בחרו <strong>English</strong> או <strong>עברית</strong>. התצוגה המקדימה מתעדכנת.</li>' +
+  '<li><strong>הורדת PDF</strong> שומרת עותק, ו<strong>דוא״ל</strong> שולח אותו לכתובות שב<strong>שליחה אל</strong>.</li></ol>' +
+  '<div class="callout note"><b>צירוף במחשב:</b> בטלפון, וב-Edge וב-Safari, ה-PDF מצורף עבורכם. בדפדפנים אחרים הוא יורד ואפליקציית הדוא״ל נפתחת עם ההודעה כתובה — צרפו את הקובץ שירד לפני השליחה.</div>' +
+  '<div class="callout tip"><b>טיפ:</b> מלאו את אנשי הקשר של הלקוח בהזמנת העבודה — המסמך מציג אותם, ו<strong>שליחה אל</strong> משתמש בכתובות שלהם.</div>'
   } },
 
 { id: "taskana-tasks", cat: "training", updated: "16 Oct 2026",
