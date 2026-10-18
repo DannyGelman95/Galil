@@ -535,7 +535,7 @@ function libExport(kind) {
   if (d.sme) meta.push(d.sme + (d.smeRole ? " (" + d.smeRole + ")" : ""));
   if (d.date) meta.push(fmtDate(d.date));
   var doc = "<!doctype html><html dir=\"" + dir + "\"><head><meta charset=\"utf-8\"><title>" + libEsc(title) + "</title><style>" + css + "</style>" + link + "</head><body><main id=\"doc\">" +
-    "<h1 class=\"doc-title\" style=\"border:0;font-size:26px\">" + libEsc(title) + "</h1>" + (meta.length ? "<p class=\"doc-meta\" style=\"color:#5f6e62\">" + libEsc(meta.join(" · ")) + "</p>" : "") +
+    "<h1 class=\"doc-title\" style=\"border:0;font-size:26px\">" + libEsc(title) + "</h1>" + (meta.length ? "<p class=\"doc-meta\" style=\"color:#5F656E\">" + libEsc(meta.join(" · ")) + "</p>" : "") +
     body + "</main></body></html>";
   var name = (title.replace(/[\\/:*?"<>|]+/g, " ").trim() || "document").slice(0, 80);
   if (kind === "doc") saveFile(name + ".doc", "﻿" + doc.replace("<html", "<html xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:w=\"urn:schemas-microsoft-com:office:word\""), "application/msword", tr("Word document"));
@@ -643,7 +643,7 @@ function libStylesPanel(d, box) {
   var sel = function (k, list) { return h("select", { class: "f", disabled: !canW, onchange: function (e) { setP(k, e.target.value); } }, list.map(function (o) { return h("option", { value: o[0], selected: String(props[k] || "") === String(o[0]) }, o[1]); })); };
   var num = function (k, ph, step) { return h("input", { class: "f", type: "number", step: step || 1, value: props[k] == null ? "" : props[k], placeholder: ph || "", disabled: !canW, onchange: function (e) { setP(k, e.target.value === "" ? "" : Number(e.target.value)); } }); };
   var col = function (k) {
-    var c = h("input", { type: "color", value: /^#[0-9a-f]{6}$/i.test(props[k] || "") ? props[k] : "#1b2a18", disabled: !canW, onchange: function (e) { setP(k, e.target.value); } });
+    var c = h("input", { type: "color", value: /^#[0-9a-f]{6}$/i.test(props[k] || "") ? props[k] : "#1C2D4A", disabled: !canW, onchange: function (e) { setP(k, e.target.value); } });
     return h("div", { class: "row", style: { gap: "4px", flexWrap: "nowrap" } }, c, h("button", { class: "btn sm ghost", title: tr("Automatic"), disabled: !canW, onclick: function () { setP(k, ""); } }, props[k] ? "✕" : tr("Auto")));
   };
   var fontOpts = [["", tr("Inherited")]].concat(d.fonts.map(function (f) { return [f.name, f.name]; }), ED_SYSFONTS.map(function (n) { return [n, n]; }));

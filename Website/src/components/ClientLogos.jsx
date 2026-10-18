@@ -66,7 +66,7 @@ function Logo({ client, dark, size = 'md' }) {
           fontWeight: 800,
           fontSize: big ? 14 : 12.5,
           letterSpacing: '.04em',
-          color: dark ? '#12240F' : '#fff',
+          color: dark ? '#1F1405' : '#fff',
           background: dark ? brand.green : `linear-gradient(135deg, ${brand.greenDeep}, ${brand.forest})`,
         }}
       >
@@ -81,7 +81,7 @@ function Logo({ client, dark, size = 'md' }) {
             fontSize: big ? 16.5 : 15.5,
             letterSpacing: '-.01em',
             whiteSpace: 'nowrap',
-            color: dark ? '#EAF2E4' : brand.forest,
+            color: dark ? '#E4E9F2' : brand.forest,
           }}
         >
           {lang === 'he' && client.he ? client.he : client.name}
@@ -89,7 +89,7 @@ function Logo({ client, dark, size = 'md' }) {
         {client.sector ? (
           <Typography
             component="span"
-            sx={{ display: 'block', fontSize: 12, whiteSpace: 'nowrap', color: dark ? '#A9BFA2' : brand.steel }}
+            sx={{ display: 'block', fontSize: 12, whiteSpace: 'nowrap', color: dark ? '#A2ADBF' : brand.steel }}
           >
             {t(client.sector[0], client.sector[1])}
           </Typography>
@@ -140,7 +140,7 @@ function MarqueeRow({ items, reverse, seconds }) {
               border: `1px solid ${brand.rule}`,
               bgcolor: 'background.paper',
               transition: 'transform .25s, border-color .25s, box-shadow .25s',
-              '&:hover': { transform: 'translateY(-3px)', borderColor: brand.green, boxShadow: '0 10px 26px rgba(20,48,28,.12)' },
+              '&:hover': { transform: 'translateY(-3px)', borderColor: brand.green, boxShadow: '0 10px 26px rgba(24,46,82,.12)' },
               '@media (prefers-reduced-motion: reduce)': { display: i >= items.length ? 'none' : 'flex' },
             }}
           >
@@ -231,13 +231,13 @@ export function LogoCloud() {
               px: '18px',
               py: '14px',
               borderRadius: '16px',
-              border: '1px solid #2C4A32',
-              bgcolor: 'rgba(26,56,34,.78)',
+              border: '1px solid #2F5492',
+              bgcolor: 'rgba(31,58,102,.78)',
               backdropFilter: 'blur(6px)',
               boxShadow: '0 18px 40px rgba(0,0,0,.28)',
               animation: { md: `${bob} ${s.d}s ease-in-out ${-i * 1.3}s infinite` },
               transition: 'border-color .25s, background-color .25s',
-              '&:hover': { borderColor: '#8CC63E', bgcolor: 'rgba(31,61,36,.95)', animationPlayState: 'paused' },
+              '&:hover': { borderColor: '#F08A24', bgcolor: 'rgba(31,58,102,.95)', animationPlayState: 'paused' },
               '@media (prefers-reduced-motion: reduce)': { animation: 'none' },
             }}
           >

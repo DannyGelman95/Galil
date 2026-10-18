@@ -161,7 +161,7 @@ export default function Home() {
                     borderRadius: '12px',
                     height: '100%',
                     transition: 'transform .25s, border-color .25s, box-shadow .25s',
-                    '&:hover': { transform: 'translateY(-4px)', borderColor: brand.green, boxShadow: '0 14px 34px rgba(20,48,28,.12)' },
+                    '&:hover': { transform: 'translateY(-4px)', borderColor: brand.green, boxShadow: '0 14px 34px rgba(24,46,82,.12)' },
                   }}
                 >
                   <CardContent sx={{ p: '26px' }}>
@@ -188,14 +188,14 @@ export default function Home() {
       </Box>
 
       {/* ===================== PROOF ===================== */}
-      <Box sx={{ bgcolor: brand.forestDeep, color: '#EAF2E4', py: { xs: '56px', md: '104px' } }}>
+      <Box sx={{ bgcolor: brand.forestDeep, color: '#E4E9F2', py: { xs: '56px', md: '104px' } }}>
         <Container maxWidth="lg">
           <Grid container spacing={{ xs: '34px', md: '56px' }} alignItems="center" sx={{ mb: { xs: '38px', md: '60px' } }}>
             <Grid size={{ xs: 12, md: 6 }}>
               <Typography variant="h2" sx={{ fontSize: 'clamp(28px,3.4vw,44px)', color: '#fff' }}>
                 {t('Fifteen years of other people’s machines', 'חמש־עשרה שנה של מכונות של אחרים')}
               </Typography>
-              <Typography sx={{ color: '#A9BFA2', mt: '14px', fontSize: 17.5, maxWidth: '48ch' }}>
+              <Typography sx={{ color: '#A2ADBF', mt: '14px', fontSize: 17.5, maxWidth: '48ch' }}>
                 {t(
                   'Defence primes, medical-device makers, automotive and software companies rely on GALIL to document what they build. Most of the work sits behind an NDA — these are some of the teams we work with.',
                   'יצרניות ביטחוניות, חברות מכשור רפואי, רכב ותוכנה סומכות על גליל שתתעד את מה שהן בונות. רוב העבודה נמצאת תחת הסכמי סודיות — אלה חלק מהצוותים שאנחנו עובדים איתם.'
@@ -208,7 +208,7 @@ export default function Home() {
                     <Typography sx={{ fontSize: 'clamp(38px,4.4vw,56px)', fontWeight: 700, letterSpacing: '-.04em', color: brand.green, lineHeight: 1 }}>
                       {s.v}
                     </Typography>
-                    <Typography sx={{ mt: '10px', fontSize: 15, color: '#A9BFA2', maxWidth: '22ch' }}>{t(s.l[0], s.l[1])}</Typography>
+                    <Typography sx={{ mt: '10px', fontSize: 15, color: '#A2ADBF', maxWidth: '22ch' }}>{t(s.l[0], s.l[1])}</Typography>
                   </Grid>
                 ))}
               </Grid>
@@ -219,20 +219,20 @@ export default function Home() {
             </Grid>
           </Grid>
 
-          <Box sx={{ borderTop: '1px solid #2C4A32', pt: '26px' }}>
+          <Box sx={{ borderTop: '1px solid #2F5492', pt: '26px' }}>
             <Grid container spacing="14px">
               {INDUSTRIES.map((ind) => (
                 <Grid key={ind[0]} size={{ xs: 6, sm: 4, md: 'auto' }} sx={{ minWidth: 140, flexGrow: 1 }}>
                   <Box
                     sx={{
-                      border: '1px solid #2C4A32',
+                      border: '1px solid #2F5492',
                       borderRadius: '9px',
                       p: '17px 14px',
                       textAlign: 'center',
                       fontSize: 14.5,
                       fontWeight: 600,
-                      color: '#C6DABE',
-                      bgcolor: '#1A3822',
+                      color: '#BEC8DA',
+                      bgcolor: '#1F3A66',
                     }}
                   >
                     {t(ind[0], ind[1])}
@@ -240,7 +240,7 @@ export default function Home() {
                 </Grid>
               ))}
             </Grid>
-            <Typography sx={{ mt: '20px', fontSize: 13.5, color: '#84A07C' }}>
+            <Typography sx={{ mt: '20px', fontSize: 13.5, color: '#7C89A0' }}>
               {t('Further references available under NDA on request.', 'המלצות נוספות יימסרו בכפוף להסכם סודיות.')}
             </Typography>
           </Box>

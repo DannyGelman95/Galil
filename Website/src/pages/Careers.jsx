@@ -231,7 +231,7 @@ export default function Careers() {
                     <Chip
                       label={t('Not open yet', 'עדיין לא פתוח')}
                       size="small"
-                      sx={{ fontSize: 12.5, fontWeight: 700, color: '#8A6410', bgcolor: '#FBF1D6', border: '1px solid #EBDBA0', mb: '14px' }}
+                      sx={{ fontSize: 12.5, fontWeight: 700, color: '#7A6200', bgcolor: '#FBF1D6', border: '1px solid #EBDBA0', mb: '14px' }}
                     />
                     <Typography variant="h3" sx={{ mb: '10px', color: brand.steel }}>
                       {t(role.title[0], role.title[1])}

@@ -70,16 +70,16 @@ export default function AssemblyDiagram() {
         >
           <defs>
             <linearGradient id="pl" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="#A7D95F" />
-              <stop offset="1" stopColor="#77B22F" />
+              <stop offset="0" stopColor="#F7A04A" />
+              <stop offset="1" stopColor="#E07B1A" />
             </linearGradient>
             <linearGradient id="pl2" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stopColor="#8CC63E" />
-              <stop offset="1" stopColor="#5E9424" />
+              <stop offset="0" stopColor="#F08A24" />
+              <stop offset="1" stopColor="#B5600E" />
             </linearGradient>
           </defs>
 
-          <path d="M70 430 L640 110" stroke="#C4D6B8" strokeWidth="1" strokeDasharray="7 6" />
+          <path d="M70 430 L640 110" stroke="#B8C3D6" strokeWidth="1" strokeDasharray="7 6" />
 
           <g
             opacity={dim('1') ? 0.24 : 1}
@@ -89,8 +89,8 @@ export default function AssemblyDiagram() {
           >
             <g transform="rotate(-30 150 400)">
               <rect x="72" y="372" width="176" height="60" rx="30" fill="url(#pl)" />
-              <circle cx="104" cy="402" r="15" fill="#F1F5EC" />
-              <circle cx="216" cy="402" r="15" fill="#F1F5EC" />
+              <circle cx="104" cy="402" r="15" fill="#ECEFF5" />
+              <circle cx="216" cy="402" r="15" fill="#ECEFF5" />
             </g>
           </g>
 
@@ -102,8 +102,8 @@ export default function AssemblyDiagram() {
           >
             <g transform="rotate(-30 300 316)">
               <rect x="222" y="288" width="176" height="58" rx="29" fill="url(#pl2)" />
-              <circle cx="254" cy="317" r="14" fill="#F1F5EC" />
-              <circle cx="366" cy="317" r="14" fill="#F1F5EC" />
+              <circle cx="254" cy="317" r="14" fill="#ECEFF5" />
+              <circle cx="366" cy="317" r="14" fill="#ECEFF5" />
             </g>
           </g>
 
@@ -114,7 +114,7 @@ export default function AssemblyDiagram() {
             onMouseLeave={() => setActive(null)}
           >
             <ellipse cx="432" cy="238" rx="40" ry="27" fill="none" stroke={brand.forest} strokeWidth="13" />
-            <ellipse cx="500" cy="200" rx="40" ry="27" fill="none" stroke="#3E6B2A" strokeWidth="13" />
+            <ellipse cx="500" cy="200" rx="40" ry="27" fill="none" stroke="#93500C" strokeWidth="13" />
           </g>
 
           <g
@@ -124,8 +124,8 @@ export default function AssemblyDiagram() {
             onMouseLeave={() => setActive(null)}
           >
             <g transform="rotate(-30 580 148)">
-              <rect x="500" y="126" width="164" height="44" rx="22" fill="#5E9424" />
-              <rect x="500" y="126" width="52" height="44" rx="22" fill="#8CC63E" />
+              <rect x="500" y="126" width="164" height="44" rx="22" fill="#B5600E" />
+              <rect x="500" y="126" width="52" height="44" rx="22" fill="#F08A24" />
             </g>
           </g>
 
@@ -185,7 +185,7 @@ export default function AssemblyDiagram() {
                 fontSize: 12,
                 fontWeight: 600,
                 bgcolor: active === part.id ? brand.forest : brand.green,
-                color: active === part.id ? '#fff' : '#12240F',
+                color: active === part.id ? '#fff' : '#1F1405',
                 transition: 'background-color .15s, color .15s',
               }}
             >

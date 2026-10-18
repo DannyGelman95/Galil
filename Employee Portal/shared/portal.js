@@ -102,17 +102,17 @@ var GalilPortal = (function () {
                      "פתחו את פורטל העובדים, התחברו עם חשבון גליל ובחרו " + heIn + " בדף הבית.")
       : t("Your account (" + u.email + ") doesn't include " + en + ". Ask an Operations Manager or the CEO if you need it.",
           "החשבון שלך (" + u.email + ") לא כולל גישה " + he + ". אם צריך גישה, פנו למנהל/ת התפעול או למנכ\"ל.");
-    var css = "position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:var(--gp-bg,#F4F7F0);font:15px/1.55 'Noto Sans','Noto Sans Hebrew',system-ui,sans-serif;color:#1B2A18";
-    if (theme() === "dark") css = css.replace("#F4F7F0", "#0F1A12").replace("color:#1B2A18", "color:#E4EFE0");
+    var css = "position:fixed;inset:0;z-index:9999;display:grid;place-items:center;padding:20px;background:var(--gp-bg,#F0F3F7);font:15px/1.55 'Noto Sans','Noto Sans Hebrew',system-ui,sans-serif;color:#1C2D4A";
+    if (theme() === "dark") css = css.replace("#F0F3F7", "#0E131B").replace("color:#1C2D4A", "color:#E0E6EF");
     var box = document.createElement("div");
     box.id = "portal-gate"; box.setAttribute("role", "alert"); box.style.cssText = css;
     var card = document.createElement("div");
-    card.style.cssText = "max-width:440px;width:100%;border-radius:18px;padding:28px 26px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.18);background:" + (theme() === "dark" ? "#18241B" : "#fff");
-    var h1 = document.createElement("div"); h1.style.cssText = "font-weight:800;letter-spacing:.14em;font-size:13px;color:#5C8B22;margin-bottom:10px"; h1.textContent = t("GALIL EMPLOYEE PORTAL", "פורטל העובדים · גליל");
+    card.style.cssText = "max-width:440px;width:100%;border-radius:18px;padding:28px 26px;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.18);background:" + (theme() === "dark" ? "#171C25" : "#fff");
+    var h1 = document.createElement("div"); h1.style.cssText = "font-weight:800;letter-spacing:.14em;font-size:13px;color:#B5600E;margin-bottom:10px"; h1.textContent = t("GALIL EMPLOYEE PORTAL", "פורטל העובדים · גליל");
     var h2 = document.createElement("h1"); h2.style.cssText = "font-size:21px;margin:0 0 8px"; h2.textContent = title;
     var p = document.createElement("p"); p.style.cssText = "margin:0 0 18px;opacity:.8"; p.textContent = msg;
     var go = document.createElement("a"); go.href = hubUrl(opts.base); go.id = "portal-gate-go";
-    go.style.cssText = "display:inline-block;background:#5C8B22;color:#fff;font-weight:700;text-decoration:none;border-radius:10px;padding:11px 20px";
+    go.style.cssText = "display:inline-block;background:#B5600E;color:#fff;font-weight:700;text-decoration:none;border-radius:10px;padding:11px 20px";
     go.textContent = u ? t("Back to the Employee Portal", "חזרה לפורטל העובדים") : t("Go to the Employee Portal", "מעבר לפורטל העובדים");
     card.appendChild(h1); card.appendChild(h2); card.appendChild(p); card.appendChild(go); box.appendChild(card);
     var mount = function () { document.body.appendChild(box); };

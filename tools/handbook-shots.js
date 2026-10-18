@@ -1,7 +1,7 @@
 // Re-shoots the Handbook's WorkDesk and portal screenshots, in English (img/) and Hebrew (img/he/).
 // Run from tests/workdesk (for Playwright):  node ../../tools/handbook-shots.js [en|he]
-// Taskana's board, task and budget screenshots (t01–t03) and the expense-attachment close-up (16b) are taken by hand;
-// the Library's (t10–t16) are taken here.
+// Taskana's board, task and budget screenshots (t01–t03), the expense-attachment close-up (16b) and the
+// Library's (t10–t16) are taken here too.
 const { chromium } = require(require.resolve("playwright", { paths: [process.cwd()] }));
 const path = require("path"), { execFileSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "../Employee Portal");
@@ -72,6 +72,9 @@ const SCENES = [
   ["11-emp-timelog-form", { user: "u-eitan", hash: wd("time") }, async ({ page }, f) => { const b = await page.locator(".tlform").boundingBox(); await shot(page, f, { x: Math.max(0, b.x - 8), y: 0, width: b.width + 16, height: 860 }); }],
   ["12-emp-planner", { user: "u-eitan", hash: wd("planner") }, async ({ page }, f) => shot(page, f)],
   ["16-emp-expenses", { user: "u-eitan", hash: wd("expenses") }, async ({ page }, f) => shot(page, f)],
+  ["16b-emp-expense-attach", { user: "u-danny", hash: wd("expenses") }, async ({ page, T }, f) => {
+    await page.locator(".tbl tbody tr").filter({ hasText: "📎" }).locator('button[aria-label="' + await T("Edit") + '"]').click();
+    await page.waitForTimeout(400); await page.locator(".panel").first().screenshot({ path: f }); }],
   ["17-emp-dashboard", { user: "u-eitan", hash: wd("dashboard") }, async ({ page }, f) => shot(page, f)],
   ["19-emp-my-assignments", { user: "u-eitan", hash: wd("time") }, async ({ page, T }, f) => { await page.getByRole("button", { name: await T("My assignments and allowances") }).click(); await modal(page, f); }],
   ["20-emp-request-hours", { user: "u-eitan", hash: wd("time") }, async ({ page, T }, f) => { await page.getByRole("button", { name: await T("My assignments and allowances") }).click(); await page.waitForTimeout(300); await page.locator(".modal button", { hasText: await T("Request hours") }).first().click(); await modal(page, f); }],
@@ -111,6 +114,13 @@ const SCENES = [
   ["59-admin-verify", { user: "u-tamir", hash: wd("management") }, async ({ page, T }, f) => { await section(page, T, "Verification Queue"); await shot(page, f); }],
   ["71-fin-budgets", { user: "u-paul", roles: { "u-paul": "FIN" }, hash: wd("management") }, async ({ page, T }, f) => { await section(page, T, "Budgets").catch(() => {}); await shot(page, f); }],
   ["98-mobile-timelog", { user: "u-eitan", viewport: PHONE, hash: wd("time") }, async ({ page }, f) => shot(page, f)],
+  ["t01-board", { user: "u-danny", taskana: "#/board" }, async ({ page }, f) => { await page.waitForTimeout(500); await shot(page, f); }],
+  ["t02-task", { user: "u-danny", taskana: "#/task/RSOM-5" }, async ({ page }, f) => {
+    await page.waitForTimeout(500); await page.evaluate(() => document.querySelectorAll(".modal, .modal *").forEach(e => { if (e.scrollHeight > e.clientHeight + 4) e.scrollTop = e.scrollHeight; }));
+    await page.waitForTimeout(300); await shot(page, f); }],
+  ["t03-budget", { user: "u-danny", taskana: "#/project/p-iai1" }, async ({ page, T }, f) => {
+    await page.waitForTimeout(500); await page.getByText(await T("Budget & hours"), { exact: true }).first().evaluate(e => e.closest(".card, .panel, section, div").scrollIntoView({ block: "start" }));
+    await page.waitForTimeout(300); await shot(page, f); }],
   ["t10-library", LIB, async ({ page }, f) => { await libDoc(page); await shot(page, f); }],
   ["t11-library-edit", LIB, async ({ page, T }, f) => { await libDoc(page); await page.locator("#lib-edit").click(); await page.waitForTimeout(300);
     await page.locator('button[aria-label="' + await T("Insert") + '"]').click(); await page.waitForTimeout(200);

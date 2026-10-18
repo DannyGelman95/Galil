@@ -15,7 +15,7 @@ var PORTAL_CSS = [
 ":root{--font:'Noto Sans','Noto Sans Hebrew','Segoe UI',Arial,sans-serif}",
 
 /* ---- home ---- */
-".hub{height:100%;overflow:auto;background:radial-gradient(1100px 520px at 85% -10%,rgba(140,198,62,.22),transparent 60%),var(--paper)}",
+".hub{height:100%;overflow:auto;background:radial-gradient(1100px 520px at 85% -10%,rgba(240,138,36,.22),transparent 60%),var(--paper)}",
 ".hubtop{position:sticky;top:0;z-index:20;display:flex;align-items:center;gap:12px;padding:10px 22px;background:var(--chrome);color:var(--chrometx)}",
 ".hubtop .brand small{font-size:11px}",
 ".hubwrap{max-width:1180px;margin:0 auto;padding:28px 22px 40px;display:flex;flex-direction:column;gap:22px}",
@@ -167,7 +167,7 @@ function PortalHome(p) {
 
   var tiles = [
     {
-      k: "workdesk", name: "WorkDesk", on: acc.workdesk, color: "#5C8B22", bg: "rgba(140,198,62,.16)",
+      k: "workdesk", name: "WorkDesk", on: acc.workdesk, color: "#B5600E", bg: "rgba(240,138,36,.16)",
       desc: "Report work, sick and vacation time and expenses. Managers follow budgets against recorded hours and run clients, projects and work orders.",
       stats: [h(Chip, { key: "w", k: "gr" }, tr("{n} h this week", { n: num(wk) })),
         p.approvals ? h(Chip, { key: "a", k: "amber" }, tr("{n} waiting for your approval", { n: p.approvals })) : null,

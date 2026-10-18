@@ -1,31 +1,32 @@
 import { createTheme } from '@mui/material/styles';
 
-// GALIL brand — Palette A (Continuity) + Noto Sans, per the brand deck.
+// GALIL brand — navy + orange + Noto Sans. The token names (forest, green)
+// predate the navy and orange palette and are kept so components need no change.
 const brand = {
-  paper: '#FBFCF9',
-  surface: '#F1F5EC',
+  paper: '#F9FAFC',
+  surface: '#ECEFF5',
   card: '#FFFFFF',
-  forest: '#1F3D24',
-  forestDeep: '#14301C',
-  green: '#8CC63E',
-  greenDeep: '#4E7A1C',
-  steel: '#6B7A6E',
-  rule: '#D9E4D0',
+  forest: '#1F3A66',
+  forestDeep: '#182E52',
+  green: '#F08A24',
+  greenDeep: '#B5600E',
+  steel: '#6B707A',
+  rule: '#D0D7E4',
   annot: '#17A3B8',
 };
 
 // Dark-theme counterparts — an explicit choice wins over the device default;
-// the deep-green sections (footer, track record) stay dark in both themes.
+// the deep-navy sections (footer, track record) stay dark in both themes.
 const brandDark = {
-  paper: '#0E1710',
-  surface: '#16211A',
-  card: '#1A261C',
-  forest: '#E4EFE0',
-  forestDeep: '#0A1209',
-  green: '#9FD154',
-  greenDeep: '#B6E072',
-  steel: '#9AAD96',
-  rule: '#2A3A2C',
+  paper: '#0D1118',
+  surface: '#151A22',
+  card: '#191E27',
+  forest: '#E0E6EF',
+  forestDeep: '#080C13',
+  green: '#F59A3E',
+  greenDeep: '#FFB46B',
+  steel: '#969EAD',
+  rule: '#29303B',
   annot: '#49C2D4',
 };
 
@@ -38,7 +39,7 @@ export function getTheme(direction, mode) {
     palette: {
       mode: mode === 'dark' ? 'dark' : 'light',
       background: { default: b.paper, paper: b.card },
-      primary: { main: b.green, dark: b.greenDeep, contrastText: mode === 'dark' ? '#0E1B0B' : '#12240F' },
+      primary: { main: b.green, dark: b.greenDeep, contrastText: '#1F1405' },
       secondary: { main: b.annot },
       text: { primary: b.forest, secondary: b.steel },
       divider: b.rule,
