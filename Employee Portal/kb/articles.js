@@ -56,7 +56,7 @@ var ARTICLES = [
   '<div class="callout tip"><b>טיפ:</b> התחילו ב<a href="#/first-week">רשימת המשימות לשבוע הראשון</a> — יש בה קישורים לכל מה שצריך.</div>'
   } },
 
-{ id: "first-week", cat: "onboarding", updated: "16 Oct 2026",
+{ id: "first-week", cat: "onboarding", updated: "18 Oct 2026",
   title: { en: "Your first week checklist", he: "רשימת משימות לשבוע הראשון" },
   summary: { en: "Everything to set up and read during your first five working days.", he: "כל מה שצריך להגדיר ולקרוא בחמשת ימי העבודה הראשונים." },
   body: {
@@ -77,6 +77,7 @@ var ARTICLES = [
   '<h2>Days 4–5 — your work</h2>' +
   '<ul><li>Meet your team and get a walkthrough of your first project from your Team Lead.</li>' +
   '<li>Open <strong>Taskana</strong> and look at your tasks — see <a href="#/taskana-tasks">Working with tasks in Taskana</a>.</li>' +
+  '<li>In Taskana, open the <strong>Library</strong> from the sidebar and read your project\'s research notes — see <a href="#/library-start">Getting started with the Library</a>.</li>' +
   '<li>Log your first week of hours in WorkDesk — see <a href="#/workdesk-time">Logging your time</a>.</li>' +
   '<li>Plan next week in the Week Planner — see <a href="#/workdesk-plan">Planning your week</a>.</li></ul>' +
   '<div class="callout note"><b>Note:</b> If any account or access is missing by the end of Day 1, tell Operations straight away — don\'t wait.</div>',
@@ -97,12 +98,13 @@ var ARTICLES = [
   '<h2>ימים 4–5 — העבודה שלך</h2>' +
   '<ul><li>הכירו את הצוות וקבלו מראש הצוות סקירה של הפרויקט הראשון שלכם.</li>' +
   '<li>פתחו את <strong>Taskana</strong> ועברו על המשימות שלכם — ראו <a href="#/taskana-tasks">עבודה עם משימות ב-Taskana</a>.</li>' +
+  '<li>ב-Taskana, פתחו את <strong>הספרייה</strong> מהסרגל הצדדי וקראו את מסמכי התחקיר של הפרויקט שלכם — ראו <a href="#/library-start">צעדים ראשונים בספרייה</a>.</li>' +
   '<li>דווחו את שעות השבוע הראשון ב-WorkDesk — ראו <a href="#/workdesk-time">דיווח שעות</a>.</li>' +
   '<li>תכננו את השבוע הבא במתכנן השבועי — ראו <a href="#/workdesk-plan">תכנון השבוע</a>.</li></ul>' +
   '<div class="callout note"><b>שימו לב:</b> אם עד סוף היום הראשון חסרים לכם חשבון או גישה, הודיעו לתפעול מיד — אל תחכו.</div>'
   } },
 
-{ id: "accounts", cat: "onboarding", updated: "16 Oct 2026",
+{ id: "accounts", cat: "onboarding", updated: "18 Oct 2026",
   title: { en: "Accounts & systems you will use", he: "החשבונות והמערכות שתשתמשו בהם" },
   summary: { en: "The company systems, what each is for and how you get access.", he: "מערכות החברה, למה כל אחת משמשת ואיך מקבלים גישה." },
   body: {
@@ -112,7 +114,7 @@ var ARTICLES = [
   '<tr><td>Microsoft 365</td><td>Email, calendar, Teams, OneDrive and SharePoint</td><td>Your <code>@galiltc.co.il</code> account + MFA</td></tr>' +
   '<tr><td>Employee Portal</td><td>One home page for WorkDesk, Taskana, the Handbook and the Knowledge Base</td><td>Your <code>@galiltc.co.il</code> account, once</td></tr>' +
   '<tr><td>— WorkDesk</td><td>Time, sick and vacation reporting, expenses; for managers, budgets, clients, projects and work orders</td><td>Through the portal</td></tr>' +
-  '<tr><td>— Taskana</td><td>Tasks, boards, reviews and questions on every project</td><td>Through the portal</td></tr>' +
+  '<tr><td>— Taskana</td><td>Tasks, boards, reviews and questions on every project, and the Library of research documents</td><td>Through the portal</td></tr>' +
   '<tr><td>— Handbook</td><td>The user guide to the portal, WorkDesk and Taskana</td><td>Through the portal</td></tr>' +
   '<tr><td>— Knowledge Base</td><td>This site — onboarding, rules and training</td><td>Through the portal</td></tr>' +
   '<tr><td>Company VPN</td><td>Access to internal file servers and client environments from outside the office</td><td>Your <code>@galiltc.co.il</code> account + MFA</td></tr>' +
@@ -127,7 +129,7 @@ var ARTICLES = [
   '<tr><td>Microsoft 365</td><td>דוא"ל, יומן, Teams, ‏OneDrive ו-SharePoint</td><td>חשבון <code>@galiltc.co.il</code> + אימות דו־שלבי</td></tr>' +
   '<tr><td>פורטל העובדים</td><td>דף בית אחד ל-WorkDesk, ‏Taskana, המדריך למשתמש ומאגר הידע</td><td>חשבון <code>@galiltc.co.il</code>, פעם אחת</td></tr>' +
   '<tr><td>— WorkDesk</td><td>דיווח שעות, מחלה וחופשה והוצאות; למנהלים גם תקציבים, לקוחות, פרויקטים והזמנות עבודה</td><td>דרך הפורטל</td></tr>' +
-  '<tr><td>— Taskana</td><td>משימות, לוחות, סקירות ושאלות בכל פרויקט</td><td>דרך הפורטל</td></tr>' +
+  '<tr><td>— Taskana</td><td>משימות, לוחות, סקירות ושאלות בכל פרויקט, וספריית מסמכי התחקיר</td><td>דרך הפורטל</td></tr>' +
   '<tr><td>— מדריך למשתמש</td><td>המדריך לפורטל, ל-WorkDesk ול-Taskana</td><td>דרך הפורטל</td></tr>' +
   '<tr><td>— מאגר ידע</td><td>האתר הזה — קליטה, כללים והדרכה</td><td>דרך הפורטל</td></tr>' +
   '<tr><td>VPN של החברה</td><td>גישה לשרתי קבצים פנימיים ולסביבות לקוחות מחוץ למשרד</td><td>חשבון <code>@galiltc.co.il</code> + אימות דו־שלבי</td></tr>' +
@@ -223,7 +225,7 @@ var ARTICLES = [
   '<li><strong>צופה</strong> — קריאה ותגובות.</li></ul>'
   } },
 
-{ id: "portal-how", cat: "portal", updated: "16 Oct 2026",
+{ id: "portal-how", cat: "portal", updated: "18 Oct 2026",
   title: { en: "How WorkDesk and Taskana work together", he: "איך WorkDesk ו-Taskana עובדים יחד" },
   summary: { en: "What lives where: records and hours in WorkDesk, tasks in Taskana.", he: "מה נמצא איפה: רשומות ושעות ב-WorkDesk, משימות ב-Taskana." },
   body: {
@@ -239,7 +241,10 @@ var ARTICLES = [
   '<h2>Tasks live in Taskana</h2>' +
   '<p>WorkDesk no longer has a Tasks tab. Plan, assign, review and discuss tasks in Taskana. When you report time in WorkDesk you can name the Taskana task it went to (optional) — the task then shows those hours under <strong>Hours in WorkDesk</strong>.</p>' +
   '<h2>Hours live in WorkDesk</h2>' +
-  '<p>Time, sick and vacation days and expenses are reported in WorkDesk only. From a task in Taskana, <strong>Report time on this task in WorkDesk</strong> opens the Time Log with the project, work order and task already filled in.</p>',
+  '<p>Time, sick and vacation days and expenses are reported in WorkDesk only. From a task in Taskana, <strong>Report time on this task in WorkDesk</strong> opens the Time Log with the project, work order and task already filled in.</p>' +
+  '<p>Managers follow the budgets in WorkDesk under <strong>Management → Budgets</strong>: a compact table with one row per budget — client, project, work order, basis, budgeted, a <strong>Used</strong> bar with its percentage, consumed, in approval, remaining, value / output and projected exhaustion. Filter it by search, client, project, basis and how much is used (<em>Under 75%</em>, <em>75–90%</em>, <em>90–100%</em>, <em>Fully consumed</em>); the chips above it add up what is shown. See <a href="../handbook/index.html#h-budget-list">The budgets table</a> in the Handbook.</p>' +
+  '<h2>Research documents live in Taskana</h2>' +
+  '<p>The <strong>Library</strong> — the team\'s documents from SME interviews, site visits and walkthroughs — is no longer a WorkDesk tab. Open it in Taskana from the sidebar (<strong>Library</strong>), beside the tasks the research is for. See <a href="#/library-start">Getting started with the Library</a>.</p>',
   he:
   '<p class="lede">WorkDesk ו-Taskana הם שני חלקים של אותו פורטל. כל אחד אחראי לסוג עבודה משלו, וכל אחד מציג את מה שהשני יודע.</p>' +
   '<table><thead><tr><th>מוגדר ב-WorkDesk</th><th>מוצג ב-Taskana</th></tr></thead><tbody>' +
@@ -252,7 +257,10 @@ var ARTICLES = [
   '<h2>המשימות נמצאות ב-Taskana</h2>' +
   '<p>ל-WorkDesk אין יותר לשונית משימות. מתכננים, מקצים, סוקרים ודנים במשימות ב-Taskana. כשמדווחים שעות ב-WorkDesk אפשר לציין את המשימה ב-Taskana שהזמן הוקדש לה (רשות) — והמשימה מציגה את השעות האלה תחת <strong>שעות ב-WorkDesk</strong>.</p>' +
   '<h2>השעות נמצאות ב-WorkDesk</h2>' +
-  '<p>שעות, ימי מחלה וחופשה והוצאות מדווחים רק ב-WorkDesk. ממשימה ב-Taskana, <strong>דיווח שעות על המשימה ב-WorkDesk</strong> פותח את יומן השעות כשהפרויקט, הזמנת העבודה והמשימה כבר ממולאים.</p>'
+  '<p>שעות, ימי מחלה וחופשה והוצאות מדווחים רק ב-WorkDesk. ממשימה ב-Taskana, <strong>דיווח שעות על המשימה ב-WorkDesk</strong> פותח את יומן השעות כשהפרויקט, הזמנת העבודה והמשימה כבר ממולאים.</p>' +
+  '<p>מנהלים עוקבים אחרי התקציבים ב-WorkDesk, ב<strong>ניהול ← תקציבים</strong>: טבלה דחוסה, שורה לכל תקציב — לקוח, פרויקט, הזמנת עבודה, בסיס, מתוקצב, פס <strong>ניצול</strong> עם האחוז, נוצל, באישור, נותר, ערך / תפוקה ומיצוי צפוי. מסננים לפי חיפוש, לקוח, פרויקט, בסיס ומידת הניצול (<em>מתחת ל-75%</em>, <em>75–90%</em>, <em>90–100%</em>, <em>נוצל במלואו</em>); התגיות שמעל הטבלה מסכמות את מה שמוצג. ראו <a href="../handbook/he.html#h-budget-list">טבלת התקציבים</a> במדריך.</p>' +
+  '<h2>מסמכי התחקיר נמצאים ב-Taskana</h2>' +
+  '<p><strong>הספרייה</strong> — המסמכים של הצוות מראיונות עם מומחי תוכן, מביקורי אתר ומהדגמות — אינה עוד לשונית ב-WorkDesk. פותחים אותה ב-Taskana מהסרגל הצדדי (<strong>ספרייה</strong>), ליד המשימות שהתחקיר נועד להן. ראו <a href="#/library-start">צעדים ראשונים בספרייה</a>.</p>'
   } },
 
 { id: "portal-around", cat: "portal", updated: "17 Oct 2026",
@@ -563,38 +571,52 @@ var ARTICLES = [
   '<p>מחליפים טלפון? הודיעו לתפעול <strong>לפני</strong> שאתם מוחקים את הישן, כדי שיעבירו את האימות.</p>'
   } },
 
-{ id: "workdesk-time", cat: "training", updated: "17 Oct 2026",
+{ id: "workdesk-time", cat: "training", updated: "18 Oct 2026",
   title: { en: "Logging your time in WorkDesk", he: "דיווח שעות ב-WorkDesk" },
   summary: { en: "Report hours against the right work order, every day.", he: "דיווח שעות על הזמנת העבודה הנכונה, כל יום." },
   body: {
   en:
+  '<p class="lede">The Time Log keeps the report form in a narrow column on the left — about a fifth of the width — and your entries in the table that fills the rest beside it.</p>' +
   '<ol class="steps">' +
   '<li>On the portal home page, open <strong>WorkDesk</strong> (or choose <strong>Report time</strong>). WorkDesk opens on the <strong>Time Log</strong>.</li>' +
-  '<li>Choose the date, the start and end time and the hour type: <strong>Red</strong> for company time, <strong>Yellow</strong> for client work, <strong>Blue</strong> for managing a client\'s projects (managers).</li>' +
-  '<li>Choose the client, project and work order. Optionally, choose the <strong>Taskana task</strong> the time went to.</li>' +
-  '<li>Add a short description and click <strong>Add entry</strong>. The entry is registered — or sent for approval if it goes past your hours bank or the budget.</li>' +
+  '<li>Work down the form, one field under another. If you report for others, choose the person under <strong>Assignee</strong> first.</li>' +
+  '<li>Choose the <strong>Date</strong> (<strong>Today</strong> beside it jumps back to today), the <strong>Type</strong> — <em>Work</em> for hours — and the <strong>Start</strong> and <strong>End</strong> time.</li>' +
+  '<li>Choose the <strong>Hour type</strong>: <strong>Red</strong> for company time, <strong>Yellow</strong> for client work, <strong>Blue</strong> for managing a client\'s projects (managers).</li>' +
+  '<li>Choose the <strong>Client</strong>, <strong>Project</strong> and <strong>Work order</strong>. Optionally, choose the <strong>Taskana task</strong> the time went to.</li>' +
+  '<li>Write what you worked on in <strong>Description</strong> (the bigger box), add any <strong>Notes</strong>, and click <strong>Add entry</strong> — the large button stays in view at the foot of the form. The entry is registered — or sent for approval if it goes past your hours bank or the budget.</li>' +
   '</ol>' +
+  '<p>The pill under the form shows whether your data is saved to GitHub; click it for details.</p>' +
+  '<h2>When an entry needs approval</h2>' +
+  '<p>It reaches your approver in the <strong>Approvals</strong> tab, where requests are shown as tiles side by side. They can <strong>Approve</strong>, <strong>Decline</strong> with a reason, or <strong>Request info</strong> — the entry then stays <em>Pending</em> and you answer their question in a comment on it.</p>' +
   '<h2>Useful shortcuts</h2>' +
   '<ul><li>From a task in Taskana, <strong>Report time on this task in WorkDesk</strong> opens the form with the project, work order and task already filled in.</li>' +
   '<li><strong>Duplicate</strong> an entry with the <i class="ui-ic" data-ic="copy"></i> button — to the previous or next day or week, a number of days back or forward (optionally onto every working day in between), or a specific date.</li>' +
   '<li>Click a work order code anywhere in a table to copy it.</li>' +
-  '<li>Click a column heading to sort the table, drag a heading to move it, or drag its edge to resize it. Use <strong>＋ Save</strong> above the table to keep that layout as a view.</li>' +
+  '<li>Click a column heading to sort the table, drag a heading to move it, or drag its edge to resize it — the table stays at full width, and the main column takes up the space. Use <strong>＋ Save</strong> above the table to keep that layout as a view.</li>' +
   '<li>On your phone, use the running timer in the mobile layout. Below it, <strong>‹ ›</strong> change the month and <strong><i class="ui-ic" data-ic="sliders"></i> Filter &amp; sort</strong> narrows and sorts your entries; managers can switch to <strong>Me and my team</strong> to see the time of the people who report to them.</li></ul>' +
-  '<div class="callout note"><b>Out of allowance?</b> Use <strong>Request hours</strong> under <i class="ui-ic" data-ic="assignments"></i> My assignments and allowances — your Team Lead or Project Manager approves or declines it.</div>',
+  '<div class="callout note"><b>Out of allowance?</b> Use <strong>Request hours</strong> under <i class="ui-ic" data-ic="assignments"></i> My assignments and allowances — your Team Lead or Project Manager approves or declines it.</div>' +
+  '<p>Every field and option is described in the Handbook — see <a href="../handbook/index.html#ch-time">The Time Log</a> and <a href="../handbook/index.html#ch-approvals">Approvals</a>.</p>',
   he:
+  '<p class="lede">ביומן השעות, טופס הדיווח נמצא בעמודה צרה מימין — כחמישית מהרוחב — והרישומים שלכם בטבלה שממלאת את השאר לצידו.</p>' +
   '<ol class="steps">' +
   '<li>בדף הבית של הפורטל, פתחו את <strong>WorkDesk</strong> (או בחרו <strong>דיווח שעות</strong>). ‏WorkDesk נפתח ב<strong>יומן השעות</strong>.</li>' +
-  '<li>בחרו תאריך, שעת התחלה וסיום וסוג שעות: <strong>אדום</strong> לזמן חברה, <strong>צהוב</strong> לעבודה ללקוח, <strong>כחול</strong> לניהול פרויקטים של לקוח (מנהלים).</li>' +
-  '<li>בחרו לקוח, פרויקט והזמנת עבודה. אפשר גם לבחור את <strong>המשימה ב-Taskana</strong> שהזמן הוקדש לה.</li>' +
-  '<li>הוסיפו תיאור קצר ולחצו <strong>הוספת רישום</strong>. הרישום נרשם — או נשלח לאישור אם הוא חורג מבנק השעות שלכם או מהתקציב.</li>' +
+  '<li>מלאו את הטופס מלמעלה למטה, שדה מתחת לשדה. אם אתם מדווחים גם עבור אחרים, בחרו קודם את האדם בשדה <strong>עבור</strong>.</li>' +
+  '<li>בחרו <strong>תאריך</strong> (<strong>היום</strong> שלידו מחזיר להיום), <strong>סוג</strong> — <em>עבודה</em> לשעות — ושעת <strong>התחלה</strong> ו<strong>סיום</strong>.</li>' +
+  '<li>בחרו <strong>סוג שעות</strong>: <strong>אדום</strong> לזמן חברה, <strong>צהוב</strong> לעבודה ללקוח, <strong>כחול</strong> לניהול פרויקטים של לקוח (מנהלים).</li>' +
+  '<li>בחרו <strong>לקוח</strong>, <strong>פרויקט</strong> ו<strong>הזמנת עבודה</strong>. אפשר גם לבחור את <strong>המשימה ב-Taskana</strong> שהזמן הוקדש לה.</li>' +
+  '<li>כתבו במה עבדתם ב<strong>תיאור</strong> (התיבה הגדולה), הוסיפו <strong>הערות</strong> אם צריך, ולחצו <strong>הוספת רישום</strong> — הכפתור הגדול נשאר גלוי בתחתית הטופס. הרישום נרשם — או נשלח לאישור אם הוא חורג מבנק השעות שלכם או מהתקציב.</li>' +
   '</ol>' +
+  '<p>הכפתור שמתחת לטופס מראה אם הנתונים שלכם נשמרו ב-GitHub; לחיצה עליו מציגה פרטים.</p>' +
+  '<h2>כשרישום צריך אישור</h2>' +
+  '<p>הוא מגיע למאשר/ת שלכם בלשונית <strong>אישורים</strong>, שבה הבקשות מוצגות כאריחים זה לצד זה. אפשר <strong>לאשר</strong>, <strong>לדחות</strong> עם סיבה, או לבחור <strong>בקשת מידע</strong> — הרישום נשאר <em>ממתין</em>, ואתם עונים על השאלה בתגובה עליו.</p>' +
   '<h2>קיצורי דרך שימושיים</h2>' +
   '<ul><li>ממשימה ב-Taskana, <strong>דיווח שעות על המשימה ב-WorkDesk</strong> פותח את הטופס כשהפרויקט, הזמנת העבודה והמשימה כבר ממולאים.</li>' +
   '<li><strong>שכפלו</strong> רישום עם הכפתור <i class="ui-ic" data-ic="copy"></i> — ליום או לשבוע הקודם או הבא, למספר ימים אחורה או קדימה (ואפשר לכל יום עבודה שביניהם), או לתאריך מסוים.</li>' +
   '<li>לחיצה על קוד הזמנת עבודה בכל טבלה מעתיקה אותו.</li>' +
-  '<li>לחצו על כותרת עמודה למיון, גררו כותרת להזזה או גררו את הקצה לשינוי הרוחב. <strong>＋ שמירה</strong> מעל הטבלה שומר את הפריסה כתצוגה.</li>' +
+  '<li>לחצו על כותרת עמודה למיון, גררו כותרת להזזה או גררו את הקצה לשינוי הרוחב — הטבלה נשארת ברוחב מלא, והעמודה הראשית תופסת את המקום. <strong>＋ שמירה</strong> מעל הטבלה שומר את הפריסה כתצוגה.</li>' +
   '<li>בטלפון, השתמשו בטיימר שבתצוגת הטלפון. מתחתיו, <strong>‹ ›</strong> מחליפים חודש ו<strong><i class="ui-ic" data-ic="sliders"></i> סינון ומיון</strong> מצמצם וממיין את הרישומים; מנהלים יכולים לעבור ל<strong>אני והצוות שלי</strong> כדי לראות את השעות של מי שכפוף להם.</li></ul>' +
-  '<div class="callout note"><b>נגמרה המכסה?</b> השתמשו ב<strong>בקשת שעות</strong> תחת <i class="ui-ic" data-ic="assignments"></i> השיבוצים והמכסות שלי — ראש הצוות או מנהל/ת הפרויקט מאשרים או דוחים.</div>'
+  '<div class="callout note"><b>נגמרה המכסה?</b> השתמשו ב<strong>בקשת שעות</strong> תחת <i class="ui-ic" data-ic="assignments"></i> השיבוצים והמכסות שלי — ראש הצוות או מנהל/ת הפרויקט מאשרים או דוחים.</div>' +
+  '<p>כל שדה ואפשרות מתוארים במדריך — ראו <a href="../handbook/he.html#ch-time">יומן השעות</a> ו<a href="../handbook/he.html#ch-approvals">אישורים</a>.</p>'
   } },
 
 { id: "workdesk-plan", cat: "training", updated: "16 Oct 2026",
@@ -667,7 +689,7 @@ var ARTICLES = [
   '<p>מה אפשר לתבוע — ב<a href="#/expenses-policy">נוהל ההוצאות</a>.</p>'
   } },
 
-{ id: "workdesk-wo-document", cat: "training", updated: "17 Oct 2026",
+{ id: "workdesk-wo-document", cat: "training", updated: "18 Oct 2026",
   title: { en: "Work order documents for clients", he: "מסמכי הזמנת עבודה ללקוחות" },
   summary: { en: "Fill in a work order and send the client an official GALIL PDF, in English or Hebrew.", he: "ממלאים הזמנת עבודה ושולחים ללקוח מסמך PDF רשמי של גליל, באנגלית או בעברית." },
   body: {
@@ -677,7 +699,15 @@ var ARTICLES = [
   '<ol class="steps">' +
   '<li>In WorkDesk, open <strong>Management → Work Orders</strong> and click <strong>+ New work order</strong>, or the <i class="ui-ic" data-ic="edit"></i> on an existing one.</li>' +
   '<li>Besides the code, title, dates and budgeted hours, fill in <strong>Scope of work</strong>, the <strong>Deliverables</strong> (one per line), the <strong>Client points of contact</strong>, GALIL\'s <strong>Project lead</strong> and <strong>Team members</strong>, and the <strong>Signatures</strong>.</li>' +
+  '<li>Optionally, fill in <strong>Title in Hebrew</strong>. The Hebrew document uses it; when it is empty, the English title is used.</li>' +
   '<li>Save.</li></ol>' +
+  '<h2>What the document contains</h2>' +
+  '<ul><li>The GALIL letterhead with the <strong>[G]</strong> mark, and the heading <strong>Work order</strong> followed by the order\'s code.</li>' +
+  '<li><strong>Order details</strong> — the order\'s title, client, project, status, contract reference, owner and dates — then the scope, deliverables and budget.</li>' +
+  '<li>The client\'s points of contact and GALIL\'s project team.</li>' +
+  '<li>Numbered <strong>Terms of engagement</strong>: schedule, the responsibilities of each side, delays, changes, acceptance, payment, confidentiality, ownership, liability, termination and general terms.</li>' +
+  '<li>Both signature blocks together at the foot of the last page.</li></ul>' +
+  '<p>The Hebrew document is laid out right to left, and brackets, codes and English names inside it read correctly.</p>' +
   '<h2>Create and send the document</h2>' +
   '<ol class="steps">' +
   '<li>Click <i class="ui-ic" data-ic="file"></i> on the work order\'s row (or <strong>Document (PDF)</strong> in the editor).</li>' +
@@ -691,7 +721,15 @@ var ARTICLES = [
   '<ol class="steps">' +
   '<li>ב-WorkDesk, פתחו <strong>ניהול ← הזמנות עבודה</strong> ולחצו <strong>+ הזמנת עבודה חדשה</strong>, או <i class="ui-ic" data-ic="edit"></i> בהזמנה קיימת.</li>' +
   '<li>מלבד הקוד, הכותרת, התאריכים והשעות המתוקצבות, מלאו את <strong>היקף העבודה</strong>, את <strong>התוצרים</strong> (אחד בכל שורה), את <strong>אנשי הקשר מטעם הלקוח</strong>, את <strong>מוביל/ת הפרויקט</strong> ו<strong>חברי הצוות</strong> מגליל, ואת <strong>החתימות</strong>.</li>' +
+  '<li>אפשר גם למלא <strong>שם בעברית (למסמך בעברית)</strong>. המסמך בעברית משתמש בו; כשהוא ריק, משמש השם באנגלית.</li>' +
   '<li>שמרו.</li></ol>' +
+  '<h2>מה יש במסמך</h2>' +
+  '<ul><li>נייר המכתבים של גליל עם הסמל <strong>[G]</strong>, והכותרת <strong>הזמנת עבודה</strong> ואחריה קוד ההזמנה.</li>' +
+  '<li><strong>פרטי ההזמנה</strong> — שם ההזמנה, הלקוח, הפרויקט, הסטטוס, אסמכתת החוזה, מנהל/ת הפרויקט והתאריכים — ואחריהם היקף העבודה, התוצרים והתקציב.</li>' +
+  '<li>אנשי הקשר מטעם הלקוח וצוות הפרויקט מטעם גליל.</li>' +
+  '<li><strong>תנאי ההתקשרות</strong> בסעיפים ממוספרים: לוח זמנים, האחריות של כל צד, עיכובים, שינויים, קבלת התוצרים, תשלום, סודיות, בעלות, אחריות לנזקים, סיום ההתקשרות והוראות כלליות.</li>' +
+  '<li>שני אזורי החתימה יחד בתחתית העמוד האחרון.</li></ul>' +
+  '<p>המסמך בעברית ערוך מימין לשמאל, וסוגריים, קודים ושמות באנגלית בתוכו מוצגים נכון.</p>' +
   '<h2>מפיקים ושולחים את המסמך</h2>' +
   '<ol class="steps">' +
   '<li>לחצו <i class="ui-ic" data-ic="file"></i> בשורה של ההזמנה (או <strong>מסמך (PDF)</strong> בעורך).</li>' +
@@ -701,7 +739,7 @@ var ARTICLES = [
   '<div class="callout tip"><b>טיפ:</b> מלאו את אנשי הקשר של הלקוח בהזמנת העבודה — המסמך מציג אותם, ו<strong>שליחה אל</strong> משתמש בכתובות שלהם.</div>'
   } },
 
-{ id: "taskana-tasks", cat: "training", updated: "16 Oct 2026",
+{ id: "taskana-tasks", cat: "training", updated: "18 Oct 2026",
   title: { en: "Working with tasks in Taskana", he: "עבודה עם משימות ב-Taskana" },
   summary: { en: "Find your tasks, move them through review, ask questions and see your hours bank.", he: "איתור המשימות שלכם, העברתן בשלבי הסקירה, שאלות ובנק השעות." },
   body: {
@@ -716,7 +754,8 @@ var ARTICLES = [
   '<ul><li><strong>Hours in WorkDesk</strong>, in each task, shows the time reported against it and how it compares with the estimate.</li>' +
   '<li><strong>My hours banks</strong>, on My work, shows your allowance on each project and how much is left.</li>' +
   '<li>Managers also see the project and work-order budgets, and everyone\'s hours banks, on each project page.</li></ul>' +
-  '<div class="callout note"><b>Note:</b> Clients, projects and people are set in WorkDesk — Taskana shows them and keeps the tasks. See <a href="#/portal-how">How WorkDesk and Taskana work together</a>.</div>',
+  '<div class="callout note"><b>Note:</b> Clients, projects and people are set in WorkDesk — Taskana shows them and keeps the tasks. See <a href="#/portal-how">How WorkDesk and Taskana work together</a>.</div>' +
+  '<div class="callout tip"><b>Tip:</b> Research for a task — SME interviews, site visits, walkthroughs — goes in the <strong>Library</strong>, in Taskana\'s sidebar. See <a href="#/library-start">Getting started with the Library</a>.</div>',
   he:
   '<ol class="steps">' +
   '<li>בדף הבית של הפורטל, פתחו את <strong>Taskana</strong>. העמוד <strong>העבודה שלי</strong> מציג את המשימות שהוקצו לכם.</li>' +
@@ -728,7 +767,8 @@ var ARTICLES = [
   '<ul><li><strong>שעות ב-WorkDesk</strong>, בכל משימה, מציג את הזמן שדווח עליה ואת ההשוואה להערכה.</li>' +
   '<li><strong>בנקי השעות שלי</strong>, בעמוד העבודה שלי, מציג את המכסה שלכם בכל פרויקט וכמה נותר.</li>' +
   '<li>מנהלים רואים גם את תקציבי הפרויקט והזמנות העבודה, ואת בנקי השעות של כולם, בעמוד של כל פרויקט.</li></ul>' +
-  '<div class="callout note"><b>שימו לב:</b> לקוחות, פרויקטים ואנשים מוגדרים ב-WorkDesk — ‏Taskana מציגה אותם ומחזיקה את המשימות. ראו <a href="#/portal-how">איך WorkDesk ו-Taskana עובדים יחד</a>.</div>'
+  '<div class="callout note"><b>שימו לב:</b> לקוחות, פרויקטים ואנשים מוגדרים ב-WorkDesk — ‏Taskana מציגה אותם ומחזיקה את המשימות. ראו <a href="#/portal-how">איך WorkDesk ו-Taskana עובדים יחד</a>.</div>' +
+  '<div class="callout tip"><b>טיפ:</b> התחקיר למשימה — ראיונות עם מומחי תוכן, ביקורי אתר, הדגמות — נכתב ב<strong>ספרייה</strong>, בסרגל הצדדי של Taskana. ראו <a href="#/library-start">צעדים ראשונים בספרייה</a>.</div>'
   } },
 
 { id: "phishing", cat: "training", updated: "30 Sep 2026",
