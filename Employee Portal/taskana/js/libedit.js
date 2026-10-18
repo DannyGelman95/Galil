@@ -163,12 +163,6 @@ function edOnLoad() {
   if (ED.anchor) { var a = ED.anchor; ED.anchor = null; setTimeout(function () { edScrollTo(a); }, 50); }
   libAfterChange(true);
 }
-function edApplyStyles() {
-  if (!ED.doc || !ED.d) return;
-  var ext = ED.doc.getElementById("ed-ext"), u = (ED.d.cssUrl || "").trim();
-  if (/^https:\/\//i.test(u)) ext.setAttribute("href", u); else ext.removeAttribute("href");
-  ED.doc.getElementById("ed-user").textContent = libCleanCss(ED.d.css || "");
-}
 function edEditable() {
   if (!ED.root) return;
   ED.root.contentEditable = ED.editing && ED.mode === "visual" ? "true" : "false";
@@ -319,6 +313,7 @@ function edWire() {
   root.addEventListener("blur", function () { if (ED.pend) edHistPush(); libFlush(); });
   d.addEventListener("selectionchange", function () { clearTimeout(ED.selT); ED.selT = setTimeout(edToolState, 80); });
   d.addEventListener("keydown", edKeys);
+  d.addEventListener("mousedown", function () { edCloseMenus(); });
   root.addEventListener("paste", edPaste);
   root.addEventListener("drop", function (e) {
     if (!ED.editing) { e.preventDefault(); return; }
@@ -332,6 +327,8 @@ function edWire() {
 }
 function edKeys(e) {
   var k = (e.key || "").toLowerCase(), mod = e.ctrlKey || e.metaKey;
+  if (e.key === "Escape" && ED_MENUS.length) { e.preventDefault(); edCloseMenus(); return; }
+  if (e.key === "Escape" && ED.barKind) { e.preventDefault(); edCloseBar(); return; }
   if (mod && k === "f") { e.preventDefault(); edFindBar(); return; }
   if (mod && k === "s") { e.preventDefault(); libFlush(); toast(tr("Saved")); return; }
   if (mod && k === "p") { e.preventDefault(); libExport("print"); return; }
@@ -842,44 +839,81 @@ function libIcon(n) {
   return s;
 }
 /* menus: { label, fn, icon, keys, on(), off(), sub: [...], el } or "—" */
-function edCloseMenus(except) { document.querySelectorAll(".ed-menu").forEach(function (m) { if (m !== except && !m.contains(except)) m.hidden = true; }); }
-document.addEventListener("mousedown", function (e) { if (!(e.target.closest && e.target.closest(".ed-menu, .ed-mbtn"))) edCloseMenus(); });
-function edMenuEl(items, cls) {
-  var m = h("div", { class: "ed-menu" + (cls ? " " + cls : ""), role: "menu", hidden: true });
+/* menus float above the page (fixed, in <body>), so neither the toolbar nor a scrolling
+   menu can clip them; each submenu opens beside its item and stays inside the window */
+var ED_MENUS = [];
+function edCloseMenus(level) {
+  level = level || 0;
+  while (ED_MENUS.length > level) { var m = ED_MENUS.pop(); m.el.remove(); if (m.btn) m.btn.classList.remove("open"); }
+}
+document.addEventListener("mousedown", function (e) { if (ED_MENUS.length && !(e.target.closest && e.target.closest(".ed-menu, .ed-mbtn"))) edCloseMenus(); });
+document.addEventListener("keydown", function (e) { if (e.key === "Escape" && ED_MENUS.length) { edCloseMenus(); e.stopPropagation(); } }, true);
+window.addEventListener("resize", function () { edCloseMenus(); });
+document.addEventListener("scroll", function (e) { if (ED_MENUS.length && !(e.target.closest && e.target.closest(".ed-menu"))) edCloseMenus(); }, true);
+function edPlace(el, rect, side) {
+  /* side: "below" (a toolbar menu) or "beside" (a submenu) */
+  el.style.left = "0px"; el.style.top = "0px"; el.style.maxHeight = "";
+  var rtl = document.documentElement.dir === "rtl", w = el.offsetWidth, hgt = el.offsetHeight, vw = innerWidth, vh = innerHeight, x, y;
+  if (side === "beside") {
+    x = rtl ? rect.left - w + 2 : rect.right - 2;
+    if (x + w > vw - 6) x = rect.left - w + 2;
+    if (x < 6) x = Math.min(vw - w - 6, rect.right - 2);
+    y = rect.top - 6;
+  } else {
+    x = (rtl || el.classList.contains("end")) ? rect.right - w : rect.left;
+    y = rect.bottom + 4;
+  }
+  x = Math.max(6, Math.min(x, vw - w - 6));
+  if (y + hgt > vh - 6) {
+    if (side !== "beside" && rect.top - hgt - 4 > 6) y = rect.top - hgt - 4;
+    else { y = Math.max(6, vh - hgt - 6); if (hgt > vh - 12) { el.style.maxHeight = (vh - 12) + "px"; y = 6; } }
+  }
+  el.style.left = Math.round(x) + "px"; el.style.top = Math.round(y) + "px";
+}
+function edMenuEl(items, level, cls) {
+  var m = h("div", { class: "ed-menu" + (cls ? " " + cls : ""), role: "menu" });
   items.forEach(function (it) {
     if (!it) return;
     if (it === "—") { m.appendChild(h("hr")); return; }
     if (it.head) { m.appendChild(h("div", { class: "ed-mhead" }, it.head)); return; }
     if (it.el) { m.appendChild(it.el); return; }
     var off = it.off && it.off(), on = it.on && it.on();
-    var b = h("button", { type: "button", role: "menuitem", class: (on ? "on " : "") + (it.sub ? "has-sub" : "") + (it.cls ? " " + it.cls : ""), disabled: off || null,
+    var b = h("button", { type: "button", role: "menuitem", class: (on ? "on " : "") + (it.sub ? "has-sub" : "") + (it.cls ? " " + it.cls : ""), disabled: off || null, style: it.style || null,
       onmousedown: function (e) { e.preventDefault(); } },
-      it.icon ? libIcon(it.icon) : h("i", { class: "ico-sp" }), h("span", { class: "lbl" }, it.label), it.keys ? h("span", { class: "keys" }, it.keys) : null, it.sub ? libIcon("chev") : null);
+      it.icon ? libIcon(it.icon) : h("i", { class: "ico-sp" }), h("span", { class: "lbl", style: it.lblStyle || null }, it.label), it.keys ? h("span", { class: "keys" }, it.keys) : null, it.sub ? libIcon("chev") : null);
     if (it.sub) {
-      var sm = edMenuEl(it.sub, "sub"); var wrap = h("div", { class: "ed-subwrap" }, b, sm);
-      var open = function () { [].slice.call(m.querySelectorAll(":scope > .ed-subwrap > .ed-menu")).forEach(function (x) { if (x !== sm) x.hidden = true; }); sm.hidden = false; };
-      b.addEventListener("mouseenter", open); b.addEventListener("click", open);
-      m.appendChild(wrap); return;
+      var open = function () {
+        if (ED_MENUS[level + 1] && ED_MENUS[level + 1].from === b) return;
+        edCloseMenus(level + 1);
+        var sm = edMenuEl(typeof it.sub === "function" ? it.sub() : it.sub, level + 1, "sub");
+        document.body.appendChild(sm); ED_MENUS.push({ el: sm, from: b });
+        m.querySelectorAll("button.open").forEach(function (x) { x.classList.remove("open"); }); b.classList.add("open");
+        edPlace(sm, b.getBoundingClientRect(), "beside");
+      };
+      b.addEventListener("mouseenter", function () { clearTimeout(ED.subT); ED.subT = setTimeout(open, 120); });
+      b.addEventListener("click", open);
+    } else {
+      b.addEventListener("mouseenter", function () { clearTimeout(ED.subT); ED.subT = setTimeout(function () { if (ED_MENUS.length > level + 1) { edCloseMenus(level + 1); m.querySelectorAll("button.open").forEach(function (x) { x.classList.remove("open"); }); } }, 160); });
+      b.addEventListener("click", function () { edCloseMenus(); it.fn(); });
     }
-    b.addEventListener("click", function () { edCloseMenus(); it.fn(); });
     m.appendChild(b);
   });
   return m;
 }
 function edMenu(content, title, items, opts) {
   opts = opts || {};
-  var wrap = h("div", { class: "ed-mwrap" });
-  var btn = h("button", { type: "button", class: "tb ed-mbtn" + (opts.wide ? " wide" : ""), title: title, "aria-label": title, "aria-haspopup": "true",
+  var btn = h("button", { type: "button", class: (opts.btnClass || "tb") + " ed-mbtn" + (opts.wide ? " wide" : ""), title: title, "aria-label": title, "aria-haspopup": "true",
     onmousedown: function (e) { e.preventDefault(); edSave(); },
     onclick: function () {
-      var was = wrap.querySelector(".ed-menu"); var fresh = edMenuEl(typeof items === "function" ? items() : items, opts.end ? "end" : "");
-      if (was) { var open = !was.hidden; was.replaceWith(fresh); if (open) { edCloseMenus(); return; } }
-      else wrap.appendChild(fresh);
-      edCloseMenus(fresh); fresh.hidden = false;
+      var mine = ED_MENUS[0] && ED_MENUS[0].btn === btn;
+      edCloseMenus();
+      if (mine) return;
+      var m = edMenuEl(typeof items === "function" ? items() : items, 0, opts.end ? "end" : "");
+      document.body.appendChild(m); ED_MENUS.push({ el: m, btn: btn }); btn.classList.add("open");
+      edPlace(m, btn.getBoundingClientRect(), "below");
     } }, content, opts.noCaret ? null : h("span", { class: "caret" }, "▾"));
   if (opts.disabled) btn.disabled = true;
-  wrap.appendChild(btn);
-  return wrap;
+  return btn;
 }
 function edBtn(ic, label, fn, keys, cmd) {
   return h("button", { type: "button", class: "tb", "data-cmd": cmd || null, title: label + (keys ? " (" + keys + ")" : ""), "aria-label": label,
@@ -940,22 +974,25 @@ function edSnippetMenu() {
   return (list.length ? list : [{ label: tr("No snippets yet"), off: function () { return true; }, fn: function () {} }]).concat(["—",
     { label: tr("Save the selection as a snippet…"), fn: edSaveSnippetBar }, { label: tr("Manage snippets…"), fn: edManageSnippets }]);
 }
-function edStyleMenu() {
-  var f = function (tag, label, cls) { return { label: tr(label), cls: "st-" + tag.toLowerCase(), fn: function () { edFocus(); if (ED.saved) edRestore(); edCmd("formatBlock", tag); if (cls !== undefined) { var b = edBlock(); if (b) edBlockClass("lead|small|caption", cls, [b]); } } }; };
-  return [f("P", "Normal text", ""), f("H1", "Heading 1"), f("H2", "Heading 2"), f("H3", "Heading 3"), f("H4", "Heading 4"), "—",
-    f("P", "Lead paragraph", "lead"), f("P", "Small print", "small"), f("P", "Caption", "caption"), f("BLOCKQUOTE", "Quote"), f("PRE", "Code block"), "—",
-    { label: tr("Custom class…"), fn: edClassBar }];
-}
 function edClassBar() {
   edSave();
   var b = edBlock(); if (!b) { toast(tr("Put the caret in a paragraph first.")); return; }
-  var known = {}; String((ED.d && ED.d.css) || "").replace(/\.([A-Za-z][\w-]*)/g, function (_, c) { known[c] = 1; });
-  var inp = h("input", { type: "text", value: b.className.replace(/\b(ed-\S+)\b/g, "").trim(), placeholder: "class-name other-class", list: "ed-classes", "aria-label": tr("Classes") });
-  var dl = h("datalist", { id: "ed-classes" }, Object.keys(known).map(function (k) { return h("option", { value: k }); }));
-  var apply = function () { var v = inp.value.split(/\s+/).filter(function (x) { return /^[\w-]+$/.test(x); }).join(" "); edCloseBar(); edRestore(); edChange(function () { if (v) b.className = v; else b.removeAttribute("class"); }); };
+  /* classes the document's CSS defines, offered as one-click choices */
+  var known = {}; String((ED.d && ED.d.css) || "").replace(/\.([A-Za-z][\w-]*)/g, function (_, c) { if (!/^(ed-|ps-|cs-)/.test(c)) known[c] = 1; });
+  var cur = b.className.split(/\s+/).filter(function (c) { return c && !/^(ed-|ps-|cs-)/.test(c); });
+  var inp = h("input", { type: "text", value: cur.join(" "), placeholder: "class-name other-class", "aria-label": tr("Classes") });
+  var apply = function () {
+    var v = inp.value.split(/\s+/).filter(function (x) { return /^[\w-]+$/.test(x); });
+    var keep = b.className.split(/\s+/).filter(function (c) { return /^(ps-|cs-)/.test(c); });
+    edCloseBar(); edRestore();
+    edChange(function () { var all = keep.concat(v).join(" "); if (all) b.className = all; else b.removeAttribute("class"); });
+    toast(v.length ? tr("Classes on this {t}: {c}", { t: b.tagName.toLowerCase(), c: v.join(" ") }) : tr("Classes removed."));
+  };
   inp.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); apply(); } });
-  edBar("class", [h("span", { class: "small" }, tr("Classes on this {t}", { t: b.tagName.toLowerCase() })), inp, dl, h("button", { class: "btn sm primary", onclick: apply }, tr("Apply")),
-    Object.keys(known).length ? h("span", { class: "muted small" }, tr("From the document's CSS: {c}", { c: Object.keys(known).slice(0, 12).join(", ") })) : null], inp);
+  var chips = Object.keys(known).slice(0, 24).map(function (k) { return h("button", { type: "button", class: "chip" + (cur.indexOf(k) >= 0 ? " green" : ""), onclick: function () { var list = inp.value.split(/\s+/).filter(Boolean), i = list.indexOf(k); if (i >= 0) list.splice(i, 1); else list.push(k); inp.value = list.join(" "); this.classList.toggle("green"); } }, "." + k); });
+  edBar("class", [h("b", { class: "small" }, tr("Classes on this {t}", { t: b.tagName.toLowerCase() })), inp, h("button", { class: "btn sm primary", onclick: apply }, tr("Apply")),
+    chips.length ? h("div", { class: "row", style: { gap: "4px", width: "100%" } }, h("span", { class: "muted small" }, tr("Defined in this document's CSS:")), chips)
+      : h("span", { class: "muted small", style: { width: "100%" } }, tr("A class does nothing until CSS styles it: add rules in HTML mode → CSS, or use Styles to make a named style."))], inp);
 }
 function edStartAtBar() {
   edSave();
@@ -980,6 +1017,8 @@ function edToolbar(d) {
     edBtn("undo", tr("Undo"), edUndo, "Ctrl+Z", "undo"), edBtn("redo", tr("Redo"), edRedo, "Ctrl+Y", "redo"),
     h("i", { class: "tb-sep" }),
     edMenu(h("span", { class: "st-label", id: "ed-style" }, tr("Normal text")), tr("Paragraph style"), edStyleMenu, { wide: true }),
+    edMenu(h("span", { class: "st-label ff", id: "ed-font" }, tr("Font")), tr("Font"), edFontMenu, { wide: true }),
+    edMenu(h("span", { class: "st-label fz", id: "ed-size" }, "—"), tr("Font size"), edSizeMenu, { wide: true }),
     h("i", { class: "tb-sep" }),
     edBtn("bold", tr("Bold"), function () { edCmd("bold"); }, "Ctrl+B", "bold"), edBtn("italic", tr("Italic"), function () { edCmd("italic"); }, "Ctrl+I", "italic"),
     edBtn("under", tr("Underline"), function () { edCmd("underline"); }, "Ctrl+U", "underline"), edBtn("strike", tr("Strikethrough"), function () { edCmd("strikeThrough"); }, "", "strikeThrough"),
@@ -1056,5 +1095,157 @@ function edToolState() {
     var t = b0 ? b0.tagName : "P", names = { P: "Normal text", H1: "Heading 1", H2: "Heading 2", H3: "Heading 3", H4: "Heading 4", BLOCKQUOTE: "Quote", PRE: "Code block", LI: "List item", TD: "Table cell", TH: "Table heading" };
     if (b0 && t === "P" && b0.classList.contains("lead")) t = "lead";
     lab.textContent = tr(names[t] || (t === "lead" ? "Lead paragraph" : "Normal text"));
+    var own = b0 && /(?:^|\s)ps-([\w-]+)/.exec(b0.className), cs0 = own && (ED.d.cstyles || []).filter(function (x) { return x.id === own[1]; })[0];
+    if (cs0) lab.textContent = cs0.name;
   }
+  var r0 = edRange(), el0 = r0 && (r0.startContainer.nodeType === 3 ? r0.startContainer.parentNode : r0.startContainer), fl = document.getElementById("ed-font"), zl = document.getElementById("ed-size");
+  if (el0 && ED.root.contains(el0) && fl && zl) { var cs1 = ED.win.getComputedStyle(el0); fl.textContent = cs1.fontFamily.split(",")[0].replace(/["']/g, ""); zl.textContent = Math.round(parseFloat(cs1.fontSize)); }
+}
+
+/* =====================================================================
+   Fonts and styles of a document.
+   d.fonts  — [{ name, kind: "google" | "file", data? }] fonts the document uses
+   d.styles — { key: props } changes to the built-in styles (Normal, Heading 1, …)
+   d.cstyles — [{ id, name, kind: "para" | "char", base, props }] the document's own styles
+   They become CSS inside the document (and in its exports).
+   ===================================================================== */
+var ED_BUILTIN = [
+  ["p", "Normal text", "#doc p, #doc li, #doc td, #doc dd"], ["h1", "Heading 1", "#doc h1"], ["h2", "Heading 2", "#doc h2"], ["h3", "Heading 3", "#doc h3"], ["h4", "Heading 4", "#doc h4"],
+  ["lead", "Lead paragraph", "#doc p.lead"], ["small", "Small print", "#doc p.small"], ["caption", "Caption", "#doc p.caption, #doc figcaption, #doc caption"],
+  ["blockquote", "Quote", "#doc blockquote"], ["pre", "Code block", "#doc pre"], ["th", "Table heading", "#doc th"], ["toc", "Table of contents", "#doc .toc"]
+];
+var ED_SYSFONTS = ["Arial", "Calibri", "Cambria", "Candara", "Consolas", "Courier New", "David", "Georgia", "Segoe UI", "Tahoma", "Times New Roman", "Trebuchet MS", "Verdana"];
+var ED_GFONTS = ["Assistant", "Alef", "Frank Ruhl Libre", "Heebo", "IBM Plex Sans", "IBM Plex Sans Hebrew", "IBM Plex Mono", "Inter", "JetBrains Mono", "Lato", "Merriweather", "Montserrat", "Noto Sans", "Noto Sans Hebrew", "Noto Serif", "Noto Serif Hebrew", "Open Sans", "Poppins", "Roboto", "Roboto Mono", "Rubik", "Secular One", "Source Sans 3", "Source Code Pro", "Varela Round"];
+var ED_PROPS = [
+  ["fontFamily", "font-family"], ["fontSize", "font-size", "px"], ["fontWeight", "font-weight"], ["fontStyle", "font-style"], ["color", "color"], ["background", "background-color"],
+  ["textAlign", "text-align"], ["lineHeight", "line-height"], ["marginTop", "margin-top", "px"], ["marginBottom", "margin-bottom", "px"], ["textIndent", "text-indent", "px"],
+  ["letterSpacing", "letter-spacing", "px"], ["textTransform", "text-transform"], ["textDecoration", "text-decoration"], ["borderBottom", "border-bottom"], ["fontVariant", "font-variant"]
+];
+function edSlug(n) { return String(n).toLowerCase().replace(/[^\w֐-׿]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 30) || "style"; }
+function edFontStack(name) { return /[\s\d]/.test(name) ? "'" + name.replace(/'/g, "") + "'" : name; }
+function edPropsCss(p) {
+  return ED_PROPS.map(function (x) {
+    var v = p && p[x[0]]; if (v === undefined || v === null || v === "") return "";
+    if (x[0] === "fontFamily") v = edFontStack(v) + ", sans-serif";
+    else if (x[2] && /^-?\d+(\.\d+)?$/.test(String(v))) v = v + x[2];
+    if (x[0] === "borderBottom") v = v === "line" ? "1px solid currentColor" : "0";
+    return x[1] + ": " + String(v).replace(/[;{}<>]/g, "") + " !important";
+  }).filter(Boolean).join("; ");
+}
+function edStylesCss(d) {
+  if (!d) return "";
+  var out = [], st = d.styles || {};
+  (d.fonts || []).forEach(function (f) { if (f.kind === "file" && f.data) out.push("@font-face{font-family:" + edFontStack(f.name) + ";src:url(" + f.data + ");font-display:swap}"); });
+  if (d.baseFont) out.push("#doc{font-family:" + edFontStack(d.baseFont) + ", sans-serif}");
+  ED_BUILTIN.forEach(function (b) { var c = edPropsCss(st[b[0]]); if (c) out.push(b[2] + "{" + c + "}"); });
+  (d.cstyles || []).forEach(function (cs) { var c = edPropsCss(cs.props); if (c) out.push((cs.kind === "char" ? "#doc span.cs-" : "#doc .ps-") + cs.id + "{" + c + "}"); });
+  return out.join("\n");
+}
+function edFontLinks(d) {
+  var g = (d && d.fonts || []).filter(function (f) { return f.kind === "google"; }).map(function (f) { return "family=" + encodeURIComponent(f.name).replace(/%20/g, "+") + ":ital,wght@0,400;0,600;0,700;1,400"; });
+  return g.length ? "https://fonts.googleapis.com/css2?" + g.join("&") + "&display=swap" : "";
+}
+/* the document's fonts, styles and own CSS, in that order (its own CSS wins) */
+function edApplyStyles() {
+  if (!ED.doc || !ED.d) return;
+  var d = ED.d, head = ED.doc.head;
+  var gl = ED.doc.getElementById("ed-gfonts"); if (!gl) { gl = ED.doc.createElement("link"); gl.id = "ed-gfonts"; gl.rel = "stylesheet"; head.insertBefore(gl, ED.doc.getElementById("ed-ext")); }
+  var fl = edFontLinks(d); if (fl) gl.setAttribute("href", fl); else gl.removeAttribute("href");
+  var ext = ED.doc.getElementById("ed-ext"), u = (d.cssUrl || "").trim();
+  if (/^https:\/\//i.test(u)) ext.setAttribute("href", u); else ext.removeAttribute("href");
+  var ss = ED.doc.getElementById("ed-styles"); if (!ss) { ss = ED.doc.createElement("style"); ss.id = "ed-styles"; head.insertBefore(ss, ED.doc.getElementById("ed-user")); }
+  ss.textContent = edStylesCss(d);
+  ED.doc.getElementById("ed-user").textContent = libCleanCss(d.css || "");
+}
+function edAllFonts(d) {
+  var mine = (d && d.fonts || []).map(function (f) { return f.name; });
+  return { mine: mine, system: ED_SYSFONTS.filter(function (f) { return mine.indexOf(f) < 0; }) };
+}
+/* a style (font-family, font-size, …) on the selected text, replacing the same style inside it */
+function edSpanStyle(prop, value) {
+  var r = edRange(); if (!r) return;
+  if (r.collapsed) { toast(tr("Select some text first.")); return; }
+  edChange(function () {
+    [].slice.call(ED.root.querySelectorAll("span[style]")).forEach(function (s) {
+      if (!r.intersectsNode(s)) return;
+      s.style.removeProperty(prop);
+      if (!s.getAttribute("style")) { s.removeAttribute("style"); if (!s.attributes.length) { var f = ED.doc.createDocumentFragment(); while (s.firstChild) f.appendChild(s.firstChild); s.replaceWith(f); } }
+    });
+  });
+  if (value) edWrap("span", null, { force: true, attrs: { style: prop + ": " + value } });
+}
+function edFontMenu() {
+  var d = ED.d, f = edAllFonts(d), it = function (n) { return { label: n, lblStyle: { fontFamily: edFontStack(n) }, fn: function () { edRestore(); edSpanStyle("font-family", edFontStack(n) + ", sans-serif"); } }; };
+  return [{ label: tr("Document font (default)"), fn: function () { edRestore(); edSpanStyle("font-family", ""); } }]
+    .concat(f.mine.length ? ["—", { head: tr("This document's fonts") }].concat(f.mine.map(it)) : [])
+    .concat(["—", { head: tr("Installed on most computers") }], f.system.map(it))
+    .concat(["—", { label: tr("Add fonts…"), icon: "plus", fn: function () { libOpenStyles("fonts"); } }]);
+}
+function edSizeMenu() {
+  return [{ label: tr("Default size"), fn: function () { edRestore(); edSpanStyle("font-size", ""); } }, "—"].concat([9, 10, 11, 12, 13, 14, 16, 18, 20, 24, 28, 32, 40, 48].map(function (n) {
+    return { label: String(n), fn: function () { edRestore(); edSpanStyle("font-size", n + "px"); } };
+  }));
+}
+/* apply a paragraph style (built-in or the document's own) to the blocks of the selection */
+function edApplyPara(key) {
+  var d = ED.d, b0;
+  if (ED.saved) edRestore();
+  var cs = (d.cstyles || []).filter(function (x) { return x.id === key; })[0];
+  var tagOf = { p: "P", h1: "H1", h2: "H2", h3: "H3", h4: "H4", lead: "P", small: "P", caption: "P", blockquote: "BLOCKQUOTE", pre: "PRE" };
+  var tag = cs ? (tagOf[cs.base] || "P") : tagOf[key] || "P";
+  edFocus();
+  edChange(function () { ED.doc.execCommand("formatBlock", false, tag); });
+  edChange(function () {
+    edBlocks().forEach(function (b) {
+      b.className.split(/\s+/).forEach(function (c) { if (/^(ps-|lead$|small$|caption$)/.test(c)) b.classList.remove(c); });
+      if (cs) { b.classList.add("ps-" + cs.id); if (/^(lead|small|caption)$/.test(cs.base)) b.classList.add(cs.base); }
+      else if (/^(lead|small|caption)$/.test(key)) b.classList.add(key);
+      if (!b.className) b.removeAttribute("class");
+    });
+  });
+}
+function edStyleMenu() {
+  var d = ED.d, st = d.styles || {}, cs = d.cstyles || [];
+  var prev = function (key, props) { var p = props || st[key] || {}; return { fontFamily: p.fontFamily ? edFontStack(p.fontFamily) : null, color: p.color || null, fontStyle: p.fontStyle || null }; };
+  var built = ED_BUILTIN.filter(function (b) { return !/^(th|toc)$/.test(b[0]); }).map(function (b) {
+    return { label: tr(b[1]), cls: "st-" + b[0], lblStyle: prev(b[0]), fn: function () { edApplyPara(b[0]); } };
+  });
+  var paras = cs.filter(function (x) { return x.kind !== "char"; }).map(function (x) { return { label: x.name, cls: "st-" + (x.base || "p"), lblStyle: prev(null, x.props), fn: function () { edApplyPara(x.id); } }; });
+  var chars = cs.filter(function (x) { return x.kind === "char"; }).map(function (x) { return { label: x.name, lblStyle: prev(null, x.props), fn: function () { edRestore(); edSpanClass("cs-", "cs-" + x.id); } }; });
+  return built.slice(0, 5).concat(["—"], built.slice(5))
+    .concat(paras.length ? ["—", { head: tr("This document's styles") }].concat(paras) : [])
+    .concat(chars.length ? ["—", { head: tr("Character styles") }].concat(chars) : [])
+    .concat(["—", { label: tr("Update the style to match the selection"), fn: function () { edMatchStyle(); } },
+      { label: tr("New style from the selection…"), icon: "plus", fn: function () { libOpenStyles("new"); } },
+      { label: tr("Manage styles and fonts…"), fn: function () { libOpenStyles("styles"); } },
+      { label: tr("Custom class…"), fn: edClassBar }]);
+}
+/* the style the caret is in: its key (built-in) or the document's own style id */
+function edStyleKeyAt(b) {
+  if (!b) return "p";
+  var m = /(?:^|\s)ps-([\w-]+)/.exec(b.className); if (m) return m[1];
+  if (b.tagName === "P") return b.classList.contains("lead") ? "lead" : b.classList.contains("small") ? "small" : b.classList.contains("caption") ? "caption" : "p";
+  var t = b.tagName.toLowerCase(); return /^(h1|h2|h3|h4|blockquote|pre|th)$/.test(t) ? t : "p";
+}
+function edReadProps(el) {
+  var cs = ED.win.getComputedStyle(el), fs = parseFloat(cs.fontSize);
+  var fam = cs.fontFamily.split(",")[0].replace(/["']/g, "").trim();
+  return { fontFamily: fam, fontSize: Math.round(fs), fontWeight: cs.fontWeight >= 600 ? "bold" : "normal", fontStyle: cs.fontStyle === "italic" ? "italic" : "",
+    color: cs.color, textAlign: /center|justify|right|left|end/.test(cs.textAlign) && cs.textAlign !== "start" ? cs.textAlign : "",
+    lineHeight: cs.lineHeight !== "normal" ? Math.round(parseFloat(cs.lineHeight) / fs * 100) / 100 : "", marginTop: Math.round(parseFloat(cs.marginTop)), marginBottom: Math.round(parseFloat(cs.marginBottom)) };
+}
+/* Word's "update to match selection": the look of the selected text becomes the style's look */
+function edMatchStyle() {
+  if (ED.saved) edRestore();
+  var b = edBlock(); if (!b) { toast(tr("Put the caret in a paragraph first.")); return; }
+  var r = edRange(), el = r && r.startContainer.nodeType === 3 ? r.startContainer.parentNode : b;
+  var props = edReadProps(el && b.contains(el) ? el : b), key = edStyleKeyAt(b), d = ED.d;
+  var own = (d.cstyles || []).filter(function (x) { return x.id === key; })[0];
+  edChange(function () {   /* the direct formatting is now part of the style */
+    [].slice.call(b.querySelectorAll("span[style]")).forEach(function (s) { s.style.removeProperty("font-family"); s.style.removeProperty("font-size"); if (!s.getAttribute("style")) { var f = ED.doc.createDocumentFragment(); while (s.firstChild) f.appendChild(s.firstChild); s.replaceWith(f); } });
+  });
+  if (own) own.props = Object.assign({}, own.props, props);
+  else { d.styles = d.styles || {}; d.styles[key] = Object.assign({}, d.styles[key], props); }
+  libStylesChanged(d);
+  toast(tr("“{s}” now looks like the selection.", { s: own ? own.name : tr((ED_BUILTIN.filter(function (x) { return x[0] === key; })[0] || [0, "Normal text"])[1]) }));
 }

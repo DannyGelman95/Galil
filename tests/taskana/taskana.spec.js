@@ -633,3 +633,51 @@ test("the Library editor: read by default, structured notes, real undo, tables, 
   await expect(page.locator("#lib-edit")).toBeDisabled();
   expect(errors).toEqual([]);
 });
+
+test("the Library editor: floating menus close on a click in the text, classes, fonts and styles", async ({ page }) => {
+  const errors = await open(page, "library");
+  await page.locator(".lib-item", { hasText: "SME interview" }).first().click();
+  await page.locator("#lib-edit").click();
+  const ed = page.frameLocator(".ed-frame").locator("#doc");
+  /* a submenu opens beside its item and inside the window; a click in the text closes every menu */
+  await ed.locator("table td").first().click();
+  await page.locator('button[aria-label="Table"]').click();
+  await page.locator(".ed-menu button", { hasText: "Cell alignment" }).hover();
+  const sub = page.locator(".ed-menu.sub");
+  await expect(sub).toBeVisible();
+  const box = await sub.boundingBox(), vp = page.viewportSize();
+  expect(box.x + box.width).toBeLessThanOrEqual(vp.width); expect(box.y + box.height).toBeLessThanOrEqual(vp.height);
+  await page.evaluate(() => ED.root.dispatchEvent(new ED.win.MouseEvent("mousedown", { bubbles: true })));   // a click in the text
+  await expect(page.locator(".ed-menu")).toHaveCount(0);
+  /* custom class */
+  await ed.locator(".qa p").first().click();
+  await page.locator('button[aria-label="Paragraph style"]').click();
+  await page.locator(".ed-menu button", { hasText: "Custom class" }).click();
+  await page.locator(".lib-bar input").fill("ui-label"); await page.keyboard.press("Enter");
+  await expect(ed.locator(".qa p").first()).toHaveClass(/ui-label/);
+  /* a Google font added to the document, then a system font on a word */
+  await page.locator('button[aria-label="Font"]').click();
+  await page.locator(".ed-menu button", { hasText: "Add fonts" }).click();
+  await page.locator('input[aria-label="Google font name"]').fill("Rubik"); await page.keyboard.press("Enter");
+  await ed.locator("h1").nth(1).click({ clickCount: 3 });
+  await page.locator('button[aria-label="Font"]').click();
+  await page.locator(".ed-menu button", { hasText: "Georgia" }).click();
+  await expect(ed.locator("h1").nth(1).locator("span")).toHaveAttribute("style", /Georgia/);
+  /* a built-in style changed, and a new style made and applied */
+  await page.locator('select[aria-label="Style to edit"]').selectOption("h1");
+  const size = page.locator(".lib-stform input[type=number]").first();
+  await size.fill("31"); await size.blur();
+  await expect(ed.locator("h1").first()).toHaveCSS("font-size", "31px");
+  await page.locator('select[aria-label="Style to edit"]').selectOption("__new");
+  await page.locator('input[aria-label="Style name"]').fill("Step result"); await page.keyboard.press("Enter");
+  await ed.locator(".qa p").nth(1).click();
+  await page.locator('button[aria-label="Paragraph style"]').click();
+  await page.locator(".ed-menu button", { hasText: "Step result" }).click();
+  await expect(ed.locator(".qa p").nth(1)).toHaveClass(/ps-step-result/);
+  await page.locator("#lib-done").click();
+  const doc = (await store(page)).library.find(d => d.kind === "SME interview");
+  expect(doc.fonts.map(f => f.name)).toContain("Rubik");
+  expect(doc.styles.h1.fontSize).toBe(31);
+  expect(doc.cstyles.map(c => c.name)).toContain("Step result");
+  expect(errors).toEqual([]);
+});
