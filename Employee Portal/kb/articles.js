@@ -56,7 +56,7 @@ var ARTICLES = [
   '<div class="callout tip"><b>טיפ:</b> התחילו ב<a href="#/first-week">רשימת המשימות לשבוע הראשון</a> — יש בה קישורים לכל מה שצריך.</div>'
   } },
 
-{ id: "first-week", cat: "onboarding", updated: "16 Oct 2026",
+{ id: "first-week", cat: "onboarding", updated: "18 Oct 2026",
   title: { en: "Your first week checklist", he: "רשימת משימות לשבוע הראשון" },
   summary: { en: "Everything to set up and read during your first five working days.", he: "כל מה שצריך להגדיר ולקרוא בחמשת ימי העבודה הראשונים." },
   body: {
@@ -77,6 +77,7 @@ var ARTICLES = [
   '<h2>Days 4–5 — your work</h2>' +
   '<ul><li>Meet your team and get a walkthrough of your first project from your Team Lead.</li>' +
   '<li>Open <strong>Taskana</strong> and look at your tasks — see <a href="#/taskana-tasks">Working with tasks in Taskana</a>.</li>' +
+  '<li>In Taskana, open the <strong>Library</strong> from the sidebar and read your project\'s research notes — see <a href="#/library-start">Getting started with the Library</a>.</li>' +
   '<li>Log your first week of hours in WorkDesk — see <a href="#/workdesk-time">Logging your time</a>.</li>' +
   '<li>Plan next week in the Week Planner — see <a href="#/workdesk-plan">Planning your week</a>.</li></ul>' +
   '<div class="callout note"><b>Note:</b> If any account or access is missing by the end of Day 1, tell Operations straight away — don\'t wait.</div>',
@@ -97,12 +98,13 @@ var ARTICLES = [
   '<h2>ימים 4–5 — העבודה שלך</h2>' +
   '<ul><li>הכירו את הצוות וקבלו מראש הצוות סקירה של הפרויקט הראשון שלכם.</li>' +
   '<li>פתחו את <strong>Taskana</strong> ועברו על המשימות שלכם — ראו <a href="#/taskana-tasks">עבודה עם משימות ב-Taskana</a>.</li>' +
+  '<li>ב-Taskana, פתחו את <strong>הספרייה</strong> מהסרגל הצדדי וקראו את מסמכי התחקיר של הפרויקט שלכם — ראו <a href="#/library-start">צעדים ראשונים בספרייה</a>.</li>' +
   '<li>דווחו את שעות השבוע הראשון ב-WorkDesk — ראו <a href="#/workdesk-time">דיווח שעות</a>.</li>' +
   '<li>תכננו את השבוע הבא במתכנן השבועי — ראו <a href="#/workdesk-plan">תכנון השבוע</a>.</li></ul>' +
   '<div class="callout note"><b>שימו לב:</b> אם עד סוף היום הראשון חסרים לכם חשבון או גישה, הודיעו לתפעול מיד — אל תחכו.</div>'
   } },
 
-{ id: "accounts", cat: "onboarding", updated: "16 Oct 2026",
+{ id: "accounts", cat: "onboarding", updated: "18 Oct 2026",
   title: { en: "Accounts & systems you will use", he: "החשבונות והמערכות שתשתמשו בהם" },
   summary: { en: "The company systems, what each is for and how you get access.", he: "מערכות החברה, למה כל אחת משמשת ואיך מקבלים גישה." },
   body: {
@@ -112,7 +114,7 @@ var ARTICLES = [
   '<tr><td>Microsoft 365</td><td>Email, calendar, Teams, OneDrive and SharePoint</td><td>Your <code>@galiltc.co.il</code> account + MFA</td></tr>' +
   '<tr><td>Employee Portal</td><td>One home page for WorkDesk, Taskana, the Handbook and the Knowledge Base</td><td>Your <code>@galiltc.co.il</code> account, once</td></tr>' +
   '<tr><td>— WorkDesk</td><td>Time, sick and vacation reporting, expenses; for managers, budgets, clients, projects and work orders</td><td>Through the portal</td></tr>' +
-  '<tr><td>— Taskana</td><td>Tasks, boards, reviews and questions on every project</td><td>Through the portal</td></tr>' +
+  '<tr><td>— Taskana</td><td>Tasks, boards, reviews and questions on every project, and the Library of research documents</td><td>Through the portal</td></tr>' +
   '<tr><td>— Handbook</td><td>The user guide to the portal, WorkDesk and Taskana</td><td>Through the portal</td></tr>' +
   '<tr><td>— Knowledge Base</td><td>This site — onboarding, rules and training</td><td>Through the portal</td></tr>' +
   '<tr><td>Company VPN</td><td>Access to internal file servers and client environments from outside the office</td><td>Your <code>@galiltc.co.il</code> account + MFA</td></tr>' +
@@ -127,7 +129,7 @@ var ARTICLES = [
   '<tr><td>Microsoft 365</td><td>דוא"ל, יומן, Teams, ‏OneDrive ו-SharePoint</td><td>חשבון <code>@galiltc.co.il</code> + אימות דו־שלבי</td></tr>' +
   '<tr><td>פורטל העובדים</td><td>דף בית אחד ל-WorkDesk, ‏Taskana, המדריך למשתמש ומאגר הידע</td><td>חשבון <code>@galiltc.co.il</code>, פעם אחת</td></tr>' +
   '<tr><td>— WorkDesk</td><td>דיווח שעות, מחלה וחופשה והוצאות; למנהלים גם תקציבים, לקוחות, פרויקטים והזמנות עבודה</td><td>דרך הפורטל</td></tr>' +
-  '<tr><td>— Taskana</td><td>משימות, לוחות, סקירות ושאלות בכל פרויקט</td><td>דרך הפורטל</td></tr>' +
+  '<tr><td>— Taskana</td><td>משימות, לוחות, סקירות ושאלות בכל פרויקט, וספריית מסמכי התחקיר</td><td>דרך הפורטל</td></tr>' +
   '<tr><td>— מדריך למשתמש</td><td>המדריך לפורטל, ל-WorkDesk ול-Taskana</td><td>דרך הפורטל</td></tr>' +
   '<tr><td>— מאגר ידע</td><td>האתר הזה — קליטה, כללים והדרכה</td><td>דרך הפורטל</td></tr>' +
   '<tr><td>VPN של החברה</td><td>גישה לשרתי קבצים פנימיים ולסביבות לקוחות מחוץ למשרד</td><td>חשבון <code>@galiltc.co.il</code> + אימות דו־שלבי</td></tr>' +
@@ -223,7 +225,7 @@ var ARTICLES = [
   '<li><strong>צופה</strong> — קריאה ותגובות.</li></ul>'
   } },
 
-{ id: "portal-how", cat: "portal", updated: "16 Oct 2026",
+{ id: "portal-how", cat: "portal", updated: "18 Oct 2026",
   title: { en: "How WorkDesk and Taskana work together", he: "איך WorkDesk ו-Taskana עובדים יחד" },
   summary: { en: "What lives where: records and hours in WorkDesk, tasks in Taskana.", he: "מה נמצא איפה: רשומות ושעות ב-WorkDesk, משימות ב-Taskana." },
   body: {
@@ -239,7 +241,10 @@ var ARTICLES = [
   '<h2>Tasks live in Taskana</h2>' +
   '<p>WorkDesk no longer has a Tasks tab. Plan, assign, review and discuss tasks in Taskana. When you report time in WorkDesk you can name the Taskana task it went to (optional) — the task then shows those hours under <strong>Hours in WorkDesk</strong>.</p>' +
   '<h2>Hours live in WorkDesk</h2>' +
-  '<p>Time, sick and vacation days and expenses are reported in WorkDesk only. From a task in Taskana, <strong>Report time on this task in WorkDesk</strong> opens the Time Log with the project, work order and task already filled in.</p>',
+  '<p>Time, sick and vacation days and expenses are reported in WorkDesk only. From a task in Taskana, <strong>Report time on this task in WorkDesk</strong> opens the Time Log with the project, work order and task already filled in.</p>' +
+  '<p>Managers follow the budgets in WorkDesk under <strong>Management → Budgets</strong>: a compact table with one row per budget — client, project, work order, basis, budgeted, a <strong>Used</strong> bar with its percentage, consumed, in approval, remaining, value / output and projected exhaustion. Filter it by search, client, project, basis and how much is used (<em>Under 75%</em>, <em>75–90%</em>, <em>90–100%</em>, <em>Fully consumed</em>); the chips above it add up what is shown. See <a href="../handbook/index.html#h-budget-list">The budgets table</a> in the Handbook.</p>' +
+  '<h2>Research documents live in Taskana</h2>' +
+  '<p>The <strong>Library</strong> — the team\'s documents from SME interviews, site visits and walkthroughs — is no longer a WorkDesk tab. Open it in Taskana from the sidebar (<strong>Library</strong>), beside the tasks the research is for. See <a href="#/library-start">Getting started with the Library</a>.</p>',
   he:
   '<p class="lede">WorkDesk ו-Taskana הם שני חלקים של אותו פורטל. כל אחד אחראי לסוג עבודה משלו, וכל אחד מציג את מה שהשני יודע.</p>' +
   '<table><thead><tr><th>מוגדר ב-WorkDesk</th><th>מוצג ב-Taskana</th></tr></thead><tbody>' +
@@ -252,7 +257,10 @@ var ARTICLES = [
   '<h2>המשימות נמצאות ב-Taskana</h2>' +
   '<p>ל-WorkDesk אין יותר לשונית משימות. מתכננים, מקצים, סוקרים ודנים במשימות ב-Taskana. כשמדווחים שעות ב-WorkDesk אפשר לציין את המשימה ב-Taskana שהזמן הוקדש לה (רשות) — והמשימה מציגה את השעות האלה תחת <strong>שעות ב-WorkDesk</strong>.</p>' +
   '<h2>השעות נמצאות ב-WorkDesk</h2>' +
-  '<p>שעות, ימי מחלה וחופשה והוצאות מדווחים רק ב-WorkDesk. ממשימה ב-Taskana, <strong>דיווח שעות על המשימה ב-WorkDesk</strong> פותח את יומן השעות כשהפרויקט, הזמנת העבודה והמשימה כבר ממולאים.</p>'
+  '<p>שעות, ימי מחלה וחופשה והוצאות מדווחים רק ב-WorkDesk. ממשימה ב-Taskana, <strong>דיווח שעות על המשימה ב-WorkDesk</strong> פותח את יומן השעות כשהפרויקט, הזמנת העבודה והמשימה כבר ממולאים.</p>' +
+  '<p>מנהלים עוקבים אחרי התקציבים ב-WorkDesk, ב<strong>ניהול ← תקציבים</strong>: טבלה דחוסה, שורה לכל תקציב — לקוח, פרויקט, הזמנת עבודה, בסיס, מתוקצב, פס <strong>ניצול</strong> עם האחוז, נוצל, באישור, נותר, ערך / תפוקה ומיצוי צפוי. מסננים לפי חיפוש, לקוח, פרויקט, בסיס ומידת הניצול (<em>מתחת ל-75%</em>, <em>75–90%</em>, <em>90–100%</em>, <em>נוצל במלואו</em>); התגיות שמעל הטבלה מסכמות את מה שמוצג. ראו <a href="../handbook/he.html#h-budget-list">טבלת התקציבים</a> במדריך.</p>' +
+  '<h2>מסמכי התחקיר נמצאים ב-Taskana</h2>' +
+  '<p><strong>הספרייה</strong> — המסמכים של הצוות מראיונות עם מומחי תוכן, מביקורי אתר ומהדגמות — אינה עוד לשונית ב-WorkDesk. פותחים אותה ב-Taskana מהסרגל הצדדי (<strong>ספרייה</strong>), ליד המשימות שהתחקיר נועד להן. ראו <a href="#/library-start">צעדים ראשונים בספרייה</a>.</p>'
   } },
 
 { id: "portal-around", cat: "portal", updated: "17 Oct 2026",
@@ -563,38 +571,52 @@ var ARTICLES = [
   '<p>מחליפים טלפון? הודיעו לתפעול <strong>לפני</strong> שאתם מוחקים את הישן, כדי שיעבירו את האימות.</p>'
   } },
 
-{ id: "workdesk-time", cat: "training", updated: "17 Oct 2026",
+{ id: "workdesk-time", cat: "training", updated: "18 Oct 2026",
   title: { en: "Logging your time in WorkDesk", he: "דיווח שעות ב-WorkDesk" },
   summary: { en: "Report hours against the right work order, every day.", he: "דיווח שעות על הזמנת העבודה הנכונה, כל יום." },
   body: {
   en:
+  '<p class="lede">The Time Log keeps the report form in a narrow column on the left — about a fifth of the width — and your entries in the table that fills the rest beside it.</p>' +
   '<ol class="steps">' +
   '<li>On the portal home page, open <strong>WorkDesk</strong> (or choose <strong>Report time</strong>). WorkDesk opens on the <strong>Time Log</strong>.</li>' +
-  '<li>Choose the date, the start and end time and the hour type: <strong>Red</strong> for company time, <strong>Yellow</strong> for client work, <strong>Blue</strong> for managing a client\'s projects (managers).</li>' +
-  '<li>Choose the client, project and work order. Optionally, choose the <strong>Taskana task</strong> the time went to.</li>' +
-  '<li>Add a short description and click <strong>Add entry</strong>. The entry is registered — or sent for approval if it goes past your hours bank or the budget.</li>' +
+  '<li>Work down the form, one field under another. If you report for others, choose the person under <strong>Assignee</strong> first.</li>' +
+  '<li>Choose the <strong>Date</strong> (<strong>Today</strong> beside it jumps back to today), the <strong>Type</strong> — <em>Work</em> for hours — and the <strong>Start</strong> and <strong>End</strong> time.</li>' +
+  '<li>Choose the <strong>Hour type</strong>: <strong>Red</strong> for company time, <strong>Yellow</strong> for client work, <strong>Blue</strong> for managing a client\'s projects (managers).</li>' +
+  '<li>Choose the <strong>Client</strong>, <strong>Project</strong> and <strong>Work order</strong>. Optionally, choose the <strong>Taskana task</strong> the time went to.</li>' +
+  '<li>Write what you worked on in <strong>Description</strong> (the bigger box), add any <strong>Notes</strong>, and click <strong>Add entry</strong> — the large button stays in view at the foot of the form. The entry is registered — or sent for approval if it goes past your hours bank or the budget.</li>' +
   '</ol>' +
+  '<p>The pill under the form shows whether your data is saved to GitHub; click it for details.</p>' +
+  '<h2>When an entry needs approval</h2>' +
+  '<p>It reaches your approver in the <strong>Approvals</strong> tab, where requests are shown as tiles side by side. They can <strong>Approve</strong>, <strong>Decline</strong> with a reason, or <strong>Request info</strong> — the entry then stays <em>Pending</em> and you answer their question in a comment on it.</p>' +
   '<h2>Useful shortcuts</h2>' +
   '<ul><li>From a task in Taskana, <strong>Report time on this task in WorkDesk</strong> opens the form with the project, work order and task already filled in.</li>' +
   '<li><strong>Duplicate</strong> an entry with the <i class="ui-ic" data-ic="copy"></i> button — to the previous or next day or week, a number of days back or forward (optionally onto every working day in between), or a specific date.</li>' +
   '<li>Click a work order code anywhere in a table to copy it.</li>' +
-  '<li>Click a column heading to sort the table, drag a heading to move it, or drag its edge to resize it. Use <strong>＋ Save</strong> above the table to keep that layout as a view.</li>' +
+  '<li>Click a column heading to sort the table, drag a heading to move it, or drag its edge to resize it — the table stays at full width, and the main column takes up the space. Use <strong>＋ Save</strong> above the table to keep that layout as a view.</li>' +
   '<li>On your phone, use the running timer in the mobile layout. Below it, <strong>‹ ›</strong> change the month and <strong><i class="ui-ic" data-ic="sliders"></i> Filter &amp; sort</strong> narrows and sorts your entries; managers can switch to <strong>Me and my team</strong> to see the time of the people who report to them.</li></ul>' +
-  '<div class="callout note"><b>Out of allowance?</b> Use <strong>Request hours</strong> under <i class="ui-ic" data-ic="assignments"></i> My assignments and allowances — your Team Lead or Project Manager approves or declines it.</div>',
+  '<div class="callout note"><b>Out of allowance?</b> Use <strong>Request hours</strong> under <i class="ui-ic" data-ic="assignments"></i> My assignments and allowances — your Team Lead or Project Manager approves or declines it.</div>' +
+  '<p>Every field and option is described in the Handbook — see <a href="../handbook/index.html#ch-time">The Time Log</a> and <a href="../handbook/index.html#ch-approvals">Approvals</a>.</p>',
   he:
+  '<p class="lede">ביומן השעות, טופס הדיווח נמצא בעמודה צרה מימין — כחמישית מהרוחב — והרישומים שלכם בטבלה שממלאת את השאר לצידו.</p>' +
   '<ol class="steps">' +
   '<li>בדף הבית של הפורטל, פתחו את <strong>WorkDesk</strong> (או בחרו <strong>דיווח שעות</strong>). ‏WorkDesk נפתח ב<strong>יומן השעות</strong>.</li>' +
-  '<li>בחרו תאריך, שעת התחלה וסיום וסוג שעות: <strong>אדום</strong> לזמן חברה, <strong>צהוב</strong> לעבודה ללקוח, <strong>כחול</strong> לניהול פרויקטים של לקוח (מנהלים).</li>' +
-  '<li>בחרו לקוח, פרויקט והזמנת עבודה. אפשר גם לבחור את <strong>המשימה ב-Taskana</strong> שהזמן הוקדש לה.</li>' +
-  '<li>הוסיפו תיאור קצר ולחצו <strong>הוספת רישום</strong>. הרישום נרשם — או נשלח לאישור אם הוא חורג מבנק השעות שלכם או מהתקציב.</li>' +
+  '<li>מלאו את הטופס מלמעלה למטה, שדה מתחת לשדה. אם אתם מדווחים גם עבור אחרים, בחרו קודם את האדם בשדה <strong>עבור</strong>.</li>' +
+  '<li>בחרו <strong>תאריך</strong> (<strong>היום</strong> שלידו מחזיר להיום), <strong>סוג</strong> — <em>עבודה</em> לשעות — ושעת <strong>התחלה</strong> ו<strong>סיום</strong>.</li>' +
+  '<li>בחרו <strong>סוג שעות</strong>: <strong>אדום</strong> לזמן חברה, <strong>צהוב</strong> לעבודה ללקוח, <strong>כחול</strong> לניהול פרויקטים של לקוח (מנהלים).</li>' +
+  '<li>בחרו <strong>לקוח</strong>, <strong>פרויקט</strong> ו<strong>הזמנת עבודה</strong>. אפשר גם לבחור את <strong>המשימה ב-Taskana</strong> שהזמן הוקדש לה.</li>' +
+  '<li>כתבו במה עבדתם ב<strong>תיאור</strong> (התיבה הגדולה), הוסיפו <strong>הערות</strong> אם צריך, ולחצו <strong>הוספת רישום</strong> — הכפתור הגדול נשאר גלוי בתחתית הטופס. הרישום נרשם — או נשלח לאישור אם הוא חורג מבנק השעות שלכם או מהתקציב.</li>' +
   '</ol>' +
+  '<p>הכפתור שמתחת לטופס מראה אם הנתונים שלכם נשמרו ב-GitHub; לחיצה עליו מציגה פרטים.</p>' +
+  '<h2>כשרישום צריך אישור</h2>' +
+  '<p>הוא מגיע למאשר/ת שלכם בלשונית <strong>אישורים</strong>, שבה הבקשות מוצגות כאריחים זה לצד זה. אפשר <strong>לאשר</strong>, <strong>לדחות</strong> עם סיבה, או לבחור <strong>בקשת מידע</strong> — הרישום נשאר <em>ממתין</em>, ואתם עונים על השאלה בתגובה עליו.</p>' +
   '<h2>קיצורי דרך שימושיים</h2>' +
   '<ul><li>ממשימה ב-Taskana, <strong>דיווח שעות על המשימה ב-WorkDesk</strong> פותח את הטופס כשהפרויקט, הזמנת העבודה והמשימה כבר ממולאים.</li>' +
   '<li><strong>שכפלו</strong> רישום עם הכפתור <i class="ui-ic" data-ic="copy"></i> — ליום או לשבוע הקודם או הבא, למספר ימים אחורה או קדימה (ואפשר לכל יום עבודה שביניהם), או לתאריך מסוים.</li>' +
   '<li>לחיצה על קוד הזמנת עבודה בכל טבלה מעתיקה אותו.</li>' +
-  '<li>לחצו על כותרת עמודה למיון, גררו כותרת להזזה או גררו את הקצה לשינוי הרוחב. <strong>＋ שמירה</strong> מעל הטבלה שומר את הפריסה כתצוגה.</li>' +
+  '<li>לחצו על כותרת עמודה למיון, גררו כותרת להזזה או גררו את הקצה לשינוי הרוחב — הטבלה נשארת ברוחב מלא, והעמודה הראשית תופסת את המקום. <strong>＋ שמירה</strong> מעל הטבלה שומר את הפריסה כתצוגה.</li>' +
   '<li>בטלפון, השתמשו בטיימר שבתצוגת הטלפון. מתחתיו, <strong>‹ ›</strong> מחליפים חודש ו<strong><i class="ui-ic" data-ic="sliders"></i> סינון ומיון</strong> מצמצם וממיין את הרישומים; מנהלים יכולים לעבור ל<strong>אני והצוות שלי</strong> כדי לראות את השעות של מי שכפוף להם.</li></ul>' +
-  '<div class="callout note"><b>נגמרה המכסה?</b> השתמשו ב<strong>בקשת שעות</strong> תחת <i class="ui-ic" data-ic="assignments"></i> השיבוצים והמכסות שלי — ראש הצוות או מנהל/ת הפרויקט מאשרים או דוחים.</div>'
+  '<div class="callout note"><b>נגמרה המכסה?</b> השתמשו ב<strong>בקשת שעות</strong> תחת <i class="ui-ic" data-ic="assignments"></i> השיבוצים והמכסות שלי — ראש הצוות או מנהל/ת הפרויקט מאשרים או דוחים.</div>' +
+  '<p>כל שדה ואפשרות מתוארים במדריך — ראו <a href="../handbook/he.html#ch-time">יומן השעות</a> ו<a href="../handbook/he.html#ch-approvals">אישורים</a>.</p>'
   } },
 
 { id: "workdesk-plan", cat: "training", updated: "16 Oct 2026",
@@ -617,6 +639,94 @@ var ARTICLES = [
   '<li>מתכננים להיעדר? בקשו את הימים כחופשה ביומן השעות — ראו <a href="#/workdesk-leave">בקשת ימי מחלה וחופשה</a>.</li>' +
   '</ol>' +
   '<p>התכנון נשמר אוטומטית. סיימו את תכנון השבוע הבא עד יום חמישי.</p>'
+  } },
+
+{ id: "workdesk-dashboard", cat: "training", updated: "18 Oct 2026",
+  title: { en: "Customizing your Dashboard", he: "התאמה אישית של לוח הבקרה" },
+  summary: { en: "Keep several dashboards and build them from ready-made widgets or your own measures and charts.", he: "כמה לוחות בקרה משלכם, בנויים מרכיבים מוכנים או ממדדים ותרשימים שתבחרו." },
+  body: {
+  en:
+  '<p class="lede">The <strong>Dashboard</strong> tab shows your hours, utilisation, plans and expenses — and, for managers, those of the people they look after. It is yours to shape: keep several dashboards, choose the widgets on each and arrange them the way you read them.</p>' +
+  '<h2>What every widget follows</h2>' +
+  '<ul><li>The bar at the top sets the period — <strong>This week</strong>, <strong>This month</strong>, <strong>Last month</strong>, <strong>Last 3 months</strong>, <strong>This year</strong> or <strong>All time</strong> — and shows figures as <strong>Values</strong> or <strong>%</strong>.</li>' +
+  '<li>The filters under it narrow everything by <strong>Employee</strong> (managers), <strong>Client</strong>, <strong>Project</strong> and <strong>Work order</strong>. <strong>Clear</strong> removes them.</li>' +
+  '<li><strong>Export</strong>, when your role allows it, downloads the figures to Excel.</li></ul>' +
+  '<h2>Your dashboards</h2>' +
+  '<ul><li>Each dashboard is a pill above the widgets — click one to switch. Your first, <em>Overview</em>, comes with a standard set of widgets.</li>' +
+  '<li><strong>+ New dashboard</strong> asks for a name and opens an empty dashboard, ready to customize.</li>' +
+  '<li>Dashboards are saved with your WorkDesk data, so they follow you to every device. Nobody else sees them.</li></ul>' +
+  '<h2>Customize a dashboard</h2>' +
+  '<ol class="steps">' +
+  '<li>Open the dashboard and click <strong><i class="ui-ic" data-ic="edit"></i> Customize</strong>. The tools appear above the widgets.</li>' +
+  '<li>Click <strong>+ Add widget</strong> and pick a ready-made widget from the catalogue — or choose <strong>Build your own…</strong> (see below).</li>' +
+  '<li>Move widgets: drag one to its new place, or use <strong>←</strong> and <strong>→</strong> on it. <i class="ui-ic" data-ic="edit"></i> on a widget opens its settings; <strong>×</strong> removes it.</li>' +
+  '<li>Click <strong>Done</strong>. The dashboard is saved as it is.</li>' +
+  '</ol>' +
+  '<table><thead><tr><th>Button</th><th>What it does</th></tr></thead><tbody>' +
+  '<tr><td>+ Add widget</td><td>Opens the catalogue of ready-made widgets, and <strong>Build your own…</strong></td></tr>' +
+  '<tr><td>Rename</td><td>Gives the dashboard a new name.</td></tr>' +
+  '<tr><td>Duplicate</td><td>Makes a copy, named “(copy)”, to vary without losing the original.</td></tr>' +
+  '<tr><td>Reset</td><td>Replaces the dashboard\'s widgets with the standard set (it asks first).</td></tr>' +
+  '<tr><td>Delete</td><td>Deletes the dashboard and its widgets (it asks first). You always keep at least one.</td></tr>' +
+  '<tr><td>Done</td><td>Leaves customizing.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>The catalogue</h2>' +
+  '<p>Ready-made widgets include <em>Total hours</em>, <em>Utilisation</em>, <em>Hours over time</em>, <em>Hours by week</em>, <em>Hours by client</em>, <em>Hours by project</em>, <em>Hours by employee</em>, <em>Utilisation by employee</em> and <em>by team</em>, <em>Hour type split</em>, <em>Actual minus planned by employee</em>, <em>Expenses by employee</em> and <em>by client</em>, <em>Sick and vacation by employee</em>, <em>Hours in approval by employee</em> and <em>Hour split · plan against actual</em>. Managers also get the <em>Manager cockpit</em> and <em>Budgets at risk</em>.</p>' +
+  '<h2>Build your own widget</h2>' +
+  '<p><strong>Build your own…</strong> opens the widget\'s settings. Fill them in and click <strong>Add to dashboard</strong>; change them later from <i class="ui-ic" data-ic="edit"></i> on the widget.</p>' +
+  '<table><thead><tr><th>Setting</th><th>Choices</th></tr></thead><tbody>' +
+  '<tr><td>Title</td><td>What the widget is called on the dashboard.</td></tr>' +
+  '<tr><td>What to measure</td><td>Total hours; Red, Yellow or Blue hours; Utilisation; Entries reported; People reporting; Planned hours; Actual minus planned; Hours in approval; Sick days; Vacation days; Expenses (₪).</td></tr>' +
+  '<tr><td>Group by</td><td>No grouping (one number); Day, Week, Month or Day of the week; Employee or Team; Client, Project or Work order; Hour type; Entry type.</td></tr>' +
+  '<tr><td>Show as</td><td><strong>Number</strong> (with no grouping), or <strong>Horizontal bars</strong>, <strong>Columns</strong>, <strong>Line</strong>, <strong>Area</strong>, <strong>Donut</strong> or <strong>Table</strong>.</td></tr>' +
+  '<tr><td>Show the top</td><td>5, 10, 20 or all of the groups — for people, clients, projects and work orders.</td></tr>' +
+  '<tr><td>Only for employee · client · project</td><td>Narrows this widget further than the dashboard\'s filters.</td></tr>' +
+  '<tr><td>Width</td><td>¼, ⅓, ½, ⅔ or the full width of the dashboard.</td></tr>' +
+  '<tr><td>Colour</td><td>Teal, Green, Yellow, Red, Blue or Amber — for bars, columns, lines and areas.</td></tr>' +
+  '</tbody></table>' +
+  '<div class="callout tip"><b>Tip:</b> Keep one dashboard per question — for example <em>My month</em>, <em>Billing</em> or <em>Client X</em> — rather than one crowded page.</div>' +
+  '<p>The Handbook describes every widget — see <a href="../handbook/index.html#h-dash-custom">Customizing a dashboard</a>.</p>',
+  he:
+  '<p class="lede">לשונית <strong>לוח בקרה</strong> מציגה את השעות, הניצולת, התכנון וההוצאות שלכם — ולמנהלים, גם של האנשים שבאחריותם. אתם קובעים איך היא נראית: אפשר להחזיק כמה לוחות, לבחור את הרכיבים בכל אחד ולסדר אותם כמו שנוח לכם לקרוא.</p>' +
+  '<h2>מה כל רכיב משקף</h2>' +
+  '<ul><li>הסרגל העליון קובע את התקופה — <strong>השבוע</strong>, <strong>החודש</strong>, <strong>החודש שעבר</strong>, <strong>3 החודשים האחרונים</strong>, <strong>השנה</strong> או <strong>כל התקופה</strong> — ומציג נתונים כ<strong>ערכים</strong> או ב-<strong>%</strong>.</li>' +
+  '<li>המסננים שמתחתיו מצמצמים הכול לפי <strong>עובד/ת</strong> (מנהלים), <strong>לקוח</strong>, <strong>פרויקט</strong> ו<strong>הזמנת עבודה</strong>. <strong>ניקוי</strong> מבטל אותם.</li>' +
+  '<li><strong>ייצוא</strong>, כשהתפקיד שלכם מאפשר, מוריד את הנתונים לאקסל.</li></ul>' +
+  '<h2>הלוחות שלכם</h2>' +
+  '<ul><li>כל לוח מוצג ככפתור מעל הרכיבים — לחיצה עוברת אליו. הלוח הראשון, <em>סקירה</em>, מגיע עם סט רכיבים רגיל.</li>' +
+  '<li><strong>+ לוח חדש</strong> מבקש שם ופותח לוח ריק, מוכן להתאמה.</li>' +
+  '<li>הלוחות נשמרים עם הנתונים שלכם ב-WorkDesk, כך שהם זמינים בכל מכשיר. אף אחד אחר לא רואה אותם.</li></ul>' +
+  '<h2>התאמה אישית של לוח</h2>' +
+  '<ol class="steps">' +
+  '<li>פתחו את הלוח ולחצו <strong><i class="ui-ic" data-ic="edit"></i> התאמה אישית</strong>. הכלים מופיעים מעל הרכיבים.</li>' +
+  '<li>לחצו <strong>+ הוספת רכיב</strong> ובחרו רכיב מוכן מהקטלוג — או <strong>בנייה עצמית…</strong> (ראו בהמשך).</li>' +
+  '<li>הזיזו רכיבים: גררו רכיב למקומו החדש, או השתמשו ב-<strong>→</strong> וב-<strong>←</strong> שעליו. <i class="ui-ic" data-ic="edit"></i> ברכיב פותח את ההגדרות שלו; <strong>×</strong> מסיר אותו.</li>' +
+  '<li>לחצו <strong>הושלם</strong>. הלוח נשמר כמו שהוא.</li>' +
+  '</ol>' +
+  '<table><thead><tr><th>כפתור</th><th>מה הוא עושה</th></tr></thead><tbody>' +
+  '<tr><td>+ הוספת רכיב</td><td>פותח את קטלוג הרכיבים המוכנים, ואת <strong>בנייה עצמית…</strong></td></tr>' +
+  '<tr><td>שינוי שם</td><td>נותן ללוח שם חדש.</td></tr>' +
+  '<tr><td>שכפול</td><td>יוצר עותק, כדי לשנות אותו בלי לאבד את המקור.</td></tr>' +
+  '<tr><td>איפוס</td><td>מחליף את הרכיבים בלוח בסט הרגיל (אחרי אישור).</td></tr>' +
+  '<tr><td>מחיקה</td><td>מוחק את הלוח ואת הרכיבים שלו (אחרי אישור). תמיד נשאר לפחות לוח אחד.</td></tr>' +
+  '<tr><td>הושלם</td><td>יציאה מההתאמה האישית.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>הקטלוג</h2>' +
+  '<p>בין הרכיבים המוכנים: <em>סה"כ שעות</em>, <em>ניצולת</em>, <em>שעות לאורך זמן</em>, <em>שעות לפי שבוע</em>, <em>שעות לפי לקוח</em>, <em>שעות לפי פרויקט</em>, <em>שעות לפי עובד/ת</em>, <em>ניצולת לפי עובד/ת</em> ו<em>לפי צוות</em>, <em>חלוקת סוגי שעות</em>, <em>בפועל פחות מתוכנן לפי עובד/ת</em>, <em>הוצאות לפי עובד/ת</em> ו<em>לפי לקוח</em>, <em>מחלה וחופשה לפי עובד/ת</em>, <em>שעות באישור לפי עובד/ת</em> ו<em>חלוקת שעות · תכנון מול ביצוע</em>. למנהלים יש גם <em>תמונת מצב למנהל</em> ו<em>תקציבים בסיכון</em>.</p>' +
+  '<h2>בנייה עצמית של רכיב</h2>' +
+  '<p><strong>בנייה עצמית…</strong> פותח את הגדרות הרכיב. מלאו אותן ולחצו <strong>הוספה ללוח</strong>; אפשר לשנות אותן אחר כך דרך <i class="ui-ic" data-ic="edit"></i> ברכיב.</p>' +
+  '<table><thead><tr><th>הגדרה</th><th>אפשרויות</th></tr></thead><tbody>' +
+  '<tr><td>כותרת</td><td>השם של הרכיב בלוח.</td></tr>' +
+  '<tr><td>מה למדוד</td><td>סה"כ שעות; שעות אדומות, צהובות או כחולות; ניצולת; רישומים שדווחו; אנשים שדיווחו; שעות מתוכננות; בפועל פחות מתוכנן; שעות באישור; ימי מחלה; ימי חופשה; הוצאות (₪).</td></tr>' +
+  '<tr><td>קיבוץ לפי</td><td>ללא קיבוץ (מספר אחד); יום, שבוע, חודש או יום בשבוע; עובד/ת או צוות; לקוח, פרויקט או הזמנת עבודה; סוג שעות; סוג רישום.</td></tr>' +
+  '<tr><td>תצוגה</td><td><strong>מספר</strong> (ללא קיבוץ), או <strong>עמודות אופקיות</strong>, <strong>עמודות</strong>, <strong>קו</strong>, <strong>שטח</strong>, <strong>טבעת</strong> או <strong>טבלה</strong>.</td></tr>' +
+  '<tr><td>להציג את המובילים</td><td>5, 10, 20 או כל הקבוצות — לאנשים, ללקוחות, לפרויקטים ולהזמנות עבודה.</td></tr>' +
+  '<tr><td>רק עבור עובד/ת · לקוח · פרויקט</td><td>מצמצם את הרכיב הזה מעבר למסננים של הלוח.</td></tr>' +
+  '<tr><td>רוחב</td><td>רבע, שליש, חצי, שני שלישים או רוחב מלא של הלוח.</td></tr>' +
+  '<tr><td>צבע</td><td>טורקיז, ירוק, צהוב, אדום, כחול או כתום — לעמודות, לקווים ולשטחים.</td></tr>' +
+  '</tbody></table>' +
+  '<div class="callout tip"><b>טיפ:</b> החזיקו לוח לכל שאלה — למשל <em>החודש שלי</em>, <em>חיוב</em> או <em>לקוח X</em> — במקום עמוד אחד עמוס.</div>' +
+  '<p>המדריך מתאר כל רכיב — ראו <a href="../handbook/he.html#h-dash-custom">התאמה אישית של לוח</a>.</p>'
   } },
 
 { id: "workdesk-leave", cat: "training", updated: "30 Sep 2026",
@@ -667,7 +777,7 @@ var ARTICLES = [
   '<p>מה אפשר לתבוע — ב<a href="#/expenses-policy">נוהל ההוצאות</a>.</p>'
   } },
 
-{ id: "workdesk-wo-document", cat: "training", updated: "17 Oct 2026",
+{ id: "workdesk-wo-document", cat: "training", updated: "18 Oct 2026",
   title: { en: "Work order documents for clients", he: "מסמכי הזמנת עבודה ללקוחות" },
   summary: { en: "Fill in a work order and send the client an official GALIL PDF, in English or Hebrew.", he: "ממלאים הזמנת עבודה ושולחים ללקוח מסמך PDF רשמי של גליל, באנגלית או בעברית." },
   body: {
@@ -677,7 +787,15 @@ var ARTICLES = [
   '<ol class="steps">' +
   '<li>In WorkDesk, open <strong>Management → Work Orders</strong> and click <strong>+ New work order</strong>, or the <i class="ui-ic" data-ic="edit"></i> on an existing one.</li>' +
   '<li>Besides the code, title, dates and budgeted hours, fill in <strong>Scope of work</strong>, the <strong>Deliverables</strong> (one per line), the <strong>Client points of contact</strong>, GALIL\'s <strong>Project lead</strong> and <strong>Team members</strong>, and the <strong>Signatures</strong>.</li>' +
+  '<li>Optionally, fill in <strong>Title in Hebrew</strong>. The Hebrew document uses it; when it is empty, the English title is used.</li>' +
   '<li>Save.</li></ol>' +
+  '<h2>What the document contains</h2>' +
+  '<ul><li>The GALIL letterhead with the <strong>[G]</strong> mark, and the heading <strong>Work order</strong> followed by the order\'s code.</li>' +
+  '<li><strong>Order details</strong> — the order\'s title, client, project, status, contract reference, owner and dates — then the scope, deliverables and budget.</li>' +
+  '<li>The client\'s points of contact and GALIL\'s project team.</li>' +
+  '<li>Numbered <strong>Terms of engagement</strong>: schedule, the responsibilities of each side, delays, changes, acceptance, payment, confidentiality, ownership, liability, termination and general terms.</li>' +
+  '<li>Both signature blocks together at the foot of the last page.</li></ul>' +
+  '<p>The Hebrew document is laid out right to left, and brackets, codes and English names inside it read correctly.</p>' +
   '<h2>Create and send the document</h2>' +
   '<ol class="steps">' +
   '<li>Click <i class="ui-ic" data-ic="file"></i> on the work order\'s row (or <strong>Document (PDF)</strong> in the editor).</li>' +
@@ -691,7 +809,15 @@ var ARTICLES = [
   '<ol class="steps">' +
   '<li>ב-WorkDesk, פתחו <strong>ניהול ← הזמנות עבודה</strong> ולחצו <strong>+ הזמנת עבודה חדשה</strong>, או <i class="ui-ic" data-ic="edit"></i> בהזמנה קיימת.</li>' +
   '<li>מלבד הקוד, הכותרת, התאריכים והשעות המתוקצבות, מלאו את <strong>היקף העבודה</strong>, את <strong>התוצרים</strong> (אחד בכל שורה), את <strong>אנשי הקשר מטעם הלקוח</strong>, את <strong>מוביל/ת הפרויקט</strong> ו<strong>חברי הצוות</strong> מגליל, ואת <strong>החתימות</strong>.</li>' +
+  '<li>אפשר גם למלא <strong>שם בעברית (למסמך בעברית)</strong>. המסמך בעברית משתמש בו; כשהוא ריק, משמש השם באנגלית.</li>' +
   '<li>שמרו.</li></ol>' +
+  '<h2>מה יש במסמך</h2>' +
+  '<ul><li>נייר המכתבים של גליל עם הסמל <strong>[G]</strong>, והכותרת <strong>הזמנת עבודה</strong> ואחריה קוד ההזמנה.</li>' +
+  '<li><strong>פרטי ההזמנה</strong> — שם ההזמנה, הלקוח, הפרויקט, הסטטוס, אסמכתת החוזה, מנהל/ת הפרויקט והתאריכים — ואחריהם היקף העבודה, התוצרים והתקציב.</li>' +
+  '<li>אנשי הקשר מטעם הלקוח וצוות הפרויקט מטעם גליל.</li>' +
+  '<li><strong>תנאי ההתקשרות</strong> בסעיפים ממוספרים: לוח זמנים, האחריות של כל צד, עיכובים, שינויים, קבלת התוצרים, תשלום, סודיות, בעלות, אחריות לנזקים, סיום ההתקשרות והוראות כלליות.</li>' +
+  '<li>שני אזורי החתימה יחד בתחתית העמוד האחרון.</li></ul>' +
+  '<p>המסמך בעברית ערוך מימין לשמאל, וסוגריים, קודים ושמות באנגלית בתוכו מוצגים נכון.</p>' +
   '<h2>מפיקים ושולחים את המסמך</h2>' +
   '<ol class="steps">' +
   '<li>לחצו <i class="ui-ic" data-ic="file"></i> בשורה של ההזמנה (או <strong>מסמך (PDF)</strong> בעורך).</li>' +
@@ -701,7 +827,7 @@ var ARTICLES = [
   '<div class="callout tip"><b>טיפ:</b> מלאו את אנשי הקשר של הלקוח בהזמנת העבודה — המסמך מציג אותם, ו<strong>שליחה אל</strong> משתמש בכתובות שלהם.</div>'
   } },
 
-{ id: "taskana-tasks", cat: "training", updated: "16 Oct 2026",
+{ id: "taskana-tasks", cat: "training", updated: "18 Oct 2026",
   title: { en: "Working with tasks in Taskana", he: "עבודה עם משימות ב-Taskana" },
   summary: { en: "Find your tasks, move them through review, ask questions and see your hours bank.", he: "איתור המשימות שלכם, העברתן בשלבי הסקירה, שאלות ובנק השעות." },
   body: {
@@ -716,7 +842,8 @@ var ARTICLES = [
   '<ul><li><strong>Hours in WorkDesk</strong>, in each task, shows the time reported against it and how it compares with the estimate.</li>' +
   '<li><strong>My hours banks</strong>, on My work, shows your allowance on each project and how much is left.</li>' +
   '<li>Managers also see the project and work-order budgets, and everyone\'s hours banks, on each project page.</li></ul>' +
-  '<div class="callout note"><b>Note:</b> Clients, projects and people are set in WorkDesk — Taskana shows them and keeps the tasks. See <a href="#/portal-how">How WorkDesk and Taskana work together</a>.</div>',
+  '<div class="callout note"><b>Note:</b> Clients, projects and people are set in WorkDesk — Taskana shows them and keeps the tasks. See <a href="#/portal-how">How WorkDesk and Taskana work together</a>.</div>' +
+  '<div class="callout tip"><b>Tip:</b> Research for a task — SME interviews, site visits, walkthroughs — goes in the <strong>Library</strong>, in Taskana\'s sidebar. See <a href="#/library-start">Getting started with the Library</a>.</div>',
   he:
   '<ol class="steps">' +
   '<li>בדף הבית של הפורטל, פתחו את <strong>Taskana</strong>. העמוד <strong>העבודה שלי</strong> מציג את המשימות שהוקצו לכם.</li>' +
@@ -728,7 +855,556 @@ var ARTICLES = [
   '<ul><li><strong>שעות ב-WorkDesk</strong>, בכל משימה, מציג את הזמן שדווח עליה ואת ההשוואה להערכה.</li>' +
   '<li><strong>בנקי השעות שלי</strong>, בעמוד העבודה שלי, מציג את המכסה שלכם בכל פרויקט וכמה נותר.</li>' +
   '<li>מנהלים רואים גם את תקציבי הפרויקט והזמנות העבודה, ואת בנקי השעות של כולם, בעמוד של כל פרויקט.</li></ul>' +
-  '<div class="callout note"><b>שימו לב:</b> לקוחות, פרויקטים ואנשים מוגדרים ב-WorkDesk — ‏Taskana מציגה אותם ומחזיקה את המשימות. ראו <a href="#/portal-how">איך WorkDesk ו-Taskana עובדים יחד</a>.</div>'
+  '<div class="callout note"><b>שימו לב:</b> לקוחות, פרויקטים ואנשים מוגדרים ב-WorkDesk — ‏Taskana מציגה אותם ומחזיקה את המשימות. ראו <a href="#/portal-how">איך WorkDesk ו-Taskana עובדים יחד</a>.</div>' +
+  '<div class="callout tip"><b>טיפ:</b> התחקיר למשימה — ראיונות עם מומחי תוכן, ביקורי אתר, הדגמות — נכתב ב<strong>ספרייה</strong>, בסרגל הצדדי של Taskana. ראו <a href="#/library-start">צעדים ראשונים בספרייה</a>.</div>'
+  } },
+
+{ id: "library-start", cat: "training", updated: "18 Oct 2026",
+  title: { en: "Getting started with the Library", he: "צעדים ראשונים בספרייה" },
+  summary: { en: "Open the team's research notebook in Taskana, find and create documents, edit them safely and export them.", he: "פתיחת מחברת התחקיר של הצוות ב-Taskana, איתור ויצירה של מסמכים, עריכה בטוחה וייצוא." },
+  body: {
+  en:
+  '<p class="lede">The Library is the team\'s research notebook: rich documents for collecting and working through what subject-matter experts tell you — in interviews, on site visits and in product walkthroughs at the client — and for the house notes the team keeps. It lives in Taskana, beside the tasks the research is for.</p>' +
+  '<h2>Opening it</h2>' +
+  '<p>In Taskana, choose <strong>Library</strong> in the sidebar. The Library is no longer a WorkDesk tab — until October 2026 it was, and its items were brought into Taskana as <em>Research notes</em> the first time the Library was opened.</p>' +
+  '<table><thead><tr><th>Taskana role</th><th>In the Library</th></tr></thead><tbody>' +
+  '<tr><td>Admin, Manager</td><td>Read and write; lock, unlock and delete any document; manage everyone\'s snippets.</td></tr>' +
+  '<tr><td>Member</td><td>Read and write; lock and delete their own documents.</td></tr>' +
+  '<tr><td>Viewer</td><td>Read only.</td></tr>' +
+  '<tr><td>External</td><td>No Library.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>Finding a document</h2>' +
+  '<ul><li>With no document open, the list of documents fills the left side. Each shows its title, kind, status, the number of open follow-ups (a <strong>?</strong> badge), its client, project and expert, and who changed it last.</li>' +
+  '<li><strong>Search the library</strong> looks through titles, experts, places, tags and the full text of every document. The three selectors narrow the list by kind, status and client.</li>' +
+  '<li>With a document open, the list folds away so the document has the width. <strong>Documents</strong> at the top brings the list back, and hides it again.</li>' +
+  '<li>A private document appears only in its author\'s list.</li></ul>' +
+  '<h2>Creating a document</h2>' +
+  '<ol class="steps">' +
+  '<li>Click <strong>New document</strong> and choose what it is for. Each kind starts from a template.</li>' +
+  '<li>The document opens with the <strong>Details</strong> tab showing. Give it a title, then set its client, project, task, expert and date.</li>' +
+  '<li>Click <strong>Edit document</strong> and start writing — or paste your raw notes and let <strong>Organize</strong> structure them (see <a href="#/library-sme-interview">Running an SME interview in the Library</a>).</li>' +
+  '</ol>' +
+  '<table><thead><tr><th>Kind</th><th>The template sets out</th></tr></thead><tbody>' +
+  '<tr><td>SME interview</td><td>Interview details (expert, role, date and place, attendees, recording), goals, questions and answers, procedures described, terminology, follow-ups.</td></tr>' +
+  '<tr><td>Site visit</td><td>Visit details (site, date, host, equipment and versions), what was observed, procedures observed, photos and screens, safety notes, follow-ups.</td></tr>' +
+  '<tr><td>Walkthrough</td><td>System and version, steps shown, a table of screens and messages, follow-ups.</td></tr>' +
+  '<tr><td>Research notes</td><td>Sources, findings, open questions.</td></tr>' +
+  '<tr><td>Meeting notes</td><td>Agenda, decisions, action items.</td></tr>' +
+  '<tr><td>Blank document</td><td>An empty page.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>Reading and editing</h2>' +
+  '<p>A document always opens for reading, so a stray click or key can\'t change it. Links work, and nothing you type lands in the text.</p>' +
+  '<ul><li><strong>Edit document</strong> — or <code>Ctrl</code>+<code>E</code>, or a double-click in the text — switches editing on. The page gets a green frame and the toolbar appears.</li>' +
+  '<li><strong>Done editing</strong> (or <code>Ctrl</code>+<code>E</code> again) switches it off and saves.</li>' +
+  '<li><strong>Visual</strong> and <strong>HTML</strong>, beside Done editing, switch between the page and its code — see <a href="#/library-html-styles">Styles, fonts and HTML mode in the Library</a>.</li>' +
+  '<li><strong>Locked</strong>: under Details, the document\'s author or a manager can lock it. Nobody can switch editing on until it is unlocked — use it for a <em>Final</em> document.</li></ul>' +
+  '<h2>Saving</h2>' +
+  '<p>There is no Save button. Every change is saved a moment after you stop typing; the footer says <strong>Saving…</strong> and then <strong>Saved</strong>, with who saved last and when. <code>Ctrl</code>+<code>S</code> saves at once. The Library is part of Taskana\'s data, so it is kept, shared and backed up the same way as the tasks.</p>' +
+  '<div class="callout warn"><b>Important:</b> If two people edit the same document at the same moment, the later save wins. Agree who is editing.</div>' +
+  '<h2>The side panel</h2>' +
+  '<table><thead><tr><th>Tab</th><th>What it shows</th></tr></thead><tbody>' +
+  '<tr><td>Outline</td><td>Every heading, indented by level. Click one to jump to it.</td></tr>' +
+  '<tr><td>Styles</td><td>The document\'s fonts and styles.</td></tr>' +
+  '<tr><td>Follow-ups</td><td>Everything marked as a follow-up, and every unticked checklist item, with a box to tick when it is resolved. <strong>Create tasks from open follow-ups</strong> turns them into Taskana tasks.</td></tr>' +
+  '<tr><td>Terms</td><td>Every word marked as a term, with a field for what it means.</td></tr>' +
+  '<tr><td>Links</td><td>The links in this document — to other documents, headings, tasks and the web — and <strong>Linked from</strong>: the documents that link here.</td></tr>' +
+  '<tr><td>Details</td><td>The document\'s details — see below.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>Details</h2>' +
+  '<table><thead><tr><th>Field</th><th>What it is for</th></tr></thead><tbody>' +
+  '<tr><td>Title · Kind</td><td>The document\'s name, and which template it started from.</td></tr>' +
+  '<tr><td>Status</td><td><em>Draft</em>, <em>In review</em> or <em>Final</em>.</td></tr>' +
+  '<tr><td>Client · Project · Task</td><td>What the research is for. The task has a link to open it; follow-ups become tasks on the project.</td></tr>' +
+  '<tr><td>Subject-matter expert · role</td><td>Who you talked to, and what they do.</td></tr>' +
+  '<tr><td>Date · Where</td><td>When and where — the client site, Teams…</td></tr>' +
+  '<tr><td>Tags</td><td>Words to find the document by.</td></tr>' +
+  '<tr><td>Private</td><td><em>Private — only I can see it</em> keeps it out of everyone else\'s list.</td></tr>' +
+  '<tr><td>Locked</td><td>No editing until unlocked (the author or a manager).</td></tr>' +
+  '</tbody></table>' +
+  '<p>Under the fields are who created the document and when, and <strong>Delete document</strong> (the author or a manager) — the message that follows offers <strong>Undo</strong>.</p>' +
+  '<h2>Exporting and printing</h2>' +
+  '<p><strong>Export</strong>, in the reading bar (and under <strong>Writer tools</strong> while editing), offers:</p>' +
+  '<ul><li><strong>Word document (.doc)</strong> — opens in Word with the document\'s look, ready to edit or to paste into a client template.</li>' +
+  '<li><strong>Web page (.html)</strong> — a single file, with the document\'s styles and fonts.</li>' +
+  '<li><strong>Markdown (.md)</strong>, or <strong>Copy as Markdown</strong> to paste it into another tool.</li>' +
+  '<li><strong>Print or save as PDF</strong> (<code>Ctrl</code>+<code>P</code>) — page breaks you inserted start a new page.</li></ul>' +
+  '<p>Every export starts with the title and a line with the client, project, expert and date.</p>' +
+  '<div class="callout tip"><b>Tip:</b> Next, read <a href="#/library-formatting">Formatting, lists, tables, links and blocks in the Library</a>. The Handbook covers the Library in full — see <a href="../handbook/index.html#ch-tk-library">The Library</a>.</div>',
+  he:
+  '<p class="lede">הספרייה היא מחברת התחקיר של הצוות: מסמכים עשירים לאיסוף ולעיבוד של מה שמומחי תוכן מספרים לכם — בראיונות, בביקורי אתר ובהדגמות מוצר אצל הלקוח — ולהערות הפנימיות של הצוות. היא נמצאת ב-Taskana, ליד המשימות שהתחקיר נועד להן.</p>' +
+  '<h2>פתיחה</h2>' +
+  '<p>ב-Taskana, בחרו <strong>ספרייה</strong> בסרגל הצדדי. הספרייה אינה עוד לשונית ב-WorkDesk — עד אוקטובר 2026 היא הייתה, והפריטים שלה הועברו ל-Taskana כ<em>הערות תחקיר</em> בפעם הראשונה שהספרייה נפתחה.</p>' +
+  '<table><thead><tr><th>תפקיד ב-Taskana</th><th>בספרייה</th></tr></thead><tbody>' +
+  '<tr><td>מנהל מערכת, מנהל</td><td>קריאה וכתיבה; נעילה, שחרור ומחיקה של כל מסמך; ניהול הקטעים השמורים של כולם.</td></tr>' +
+  '<tr><td>חבר צוות</td><td>קריאה וכתיבה; נעילה ומחיקה של המסמכים שלו.</td></tr>' +
+  '<tr><td>צופה</td><td>קריאה בלבד.</td></tr>' +
+  '<tr><td>חיצוני</td><td>אין ספרייה.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>איתור מסמך</h2>' +
+  '<ul><li>כשאין מסמך פתוח, רשימת המסמכים ממלאת את הצד. לכל מסמך מוצגים הכותרת, הסוג, הסטטוס, מספר הנקודות הפתוחות להמשך (תג <strong>?</strong>), הלקוח, הפרויקט והמומחה, ומי שינה אותו לאחרונה.</li>' +
+  '<li><strong>חיפוש בספרייה</strong> מחפש בכותרות, במומחים, במקומות, בתגיות ובכל הטקסט של כל מסמך. שלוש הבחירות מצמצמות את הרשימה לפי סוג, סטטוס ולקוח.</li>' +
+  '<li>כשמסמך פתוח, הרשימה מתקפלת כדי שלמסמך יהיה כל הרוחב. <strong>מסמכים</strong> למעלה מחזיר את הרשימה, ומסתיר אותה שוב.</li>' +
+  '<li>מסמך פרטי מופיע רק ברשימה של מי שכתב אותו.</li></ul>' +
+  '<h2>יצירת מסמך</h2>' +
+  '<ol class="steps">' +
+  '<li>לחצו <strong>מסמך חדש</strong> ובחרו למה הוא נועד. כל סוג מתחיל מתבנית.</li>' +
+  '<li>המסמך נפתח כשהלשונית <strong>פרטים</strong> מוצגת. תנו לו כותרת, ואז קבעו את הלקוח, הפרויקט, המשימה, המומחה והתאריך.</li>' +
+  '<li>לחצו <strong>עריכת המסמך</strong> והתחילו לכתוב — או הדביקו את ההערות הגולמיות ותנו ל<strong>סידור</strong> לבנות אותן (ראו <a href="#/library-sme-interview">ראיון מומחה תוכן בספרייה</a>).</li>' +
+  '</ol>' +
+  '<table><thead><tr><th>סוג</th><th>מה התבנית כוללת</th></tr></thead><tbody>' +
+  '<tr><td>ראיון מומחה תוכן</td><td>פרטי הראיון (מומחה, תפקיד, תאריך ומקום, משתתפים, הקלטה), מטרות, שאלות ותשובות, נהלים שתוארו, מונחים, נקודות להמשך.</td></tr>' +
+  '<tr><td>ביקור באתר</td><td>פרטי הביקור (אתר, תאריך, מארח, ציוד וגרסאות), מה נצפה, נהלים שנצפו, תמונות ומסכים, הערות בטיחות, נקודות להמשך.</td></tr>' +
+  '<tr><td>הדגמה</td><td>מערכת וגרסה, הצעדים שהוצגו, טבלת מסכים והודעות, נקודות להמשך.</td></tr>' +
+  '<tr><td>הערות תחקיר</td><td>מקורות, ממצאים, שאלות פתוחות.</td></tr>' +
+  '<tr><td>סיכום פגישה</td><td>סדר יום, החלטות, משימות לביצוע.</td></tr>' +
+  '<tr><td>מסמך ריק</td><td>דף ריק.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>קריאה ועריכה</h2>' +
+  '<p>מסמך תמיד נפתח לקריאה, כך שלחיצה או הקשה מקרית לא ישנו אותו. הקישורים עובדים, ושום דבר שתקלידו לא נכנס לטקסט.</p>' +
+  '<ul><li><strong>עריכת המסמך</strong> — או <code>Ctrl</code>+<code>E</code>, או לחיצה כפולה בטקסט — מפעילה עריכה. הדף מקבל מסגרת ירוקה וסרגל הכלים מופיע.</li>' +
+  '<li><strong>סיום עריכה</strong> (או <code>Ctrl</code>+<code>E</code> שוב) מכבה את העריכה ושומר.</li>' +
+  '<li><strong>חזותי</strong> ו-<strong>HTML</strong>, ליד סיום עריכה, עוברים בין הדף לקוד שלו — ראו <a href="#/library-html-styles">סגנונות, גופנים ומצב HTML בספרייה</a>.</li>' +
+  '<li><strong>נעול</strong>: תחת פרטים, מי שכתב את המסמך או מנהל יכולים לנעול אותו. אף אחד לא יכול להפעיל עריכה עד שהוא משוחרר — השתמשו בזה למסמך <em>סופי</em>.</li></ul>' +
+  '<h2>שמירה</h2>' +
+  '<p>אין כפתור שמירה. כל שינוי נשמר רגע אחרי שמפסיקים להקליד; בתחתית מופיע <strong>שומר…</strong> ואז <strong>נשמר</strong>, עם מי שמר לאחרונה ומתי. <code>Ctrl</code>+<code>S</code> שומר מיד. הספרייה היא חלק מהנתונים של Taskana, ולכן היא נשמרת, משותפת ומגובה כמו המשימות.</p>' +
+  '<div class="callout warn"><b>חשוב:</b> אם שני אנשים עורכים את אותו מסמך באותו רגע, השמירה המאוחרת גוברת. תאמו מי עורך.</div>' +
+  '<h2>החלונית הצדדית</h2>' +
+  '<table><thead><tr><th>לשונית</th><th>מה היא מציגה</th></tr></thead><tbody>' +
+  '<tr><td>מבנה</td><td>כל הכותרות, מוזחות לפי רמה. לחיצה על כותרת קופצת אליה.</td></tr>' +
+  '<tr><td>סגנונות</td><td>הגופנים והסגנונות של המסמך.</td></tr>' +
+  '<tr><td>להמשך</td><td>כל מה שסומן להמשך טיפול, וכל פריט לא מסומן ברשימת בדיקה, עם תיבה לסמן כשהוא נפתר. <strong>יצירת משימות מנקודות פתוחות</strong> הופך אותם למשימות ב-Taskana.</td></tr>' +
+  '<tr><td>מונחים</td><td>כל מילה שסומנה כמונח, עם שדה למשמעות שלה.</td></tr>' +
+  '<tr><td>קישורים</td><td>הקישורים במסמך — למסמכים אחרים, לכותרות, למשימות ולאינטרנט — ו<strong>מקושר מ-</strong>: המסמכים שמקשרים לכאן.</td></tr>' +
+  '<tr><td>פרטים</td><td>פרטי המסמך — ראו בהמשך.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>פרטים</h2>' +
+  '<table><thead><tr><th>שדה</th><th>למה הוא משמש</th></tr></thead><tbody>' +
+  '<tr><td>כותרת · סוג</td><td>שם המסמך, ומאיזו תבנית הוא התחיל.</td></tr>' +
+  '<tr><td>סטטוס</td><td><em>טיוטה</em>, <em>בסקירה</em> או <em>סופי</em>.</td></tr>' +
+  '<tr><td>לקוח · פרויקט · משימה</td><td>למה התחקיר נועד. למשימה יש קישור שפותח אותה; נקודות להמשך הופכות למשימות בפרויקט.</td></tr>' +
+  '<tr><td>מומחה/ית תוכן · תפקיד</td><td>עם מי דיברתם, ומה הוא או היא עושים.</td></tr>' +
+  '<tr><td>תאריך · איפה</td><td>מתי ואיפה — אתר הלקוח, Teams…</td></tr>' +
+  '<tr><td>תגיות</td><td>מילים שלפיהן אפשר למצוא את המסמך.</td></tr>' +
+  '<tr><td>פרטי</td><td><em>פרטי — רק אני רואה אותו</em> מוציא אותו מהרשימה של כל השאר.</td></tr>' +
+  '<tr><td>נעול</td><td>אין עריכה עד לשחרור (מי שכתב או מנהל).</td></tr>' +
+  '</tbody></table>' +
+  '<p>מתחת לשדות מופיעים מי יצר את המסמך ומתי, ו<strong>מחיקת המסמך</strong> (מי שכתב או מנהל) — ההודעה שמופיעה אחר כך מציעה <strong>ביטול</strong>.</p>' +
+  '<h2>ייצוא והדפסה</h2>' +
+  '<p><strong>ייצוא</strong>, בסרגל הקריאה (ותחת <strong>כלי כתיבה</strong> בזמן עריכה), מציע:</p>' +
+  '<ul><li><strong>מסמך Word ‏(.doc)</strong> — נפתח ב-Word במראה של המסמך, מוכן לעריכה או להדבקה בתבנית של הלקוח.</li>' +
+  '<li><strong>דף אינטרנט ‏(.html)</strong> — קובץ אחד, עם הסגנונות והגופנים של המסמך.</li>' +
+  '<li><strong>Markdown ‏(.md)</strong>, או <strong>העתקה כ-Markdown</strong> להדבקה בכלי אחר.</li>' +
+  '<li><strong>הדפסה או שמירה כ-PDF</strong> (<code>Ctrl</code>+<code>P</code>) — מעברי עמוד שהוספתם מתחילים עמוד חדש.</li></ul>' +
+  '<p>כל ייצוא מתחיל בכותרת ובשורה עם הלקוח, הפרויקט, המומחה והתאריך.</p>' +
+  '<div class="callout tip"><b>טיפ:</b> המשיכו ל<a href="#/library-formatting">עיצוב, רשימות, טבלאות, קישורים ובלוקים בספרייה</a>. המדריך מכסה את הספרייה במלואה — ראו <a href="../handbook/he.html#ch-tk-library">הספרייה</a>.</div>'
+  } },
+
+{ id: "library-sme-interview", cat: "training", updated: "18 Oct 2026",
+  title: { en: "Running an SME interview in the Library", he: "ראיון מומחה תוכן בספרייה" },
+  summary: { en: "From an empty template to a structured, reviewed document: notes, follow-ups, terms, contents and export.", he: "מתבנית ריקה למסמך מסודר וסקור: הערות, נקודות להמשך, מונחים, תוכן עניינים וייצוא." },
+  body: {
+  en:
+  '<p class="lede">Most of what we write starts with a subject-matter expert (SME) explaining how something works. This guide walks through one interview in the Library — before, during and after — until it is a document the team can build on.</p>' +
+  '<h2>Before the interview</h2>' +
+  '<ol class="steps">' +
+  '<li>In Taskana, open <strong>Library</strong> in the sidebar, click <strong>New document</strong> and choose <strong>SME interview</strong>. The template sets out the interview details, goals, questions and answers, procedures described, terminology and follow-ups.</li>' +
+  '<li>On the <strong>Details</strong> tab, give it a title and link it to its work: the <strong>Client</strong>, the <strong>Project</strong> and the <strong>Task</strong> the research is for. Fill in the <strong>Subject-matter expert</strong> and their <strong>role</strong>, the <strong>Date</strong> and <strong>Where</strong> (the client site, Teams…), and a few <strong>Tags</strong>. The status starts as <em>Draft</em>.</li>' +
+  '<li>Click <strong>Edit document</strong> (<code>Ctrl</code>+<code>E</code>). Fill in the interview details table — attendees, whether it is recorded — and write your goals and the questions you plan to ask.</li>' +
+  '</ol>' +
+  '<div class="callout note"><b>Note:</b> Set the project before the interview. Follow-ups become tasks on the document\'s project, so without one they cannot be turned into tasks.</div>' +
+  '<h2>During the interview — take raw notes</h2>' +
+  '<p>Don\'t format as you go. Type under <strong>Questions and answers</strong> as fast as you need, one thought per line, or paste notes you took elsewhere. A few habits make the clean-up afterwards automatic:</p>' +
+  '<table><thead><tr><th>Type</th><th>Becomes, after Organize</th></tr></thead><tbody>' +
+  '<tr><td><code>Q:</code> and <code>A:</code> at the start of a line</td><td>A question-and-answer block</td></tr>' +
+  '<tr><td>A line in CAPITALS, or starting with <code>#</code></td><td>A heading</td></tr>' +
+  '<tr><td>A short line ending with a colon, e.g. <code>Error codes:</code></td><td>A Heading 2</td></tr>' +
+  '<tr><td><code>1.2</code> or <code>1.2.3</code> at the start</td><td>A numbered Heading 2 or 3</td></tr>' +
+  '<tr><td><code>1.</code> or <code>a)</code> at the start</td><td>A numbered step</td></tr>' +
+  '<tr><td><code>-</code>, <code>*</code> or <code>•</code> at the start</td><td>A bullet</td></tr>' +
+  '<tr><td><code>[ ]</code> or <code>[x]</code> at the start</td><td>A checklist item</td></tr>' +
+  '<tr><td><code>Note:</code>, <code>Tip:</code>, <code>Warning:</code> or <code>Caution:</code></td><td>A callout of that kind</td></tr>' +
+  '<tr><td><code>todo</code>, <code>TBD</code>, <code>follow-up</code> or <code>??</code></td><td>A follow-up</td></tr>' +
+  '<tr><td>Something that looks like code — JSON, XML, SQL, a shell command</td><td>A code block, tidied and labelled</td></tr>' +
+  '</tbody></table>' +
+  '<p>When the interview is recorded, <strong>Insert → Time stamp</strong> drops the current time in brackets, so you can find the moment in the recording later. Paste screenshots straight onto the page with <code>Ctrl</code>+<code>V</code>.</p>' +
+  '<h2>After the interview — organize</h2>' +
+  '<ol class="steps">' +
+  '<li>Select the notes (or nothing, to organize every plain paragraph) and choose <strong>Writer tools → Organize pasted notes into a document</strong>. Headings, lists and tables you already made are left alone. One <strong>Undo</strong> puts the notes back exactly as they were.</li>' +
+  '<li>Read it through. Fix headings with the <strong>Style</strong> menu, and tidy anything Organize could not guess.</li>' +
+  '<li>Choose <strong>Writer tools → Tidy code blocks</strong> if the expert showed you commands, settings or messages.</li>' +
+  '</ol>' +
+  '<h2>Follow-ups become tasks</h2>' +
+  '<ol class="steps">' +
+  '<li>Select anything that still needs an answer and choose <strong>Writer tools → Mark selection as a follow-up</strong>. It is highlighted, and listed on the <strong>Follow-ups</strong> tab together with any unticked checklist items.</li>' +
+  '<li>On the Follow-ups tab, tick the ones that are already resolved.</li>' +
+  '<li>Click <strong>Create tasks from open follow-ups</strong>. Each open follow-up becomes a Taskana task on the document\'s project, assigned to you — reassign them in Taskana as needed.</li>' +
+  '</ol>' +
+  '<h2>Capture the client\'s terms</h2>' +
+  '<ol class="steps">' +
+  '<li>Select a word or phrase the client uses and choose <strong>Writer tools → Mark selection as a term</strong>.</li>' +
+  '<li>On the <strong>Terms</strong> tab, write what each term means.</li>' +
+  '<li>Choose <strong>Insert glossary from terms</strong> to add a Glossary table at the end of the document. Run it again after adding terms — it refreshes the table.</li>' +
+  '</ol>' +
+  '<h2>Give it structure</h2>' +
+  '<ul><li><strong>Insert / update table of contents</strong> adds a contents box at the top that links to every heading. Run it again after changing headings. (Organize adds one by itself when it creates two or more headings.)</li>' +
+  '<li><strong>Number the headings (1, 1.1, 1.2…)</strong> numbers every Heading 1–3; choose it again to stop.</li>' +
+  '<li><strong>Clean up formatting (whole document)</strong> removes empty paragraphs and leftovers from pasted text.</li>' +
+  '<li>Link the interview to related documents with <strong>Insert → Link to a document, heading or task…</strong>. The other document lists it under <strong>Linked from</strong>.</li></ul>' +
+  '<h2>Review and finish</h2>' +
+  '<ol class="steps">' +
+  '<li>Under Details, set the status to <em>In review</em> and ask your Team Lead — or the SME — to read it.</li>' +
+  '<li>Once it is agreed, set the status to <em>Final</em> and tick <strong>Locked</strong>, so nobody changes it by accident.</li>' +
+  '<li>Choose <strong>Export → Word document (.doc)</strong> when the content goes into the client\'s manual, or <strong>Print or save as PDF</strong> to send the expert a copy for sign-off.</li>' +
+  '</ol>' +
+  '<div class="callout tip"><b>Tip:</b> Search the Library for the expert\'s name before you go — earlier interviews with them show what is already known. The Handbook has a worked example — see <a href="../handbook/index.html#ch-tk-lib-tools">Library tools: structure, styles and HTML</a>.</div>',
+  he:
+  '<p class="lede">רוב מה שאנחנו כותבים מתחיל במומחה תוכן שמסביר איך משהו עובד. המדריך הזה עובר על ראיון אחד בספרייה — לפני, במהלך ואחרי — עד שהוא מסמך שהצוות יכול לבנות עליו.</p>' +
+  '<h2>לפני הראיון</h2>' +
+  '<ol class="steps">' +
+  '<li>ב-Taskana, פתחו את <strong>ספרייה</strong> בסרגל הצדדי, לחצו <strong>מסמך חדש</strong> ובחרו <strong>ראיון מומחה תוכן</strong>. התבנית כוללת את פרטי הראיון, מטרות, שאלות ותשובות, נהלים שתוארו, מונחים ונקודות להמשך.</li>' +
+  '<li>בלשונית <strong>פרטים</strong>, תנו כותרת וקשרו את המסמך לעבודה: <strong>לקוח</strong>, <strong>פרויקט</strong> ו<strong>משימה</strong> שהתחקיר נועד להם. מלאו את <strong>מומחה/ית תוכן</strong> ואת התפקיד, <strong>תאריך</strong> ו<strong>איפה</strong> (אתר הלקוח, Teams…), וכמה <strong>תגיות</strong>. הסטטוס מתחיל כ<em>טיוטה</em>.</li>' +
+  '<li>לחצו <strong>עריכת המסמך</strong> (<code>Ctrl</code>+<code>E</code>). מלאו את טבלת פרטי הראיון — משתתפים, האם הוא מוקלט — וכתבו את המטרות ואת השאלות שאתם מתכננים לשאול.</li>' +
+  '</ol>' +
+  '<div class="callout note"><b>שימו לב:</b> קבעו את הפרויקט לפני הראיון. נקודות להמשך הופכות למשימות בפרויקט של המסמך, ובלי פרויקט אי אפשר להפוך אותן למשימות.</div>' +
+  '<h2>במהלך הראיון — הערות גולמיות</h2>' +
+  '<p>אל תעצבו תוך כדי. הקלידו תחת <strong>שאלות ותשובות</strong> כמה שיותר מהר, מחשבה אחת בכל שורה, או הדביקו הערות שרשמתם במקום אחר. כמה הרגלים הופכים את הסידור אחר כך לאוטומטי:</p>' +
+  '<table><thead><tr><th>מקלידים</th><th>אחרי סידור, הופך ל</th></tr></thead><tbody>' +
+  '<tr><td><code>Q:</code> ו-<code>A:</code> (או <code>ש:</code> ו-<code>ת:</code>) בתחילת שורה</td><td>בלוק שאלה ותשובה</td></tr>' +
+  '<tr><td>שורה באותיות גדולות, או שמתחילה ב-<code>#</code></td><td>כותרת</td></tr>' +
+  '<tr><td>שורה קצרה שמסתיימת בנקודתיים, למשל <code>קודי שגיאה:</code></td><td>כותרת 2</td></tr>' +
+  '<tr><td><code>1.2</code> או <code>1.2.3</code> בהתחלה</td><td>כותרת 2 או 3 ממוספרת</td></tr>' +
+  '<tr><td><code>1.</code> או <code>a)</code> בהתחלה</td><td>צעד ממוספר</td></tr>' +
+  '<tr><td><code>-</code>, <code>*</code> או <code>•</code> בהתחלה</td><td>תבליט</td></tr>' +
+  '<tr><td><code>[ ]</code> או <code>[x]</code> בהתחלה</td><td>פריט ברשימת בדיקה</td></tr>' +
+  '<tr><td><code>Note:</code>, <code>Tip:</code>, <code>Warning:</code> או <code>Caution:</code></td><td>תיבת הדגשה מהסוג הזה</td></tr>' +
+  '<tr><td><code>todo</code>, <code>TBD</code>, <code>follow-up</code> או <code>??</code></td><td>נקודה להמשך</td></tr>' +
+  '<tr><td>משהו שנראה כמו קוד — JSON, ‏XML, ‏SQL, פקודת מעטפת</td><td>בלוק קוד, מסודר ומתויג</td></tr>' +
+  '</tbody></table>' +
+  '<p>כשהראיון מוקלט, <strong>הוספה ← חותמת זמן</strong> מוסיפה את השעה הנוכחית בסוגריים, כדי שתמצאו אחר כך את הרגע בהקלטה. צילומי מסך מדביקים ישירות לדף עם <code>Ctrl</code>+<code>V</code>.</p>' +
+  '<h2>אחרי הראיון — סידור</h2>' +
+  '<ol class="steps">' +
+  '<li>בחרו את ההערות (או כלום, כדי לסדר כל פסקה רגילה) ובחרו <strong>כלי כתיבה ← סידור הערות שהודבקו למסמך</strong>. כותרות, רשימות וטבלאות שכבר יצרתם נשארות כמו שהן. <strong>ביטול</strong> אחד מחזיר את ההערות בדיוק כפי שהיו.</li>' +
+  '<li>קראו את התוצאה. תקנו כותרות בתפריט <strong>סגנון</strong>, וסדרו כל מה שהסידור לא ניחש.</li>' +
+  '<li>אם המומחה הראה לכם פקודות, הגדרות או הודעות, בחרו <strong>כלי כתיבה ← סידור בלוקי קוד</strong>.</li>' +
+  '</ol>' +
+  '<h2>נקודות להמשך הופכות למשימות</h2>' +
+  '<ol class="steps">' +
+  '<li>בחרו כל דבר שעדיין צריך תשובה ובחרו <strong>כלי כתיבה ← סימון הבחירה להמשך טיפול</strong>. הוא מודגש, ומופיע בלשונית <strong>להמשך</strong> יחד עם פריטים לא מסומנים ברשימות בדיקה.</li>' +
+  '<li>בלשונית להמשך, סמנו את מה שכבר נפתר.</li>' +
+  '<li>לחצו <strong>יצירת משימות מנקודות פתוחות</strong>. כל נקודה פתוחה הופכת למשימה ב-Taskana בפרויקט של המסמך, מוקצית לכם — הקצו אותן מחדש ב-Taskana לפי הצורך.</li>' +
+  '</ol>' +
+  '<h2>המונחים של הלקוח</h2>' +
+  '<ol class="steps">' +
+  '<li>בחרו מילה או ביטוי שהלקוח משתמש בהם ובחרו <strong>כלי כתיבה ← סימון הבחירה כמונח</strong>.</li>' +
+  '<li>בלשונית <strong>מונחים</strong>, כתבו מה כל מונח אומר.</li>' +
+  '<li>בחרו <strong>הוספת מילון מהמונחים</strong> כדי להוסיף טבלת מילון מונחים בסוף המסמך. הפעילו שוב אחרי שהוספתם מונחים — הטבלה מתעדכנת.</li>' +
+  '</ol>' +
+  '<h2>מבנה</h2>' +
+  '<ul><li><strong>הוספה / עדכון של תוכן עניינים</strong> מוסיף בראש המסמך תיבת תוכן עם קישור לכל כותרת. הפעילו שוב אחרי שינוי כותרות. (הסידור מוסיף אחת בעצמו כשהוא יוצר שתי כותרות או יותר.)</li>' +
+  '<li><strong>מספור הכותרות (1, 1.1, 1.2…)</strong> ממספר כל כותרת 1–3; בחירה נוספת מפסיקה את המספור.</li>' +
+  '<li><strong>ניקוי עיצוב (כל המסמך)</strong> מסיר פסקאות ריקות ושאריות מטקסט שהודבק.</li>' +
+  '<li>קשרו את הראיון למסמכים קשורים עם <strong>הוספה ← קישור למסמך, לכותרת או למשימה…</strong>. המסמך השני מציג אותו תחת <strong>מקושר מ-</strong>.</li></ul>' +
+  '<h2>סקירה וסיום</h2>' +
+  '<ol class="steps">' +
+  '<li>תחת פרטים, שנו את הסטטוס ל<em>בסקירה</em> ובקשו מראש הצוות — או מהמומחה — לקרוא.</li>' +
+  '<li>אחרי שהתוכן מוסכם, שנו את הסטטוס ל<em>סופי</em> וסמנו <strong>נעול</strong>, כדי שאף אחד לא ישנה אותו בטעות.</li>' +
+  '<li>בחרו <strong>ייצוא ← מסמך Word ‏(.doc)</strong> כשהתוכן עובר למדריך של הלקוח, או <strong>הדפסה או שמירה כ-PDF</strong> כדי לשלוח למומחה עותק לאישור.</li>' +
+  '</ol>' +
+  '<div class="callout tip"><b>טיפ:</b> לפני שיוצאים, חפשו בספרייה את שם המומחה — ראיונות קודמים איתו מראים מה כבר ידוע. במדריך יש דוגמה מלאה — ראו <a href="../handbook/he.html#ch-tk-lib-tools">כלי הספרייה: מבנה, סגנונות ו-HTML</a>.</div>'
+  } },
+
+{ id: "library-formatting", cat: "training", updated: "18 Oct 2026",
+  title: { en: "Formatting, lists, tables, links and blocks in the Library", he: "עיצוב, רשימות, טבלאות, קישורים ובלוקים בספרייה" },
+  summary: { en: "The Library editor, control by control: the toolbar, styles, lists, tables, images, links, content blocks, snippets and shortcuts.", he: "עורך הספרייה, פקד אחר פקד: סרגל הכלים, סגנונות, רשימות, טבלאות, תמונות, קישורים, בלוקי תוכן, קטעים שמורים וקיצורים." },
+  body: {
+  en:
+  '<p class="lede">The Library editor works like a word processor: a toolbar of buttons and menus over the page, keyboard shortcuts, and undo for every change. Switch editing on first — <strong>Edit document</strong> or <code>Ctrl</code>+<code>E</code> — see <a href="#/library-start">Getting started with the Library</a>.</p>' +
+  '<h2>The toolbar</h2>' +
+  '<table><thead><tr><th>Control</th><th>What it does</th></tr></thead><tbody>' +
+  '<tr><td>Undo · Redo</td><td>Steps back and forward through every change — typing (a word at a time), buttons and tools alike.</td></tr>' +
+  '<tr><td>Style</td><td>Shows the style the caret is in and applies another: Normal text, Heading 1–4, Lead paragraph, Small print, Caption, Quote, Code block, and the document\'s own styles.</td></tr>' +
+  '<tr><td>Font · Size</td><td>The typeface and size of the selected words. The list shows each font in its own face.</td></tr>' +
+  '<tr><td>B · I · U · S</td><td>Bold, italic, underline, strikethrough.</td></tr>' +
+  '<tr><td>More formatting</td><td>Superscript, subscript, inline code, keyboard key, text size, clear formatting.</td></tr>' +
+  '<tr><td>Text colour · Highlight</td><td>A palette for each; <em>Automatic</em> and <em>No highlight</em> remove them.</td></tr>' +
+  '<tr><td>Alignment</td><td>Start, centre, end, justify — for every paragraph in the selection.</td></tr>' +
+  '<tr><td>Bullets · Numbering</td><td>List styles — see Lists below.</td></tr>' +
+  '<tr><td>Decrease · Increase indent</td><td>Nests a list item, or indents a paragraph by a step.</td></tr>' +
+  '<tr><td>Spacing and indents</td><td>Line spacing (1.0, 1.15, 1.5, 2.0), space after paragraphs (none, normal, large), first-line and hanging indents.</td></tr>' +
+  '<tr><td>Insert</td><td>Links, images, tables, content blocks, snippets, special characters, a divider, a page break, a table of contents, today\'s date, a time stamp.</td></tr>' +
+  '<tr><td>Table</td><td>Everything about the table the caret is in.</td></tr>' +
+  '<tr><td>Link · Find</td><td>A web link; find and replace.</td></tr>' +
+  '<tr><td>Writer tools</td><td>Structure, follow-ups, terms, code and clean-up — see <a href="#/library-sme-interview">Running an SME interview in the Library</a>.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>Formatting text and paragraphs</h2>' +
+  '<ul><li>Select the words first, then use the toolbar. Formatting wraps exactly the selected words — across several lines or paragraphs too — without adding line breaks or spaces. Click the button again to take it off.</li>' +
+  '<li><strong>More formatting → Clear formatting</strong> removes bold, italics, colours, highlights, fonts and sizes from the selection.</li>' +
+  '<li>Use <strong>styles</strong> to give a paragraph its role rather than making text bold and large by hand: headings feed the outline, the table of contents and heading numbers, and a style can be changed for the whole document at once — see <a href="#/library-html-styles">Styles, fonts and HTML mode in the Library</a>.</li>' +
+  '<li><strong>Alignment</strong>, <strong>Spacing and indents</strong> and the indent buttons apply to every paragraph the selection touches.</li>' +
+  '<li>Each paragraph runs in the direction of its own text, so English notes in a Hebrew document (and the reverse) read correctly.</li></ul>' +
+  '<h2>Lists</h2>' +
+  '<ul><li><strong>Bullets</strong>: dots, circles, squares, dashes, arrows, or a checklist — click a checklist box to tick it.</li>' +
+  '<li><strong>Numbering</strong>: 1. 2. 3. · a. b. c. · A. B. C. · i. ii. iii. · I. II. III. — and two multilevel styles for the whole list: <em>Multilevel 1 · 1.1 · 1.1.1</em> and <em>Outline 1 · a · i</em>.</li>' +
+  '<li><code>Tab</code> on a list item nests it one level deeper; <code>Shift</code>+<code>Tab</code> brings it back. <strong>Decrease</strong> and <strong>Increase indent</strong> do the same.</li>' +
+  '<li><strong>Numbering → Start at…</strong> starts a numbered list from any number — useful when a procedure continues after a note.</li>' +
+  '<li><strong>Remove the list</strong> turns the items back into paragraphs.</li></ul>' +
+  '<h2>Tables</h2>' +
+  '<ol class="steps">' +
+  '<li>Choose <strong>Insert → Table</strong> and move over the grid to choose the size (up to 8 × 8), or <strong>Custom size…</strong> for up to 60 rows and 15 columns. The first row is a header row.</li>' +
+  '<li>Type in a cell. <code>Tab</code> moves to the next cell (and adds a row at the end), <code>Shift</code>+<code>Tab</code> to the previous one.</li>' +
+  '<li>To size a column, point at the right edge of one of its cells (the left edge in Hebrew) until the pointer becomes ↔, and drag. The table keeps the widths you set.</li>' +
+  '<li>Use the <strong>Table</strong> menu for everything else.</li>' +
+  '</ol>' +
+  '<table><thead><tr><th>Table menu</th><th>What it does</th></tr></thead><tbody>' +
+  '<tr><td>Insert row above / below, column before / after</td><td>Adds a row or column next to the caret.</td></tr>' +
+  '<tr><td>Delete row / column / table</td><td>Removes it; deleting the last row or column removes the table.</td></tr>' +
+  '<tr><td>Merge with the cell to the right / below</td><td>Joins two cells, keeping both contents.</td></tr>' +
+  '<tr><td>Split merged cell</td><td>Splits a merged cell back into single cells.</td></tr>' +
+  '<tr><td>Header row · First column as labels · Caption</td><td>Turns the first row into headings, the first column into bold labels, and adds a caption above the table.</td></tr>' +
+  '<tr><td>Autofit</td><td><em>Fit to contents</em>, <em>Fit to page width</em>, <em>Fixed column widths</em> (the widths stop changing as you type), <em>Distribute columns evenly</em>.</td></tr>' +
+  '<tr><td>Cell alignment · Cell shading</td><td>Top, middle or bottom; start, centre or end; a background colour — for the selected cells.</td></tr>' +
+  '<tr><td>Table style</td><td>Grid, striped rows, plain lines, compact, dark header.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>Images</h2>' +
+  '<ul><li>Choose <strong>Insert → Image…</strong>, paste a screenshot (<code>Ctrl</code>+<code>V</code>), or drag an image file onto the page. Images up to 1 MB.</li>' +
+  '<li>Click an image to select it. The bar above the page sets its width (25 %, 50 %, 75 %, 100 %, original), wraps the text to the left or right, centres it or puts it back in line, sets its alternative text, adds a caption under it, or deletes it.</li></ul>' +
+  '<h2>Links</h2>' +
+  '<ul><li><strong>Link</strong> (<code>Ctrl</code>+<code>K</code>) — type a web address and <strong>Apply</strong>. With the caret in a link, the same bar changes or removes it.</li>' +
+  '<li><strong>Insert → Link to a document, heading or task…</strong> opens a picker with three tabs: <em>Documents</em> (its search finds headings inside them too), <em>This document</em> (its headings) and <em>Tasks</em> (Taskana tasks by key or title). Selected words become the link; otherwise the title is inserted.</li>' +
+  '<li>While reading, a click follows the link: another document opens (at the heading, if the link points to one), a task opens over the page, and a web address opens in a new tab. While editing, <code>Ctrl</code>+click follows it.</li>' +
+  '<li>The <strong>Links</strong> tab in the side panel lists every link in the document and every document that links to it.</li></ul>' +
+  '<h2>Content blocks</h2>' +
+  '<p><strong>Insert → Content block</strong> adds a ready-made block, already formatted:</p>' +
+  '<ul><li><strong>Admonitions</strong> — Note, Tip, Important, Warning (damage to equipment or data), Caution (risk of injury).</li>' +
+  '<li><strong>Structure</strong> — Procedure (a titled set of numbered steps with a result line), Before you begin (prerequisites as a checklist), Question and answer, Definition list, Field / value table.</li>' +
+  '<li><strong>Layout</strong> — Figure with caption, Two or Three columns, a Collapsible section (click its title to fold it), Code block.</li></ul>' +
+  '<h2>Snippets</h2>' +
+  '<p>A snippet is a piece of a document saved under a name for the whole team to reuse — a standard safety note, a disclaimer, a table layout.</p>' +
+  '<ol class="steps">' +
+  '<li>Select what to keep and choose <strong>Insert → Snippet → Save the selection as a snippet…</strong>. Name it and press <code>Enter</code>.</li>' +
+  '<li>To use it, put the caret where it belongs and choose it under <strong>Insert → Snippet</strong>.</li>' +
+  '<li><strong>Manage snippets…</strong> renames, inserts and deletes them — your own, or any as a manager.</li>' +
+  '</ol>' +
+  '<h2>Also under Insert</h2>' +
+  '<ul><li><strong>Special character</strong> — arrows, ±, ×, ≤, ≥, °, µ, Ω, ©, ™, €, ₪, ✓, ⚠ and more.</li>' +
+  '<li><strong>Divider</strong> · <strong>Page break</strong> (a new page in print, PDF and Word) · <strong>Table of contents</strong> · <strong>Today\'s date</strong> · <strong>Time stamp</strong> (the current time in brackets).</li></ul>' +
+  '<h2>Find and replace</h2>' +
+  '<p><code>Ctrl</code>+<code>F</code> opens the bar above the page. It counts the matches as you type; <code>Enter</code> or ↓ goes to the next one, ↑ to the previous one; <strong>Aa</strong> matches capitals exactly. While editing, <strong>Replace</strong> changes the current match and <strong>Replace all</strong> every one — Undo brings them all back in one step.</p>' +
+  '<h2>Typing shortcuts</h2>' +
+  '<p>At the start of an empty paragraph, type one of these and a space:</p>' +
+  '<table><thead><tr><th>Type</th><th>You get</th></tr></thead><tbody>' +
+  '<tr><td><code>#</code> · <code>##</code> · <code>###</code> · <code>####</code></td><td>Heading 1 · 2 · 3 · 4</td></tr>' +
+  '<tr><td><code>-</code> or <code>*</code></td><td>A bulleted list</td></tr>' +
+  '<tr><td><code>1.</code> · <code>a.</code></td><td>A numbered list · a lettered list</td></tr>' +
+  '<tr><td><code>[]</code></td><td>A checklist</td></tr>' +
+  '<tr><td><code>&gt;</code></td><td>A quote</td></tr>' +
+  '<tr><td><code>```</code></td><td>A code block (<code>Enter</code> twice at its end leaves it)</td></tr>' +
+  '<tr><td><code>---</code></td><td>A divider</td></tr>' +
+  '</tbody></table>' +
+  '<h2>Keyboard shortcuts</h2>' +
+  '<table><thead><tr><th>Keys</th><th>Action</th></tr></thead><tbody>' +
+  '<tr><td><code>Ctrl</code>+<code>E</code></td><td>Start or stop editing</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>Z</code> · <code>Ctrl</code>+<code>Y</code> (or <code>Ctrl</code>+<code>Shift</code>+<code>Z</code>)</td><td>Undo · Redo</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>B</code> · <code>I</code> · <code>U</code></td><td>Bold · Italic · Underline</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>`</code></td><td>Inline code</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>Alt</code>+<code>1</code>…<code>4</code> · <code>Ctrl</code>+<code>Alt</code>+<code>0</code></td><td>Heading 1–4 · Normal text</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>Shift</code>+<code>7</code> · <code>8</code></td><td>Numbered list · Bulleted list</td></tr>' +
+  '<tr><td><code>Tab</code> · <code>Shift</code>+<code>Tab</code></td><td>Nest or un-nest a list item; next or previous table cell; indent a paragraph; two spaces in a code block</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>K</code></td><td>Link</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>F</code></td><td>Find and replace</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>S</code> · <code>Ctrl</code>+<code>P</code></td><td>Save now · Print or save as PDF</td></tr>' +
+  '<tr><td><code>Esc</code></td><td>Close a menu or the bar above the page</td></tr>' +
+  '</tbody></table>' +
+  '<div class="callout note"><b>Pasting:</b> text pasted from Word, Outlook or a web page keeps its headings, lists, tables, bold and links, and loses the rest — Word\'s hidden styling, and the source\'s fonts and colours. Plain text arrives as one paragraph per line. Inside a code block, everything is pasted as plain text.</div>' +
+  '<p>The Handbook goes through every control — see <a href="../handbook/index.html#ch-tk-lib-write">Writing in the Library</a>.</p>',
+  he:
+  '<p class="lede">עורך הספרייה עובד כמו מעבד תמלילים: סרגל כפתורים ותפריטים מעל הדף, קיצורי מקלדת וביטול לכל שינוי. קודם מפעילים עריכה — <strong>עריכת המסמך</strong> או <code>Ctrl</code>+<code>E</code> — ראו <a href="#/library-start">צעדים ראשונים בספרייה</a>.</p>' +
+  '<h2>סרגל הכלים</h2>' +
+  '<table><thead><tr><th>פקד</th><th>מה הוא עושה</th></tr></thead><tbody>' +
+  '<tr><td>ביטול · ביצוע חוזר</td><td>צעד אחורה וקדימה בכל שינוי — הקלדה (מילה בכל פעם), כפתורים וכלים.</td></tr>' +
+  '<tr><td>סגנון</td><td>מראה באיזה סגנון הסמן נמצא ומחיל סגנון אחר: טקסט רגיל, כותרת 1–4, פסקת פתיחה, אותיות קטנות, כיתוב, ציטוט, בלוק קוד, והסגנונות של המסמך עצמו.</td></tr>' +
+  '<tr><td>גופן · גודל</td><td>הגופן והגודל של המילים שנבחרו. הרשימה מציגה כל גופן בצורתו.</td></tr>' +
+  '<tr><td>B · I · U · S</td><td>מודגש, נטוי, קו תחתון, קו חוצה.</td></tr>' +
+  '<tr><td>עיצוב נוסף</td><td>כתב עילי, כתב תחתי, קוד בשורה, מקש מקלדת, גודל טקסט, ניקוי עיצוב.</td></tr>' +
+  '<tr><td>צבע טקסט · הדגשה בצבע</td><td>לוח צבעים לכל אחד; <em>אוטומטי</em> ו<em>ללא הדגשה</em> מסירים אותם.</td></tr>' +
+  '<tr><td>יישור</td><td>התחלה, מרכז, סוף, יישור לשני הצדדים — לכל פסקה בבחירה.</td></tr>' +
+  '<tr><td>תבליטים · מספור</td><td>סגנונות רשימה — ראו רשימות בהמשך.</td></tr>' +
+  '<tr><td>הקטנת הזחה · הגדלת הזחה</td><td>מקנן פריט ברשימה, או מזיח פסקה בצעד.</td></tr>' +
+  '<tr><td>ריווח והזחות</td><td>ריווח שורות (1.0, 1.15, 1.5, 2.0), רווח אחרי פסקאות (ללא, רגיל, גדול), הזחת שורה ראשונה והזחה תלויה.</td></tr>' +
+  '<tr><td>הוספה</td><td>קישורים, תמונות, טבלאות, בלוקי תוכן, קטעים שמורים, תווים מיוחדים, קו מפריד, מעבר עמוד, תוכן עניינים, התאריך של היום, חותמת זמן.</td></tr>' +
+  '<tr><td>טבלה</td><td>כל מה שקשור לטבלה שהסמן נמצא בה.</td></tr>' +
+  '<tr><td>קישור · חיפוש</td><td>קישור לאינטרנט; חיפוש והחלפה.</td></tr>' +
+  '<tr><td>כלי כתיבה</td><td>מבנה, נקודות להמשך, מונחים, קוד וניקוי — ראו <a href="#/library-sme-interview">ראיון מומחה תוכן בספרייה</a>.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>עיצוב טקסט ופסקאות</h2>' +
+  '<ul><li>קודם בוחרים את המילים, ואז משתמשים בסרגל. העיצוב חל בדיוק על המילים שנבחרו — גם על פני כמה שורות או פסקאות — בלי להוסיף שורות או רווחים. לחיצה נוספת על הכפתור מסירה אותו.</li>' +
+  '<li><strong>עיצוב נוסף ← ניקוי עיצוב</strong> מסיר מהבחירה הדגשה, נטוי, צבעים, הדגשות בצבע, גופנים וגדלים.</li>' +
+  '<li>השתמשו ב<strong>סגנונות</strong> כדי לתת לפסקה את התפקיד שלה, במקום להדגיש ולהגדיל טקסט ידנית: הכותרות מזינות את המבנה, את תוכן העניינים ואת מספור הכותרות, ואפשר לשנות סגנון בכל המסמך בבת אחת — ראו <a href="#/library-html-styles">סגנונות, גופנים ומצב HTML בספרייה</a>.</li>' +
+  '<li><strong>יישור</strong>, <strong>ריווח והזחות</strong> וכפתורי ההזחה חלים על כל פסקה שהבחירה נוגעת בה.</li>' +
+  '<li>כל פסקה נכתבת בכיוון של הטקסט שלה, כך שהערות באנגלית במסמך בעברית (וההפך) נקראות נכון.</li></ul>' +
+  '<h2>רשימות</h2>' +
+  '<ul><li><strong>תבליטים</strong>: נקודות, עיגולים, ריבועים, מקפים, חצים, או רשימת בדיקה — לחיצה על תיבה מסמנת אותה.</li>' +
+  '<li><strong>מספור</strong>: 1. 2. 3. · a. b. c. · A. B. C. · i. ii. iii. · I. II. III. — ושני סגנונות רב־רמתיים לכל הרשימה: <em>רב־רמתי 1 · 1.1 · 1.1.1</em> ו<em>מתאר 1 · a · i</em>.</li>' +
+  '<li><code>Tab</code> בפריט ברשימה מקנן אותו רמה אחת פנימה; <code>Shift</code>+<code>Tab</code> מחזיר אותו. <strong>הקטנת הזחה</strong> ו<strong>הגדלת הזחה</strong> עושים אותו דבר.</li>' +
+  '<li><strong>מספור ← התחלה מ-…</strong> מתחיל רשימה ממוספרת מכל מספר — שימושי כשנוהל ממשיך אחרי הערה.</li>' +
+  '<li><strong>ביטול הרשימה</strong> מחזיר את הפריטים לפסקאות.</li></ul>' +
+  '<h2>טבלאות</h2>' +
+  '<ol class="steps">' +
+  '<li>בחרו <strong>הוספה ← טבלה</strong> ועברו על הרשת כדי לבחור גודל (עד 8 × 8), או <strong>גודל מותאם…</strong> לעד 60 שורות ו-15 עמודות. השורה הראשונה היא שורת כותרת.</li>' +
+  '<li>הקלידו בתא. <code>Tab</code> עובר לתא הבא (ומוסיף שורה בסוף), <code>Shift</code>+<code>Tab</code> לתא הקודם.</li>' +
+  '<li>כדי לשנות רוחב עמודה, הצביעו על הקצה השמאלי של אחד התאים שלה (הימני באנגלית) עד שהסמן הופך ל-↔, וגררו. הטבלה שומרת את הרוחב שקבעתם.</li>' +
+  '<li>כל השאר — בתפריט <strong>טבלה</strong>.</li>' +
+  '</ol>' +
+  '<table><thead><tr><th>תפריט טבלה</th><th>מה הוא עושה</th></tr></thead><tbody>' +
+  '<tr><td>הוספת שורה מעל / מתחת, עמודה לפני / אחרי</td><td>מוסיף שורה או עמודה ליד הסמן.</td></tr>' +
+  '<tr><td>מחיקת שורה / עמודה / הטבלה</td><td>מוחק; מחיקת השורה או העמודה האחרונה מוחקת את הטבלה.</td></tr>' +
+  '<tr><td>מיזוג עם התא הבא בשורה / שמתחת</td><td>מאחד שני תאים ושומר את התוכן של שניהם.</td></tr>' +
+  '<tr><td>פיצול תא ממוזג</td><td>מפצל תא ממוזג חזרה לתאים בודדים.</td></tr>' +
+  '<tr><td>שורת כותרת · עמודה ראשונה ככותרות · כיתוב</td><td>הופך את השורה הראשונה לכותרות, את העמודה הראשונה לתוויות מודגשות, ומוסיף כיתוב מעל הטבלה.</td></tr>' +
+  '<tr><td>התאמה אוטומטית</td><td><em>התאמה לתוכן</em>, <em>התאמה לרוחב הדף</em>, <em>רוחב עמודות קבוע</em> (הרוחב לא משתנה בזמן ההקלדה), <em>פיזור עמודות שווה</em>.</td></tr>' +
+  '<tr><td>יישור תאים · הצללת תאים</td><td>למעלה, באמצע או למטה; התחלה, מרכז או סוף; צבע רקע — לתאים שנבחרו.</td></tr>' +
+  '<tr><td>סגנון טבלה</td><td>רשת, שורות מפוספסות, קווים פשוטים, דחוס, כותרת כהה.</td></tr>' +
+  '</tbody></table>' +
+  '<h2>תמונות</h2>' +
+  '<ul><li>בחרו <strong>הוספה ← תמונה…</strong>, הדביקו צילום מסך (<code>Ctrl</code>+<code>V</code>), או גררו קובץ תמונה לדף. תמונות עד 1 MB.</li>' +
+  '<li>לחיצה על תמונה בוחרת אותה. הסרגל שמעל הדף קובע את הרוחב (25%, 50%, 75%, 100%, מקורי), גלישת טקסט משמאל או מימין, מרכוז או החזרה לתוך השורה, טקסט חלופי, כיתוב מתחת לתמונה, או מחיקה.</li></ul>' +
+  '<h2>קישורים</h2>' +
+  '<ul><li><strong>קישור</strong> (<code>Ctrl</code>+<code>K</code>) — הקלידו כתובת ולחצו <strong>החלה</strong>. כשהסמן בתוך קישור, אותו סרגל משנה או מסיר אותו.</li>' +
+  '<li><strong>הוספה ← קישור למסמך, לכותרת או למשימה…</strong> פותח בורר עם שלוש לשוניות: <em>מסמכים</em> (החיפוש מוצא גם כותרות בתוכם), <em>המסמך הזה</em> (הכותרות שלו) ו<em>משימות</em> (משימות Taskana לפי מפתח או כותרת). מילים שנבחרו הופכות לקישור; אחרת נוספת הכותרת.</li>' +
+  '<li>בזמן קריאה, לחיצה על קישור עוקבת אחריו: מסמך אחר נפתח (בכותרת, אם הקישור מצביע עליה), משימה נפתחת מעל הדף, וכתובת אינטרנט נפתחת בלשונית חדשה. בזמן עריכה, <code>Ctrl</code>+לחיצה עוקבת אחריו.</li>' +
+  '<li>הלשונית <strong>קישורים</strong> בחלונית הצדדית מציגה כל קישור במסמך וכל מסמך שמקשר אליו.</li></ul>' +
+  '<h2>בלוקי תוכן</h2>' +
+  '<p><strong>הוספה ← בלוק תוכן</strong> מוסיף בלוק מוכן, כבר מעוצב:</p>' +
+  '<ul><li><strong>תיבות הדגשה</strong> — הערה, טיפ, חשוב, אזהרה (נזק לציוד או לנתונים), זהירות (סכנת פציעה).</li>' +
+  '<li><strong>מבנה</strong> — נוהל (צעדים ממוספרים עם כותרת ושורת תוצאה), לפני שמתחילים (דרישות מוקדמות כרשימת בדיקה), שאלה ותשובה, רשימת הגדרות, טבלת שדה / ערך.</li>' +
+  '<li><strong>פריסה</strong> — איור עם כיתוב, שתי עמודות או שלוש עמודות, קטע מתקפל (לחיצה על הכותרת מקפלת אותו), בלוק קוד.</li></ul>' +
+  '<h2>קטעים שמורים</h2>' +
+  '<p>קטע שמור הוא חלק ממסמך שנשמר בשם, כדי שכל הצוות ישתמש בו שוב — הערת בטיחות קבועה, הסתייגות, מבנה של טבלה.</p>' +
+  '<ol class="steps">' +
+  '<li>בחרו את מה שרוצים לשמור ובחרו <strong>הוספה ← קטע שמור ← שמירת הבחירה כקטע שמור…</strong>. תנו לו שם והקישו <code>Enter</code>.</li>' +
+  '<li>כדי להשתמש בו, העמידו את הסמן במקום הנכון ובחרו אותו תחת <strong>הוספה ← קטע שמור</strong>.</li>' +
+  '<li><strong>ניהול קטעים שמורים…</strong> משנה שם, מוסיף ומוחק — את שלכם, או כל קטע אם אתם מנהלים.</li>' +
+  '</ol>' +
+  '<h2>עוד תחת הוספה</h2>' +
+  '<ul><li><strong>תו מיוחד</strong> — חצים, ±, ×, ≤, ≥, °, µ, Ω, ©, ™, €, ₪, ✓, ⚠ ועוד.</li>' +
+  '<li><strong>קו מפריד</strong> · <strong>מעבר עמוד</strong> (עמוד חדש בהדפסה, ב-PDF וב-Word) · <strong>תוכן עניינים</strong> · <strong>התאריך של היום</strong> · <strong>חותמת זמן</strong> (השעה הנוכחית בסוגריים).</li></ul>' +
+  '<h2>חיפוש והחלפה</h2>' +
+  '<p><code>Ctrl</code>+<code>F</code> פותח את הסרגל שמעל הדף. הוא סופר את ההתאמות תוך כדי הקלדה; <code>Enter</code> או ↓ עוברים להתאמה הבאה, ↑ לקודמת; <strong>Aa</strong> מתאים אותיות רישיות בדיוק. בזמן עריכה, <strong>החלפה</strong> מחליפה את ההתאמה הנוכחית ו<strong>החלפת הכול</strong> את כולן — ביטול מחזיר את כולן בצעד אחד.</p>' +
+  '<h2>קיצורי הקלדה</h2>' +
+  '<p>בתחילת פסקה ריקה, הקלידו אחד מאלה ורווח:</p>' +
+  '<table><thead><tr><th>מקלידים</th><th>מקבלים</th></tr></thead><tbody>' +
+  '<tr><td><code>#</code> · <code>##</code> · <code>###</code> · <code>####</code></td><td>כותרת 1 · 2 · 3 · 4</td></tr>' +
+  '<tr><td><code>-</code> או <code>*</code></td><td>רשימת תבליטים</td></tr>' +
+  '<tr><td><code>1.</code> · <code>a.</code></td><td>רשימה ממוספרת · רשימה באותיות</td></tr>' +
+  '<tr><td><code>[]</code></td><td>רשימת בדיקה</td></tr>' +
+  '<tr><td><code>&gt;</code></td><td>ציטוט</td></tr>' +
+  '<tr><td><code>```</code></td><td>בלוק קוד (<code>Enter</code> פעמיים בסופו יוצא ממנו)</td></tr>' +
+  '<tr><td><code>---</code></td><td>קו מפריד</td></tr>' +
+  '</tbody></table>' +
+  '<h2>קיצורי מקלדת</h2>' +
+  '<table><thead><tr><th>מקשים</th><th>פעולה</th></tr></thead><tbody>' +
+  '<tr><td><code>Ctrl</code>+<code>E</code></td><td>התחלה או סיום של עריכה</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>Z</code> · <code>Ctrl</code>+<code>Y</code> (או <code>Ctrl</code>+<code>Shift</code>+<code>Z</code>)</td><td>ביטול · ביצוע חוזר</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>B</code> · <code>I</code> · <code>U</code></td><td>מודגש · נטוי · קו תחתון</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>`</code></td><td>קוד בשורה</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>Alt</code>+<code>1</code>…<code>4</code> · <code>Ctrl</code>+<code>Alt</code>+<code>0</code></td><td>כותרת 1–4 · טקסט רגיל</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>Shift</code>+<code>7</code> · <code>8</code></td><td>רשימה ממוספרת · רשימת תבליטים</td></tr>' +
+  '<tr><td><code>Tab</code> · <code>Shift</code>+<code>Tab</code></td><td>קינון או ביטול קינון של פריט ברשימה; התא הבא או הקודם בטבלה; הזחת פסקה; שני רווחים בבלוק קוד</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>K</code></td><td>קישור</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>F</code></td><td>חיפוש והחלפה</td></tr>' +
+  '<tr><td><code>Ctrl</code>+<code>S</code> · <code>Ctrl</code>+<code>P</code></td><td>שמירה מיידית · הדפסה או שמירה כ-PDF</td></tr>' +
+  '<tr><td><code>Esc</code></td><td>סגירת תפריט או הסרגל שמעל הדף</td></tr>' +
+  '</tbody></table>' +
+  '<div class="callout note"><b>הדבקה:</b> טקסט שמודבק מ-Word, מ-Outlook או מדף אינטרנט שומר על הכותרות, הרשימות, הטבלאות, ההדגשות והקישורים, ומאבד את השאר — העיצוב הנסתר של Word, והגופנים והצבעים של המקור. טקסט פשוט מגיע כפסקה לכל שורה. בתוך בלוק קוד, הכול מודבק כטקסט פשוט.</div>' +
+  '<p>המדריך עובר על כל פקד — ראו <a href="../handbook/he.html#ch-tk-lib-write">כתיבה בספרייה</a>.</p>'
+  } },
+
+{ id: "library-html-styles", cat: "training", updated: "18 Oct 2026",
+  title: { en: "Styles, fonts and HTML mode in the Library", he: "סגנונות, גופנים ומצב HTML בספרייה" },
+  summary: { en: "Give a document its look once: styles, your own fonts, CSS, a linked stylesheet and the HTML behind the page.", he: "קובעים את המראה של מסמך פעם אחת: סגנונות, גופנים משלכם, CSS, גיליון סגנונות מקושר וה-HTML שמאחורי הדף." },
+  body: {
+  en:
+  '<p class="lede">Every Library document carries its own look: its styles, its fonts and its CSS. Change a style once and every paragraph in that style follows — and when a client has a house style, you can bring it in. This is how.</p>' +
+  '<h2>The Styles tab</h2>' +
+  '<p>Open <strong>Styles</strong> in the side panel while editing. It holds the document\'s fonts and every style the document uses, ready to change.</p>' +
+  '<ol class="steps">' +
+  '<li>Pick a style under <strong>Style to edit</strong> — Normal text, Heading 1–4, Lead paragraph, Small print, Caption, Quote, Code block, Table heading, Table of contents, or one of the document\'s own.</li>' +
+  '<li>Set any of: font, size, weight, italic, capitals, text colour, background, alignment, line height, space before and after, first-line indent, letter spacing, underline, a line under the paragraph.</li>' +
+  '<li>Every paragraph in that style changes at once. <strong>Reset to default</strong> undoes your changes to the style.</li>' +
+  '</ol>' +
+  '<h2>Update a style to match the selection</h2>' +
+  '<p>The word-processor way: format one paragraph by hand until it looks right, put the caret in it, and choose <strong>Update the style to match the selection</strong> in the toolbar\'s style menu — or <strong>Match the selection</strong> on the Styles tab. The style takes that look, and the manual formatting is folded into it, so every other paragraph in the style follows.</p>' +
+  '<h2>New styles</h2>' +
+  '<ol class="steps">' +
+  '<li>Format some text the way you want it and leave it selected.</li>' +
+  '<li>Choose <strong>New style from the selection…</strong> in the style menu (or <strong>＋ New style…</strong> on the Styles tab).</li>' +
+  '<li>Name it, choose <strong>Paragraph style</strong> or <strong>Character style (for words)</strong>, and what it is based on.</li>' +
+  '<li>Click <strong>Create style</strong>. It starts from how the selected text looks. Paragraph styles appear under <em>This document\'s styles</em> in the style menu, character styles under <em>Character styles</em>.</li>' +
+  '</ol>' +
+  '<h2>Copy styles from another document</h2>' +
+  '<p><strong>Copy the styles and fonts of another document</strong>, at the bottom of the Styles tab, brings in that document\'s styles, fonts and CSS — the text is untouched. Keep one well-styled document per client as the model, and copy from it into every new one.</p>' +
+  '<h2>Fonts</h2>' +
+  '<ul><li><strong>Document font</strong>, under Styles → Fonts, sets the typeface of the whole document.</li>' +
+  '<li>Add a <strong>Google font</strong> by name — suggestions include Heebo, Rubik, Assistant, Frank Ruhl Libre, Inter, Roboto and more — and press <strong>Add</strong>.</li>' +
+  '<li>Or <strong>Upload a font file</strong> — <code>.woff2</code>, <code>.woff</code>, <code>.ttf</code> or <code>.otf</code>, up to 700 KB. A <code>.woff2</code> file is usually the smallest.</li>' +
+  '<li>The fonts you add appear at the top of the toolbar\'s <strong>Font</strong> menu, followed by the fonts installed on most computers, and they travel with the document when you export it as a web page.</li></ul>' +
+  '<h2>Custom classes</h2>' +
+  '<p><strong>Custom class…</strong>, in the style menu, gives the paragraph at the caret one or more CSS classes. The classes the document\'s CSS defines are offered as one-click choices. A class changes nothing until CSS styles it — add the rules in HTML mode → CSS, or make a named style instead.</p>' +
+  '<h2>HTML mode</h2>' +
+  '<ol class="steps">' +
+  '<li>While editing, choose <strong>HTML</strong> beside Done editing (or <strong>Writer tools → Edit the document\'s CSS…</strong>). The code is on the left and the page on the right, updated as you type.</li>' +
+  '<li>On the <strong>HTML</strong> tab, change the HTML, or paste a whole page\'s HTML. <strong>Paste HTML</strong> replaces the document with the HTML on the clipboard; <strong>Format HTML</strong> lays the code out neatly.</li>' +
+  '<li>On the <strong>CSS</strong> tab, write CSS for this document, and give the address of a <strong>Linked stylesheet</strong> — a <code>.css</code> file at an <code>https://</code> address, for example the client\'s documentation stylesheet. Plain <code>http://</code> addresses are not accepted.</li>' +
+  '<li>Choose <strong>Visual</strong> to go back to the page.</li>' +
+  '</ol>' +
+  '<p>The order is: the linked file first, then the document\'s styles, then its own CSS — so the document\'s CSS has the last word.</p>' +
+  '<h2>What is kept, and what is stripped</h2>' +
+  '<table><thead><tr><th>Kept</th><th>Always removed</th></tr></thead><tbody>' +
+  '<tr><td>Headings, paragraphs, lists, tables, images, links, sections, figures, collapsible sections, classes, ids and inline styles</td><td>Scripts, event handlers, forms, frames and embedded media</td></tr>' +
+  '</tbody></table>' +
+  '<div class="callout note"><b>Note:</b> A document\'s CSS and fonts apply only inside that document — never to Taskana or to other documents.</div>' +
+  '<div class="callout tip"><b>Tip:</b> Prefer styles over CSS when you can: a teammate who has never seen your CSS can still change a style on the Styles tab. The Handbook covers this in full — see <a href="../handbook/index.html#ch-tk-lib-tools">Library tools: structure, styles and HTML</a>.</div>',
+  he:
+  '<p class="lede">לכל מסמך בספרייה יש מראה משלו: הסגנונות, הגופנים וה-CSS שלו. משנים סגנון פעם אחת וכל פסקה בסגנון הזה משתנה איתו — וכשללקוח יש סגנון בית, אפשר להביא אותו. כך עושים את זה.</p>' +
+  '<h2>הלשונית סגנונות</h2>' +
+  '<p>פתחו את <strong>סגנונות</strong> בחלונית הצדדית בזמן עריכה. יש בה את הגופנים של המסמך ואת כל סגנון שהמסמך משתמש בו, מוכנים לשינוי.</p>' +
+  '<ol class="steps">' +
+  '<li>בחרו סגנון ב<strong>סגנון לעריכה</strong> — טקסט רגיל, כותרת 1–4, פסקת פתיחה, אותיות קטנות, כיתוב, ציטוט, בלוק קוד, כותרת טבלה, תוכן עניינים, או אחד מהסגנונות של המסמך.</li>' +
+  '<li>קבעו כל אחד מאלה: גופן, גודל, משקל, נטוי, אותיות רישיות, צבע טקסט, רקע, יישור, גובה שורה, רווח לפני ואחרי, הזחת שורה ראשונה, ריווח אותיות, קו תחתון, קו מתחת לפסקה.</li>' +
+  '<li>כל פסקה בסגנון הזה משתנה בבת אחת. <strong>איפוס לברירת המחדל</strong> מבטל את השינויים שעשיתם בסגנון.</li>' +
+  '</ol>' +
+  '<h2>עדכון סגנון לפי הבחירה</h2>' +
+  '<p>הדרך של מעבד התמלילים: עצבו פסקה אחת ידנית עד שהיא נראית נכון, העמידו בה את הסמן, ובחרו <strong>עדכון הסגנון לפי הבחירה</strong> בתפריט הסגנון שבסרגל — או <strong>התאמה לבחירה</strong> בלשונית סגנונות. הסגנון מקבל את המראה הזה, והעיצוב הידני נבלע בו, כך שכל שאר הפסקאות בסגנון משתנות בהתאם.</p>' +
+  '<h2>סגנונות חדשים</h2>' +
+  '<ol class="steps">' +
+  '<li>עצבו טקסט כמו שאתם רוצים והשאירו אותו בחור.</li>' +
+  '<li>בחרו <strong>סגנון חדש מהבחירה…</strong> בתפריט הסגנון (או <strong>＋ סגנון חדש…</strong> בלשונית סגנונות).</li>' +
+  '<li>תנו לו שם, בחרו <strong>סגנון פסקה</strong> או <strong>סגנון תווים (למילים)</strong>, ועל מה הוא מבוסס.</li>' +
+  '<li>לחצו <strong>יצירת סגנון</strong>. הוא מתחיל מהמראה של הטקסט שנבחר. סגנונות פסקה מופיעים בתפריט הסגנון תחת <em>הסגנונות של המסמך</em>, וסגנונות תווים תחת <em>סגנונות תווים</em>.</li>' +
+  '</ol>' +
+  '<h2>העתקת סגנונות ממסמך אחר</h2>' +
+  '<p><strong>העתקת הסגנונות והגופנים של מסמך אחר</strong>, בתחתית הלשונית סגנונות, מביאה את הסגנונות, הגופנים וה-CSS של המסמך ההוא — הטקסט נשאר כמו שהוא. החזיקו מסמך אחד מעוצב היטב לכל לקוח כדוגמה, והעתיקו ממנו לכל מסמך חדש.</p>' +
+  '<h2>גופנים</h2>' +
+  '<ul><li><strong>גופן המסמך</strong>, תחת סגנונות ← גופנים, קובע את הגופן של כל המסמך.</li>' +
+  '<li>הוסיפו <strong>גופן של Google</strong> לפי שם — בין ההצעות Heebo, ‏Rubik, ‏Assistant, ‏Frank Ruhl Libre, ‏Inter, ‏Roboto ועוד — ולחצו <strong>הוספה</strong>.</li>' +
+  '<li>או <strong>העלאת קובץ גופן</strong> — <code>.woff2</code>, <code>.woff</code>, <code>.ttf</code> או <code>.otf</code>, עד 700KB. קובץ <code>.woff2</code> הוא בדרך כלל הקטן ביותר.</li>' +
+  '<li>הגופנים שהוספתם מופיעים בראש התפריט <strong>גופן</strong> בסרגל, ואחריהם הגופנים שמותקנים ברוב המחשבים, והם עוברים עם המסמך כשמייצאים אותו כדף אינטרנט.</li></ul>' +
+  '<h2>מחלקות מותאמות</h2>' +
+  '<p><strong>מחלקה מותאמת…</strong>, בתפריט הסגנון, נותנת לפסקה שבה הסמן מחלקת CSS אחת או יותר. המחלקות שה-CSS של המסמך מגדיר מוצעות כבחירה בלחיצה אחת. מחלקה לא משנה דבר עד שיש לה עיצוב ב-CSS — הוסיפו כללים במצב HTML ← CSS, או צרו במקום זה סגנון בעל שם.</p>' +
+  '<h2>מצב HTML</h2>' +
+  '<ol class="steps">' +
+  '<li>בזמן עריכה, בחרו <strong>HTML</strong> ליד סיום עריכה (או <strong>כלי כתיבה ← עריכת ה-CSS של המסמך…</strong>). הקוד בצד אחד והדף בצד השני, ומתעדכן תוך כדי הקלדה.</li>' +
+  '<li>בלשונית <strong>HTML</strong>, שנו את ה-HTML, או הדביקו HTML של דף שלם. <strong>הדבקת HTML</strong> מחליפה את המסמך ב-HTML שבלוח; <strong>סידור HTML</strong> מסדר את הקוד בצורה נקייה.</li>' +
+  '<li>בלשונית <strong>CSS</strong>, כתבו CSS למסמך הזה, ותנו כתובת של <strong>גיליון סגנונות מקושר</strong> — קובץ <code>.css</code> בכתובת <code>https://</code>, למשל גיליון הסגנונות של התיעוד של הלקוח. כתובות <code>http://</code> רגילות אינן מתקבלות.</li>' +
+  '<li>בחרו <strong>חזותי</strong> כדי לחזור לדף.</li>' +
+  '</ol>' +
+  '<p>הסדר הוא: קודם הקובץ המקושר, אחריו הסגנונות של המסמך, ואחריהם ה-CSS שלו — כך של-CSS של המסמך יש המילה האחרונה.</p>' +
+  '<h2>מה נשמר ומה מוסר</h2>' +
+  '<table><thead><tr><th>נשמר</th><th>מוסר תמיד</th></tr></thead><tbody>' +
+  '<tr><td>כותרות, פסקאות, רשימות, טבלאות, תמונות, קישורים, מקטעים, איורים, קטעים מתקפלים, מחלקות, מזהים (ids) וסגנונות מוטבעים</td><td>סקריפטים, מטפלי אירועים, טפסים, מסגרות ומדיה מוטמעת</td></tr>' +
+  '</tbody></table>' +
+  '<div class="callout note"><b>שימו לב:</b> ה-CSS והגופנים של מסמך חלים רק בתוך המסמך הזה — לעולם לא על Taskana או על מסמכים אחרים.</div>' +
+  '<div class="callout tip"><b>טיפ:</b> כשאפשר, העדיפו סגנונות על פני CSS: עמית שמעולם לא ראה את ה-CSS שלכם עדיין יכול לשנות סגנון בלשונית סגנונות. המדריך מכסה את זה במלואו — ראו <a href="../handbook/he.html#ch-tk-lib-tools">כלי הספרייה: מבנה, סגנונות ו-HTML</a>.</div>'
   } },
 
 { id: "phishing", cat: "training", updated: "30 Sep 2026",

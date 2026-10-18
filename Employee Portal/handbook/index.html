@@ -49,7 +49,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <div class="stamp">
       <span>Application <b>GALIL Employee Portal</b></span>
       <span>Covers <b>Portal · WorkDesk · Taskana</b></span>
-      <span>Handbook revised <b>17/10/2026</b></span>
+      <span>Handbook revised <b>18/10/2026</b></span>
       <span>Language <b>English · עברית</b></span>
     </div>
   </div>
@@ -407,7 +407,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <li><strong>Expenses</strong> — money or hours claimed against a client, project and work order, with evidence. A claim within its expense type's ceiling is approved on saving; above the ceiling it goes to approval. Approvers then mark it Paid or Rejected. Expenses do not reduce an hour budget.</li>
       <li><strong>Dashboard</strong> — registered entries only, filtered by period, people, client, project and work order.</li>
       <li><strong>Taskana</strong> — reads people, clients, projects, work orders, budgets, allowances and registered hours from WorkDesk, and shows them beside the tasks. See <a href="#ch-tk-wd">From WorkDesk to Taskana</a>.</li>
-      <li><strong>Library</strong> — now in Taskana: rich research documents from SME interviews, site visits and walkthroughs.</li>
+      <li><strong>Library</strong> — now in Taskana: rich research documents from SME interviews, site visits and walkthroughs. See <a href="#ch-tk-library">The Library</a>.</li>
       <li><strong>Audit log</strong> — every change above, with who made it and when.</li>
     </ul>
   </section>
@@ -421,7 +421,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <div class="tw"><table>
       <thead><tr><th style="width:70px">Code</th><th style="width:170px">Role</th><th>What it carries</th></tr></thead>
       <tbody>
-        <tr><td><code>EMP</code></td><td><strong>Employee</strong></td><td>Reports own time, plans own week, reports own expenses, writes to the Library.</td></tr>
+        <tr><td><code>EMP</code></td><td><strong>Employee</strong></td><td>Reports own time, plans own week, reports own expenses, reads and writes in the Taskana <a href="#ch-tk-library">Library</a>.</td></tr>
         <tr><td><code>SEN</code></td><td><strong>Senior Employee</strong></td><td>As Employee. The difference is one of seniority and of what the Week Planner and Dashboard show their managers.</td></tr>
         <tr><td><code>TL</code></td><td><strong>Team Lead</strong></td><td>As Senior Employee, plus approves time and expenses for their team, assigns their team to projects and may report Blue · Management hours.</td></tr>
         <tr><td><code>PM</code></td><td><strong>Project Manager</strong></td><td>As Team Lead, plus owns projects, work orders, budgets and assignments.</td></tr>
@@ -529,7 +529,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <ul>
       <li><strong>Sort</strong> — click a column heading to sort A→Z (lowest first), again for Z→A (highest first), and a third time to clear it. A ▲ or ▼ beside the heading shows the sort in use. The <strong>Sort</strong> picker and its <strong>A→Z</strong>, <strong>Z→A</strong> and <strong><i class="ui-ic" data-ic="close"></i></strong> buttons in the toolbar do the same. Dates and numbers sort by value, and empty cells always go last.</li>
       <li><strong>Move a column</strong> — drag its heading onto another column, or choose it in <strong>Move column</strong> and use <strong>←</strong> and <strong>→</strong>.</li>
-      <li><strong>Resize a column</strong> — drag the right edge of its heading. Double-click that edge, or click <strong><i class="ui-ic" data-ic="widths"></i> Widths</strong>, to return to automatic widths that fit the content.</li>
+      <li><strong>Resize a column</strong> — drag the right edge of its heading. Double-click that edge, or click <strong><i class="ui-ic" data-ic="widths"></i> Widths</strong>, to return to automatic widths that fit the content. The table always keeps the full width of its panel: narrowing one column hands the space to the table's main column (Description in the Time Log, Project in Budgets) rather than leaving a gap at the edge.</li>
       <li><strong>Reset</strong> — <strong><i class="ui-ic" data-ic="order"></i> Order</strong> restores the original column order; <strong><i class="ui-ic" data-ic="reset"></i> All</strong> clears the sort, order and widths together.</li>
     </ul>
     <p><strong>Saved views.</strong> Click <strong>＋ Save</strong> to keep the current sort, column order and widths under a name; saving under an existing name replaces it. Pick a view from the <strong>View</strong> list to apply it. With a view chosen, <strong><i class="ui-ic" data-ic="star"></i></strong> makes it open automatically every time you open that table (it turns to <strong><i class="ui-ic" data-ic="star-on"></i></strong>, and the view is marked <i class="ui-ic" data-ic="star-on"></i> in the list); click again to stop. <strong><i class="ui-ic" data-ic="trash"></i></strong> deletes the chosen view. Views belong to you and to that one table — each person keeps their own, and a view saved on the Time Log is not offered on Expenses.</p>
@@ -543,7 +543,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
         <tr><td><strong>Time</strong></td><td>A running <strong>timer</strong> — <strong><i class="ui-ic" data-ic="play"></i> Start the timer</strong>, then <strong><i class="ui-ic" data-ic="square"></i> Stop and report</strong> when you're done, which opens the entry form pre-filled with the start and end times. <strong>Report without the timer</strong> skips straight to that form. Below it, <strong>‹ ›</strong> move between months; <strong>Mine</strong> shows your own entries and, for managers, <strong>Me and my team</strong> adds the people who report to you (directly or through your teams) — each card then names who reported it. <strong><i class="ui-ic" data-ic="settings"></i> Filter &amp; sort</strong> narrows the list by person, type, status and project and sorts it newest first, oldest first or by most hours. Each entry can be edited, duplicated with <strong><i class="ui-ic" data-ic="copy"></i> Duplicate…</strong> (the same choices as on the desktop — see <a href="#ch-time">Duplicating an entry</a>), or deleted, the same as on the desktop Time Log.</td></tr>
         <tr><td><strong>Plan</strong></td><td>The Week Planner, one day at a time.</td></tr>
         <tr><td><strong>Expenses</strong></td><td><strong>+ Report an expense</strong> opens a bottom sheet with the same fields — and the same evidence attachment control — as the desktop form.</td></tr>
-        <tr><td><strong>More</strong></td><td>Library, Approvals (if you approve anything), My assignments and allowances, My profile, the portal home, Taskana, the Handbook and the Knowledge Base.</td></tr>
+        <tr><td><strong>More</strong></td><td>Approvals (if you approve anything), My assignments and allowances, My profile, <strong>Library in Taskana</strong>, the portal home, Taskana, the Handbook and the Knowledge Base.</td></tr>
       </tbody>
     </table></div>
     <div class="fig-pair">
@@ -552,7 +552,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
         <figcaption><span class="fno">Fig 7.4</span><span>The Time tab on a phone — the timer is the primary way to report a day's work.</span></figcaption>
       </figure>
       <figure>
-        <img src="img/99-mobile-more.png" alt="The More bottom sheet: Library, My assignments and allowances, My profile, and a note about switching to the desktop layout.">
+        <img src="img/99-mobile-more.png" alt="The More bottom sheet: My assignments and allowances, My profile, Library in Taskana, and a note about switching to the desktop layout.">
         <figcaption><span class="fno">Fig 7.5</span><span>The More sheet — everything that doesn't fit in the bottom bar.</span></figcaption>
       </figure>
     </div>
@@ -565,16 +565,17 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <!-- ============ 6 ============ -->
   <section class="ch" id="ch-time" data-title="Time Log" data-caps="reportOwnTime,reportBlueTime,viewOthersTime">
     <div class="ch-head"><span class="ch-num">06</span><h2>Time Log</h2></div>
-    <p class="lede">Where the day is reported. A form band at the top, a month of entries below it, and an engine in between that decides whether each entry registers or goes to an approver.</p>
+    <p class="lede">Where the day is reported. The report form runs down a narrow column on the left (on the right in Hebrew), the month of entries fills the rest of the screen beside it, and an engine in between decides whether each entry registers or goes to an approver.</p>
     <div class="locked-note"></div>
     <div class="perm" data-perm="reportOwnTime,reportBlueTime,viewOthersTime,editOthersTime,excelExport"></div>
 
     <figure>
-      <img src="img/10-emp-timelog.png" alt="The Time Log tab: Report time form band, month navigator with totals, filter row, and the entry table with the date and weekday shown side by side.">
-      <figcaption><span class="fno">Fig 8.1</span><span>The Time Log as an Employee sees it. Totals sit beside the month navigator: Red, Yellow, Total, Sick and — in amber — anything sitting in approval. The date and weekday sit side by side in each row, and a Work order code can be clicked to copy it.</span></figcaption>
+      <img src="img/10-emp-timelog.png" alt="The Time Log tab: the Report time form as a narrow column on the left, and beside it the month navigator with totals, the filter row and the entry table with the date and weekday shown side by side.">
+      <figcaption><span class="fno">Fig 8.1</span><span>The Time Log as an Employee sees it. The form takes about a fifth of the width, so the entry table fits without scrolling sideways. Totals sit beside the month navigator: Red, Yellow, Total, Sick and — in amber — anything sitting in approval. The date and weekday sit side by side in each row, and a Work order code can be clicked to copy it.</span></figcaption>
     </figure>
 
     <h3>Reporting time</h3>
+    <p>The form lists one field under another, in the order you fill them: <strong>Assignee</strong> (only for those who report for others), <strong>Date</strong> with <strong>Today</strong>, <strong>Type</strong>, <strong>Start</strong> and <strong>End</strong>, <strong>Hour type</strong>, <strong>Client</strong>, <strong>Project</strong>, <strong>Work order</strong>, <strong>Taskana task</strong>, <strong>Description</strong> and <strong>Notes</strong>, with a large <strong>Add entry</strong> button at the foot that stays in view while the column scrolls. On a desktop the <em>Connected to GitHub</em> sync pill sits under the form, the width of the column.</p>
     <ol class="steps">
       <li>Set the <strong>Date</strong>, or click <strong>Today</strong>. Future dates are refused — plan those in the Week Planner instead.</li>
       <li>Choose the <strong>Type</strong>: <em>Work</em>, <em>Sick</em> or <em>Vacation</em>. Sick and Vacation hide the time fields — see <a href="#h-leave">Sick and vacation days</a> below.</li>
@@ -586,8 +587,8 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </ol>
 
     <figure>
-      <img src="img/11-emp-timelog-form.png" alt="Close-up of the Report time form band showing date, type, start, end, derived hours, the Red/Yellow/Blue toggle and the list fields.">
-      <figcaption><span class="fno">Fig 8.2</span><span>The form band, seen by a Team Lead — note the Blue option, only offered to roles that manage clients' projects. The dropdowns list only what you are assigned to — if a project is missing, you are not assigned to it yet.</span></figcaption>
+      <img src="img/11-emp-timelog-form.png" alt="The Report time form column: date with Today, type, start and end with the derived hours, the Red/Yellow/Blue toggle, client, project, work order, Taskana task, a large description box, notes and the Add entry button.">
+      <figcaption><span class="fno">Fig 8.2</span><span>The report form, seen by a Team Lead — one field per row; note the Blue option, only offered to roles that manage clients' projects. The dropdowns list only what you are assigned to — if a project is missing, you are not assigned to it yet.</span></figcaption>
     </figure>
 
     <div class="note">
@@ -655,7 +656,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
     <h3>Editing, deleting and correcting</h3>
     <ul>
-      <li><strong><i class="ui-ic" data-ic="edit"></i></strong> loads an entry back into the form band. Saving a pending entry re-runs the engine; saving a registered entry as an approver leaves it registered.</li>
+      <li><strong><i class="ui-ic" data-ic="edit"></i></strong> loads an entry back into the report form. Saving a pending entry re-runs the engine; saving a registered entry as an approver leaves it registered.</li>
       <li><strong><i class="ui-ic" data-ic="trash"></i></strong> deletes it and cancels any pending approval attached. The toast offers <strong>Undo</strong>.</li>
       <li>The <strong>Project status</strong> column shows the project's current status as set under <a href="#ch-budgets">Management → Projects</a>. It is read-only here; the project status filter uses the same value.</li>
       <li>You may always edit your own entries. Editing someone else's needs <code>editOthersTime</code> — Team Lead within their team, Project Manager within their projects, Operations Manager and CEO anywhere.</li>
@@ -775,9 +776,21 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </div>
 
     <figure>
-      <img src="img/40-pm-budgets.png" alt="The Budgets tab: one card per budget with a consumption bar and statistic tiles for budgeted, consumed, in approval, remaining and projected exhaustion.">
-      <figcaption><span class="fno">Fig 11.1</span><span>A budget card. The bar carries consumed hours solid and hours in approval hatched behind them, so a budget that is about to be breached is visible before it is.</span></figcaption>
+      <img src="img/40-pm-budgets.png" alt="The Budgets section: a filter row with search, client, project, basis and used, totals for the view, and a compact table with one row per budget and a consumption bar in the Used column.">
+      <figcaption><span class="fno">Fig 11.1</span><span>Budgets as a compact table — one row per budget. The bar in <b>Used</b> carries consumed hours solid and hours in approval hatched behind them, so a budget that is about to be breached is visible before it is.</span></figcaption>
     </figure>
+
+    <h3 id="h-budget-list">The budgets table</h3>
+    <p>Every budget in your scope is one row: <strong>Client · Project · Work order · Basis · Budgeted · Used · Consumed · In approval · Remaining · Value / output · Projected exhaustion</strong>, then <strong><i class="ui-ic" data-ic="edit"></i></strong> and <strong>History</strong>. A client-level budget reads <em>All projects</em> in the Project column. A row that is fully consumed is tinted red; hover the Basis chip of a money or unit budget to see its amount and rate, or its units.</p>
+    <p>The row above the table narrows it:</p>
+    <ul>
+      <li><strong>Search</strong> — matches the client, project, work order and the budget's notes.</li>
+      <li><strong>Client</strong> and <strong>Project</strong> — only those that have a budget are offered; choosing a client narrows the projects.</li>
+      <li><strong>Basis</strong> — Hours, Money, Pages, Words or Custom.</li>
+      <li><strong>Used</strong> — <em>Under 75%</em>, <em>75–90%</em>, <em>90–100%</em> or <em>Fully consumed</em>.</li>
+      <li><strong>Clear</strong> resets them all.</li>
+    </ul>
+    <p>At the end of the row, chips total the filtered view: the number of budgets, budgeted, consumed, in approval (when there is any) and remaining hours. The table sorts, moves and resizes like every other — see <a href="#h-tables">Working with tables</a>.</p>
 
     <h3>Creating a budget</h3>
     <ol class="steps">
@@ -799,10 +812,11 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <figcaption><span class="fno">Fig 11.2</span><span>The budget editor on a money basis.</span></figcaption>
     </figure>
 
-    <h3>Reading a budget card</h3>
+    <h3>Reading a budget row</h3>
     <div class="tw"><table>
       <thead><tr><th style="width:190px">Figure</th><th>How it is calculated</th></tr></thead>
       <tbody>
+        <tr><td><strong>Used</strong></td><td>Consumed as a share of budgeted, as a bar and a percentage — amber from 90 %, red from 100 %.</td></tr>
         <tr><td><strong>Consumed</strong></td><td>Registered Yellow and Blue hours in the budget's scope. A work-order budget counts only that work order; a project budget counts the project.</td></tr>
         <tr><td><strong>In approval</strong></td><td>Pending Yellow and Blue hours in the same scope. Not yet consumed — but coming.</td></tr>
         <tr><td><strong>Remaining</strong></td><td>Budgeted minus consumed. Turns red when negative.</td></tr>
@@ -811,7 +825,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
         <tr><td><strong>Projected exhaustion</strong></td><td>Extrapolated from the <strong>last 30 days'</strong> burn. Reads <em>now</em> if already exhausted, <em>—</em> if nothing has been burned.</td></tr>
       </tbody>
     </table></div>
-    <p>At <strong>90 %</strong> the card shows an amber banner, visible to the project owner and Finance. At <strong>100 %</strong> it turns red and every further Yellow or Blue entry on that project routes to approval.</p>
+    <p>At <strong>90 %</strong> the row's percentage turns amber, visible to the project owner and Finance. At <strong>100 %</strong> the row turns red and every further Yellow or Blue entry on that project routes to approval.</p>
 
     <h3>Change history</h3>
     <p>Editing a budget's basis, amount, rate, hours, units or currency appends to its history. The <strong>History</strong> button opens a table of when, who, which field, and the before-and-after values.</p>
@@ -824,12 +838,12 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <ol class="steps">
       <li>Switch to <strong>Work orders</strong> and click <strong>+ New work order</strong>.</li>
       <li>Pick the project — WorkDesk proposes a code in the form <code>WO-[client initials]-[6 digits]</code>. You may override the digits, but the shape is enforced.</li>
-      <li>Give it a title, a status (<strong>Active</strong>, <strong>On hold</strong>, <strong>Closed</strong>), a contract reference and dates.</li>
+      <li>Give it a title, a status (<strong>Active</strong>, <strong>On hold</strong>, <strong>Closed</strong>), a contract reference and dates. <strong>Title in Hebrew</strong> is optional: it is the title the Hebrew document shows; left empty, the Hebrew document shows the English title.</li>
       <li>Enter <strong>Budgeted hours for this work order</strong> and a budget record is created or updated for you.</li>
       <li>Under <strong>What the work order includes</strong>, describe the <strong>Scope of work</strong> and list the <strong>Deliverables</strong>, one per line.</li>
       <li>Under <strong>Client points of contact</strong>, add the people on the client's side — name, role on the project, email and phone. The client's main contact is filled in for you.</li>
       <li>Under <strong>Designated from GALIL</strong>, pick the <strong>Project lead</strong> (the project owner by default) and the <strong>Team members</strong>. Left empty, the team is taken from the people assigned to the work order.</li>
-      <li>Under <strong>Signatures</strong>, name the client's signatory and choose who signs for GALIL (the CEO by default). <strong>Notes and terms</strong> are printed on the document.</li>
+      <li>Under <strong>Signatures</strong>, name the client's signatory and choose who signs for GALIL (the CEO by default). <strong>Notes</strong> are printed on the document, above the standard terms of engagement.</li>
     </ol>
     <figure class="fig-narrow">
       <img src="img/42-pm-new-work-order.png" alt="The New work order dialog: project, proposed code, title, status, contract reference, dates and budgeted hours, then the scope of work, deliverables and client points of contact.">
@@ -837,16 +851,17 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </figure>
 
     <h4>The work order document</h4>
-    <p>Every work order produces an official GALIL document as a PDF: the <i class="ui-ic" data-ic="file"></i> button on its row in the register, or <strong>Document (PDF)</strong> at the foot of the editor. The document carries the GALIL letterhead and footer with the company address, and sets out the order details, scope of work, deliverables, budget, the client's points of contact, GALIL's project team, notes and terms, and two signature blocks — one for the client and one for GALIL.</p>
+    <p>Every work order produces an official GALIL document as a PDF: the <i class="ui-ic" data-ic="file"></i> button on its row in the register, or <strong>Document (PDF)</strong> at the foot of the editor. The document carries the GALIL letterhead — the <strong>[G]</strong> mark beside the company name and its tagline — and a footer with the company address. It is headed <strong>Work order &lt;code&gt;</strong>; the order's own title is listed in the order details (in the Hebrew document, its Hebrew title when there is one). It then sets out the scope of work, deliverables, budget, the client's points of contact, GALIL's project team and notes.</p>
+    <p>Then come the <strong>Terms of engagement</strong>, numbered clauses that apply to every work order: schedule, GALIL's responsibilities, the client's responsibilities, delays, changes, acceptance, payment, confidentiality, ownership, liability, termination and general. The schedule clause carries the order's own start and end dates. The two signature blocks — one for the client and one for GALIL — always sit together at the foot of the last page, under a line confirming what both parties agree to; if they don't fit there, they move to a new page whole rather than splitting.</p>
     <ol class="steps">
       <li>Open the document. A preview appears in the window.</li>
-      <li>Choose <strong>English</strong> or <strong>עברית</strong> at the top. The Hebrew document is laid out right to left, with people's Hebrew names; it opens first when the portal is in Hebrew.</li>
+      <li>Choose <strong>English</strong> or <strong>עברית</strong> at the top. The Hebrew document is laid out right to left, with people's Hebrew names, the Hebrew title and the terms in Hebrew; brackets, codes and numbers inside Hebrew text read the right way round. It opens first when the portal is in Hebrew.</li>
       <li><strong>Download PDF</strong> saves it as <code>GALIL-&lt;code&gt;.pdf</code> (<code>GALIL-&lt;code&gt;-HE.pdf</code> in Hebrew).</li>
       <li><strong>Email</strong> sends it to the addresses in <strong>Send to</strong> — the client's contacts, unless you change them. On a phone, and in Edge and Safari, the PDF goes attached; elsewhere it downloads and your mail app opens with the message written, ready for you to attach the file.</li>
     </ol>
     <figure class="fig-narrow">
-      <img src="img/45-pm-wo-document.png" alt="The first page of a work order document: the GALIL letterhead with the work order code, the title, order details, scope, deliverables, budget, client contacts and the GALIL project team.">
-      <figcaption><span class="fno">Fig 11.5</span><span>The first page of the work order document. The signature blocks follow the team.</span></figcaption>
+      <img src="img/45-pm-wo-document.png" alt="The first page of a work order document: the [G] mark and GALIL letterhead, the heading Work order with its code, the order details including the title, scope, deliverables, budget, client contacts and the GALIL project team.">
+      <figcaption><span class="fno">Fig 11.5</span><span>The first page of the work order document. The terms of engagement follow, and the signatures close the last page.</span></figcaption>
     </figure>
     <div class="note warn">
       <span class="tag">Side effect worth knowing</span>
@@ -857,7 +872,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <p>Everyone, with email, role, team, manager and status. Operations Managers and the CEO change roles from the dropdown here and can <strong>Deactivate</strong> or <strong>Reactivate</strong> an account — except their own, which another administrator changes. Everyone else sees the same list read-only. Click an email address to copy it — every email address in WorkDesk works the same way. The <strong>Used by</strong> column counts the records each person is attached to. The <strong>Portal access</strong> column shows which parts of the portal the person can open and their Taskana role; Operations Managers and the CEO change it with <strong><i class="ui-ic" data-ic="edit"></i></strong> — see <a href="#ch-access">Portal access</a>.</p>
     <figure>
       <img src="img/51-admin-people.png" alt="The Management tab's People section listing staff with role dropdowns, team, manager and active status.">
-      <figcaption><span class="fno">Fig 11.5</span><span>People. Deactivating keeps the person's history intact; it only stops them signing in.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.6</span><span>People. Deactivating keeps the person's history intact; it only stops them signing in.</span></figcaption>
     </figure>
 
     <h3 id="h-teams">Teams</h3>
@@ -909,7 +924,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </ol>
     <figure>
       <img src="img/52-admin-activation.png" alt="The Pending activation section showing a new sign-up card with role, team, initial project and allowance selectors.">
-      <figcaption><span class="fno">Fig 11.6</span><span>Activation. Doing it here also closes the matching request in the approvals queue.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.7</span><span>Activation. Doing it here also closes the matching request in the approvals queue.</span></figcaption>
     </figure>
 
     <h3>Assignments &amp; allowances</h3>
@@ -925,7 +940,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <p>Allowance is set <em>per assignment</em>, not per person: the same writer can hold 40 hours on one work order and 200 on another. Edit a number in place and it saves when you leave the field. Your own allowance is shown read-only here — raise it through <a href="#ch-mywork">My assignments → Request hours</a>, like anyone else; <strong><i class="ui-ic" data-ic="trash"></i></strong> removes the assignment. Blue hours draw on the allowance and the budget just like Yellow hours.</p>
     <figure>
       <img src="img/53-admin-assignments.png" alt="The Assignments and allowances section: a form band to create an assignment above a table of person, project, work order, allowance, consumed, in approval and remaining.">
-      <figcaption><span class="fno">Fig 11.7</span><span>Assignments. Leaving <b>Work order</b> blank creates a project-level assignment that covers every work order on it.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.8</span><span>Assignments. Leaving <b>Work order</b> blank creates a project-level assignment that covers every work order on it.</span></figcaption>
     </figure>
 
     <h3>Clients, Projects and Expense types</h3>
@@ -937,23 +952,23 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <div class="fig-pair">
       <figure>
         <img src="img/54-admin-clients.png" alt="The Clients section with name, initials, contact and verified columns.">
-        <figcaption><span class="fno">Fig 11.8</span><span>Clients. <b>Initials</b> feed the work-order code, so keep them short and stable.</span></figcaption>
+        <figcaption><span class="fno">Fig 11.9</span><span>Clients. <b>Initials</b> feed the work-order code, so keep them short and stable.</span></figcaption>
       </figure>
       <figure>
         <img src="img/55-admin-projects.png" alt="The Projects section with project, client, status, owner and WO tracked columns.">
-        <figcaption><span class="fno">Fig 11.9</span><span>Projects. The owner list offers Project Managers, Team Leads, Operations Managers and the CEO.</span></figcaption>
+        <figcaption><span class="fno">Fig 11.10</span><span>Projects. The owner list offers Project Managers, Team Leads, Operations Managers and the CEO.</span></figcaption>
       </figure>
     </div>
     <figure class="fig-narrow">
       <img src="img/57-admin-expense-types.png" alt="The Expense types section with an evidence-required checkbox and an auto-approval ceiling per type.">
-      <figcaption><span class="fno">Fig 11.10</span><span>Expense types. The ceiling and the evidence flag are what drive the expense form's behaviour.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.11</span><span>Expense types. The ceiling and the evidence flag are what drive the expense form's behaviour.</span></figcaption>
     </figure>
 
     <h3>Verification queue</h3>
     <p>Clients and projects created by approving an unlisted item wait here until a manager clicks <strong>Confirm</strong>. It is the tidy-up step after a busy week of typed-in names.</p>
     <figure class="fig-narrow">
       <img src="img/59-admin-verify.png" alt="The Verification queue section, empty, with the message Nothing to verify.">
-      <figcaption><span class="fno">Fig 11.11</span><span>An empty verification queue — the state to aim for.</span></figcaption>
+      <figcaption><span class="fno">Fig 11.12</span><span>An empty verification queue — the state to aim for.</span></figcaption>
     </figure>
   </section>
 
@@ -965,8 +980,8 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <div class="perm" data-perm="approveTime,approveExpenses,manageEmployeesRoles"></div>
 
     <figure>
-      <img src="img/31-tl-approvals.png" alt="The Approvals queue: filter pills by request type, a status selector, and request cards with context and action buttons.">
-      <figcaption><span class="fno">Fig 12.1</span><span>The queue. Each card carries everything needed to decide without leaving the page — the hours, the assignment allowance, the affected budget, and the requester's own words.</span></figcaption>
+      <img src="img/31-tl-approvals.png" alt="The Approvals queue: filter pills by request type, a status selector, and the requests as tiles side by side, each with its context and action buttons.">
+      <figcaption><span class="fno">Fig 12.1</span><span>The queue. Requests are tiles that fill the width — two, three or more side by side, depending on the screen. Each tile carries everything needed to decide without leaving the page — the hours, the assignment allowance, the affected budget, and the requester's own words.</span></figcaption>
     </figure>
 
     <h3>What lands in your queue</h3>
@@ -990,7 +1005,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
         <tr><td><strong>Approve</strong></td><td>The entry registers, or the expense is approved, or the account is activated. The requester is notified.</td></tr>
         <tr><td><strong>Edit &amp; approve</strong></td><td>Opens the entry in a full Time Log form. Correct it, then <strong>Save &amp; approve</strong>. Both the original submission and the corrected version are kept in the audit log. You may also set the person's allowance on that assignment while you are there.</td></tr>
         <tr><td><strong>Decline</strong></td><td>A written reason is mandatory. The entry becomes Cancelled, stays visible to the requester with your reason, and never contributes hours.</td></tr>
-        <tr><td><strong>Request information</strong></td><td>Sends a question. The request stays Pending and the exchange appears as a thread on the card.</td></tr>
+        <tr><td><strong>Request info</strong></td><td>Sends a question. The request stays Pending and the exchange appears as a thread on the card.</td></tr>
       </tbody>
     </table></div>
     <div class="fig-pair">
@@ -999,7 +1014,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
         <figcaption><span class="fno">Fig 12.2</span><span>Declining. Without a reason the dialog refuses.</span></figcaption>
       </figure>
       <figure>
-        <img src="img/33-tl-request-info.png" alt="The Request information dialog with a question field.">
+        <img src="img/33-tl-request-info.png" alt="The Request information dialog, opened from Request info, with a question field.">
         <figcaption><span class="fno">Fig 12.3</span><span>Asking for more. Nothing changes status.</span></figcaption>
       </figure>
     </div>
@@ -1013,7 +1028,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </ul>
 
     <h3>Bulk approval</h3>
-    <p>Tick the checkbox on several cards and a <strong>Bulk approve</strong> button appears. Requests whose reason is <strong>Budget exceeded</strong> cannot be ticked and cannot be bulk-approved — they must be handled one at a time.</p>
+    <p>Tick the checkbox on several tiles and a <strong>Bulk approve</strong> button appears. Requests whose reason is <strong>Budget exceeded</strong> cannot be ticked and cannot be bulk-approved — they must be handled one at a time.</p>
 
     <h3>Reviewing decisions</h3>
     <p>Switch the <strong>Status</strong> selector to <em>Approved</em> or <em>Declined</em> to see history. You will see decisions you made, decisions routed to you, and — as <code>OPS</code> or <code>CEO</code> — everything. Each shows who decided, when, and any note.</p>
@@ -1026,7 +1041,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <!-- ============ 12 ============ -->
   <section class="ch" id="ch-dashboard" data-title="Dashboard" data-caps="dashboardOwn,dashboardCompany">
     <div class="ch-head"><span class="ch-num">12</span><h2>Dashboard</h2></div>
-    <p class="lede">Registered time only, over a period you choose, with a manager cockpit on top for anyone who has people or budgets to watch.</p>
+    <p class="lede">Registered time only, over a period you choose — laid out the way you want. Each person keeps their own dashboards, each a set of widgets you pick from a catalogue or build yourself, with a manager cockpit for anyone who has people or budgets to watch.</p>
     <div class="locked-note"></div>
     <div class="perm" data-perm="dashboardOwn,dashboardCompany,excelExport"></div>
 
@@ -1047,45 +1062,40 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <li><strong>Hours in approval</strong> — pending hours in your scope that are not counted yet.</li>
     </ul>
 
-    <h3>The figures</h3>
-    <p>Total hours · Red · Yellow · <strong>Utilisation</strong> (Yellow as a share of total) · Sick days · Vacation days · Expenses per currency · Entries reported. Below them, hours over time as a stacked Red-and-Yellow area chart, hours by client as a ranked bar list, and two comparison bars: the Red/Yellow split and planned against actual with its variance.</p>
+    <h3>The standard dashboard</h3>
+    <p>Everyone starts with one dashboard, <strong>Overview</strong>: the manager cockpit (managers only), Total hours, Yellow · client, Red · company and Utilisation (Yellow as a share of total), hours over time, hours by client, the hour split — Red/Yellow(/Blue) and planned against actual with its variance — Sick days, Vacation days, Expenses and Entries reported.</p>
     <figure>
       <img src="img/17-emp-dashboard.png" alt="The Dashboard as an Employee: own figures only, no manager cockpit.">
       <figcaption><span class="fno">Fig 13.2</span><span>The same Dashboard for an Employee — own figures, no cockpit, no employee filter.</span></figcaption>
     </figure>
 
+    <h3 id="h-dash-custom">Customizing a dashboard</h3>
+    <p>The pills under the filters are your dashboards; click one to open it, or <strong>+ New dashboard</strong> to start another — give it a name (<em>Billing</em>, <em>My team</em>, <em>Client X</em>) and it opens empty, ready for widgets. Dashboards are saved with your WorkDesk data, so they follow you to any device, and nobody else sees them.</p>
+    <ol class="steps">
+      <li>Click <strong><i class="ui-ic" data-ic="edit"></i> Customize</strong>. Each widget gets its own buttons, and the dashboard tools appear: <strong>+ Add widget</strong>, <strong>Rename</strong>, <strong>Duplicate</strong>, <strong>Reset</strong> (back to the standard set), <strong>Delete</strong> (you always keep at least one) and <strong>Done</strong>.</li>
+      <li><strong>+ Add widget</strong> opens the catalogue. Click a ready-made widget to add it at once, or <strong>Build your own…</strong> to set one up.</li>
+      <li>Rearrange: drag a widget onto another's place, or use <strong>←</strong> and <strong>→</strong> on it. <strong><i class="ui-ic" data-ic="edit"></i></strong> opens its settings; <strong><i class="ui-ic" data-ic="close"></i></strong> removes it.</li>
+      <li>Click <strong>Done</strong>.</li>
+    </ol>
+    <figure>
+      <img src="img/46-pm-dashboard-custom.png" alt="The Dashboard in Customize mode with the Add widget catalogue open: Build your own, then ready-made widgets such as Manager cockpit, Total hours, Hours by client, Hour type split and Budgets at risk.">
+      <figcaption><span class="fno">Fig 13.3</span><span>Customize, then <b>+ Add widget</b>. The catalogue's first item builds a widget from scratch.</span></figcaption>
+    </figure>
+    <div class="tw"><table>
+      <thead><tr><th style="width:190px">Widget setting</th><th>Choices</th></tr></thead>
+      <tbody>
+        <tr><td><strong>What to measure</strong></td><td>Total hours · Red · Yellow · Blue hours · Utilisation · Entries reported · People reporting · Planned hours · Actual minus planned · Hours in approval · Sick days · Vacation days · Expenses (₪).</td></tr>
+        <tr><td><strong>Group by</strong></td><td>No grouping (one number) · Day · Week · Month · Day of the week · Employee · Team · Client · Project · Work order · Hour type · Entry type.</td></tr>
+        <tr><td><strong>Show as</strong></td><td>Number (with no grouping) · Horizontal bars · Columns · Line · Area · Donut · Table.</td></tr>
+        <tr><td><strong>Show the top</strong></td><td>5, 10, 20 or all groups — for groupings other than time and hour type.</td></tr>
+        <tr><td><strong>Only for</strong></td><td>One employee, client or project — narrows this widget further than the dashboard's filters.</td></tr>
+        <tr><td><strong>Width</strong> and <strong>Colour</strong></td><td>¼, ⅓, ½, ⅔ or the full width; the colour of bars, columns, lines and areas.</td></tr>
+      </tbody>
+    </table></div>
+    <p>Ready-made panels: <strong>Manager cockpit</strong> and <strong>Budgets at risk</strong> (managers), and <strong>Hour split · plan against actual</strong>. Every widget follows the dashboard's period, the <b>%</b> toggle and the filters above it.</p>
+
     <h3>Filters and export</h3>
     <p>Filter by employee, client, project and work order; <strong>Clear</strong> resets them. <strong><i class="ui-ic" data-ic="download"></i> Export</strong> writes the underlying entries — not the chart — so the numbers can be checked.</p>
-  </section>
-
-  <!-- ============ 13 ============ -->
-  <section class="ch" id="ch-library" data-title="Library" data-caps="libraryRead,libraryWrite">
-    <div class="ch-head"><span class="ch-num">13</span><h2>Library</h2></div>
-    <p class="lede">The house knowledge base — style decisions, terminology rulings, snippets, client conventions — searchable across titles, bodies and tags.</p>
-    <div class="locked-note"></div>
-    <div class="perm" data-perm="libraryRead,libraryWrite"></div>
-
-    <figure>
-      <img src="img/18-emp-library.png" alt="The Library as a grid of cards with titles, bodies, tags and author lines, above a search field and tag filter.">
-      <figcaption><span class="fno">Fig 14.1</span><span>The Library. Search is full-text; the tag selector narrows further.</span></figcaption>
-    </figure>
-
-    <h3>Adding an item</h3>
-    <ol class="steps">
-      <li>Click <strong>+ New item</strong>.</li>
-      <li>Give it a title — required — and a body.</li>
-      <li>Add comma-separated tags and a link if there is one.</li>
-      <li>Optionally attach it to a client or project, and add an image.</li>
-      <li>Tick <strong>Private to me</strong> if it is a personal note rather than house knowledge.</li>
-      <li><strong>Save</strong>.</li>
-    </ol>
-
-    <h3>Who can edit what</h3>
-    <ul>
-      <li>Private items are visible only to their author.</li>
-      <li>You may edit or delete your own items. <code>OPS</code> and <code>CEO</code> may edit anyone's.</li>
-      <li>Finance can read the Library but not write to it. Contractors and Viewers have no Library tab. Company-wide rules and training material belong in the <a href="../kb/index.html">Knowledge Base</a> instead.</li>
-    </ul>
   </section>
 
   <!-- ============ 14 ============ -->
@@ -1096,7 +1106,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
     <figure>
       <img src="img/19-emp-my-assignments.png" alt="The My assignments and allowances dialog: a table of projects, work orders, allowance, consumed, in approval and remaining, with Request hours buttons.">
-      <figcaption><span class="fno">Fig 15.1</span><span>Your assignments. A percentage chip appears from 75 % and turns amber at 90 %, red at 100 % — or past it, as here.</span></figcaption>
+      <figcaption><span class="fno">Fig 14.1</span><span>Your assignments. A percentage chip appears from 75 % and turns amber at 90 %, red at 100 % — or past it, as here.</span></figcaption>
     </figure>
 
     <h3>Requesting additional hours</h3>
@@ -1108,7 +1118,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </ol>
     <figure class="fig-narrow">
       <img src="img/20-emp-request-hours.png" alt="The Request additional hours dialog with allowance, consumed, remaining and in-approval tiles above the hours and justification fields.">
-      <figcaption><span class="fno">Fig 15.2</span><span>On approval the allowance is raised automatically — no one has to remember to edit it.</span></figcaption>
+      <figcaption><span class="fno">Fig 14.2</span><span>On approval the allowance is raised automatically — no one has to remember to edit it.</span></figcaption>
     </figure>
     <p>The request appears in the approval queue as an <strong>Allowance increase</strong>, showing the hours asked for and your justification. On approval, the allowance is raised automatically.</p>
     <div class="note">
@@ -1143,7 +1153,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </ol>
     <figure>
       <img src="img/60-admin-settings.png" alt="The Company settings section with soft and hard daily limits, default weekly hours and the month-close control.">
-      <figcaption><span class="fno">Fig 16.1</span><span>Company settings.</span></figcaption>
+      <figcaption><span class="fno">Fig 15.1</span><span>Company settings.</span></figcaption>
     </figure>
 
     <h3>Backup &amp; restore</h3>
@@ -1153,7 +1163,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <p>Append-only. Every sign-in, sign-out, role change, portal-access change, approval decision, budget edit, allowance change and deletion is recorded with actor, timestamp, entity and device. Visible to <code>OPS</code>, <code>FIN</code> and <code>CEO</code>; the most recent 400 entries are shown, 4,000 retained.</p>
     <figure>
       <img src="img/62-admin-audit.png" alt="The Audit log section: a table of timestamp, actor, action, entity and IP.">
-      <figcaption><span class="fno">Fig 16.2</span><span>The audit log.</span></figcaption>
+      <figcaption><span class="fno">Fig 15.2</span><span>The audit log.</span></figcaption>
     </figure>
   </section>
 
@@ -1166,7 +1176,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
     <figure>
       <img src="img/61-admin-backup.png" alt="The Backup and restore tab showing the download, restore and import lists panels.">
-      <figcaption><span class="fno">Fig 17.1</span><span>Backup &amp; restore, inside System administration.</span></figcaption>
+      <figcaption><span class="fno">Fig 16.1</span><span>Backup &amp; restore, inside System administration.</span></figcaption>
     </figure>
 
     <h3>The file format</h3>
@@ -1229,7 +1239,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
     <figure>
       <img src="img/t01-board.png" alt="Taskana's board: the sidebar on the left, and six workflow columns — Backlog, To Do, Writing, Peer Review, SME Review, Done — with task cards.">
-      <figcaption><span class="fno">Fig 19.1</span><span>The board. Each card shows the task key, title, type, priority, due date and assignee; drag it to move it along the workflow.</span></figcaption>
+      <figcaption><span class="fno">Fig 18.1</span><span>The board. Each card shows the task key, title, type, priority, due date and assignee; drag it to move it along the workflow.</span></figcaption>
     </figure>
 
     <h3>Opening it</h3>
@@ -1245,6 +1255,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
         <tr><td><strong>Board</strong></td><td>Every task in its workflow column, filtered by client, project, assignee, type, priority, status or text.</td></tr>
         <tr><td><strong>All tasks</strong></td><td>The same tasks as a list, with bulk actions.</td></tr>
         <tr><td><strong>Insights</strong></td><td>Delivery metrics — see <a href="#ch-tk-roles">Taskana roles, insights and data</a>.</td></tr>
+        <tr><td><strong>Library</strong></td><td>The team's research documents — SME interviews, site visits, walkthroughs, research and meeting notes — in a full document editor. See <a href="#ch-tk-library">The Library</a>.</td></tr>
         <tr><td><strong>Clients &amp; projects</strong></td><td>Every client and project from WorkDesk, with its tasks, work orders, budget and team.</td></tr>
         <tr><td><strong>People</strong></td><td>Everyone from WorkDesk with their Taskana role and their tasks.</td></tr>
         <tr><td><strong>Saved views</strong></td><td>Board or list filters you saved. Saved views are personal — only the person who saved a view sees it.</td></tr>
@@ -1280,7 +1291,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
     <figure>
       <img src="img/t02-task.png" alt="A Taskana task's details: status, assignee, dates and work order on the right, the description, sub-tasks and comments in the middle, and the Hours in WorkDesk section.">
-      <figcaption><span class="fno">Fig 20.1</span><span>A task. <b>Hours in WorkDesk</b> shows the time reported on the task against its estimate, the assignee's hours bank and the budget it draws on.</span></figcaption>
+      <figcaption><span class="fno">Fig 19.1</span><span>A task. <b>Hours in WorkDesk</b> shows the time reported on the task against its estimate, the assignee's hours bank and the budget it draws on.</span></figcaption>
     </figure>
 
     <h3>On the task</h3>
@@ -1337,7 +1348,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
     <figure>
       <img src="img/t03-budget.png" alt="A Taskana project page with the Budget and hours card: a budget bar per work order and an hours-bank bar per person.">
-      <figcaption><span class="fno">Fig 22.1</span><span>The <b>Budget &amp; hours</b> card on a project. The solid part of each bar is registered hours; the hatched part is hours waiting for approval.</span></figcaption>
+      <figcaption><span class="fno">Fig 21.1</span><span>The <b>Budget &amp; hours</b> card on a project. The solid part of each bar is registered hours; the hatched part is hours waiting for approval.</span></figcaption>
     </figure>
 
     <h3>The indicators</h3>
@@ -1388,6 +1399,330 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <p>With GitHub storage every save is a commit, so the branch history is a backup too; with OneDrive a dated copy goes to <code>backups/</code> once a day.</p>
   </section>
 
+  <!-- ============ 24 ============ -->
+  <section class="ch" id="ch-tk-library" data-part="Taskana" data-title="The Library" data-caps="tkLibraryRead,tkLibraryWrite">
+    <div class="ch-head"><span class="ch-num">24</span><h2>The Library</h2></div>
+    <p class="lede">The team's research notebook: rich documents for collecting and working through what subject-matter experts tell you — in interviews, on site visits and in product walkthroughs at the client — and for the house notes the team keeps. It lives in Taskana, beside the tasks the research is for.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="tkLibraryRead,tkLibraryWrite"></div>
+
+    <figure>
+      <img src="img/t10-library.png" alt="A Library document open for reading: the reading bar with Edit document, Find and Export, the document itself, and the side panel with its Outline, Styles, Follow-ups, Terms, Links and Details tabs.">
+      <figcaption><span class="fno">Fig 23.1</span><span>A document open for reading. The side panel on the right follows the document: its outline, styles, follow-ups, terms, links and details.</span></figcaption>
+    </figure>
+
+    <h3>Opening it</h3>
+    <p>In Taskana, choose <strong>Library</strong> in the sidebar. Everyone who can see every task in Taskana — Admins, Managers, Members and Viewers — can read the Library; Members and above can write in it. Outsourced (External) accounts have no Library. Until October 2026 the Library was a tab in WorkDesk; its items were brought into Taskana as <em>Research notes</em> the first time the Library was opened.</p>
+
+    <h3>Finding a document</h3>
+    <ul>
+      <li>With no document open, the list of documents fills the left side: each shows its title, kind, status, the number of open follow-ups (a <strong>?</strong> badge with the count), its client, project and expert, and who changed it last.</li>
+      <li><strong>Search the library</strong> looks through titles, experts, places, tags and the full text of every document. The three selectors narrow the list by kind, status and client.</li>
+      <li>With a document open, the list folds away so the document has the width. The <strong>Documents</strong> button at the top brings the list back, and hides it again.</li>
+      <li>A private document (<strong>Private — only I can see it</strong> under Details) appears only in its author's list.</li>
+    </ul>
+
+    <h3>Creating a document</h3>
+    <ol class="steps">
+      <li>Click <strong>New document</strong> and choose what it is for. Each kind starts from a template:</li>
+    </ol>
+    <div class="tw"><table>
+      <thead><tr><th style="width:170px">Kind</th><th>The template sets out</th></tr></thead>
+      <tbody>
+        <tr><td><strong>SME interview</strong></td><td>Interview details (expert, role, date and place, attendees, recording), goals, questions and answers, procedures described, terminology, follow-ups.</td></tr>
+        <tr><td><strong>Site visit</strong></td><td>Visit details (site, date, host, equipment and versions), what was observed, procedures observed, photos and screens, safety notes, follow-ups.</td></tr>
+        <tr><td><strong>Walkthrough</strong></td><td>System and version, steps shown, a table of screens and messages, follow-ups.</td></tr>
+        <tr><td><strong>Research notes</strong></td><td>Sources, findings, open questions.</td></tr>
+        <tr><td><strong>Meeting notes</strong></td><td>Agenda, decisions, action items.</td></tr>
+        <tr><td><strong>Blank document</strong></td><td>An empty page.</td></tr>
+      </tbody>
+    </table></div>
+    <ol class="steps" start="2">
+      <li>The new document opens with the <strong>Details</strong> tab showing: give it a title, then set its client, project, task, expert and date (see <a href="#h-lib-details">Details</a> below).</li>
+      <li>Click <strong>Edit document</strong> and start writing — or paste your raw notes and let <strong>Organize</strong> structure them (see <a href="#ch-tk-lib-tools">Library tools</a>).</li>
+    </ol>
+
+    <h3>Reading and editing</h3>
+    <p>A document always opens for <strong>reading</strong>, so a stray click or key can't change it. Links work, and nothing you type lands in the text.</p>
+    <ul>
+      <li><strong>Edit document</strong> (or <kbd>Ctrl</kbd>+<kbd>E</kbd>, or a double-click in the text) switches editing on. The page gets a green frame and the toolbar appears.</li>
+      <li><strong>Done editing</strong> (or <kbd>Ctrl</kbd>+<kbd>E</kbd> again) switches it off and saves.</li>
+      <li><strong>Visual</strong> and <strong>HTML</strong>, beside Done editing, switch between the page and its HTML and CSS — see <a href="#h-lib-html">HTML mode</a>.</li>
+      <li><strong>Locked</strong>: under Details, the document's author or a manager can tick <strong>Locked — no editing until unlocked</strong>. Nobody can switch editing on until it is unlocked — use it for a Final document.</li>
+    </ul>
+    <div class="note">
+      <span class="tag">Saving</span>
+      <p>There is no Save button: every change is saved a moment after you stop typing, and the footer says <em>Saving…</em> and then <em>Saved</em>, with who saved last and when. <kbd>Ctrl</kbd>+<kbd>S</kbd> saves at once. The Library is part of Taskana's data, so it is kept, shared and backed up the same way as the tasks. If two people edit the same document at the same moment, the later save wins — agree who is editing.</p>
+    </div>
+
+    <h3>The side panel</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:130px">Tab</th><th>What it shows</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Outline</strong></td><td>Every heading, indented by level. Click one to jump to it.</td></tr>
+        <tr><td><strong>Styles</strong></td><td>The document's fonts and styles — see <a href="#h-lib-styles">Fonts and styles</a>.</td></tr>
+        <tr><td><strong>Follow-ups</strong></td><td>Everything marked as a follow-up, with a box to tick when it is resolved, and every unticked checklist item. <strong>Create tasks from open follow-ups</strong> turns them into Taskana tasks.</td></tr>
+        <tr><td><strong>Terms</strong></td><td>Every word marked as a term, with a field for what it means.</td></tr>
+        <tr><td><strong>Links</strong></td><td>The links in this document — to other documents, headings, tasks and the web — and <strong>Linked from</strong>: the documents that link here.</td></tr>
+        <tr><td id="h-lib-details"><strong>Details</strong></td><td>Title · Kind · Status (<em>Draft</em>, <em>In review</em>, <em>Final</em>) · Client · Project · Task (with a link to it) · Subject-matter expert and their role · Date · Where · Tags · Private · Locked · who created it and when · <strong>Delete document</strong> (the author or a manager; the toast offers Undo).</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Exporting and printing</h3>
+    <p><strong>Export</strong> (in the reading bar, and under Writer tools while editing) offers:</p>
+    <ul>
+      <li><strong>Word document (.doc)</strong> — opens in Word with the document's look, ready to edit or to paste into a client template.</li>
+      <li><strong>Web page (.html)</strong> — a single file, with the document's styles and fonts.</li>
+      <li><strong>Markdown (.md)</strong>, or <strong>Copy as Markdown</strong> to paste it into another tool.</li>
+      <li><strong>Print or save as PDF</strong> (<kbd>Ctrl</kbd>+<kbd>P</kbd>) — page breaks you inserted start a new page.</li>
+    </ul>
+    <p>Every export starts with the title and a line with the client, project, expert and date.</p>
+  </section>
+
+  <!-- ============ 25 ============ -->
+  <section class="ch" id="ch-tk-lib-write" data-part="Taskana" data-title="Writing in the Library" data-caps="tkLibraryWrite">
+    <div class="ch-head"><span class="ch-num">25</span><h2>Writing in the Library</h2></div>
+    <p class="lede">The editor works like a word processor: a toolbar of buttons and menus over the page, keyboard shortcuts, and undo for every change. This chapter goes through it from left to right.</p>
+    <div class="locked-note"></div>
+
+    <figure>
+      <img src="img/t11-library-edit.png" alt="A document being edited: the toolbar with undo, style, font, size, formatting, colour, alignment, lists, indents and spacing, then Insert, Table, Link and Find; the Insert menu is open with its Content block submenu.">
+      <figcaption><span class="fno">Fig 24.1</span><span>Editing. Menus open over the page and their submenus open beside them, always inside the window; a click in the text or <kbd>Esc</kbd> closes them.</span></figcaption>
+    </figure>
+
+    <h3>The toolbar</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:200px">Control</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Undo · Redo</strong></td><td>Steps back and forward through every change — typing (a word at a time), buttons and tools alike. <kbd>Ctrl</kbd>+<kbd>Z</kbd> · <kbd>Ctrl</kbd>+<kbd>Y</kbd>.</td></tr>
+        <tr><td><strong>Style</strong></td><td>Shows the style the caret is in and applies another: Normal text, Heading 1–4, Lead paragraph, Small print, Caption, Quote, Code block, and the document's own styles.</td></tr>
+        <tr><td><strong>Font · Size</strong></td><td>The typeface and size of the selected words. The list shows each font in its own face.</td></tr>
+        <tr><td><strong>B · I · U · S</strong></td><td>Bold, italic, underline, strikethrough.</td></tr>
+        <tr><td><strong>More formatting</strong></td><td>Superscript, subscript, inline code (<kbd>Ctrl</kbd>+<kbd>`</kbd>), keyboard key, text size, clear formatting.</td></tr>
+        <tr><td><strong>Text colour · Highlight</strong></td><td>A palette for each; <em>Automatic</em> and <em>No highlight</em> remove them.</td></tr>
+        <tr><td><strong>Alignment</strong></td><td>Start, centre, end, justify — for every paragraph in the selection.</td></tr>
+        <tr><td><strong>Bullets · Numbering</strong></td><td>List styles — see <a href="#h-lib-lists">Lists</a>.</td></tr>
+        <tr><td><strong>Decrease · Increase indent</strong></td><td>Nests a list item, or indents a paragraph by a step.</td></tr>
+        <tr><td><strong>Spacing and indents</strong></td><td>Line spacing (1.0, 1.15, 1.5, 2.0), space after paragraphs (none, normal, large), first-line and hanging indents.</td></tr>
+        <tr><td><strong>Insert</strong></td><td>Links, images, tables, content blocks, snippets, special characters, a divider, a page break, a table of contents, today's date, a time stamp.</td></tr>
+        <tr><td><strong>Table</strong></td><td>Everything about the table the caret is in — see <a href="#h-lib-tables">Tables</a>.</td></tr>
+        <tr><td><strong>Link · Find</strong></td><td>A web link (<kbd>Ctrl</kbd>+<kbd>K</kbd>); find and replace (<kbd>Ctrl</kbd>+<kbd>F</kbd>).</td></tr>
+        <tr><td><strong>Writer tools</strong></td><td>Structure, follow-ups, terms, code and clean-up — see <a href="#ch-tk-lib-tools">Library tools</a>.</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Formatting text</h3>
+    <p>Select the words first, then use the toolbar. Formatting wraps exactly the selected words — across several lines or paragraphs too — without adding line breaks or spaces. Clicking a button again on formatted text takes the formatting off. <strong>More formatting → Clear formatting</strong> removes bold, italics, colours, highlights, fonts and sizes from the selection.</p>
+
+    <h3>Paragraphs</h3>
+    <ul>
+      <li><strong>Styles</strong> give a paragraph its role — a heading, a quote, small print. Use them rather than making text bold and large by hand: headings feed the outline, the table of contents and heading numbers, and a style can be changed for the whole document at once (see <a href="#h-lib-styles">Fonts and styles</a>).</li>
+      <li><strong>Alignment</strong>, <strong>Spacing and indents</strong> and the indent buttons apply to every paragraph the selection touches.</li>
+      <li>Each paragraph runs in the direction of its own text, so English notes in a Hebrew document (and the reverse) read correctly.</li>
+    </ul>
+
+    <h3 id="h-lib-lists">Lists</h3>
+    <ul>
+      <li><strong>Bullets</strong>: dots, circles, squares, dashes, arrows, or a <strong>checklist</strong> — click a checklist box to tick it.</li>
+      <li><strong>Numbering</strong>: 1. 2. 3. · a. b. c. · A. B. C. · i. ii. iii. · I. II. III. — and two multilevel styles for the whole list: <strong>Multilevel 1 · 1.1 · 1.1.1</strong> and <strong>Outline 1 · a · i</strong>.</li>
+      <li><kbd>Tab</kbd> on a list item nests it one level deeper; <kbd>Shift</kbd>+<kbd>Tab</kbd> brings it back.</li>
+      <li><strong>Numbering → Start at…</strong> starts a numbered list from any number — useful when a procedure continues after a note.</li>
+      <li><strong>Remove the list</strong> turns the items back into paragraphs.</li>
+    </ul>
+
+    <h3 id="h-lib-tables">Tables</h3>
+    <figure>
+      <img src="img/t12-library-table.png" alt="The Table menu open over a table: insert and delete rows and columns, merge and split, header row, first column as labels, caption, and the Autofit submenu with fit to contents, fit to page width, fixed column widths and distribute columns evenly.">
+      <figcaption><span class="fno">Fig 24.2</span><span>The Table menu. Every command acts on the table the caret is in.</span></figcaption>
+    </figure>
+    <ol class="steps">
+      <li><strong>Insert → Table</strong> and move over the grid to choose the size (up to 8 × 8), or <strong>Custom size…</strong> for up to 60 rows and 15 columns. The first row is a header row.</li>
+      <li>Type in a cell. <kbd>Tab</kbd> moves to the next cell (and adds a row at the end), <kbd>Shift</kbd>+<kbd>Tab</kbd> to the previous one.</li>
+      <li>Use the <strong>Table</strong> menu to change it:</li>
+    </ol>
+    <div class="tw"><table>
+      <thead><tr><th style="width:220px">Command</th><th>What it does</th></tr></thead>
+      <tbody>
+        <tr><td>Insert row above / below, column before / after</td><td>Adds a row or column next to the caret.</td></tr>
+        <tr><td>Delete row / column / table</td><td>Removes it; deleting the last row or column removes the table.</td></tr>
+        <tr><td>Merge with the cell to the right / below</td><td>Joins two cells, keeping both contents.</td></tr>
+        <tr><td>Split merged cell</td><td>Splits a merged cell back into single cells.</td></tr>
+        <tr><td>Header row · First column as labels · Caption</td><td>Turn the first row into headings, the first column into bold labels, and add a caption above the table.</td></tr>
+        <tr><td>Autofit</td><td><strong>Fit to contents</strong> (columns as wide as their text), <strong>Fit to page width</strong>, <strong>Fixed column widths</strong> (the widths stop changing as you type), <strong>Distribute columns evenly</strong>.</td></tr>
+        <tr><td>Cell alignment · Cell shading</td><td>Top, middle or bottom; start, centre or end; a background colour — for the selected cells.</td></tr>
+        <tr><td>Table style</td><td>Grid, striped rows, plain lines, compact, dark header.</td></tr>
+      </tbody>
+    </table></div>
+    <p><strong>To size a column</strong>, point at the right edge of one of its cells (the left edge in Hebrew) until the pointer becomes ↔, and drag. The table keeps the widths you set.</p>
+
+    <h3>Images</h3>
+    <ul>
+      <li><strong>Insert → Image…</strong>, or paste a screenshot (<kbd>Ctrl</kbd>+<kbd>V</kbd>), or drag an image file onto the page. Images up to 1 MB.</li>
+      <li>Click an image to select it. The bar above the page sets its width (25 %, 50 %, 75 %, 100 %, original), wraps the text to the left or right, centres it or puts it back in line, sets its <strong>alternative text</strong>, adds a <strong>caption</strong> under it, or deletes it.</li>
+    </ul>
+
+    <h3 id="h-lib-links">Links</h3>
+    <ul>
+      <li><strong>Link</strong> (<kbd>Ctrl</kbd>+<kbd>K</kbd>) — type a web address and <strong>Apply</strong>. With the caret in a link, the same bar changes or removes it.</li>
+      <li><strong>Insert → Link to a document, heading or task…</strong> opens a picker with three tabs: <strong>Documents</strong> (search finds headings inside them too), <strong>This document</strong> (its headings) and <strong>Tasks</strong> (Taskana tasks by key or title). With words selected, they become the link; otherwise the title is inserted.</li>
+      <li>While reading, a click on a link follows it: another document opens (at the heading, if the link points to one), a task opens over the page, and a web address opens in a new tab. While editing, <kbd>Ctrl</kbd>+click follows it.</li>
+      <li>The <strong>Links</strong> tab lists every link in the document and every document that links to it.</li>
+    </ul>
+    <figure>
+      <img src="img/t16-library-links.png" alt="The Link to a document, heading or task picker above the page, with the Documents, This document and Tasks tabs, a search field and a list of documents.">
+      <figcaption><span class="fno">Fig 24.3</span><span>Linking to another document, a heading or a Taskana task.</span></figcaption>
+    </figure>
+
+    <h3>Content blocks</h3>
+    <p><strong>Insert → Content block</strong> adds a ready-made block, already formatted:</p>
+    <ul>
+      <li><strong>Admonitions</strong> — Note, Tip, Important, Warning (damage to equipment or data), Caution (risk of injury).</li>
+      <li><strong>Structure</strong> — Procedure (a titled set of numbered steps with a result line), Before you begin (prerequisites as a checklist), Question and answer, Definition list, Field / value table.</li>
+      <li><strong>Layout</strong> — Figure with caption, Two or Three columns, a Collapsible section (click its title to fold it), Code block.</li>
+    </ul>
+
+    <h3>Snippets</h3>
+    <p>A snippet is a piece of a document saved under a name, for the whole team to reuse — a standard safety note, a disclaimer, a table layout.</p>
+    <ol class="steps">
+      <li>Select what to keep and choose <strong>Insert → Snippet → Save the selection as a snippet…</strong>. Name it and press <kbd>Enter</kbd>.</li>
+      <li>To use it, put the caret where it belongs and choose it under <strong>Insert → Snippet</strong>.</li>
+      <li><strong>Manage snippets…</strong> renames, inserts and deletes them (your own, or any as a manager).</li>
+    </ol>
+
+    <h3>Also under Insert</h3>
+    <p><strong>Special character</strong> (arrows, ±, ×, ≤, ≥, °, µ, Ω, ©, ™, €, ₪, ✓, ⚠ and more) · <strong>Divider</strong> · <strong>Page break</strong> (a new page in print, PDF and Word) · <strong>Table of contents</strong> · <strong>Today's date</strong> · <strong>Time stamp</strong> — the current time in brackets, handy for marking where you are in a recorded interview.</p>
+
+    <h3>Find and replace</h3>
+    <p><kbd>Ctrl</kbd>+<kbd>F</kbd> opens the bar above the page. It counts the matches as you type; <kbd>Enter</kbd> or ↓ goes to the next one, ↑ to the previous one; <strong>Aa</strong> matches capitals exactly. While editing, <strong>Replace</strong> changes the current match and <strong>Replace all</strong> every one — undo brings them all back in one step.</p>
+
+    <h3>Typing shortcuts</h3>
+    <p>At the start of an empty paragraph, type one of these and a space:</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:120px">Type</th><th>You get</th></tr></thead>
+      <tbody>
+        <tr><td><code>#</code> · <code>##</code> · <code>###</code> · <code>####</code></td><td>Heading 1 · 2 · 3 · 4</td></tr>
+        <tr><td><code>-</code> or <code>*</code></td><td>A bulleted list</td></tr>
+        <tr><td><code>1.</code> · <code>a.</code></td><td>A numbered list · a lettered list</td></tr>
+        <tr><td><code>[]</code></td><td>A checklist</td></tr>
+        <tr><td><code>&gt;</code></td><td>A quote</td></tr>
+        <tr><td><code>```</code></td><td>A code block (<kbd>Enter</kbd> twice at its end leaves it)</td></tr>
+        <tr><td><code>---</code></td><td>A divider</td></tr>
+      </tbody>
+    </table></div>
+
+    <h3>Keyboard shortcuts</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:220px">Keys</th><th>Action</th></tr></thead>
+      <tbody>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>E</kbd></td><td>Start or stop editing</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd> · <kbd>Ctrl</kbd>+<kbd>Y</kbd> (or <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>Z</kbd>)</td><td>Undo · Redo</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>B</kbd> · <kbd>I</kbd> · <kbd>U</kbd></td><td>Bold · Italic · Underline</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>`</kbd></td><td>Inline code</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>1</kbd>…<kbd>4</kbd> · <kbd>Ctrl</kbd>+<kbd>Alt</kbd>+<kbd>0</kbd></td><td>Heading 1–4 · Normal text</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>7</kbd> · <kbd>8</kbd></td><td>Numbered list · Bulleted list</td></tr>
+        <tr><td><kbd>Tab</kbd> · <kbd>Shift</kbd>+<kbd>Tab</kbd></td><td>Nest or un-nest a list item; next or previous table cell; indent a paragraph; two spaces in a code block</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>K</kbd></td><td>Link</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>F</kbd></td><td>Find and replace</td></tr>
+        <tr><td><kbd>Ctrl</kbd>+<kbd>S</kbd> · <kbd>Ctrl</kbd>+<kbd>P</kbd></td><td>Save now · Print or save as PDF</td></tr>
+        <tr><td><kbd>Esc</kbd></td><td>Close a menu or the bar above the page</td></tr>
+      </tbody>
+    </table></div>
+
+    <div class="note">
+      <span class="tag">Pasting</span>
+      <p>Text pasted from Word, Outlook or a web page keeps its headings, lists, tables, bold and links, and loses the rest (Word's hidden styling, fonts and colours from the source). Plain text arrives as one paragraph per line. Inside a code block, everything is pasted as plain text.</p>
+    </div>
+  </section>
+
+  <!-- ============ 26 ============ -->
+  <section class="ch" id="ch-tk-lib-tools" data-part="Taskana" data-title="Library tools: structure, styles and HTML" data-caps="tkLibraryWrite">
+    <div class="ch-head"><span class="ch-num">26</span><h2>Library tools: structure, styles and HTML</h2></div>
+    <p class="lede">The tools that turn raw notes into a document: organising a dump, a table of contents, follow-ups and terms, tidy code — and the document's fonts, styles, CSS and HTML.</p>
+    <div class="locked-note"></div>
+
+    <h3>Organize pasted notes</h3>
+    <p>Type or paste your notes as they come — one thought per line — then choose <strong>Writer tools → Organize pasted notes into a document</strong>. With part of the document selected, only that part is organised; otherwise every plain paragraph is. Headings, lists and tables you already made are left alone.</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:290px">A line that…</th><th>becomes</th></tr></thead>
+      <tbody>
+        <tr><td>is in CAPITALS, or starts with <code>#</code></td><td>A heading</td></tr>
+        <tr><td>is short and ends with a colon, e.g. <em>Error codes:</em></td><td>A Heading 2</td></tr>
+        <tr><td>starts with <code>1.2</code> or <code>1.2.3</code></td><td>A Heading 2 or 3 (numbered headings)</td></tr>
+        <tr><td>starts with <code>1.</code> or <code>a)</code></td><td>A numbered step</td></tr>
+        <tr><td>starts with <code>-</code>, <code>*</code> or <code>•</code></td><td>A bullet</td></tr>
+        <tr><td>starts with <code>[ ]</code> or <code>[x]</code></td><td>A checklist item</td></tr>
+        <tr><td>starts with <code>Q:</code> / <code>A:</code> (or <code>ש:</code> / <code>ת:</code>)</td><td>A question-and-answer block</td></tr>
+        <tr><td>starts with <code>Note:</code>, <code>Tip:</code>, <code>Warning:</code> or <code>Caution:</code></td><td>A callout of that kind</td></tr>
+        <tr><td>starts with <code>todo</code>, <code>TBD</code>, <code>follow-up</code> or <code>??</code></td><td>A follow-up</td></tr>
+        <tr><td>looks like code (JSON, XML, SQL, a shell command, indented lines, braces and semicolons)</td><td>A code block, tidied and labelled</td></tr>
+      </tbody>
+    </table></div>
+    <p>With two or more headings, a table of contents is added at the top. One <strong>Undo</strong> puts the notes back exactly as they were.</p>
+    <figure>
+      <img src="img/t15-library-organize.png" alt="A document after Organize: a contents box, a heading, numbered steps, a note callout, a question-and-answer block, a bulleted list, a follow-up and a tidied JSON code block.">
+      <figcaption><span class="fno">Fig 25.1</span><span>A pasted dump of interview notes after Organize.</span></figcaption>
+    </figure>
+
+    <h3>Structure</h3>
+    <ul>
+      <li><strong>Insert / update table of contents</strong> — a contents box at the top, linking to every heading; run it again after changing headings.</li>
+      <li><strong>Number the headings (1, 1.1, 1.2…)</strong> — numbers every Heading 1–3 automatically; choose it again to stop.</li>
+      <li><strong>Tidy code blocks</strong> — re-indents JSON, XML and HTML, breaks SQL at its clauses, cleans shell commands and indents brace-based code; each block is labelled with its language. <strong>Turn selection into a code block</strong> does the same for selected text.</li>
+      <li><strong>Clean up formatting (whole document)</strong> — removes empty paragraphs and leftover formatting from pasted text.</li>
+    </ul>
+
+    <h3>Follow-ups and terms</h3>
+    <ol class="steps">
+      <li>Select what still needs an answer and choose <strong>Writer tools → Mark selection as a follow-up</strong>. It is highlighted, and listed under <strong>Follow-ups</strong> in the side panel together with any unticked checklist items.</li>
+      <li>Tick it there when it is resolved. <strong>Create tasks from open follow-ups</strong> makes a Taskana task of each open one, on the document's project (set it under Details first), assigned to you.</li>
+      <li>Select a word the client uses and choose <strong>Mark selection as a term</strong>. Under <strong>Terms</strong>, write what it means. <strong>Insert glossary from terms</strong> adds (or refreshes) a Glossary table at the end of the document.</li>
+    </ol>
+
+    <h3 id="h-lib-styles">Fonts and styles</h3>
+    <figure>
+      <img src="img/t14-library-styles.png" alt="The Styles tab of the side panel editing Heading 1, with fields for font, size, weight, style, capitals, colours, alignment, line height and spacing, and the style menu open in the toolbar.">
+      <figcaption><span class="fno">Fig 25.2</span><span>The Styles tab. Change a style once and every paragraph in that style follows.</span></figcaption>
+    </figure>
+    <p><strong>Fonts.</strong> Under <strong>Styles → Fonts</strong>:</p>
+    <ul>
+      <li><strong>Document font</strong> sets the typeface of the whole document.</li>
+      <li>Add a <strong>Google font</strong> by name (suggestions include Heebo, Rubik, Assistant, Frank Ruhl Libre, Inter, Roboto and more) and press <strong>Add</strong>, or <strong>Upload a font file</strong> (.woff2, .woff, .ttf or .otf, up to 700 KB).</li>
+      <li>The fonts you add appear at the top of the toolbar's <strong>Font</strong> menu, followed by the fonts installed on most computers.</li>
+    </ul>
+    <p><strong>Changing a style.</strong> Pick it in <strong>Style</strong> — Normal text, Heading 1–4, Lead paragraph, Small print, Caption, Quote, Code block, Table heading, Table of contents, or one of the document's own — and set any of: font, size, weight, italic, capitals, text colour, background, alignment, line height, space before and after, first-line indent, letter spacing, underline, a line under the paragraph. Every paragraph in that style changes at once. <strong>Reset to default</strong> undoes your changes to the style.</p>
+    <p><strong>Update a style to match the selection</strong> — the word-processor way: format one paragraph by hand until it looks right, put the caret in it, and choose <strong>Update the style to match the selection</strong> in the style menu (or <strong>Match the selection</strong> in the Styles tab). The style takes that look, and the manual formatting is folded into it.</p>
+    <p><strong>A new style.</strong> Choose <strong>New style from the selection…</strong> in the style menu (or <strong>＋ New style…</strong> in the Styles tab), name it, choose <strong>Paragraph style</strong> or <strong>Character style (for words)</strong> and what it is <strong>based on</strong>, and <strong>Create style</strong>. It starts from how the selected text looks. Paragraph styles appear under <em>This document's styles</em> in the style menu, character styles under <em>Character styles</em>.</p>
+    <p><strong>Copy the styles and fonts of another document</strong> (at the bottom of the Styles tab) brings in that document's styles, fonts and CSS — the text is untouched. Use one well-styled document as the model for the rest.</p>
+    <p><strong>Custom class</strong> (in the style menu) gives the paragraph at the caret one or more CSS classes. The classes the document's CSS defines are offered as one-click choices. A class changes nothing until CSS styles it.</p>
+
+    <h3 id="h-lib-html">HTML mode</h3>
+    <figure>
+      <img src="img/t13-library-html.png" alt="HTML mode: the document's HTML in a dark code box on the left, with HTML and CSS tabs, Format HTML and Paste HTML, and the live preview of the document on the right.">
+      <figcaption><span class="fno">Fig 25.3</span><span>HTML mode: the code on the left, the page on the right, updated as you type.</span></figcaption>
+    </figure>
+    <ol class="steps">
+      <li>While editing, choose <strong>HTML</strong> beside Done editing (or <strong>Writer tools → Edit the document's CSS…</strong>).</li>
+      <li>On the <strong>HTML</strong> tab, change the HTML, or paste a whole page's HTML. <strong>Paste HTML</strong> replaces the document with the HTML on the clipboard; <strong>Format HTML</strong> lays the code out neatly. The preview on the right follows as you type.</li>
+      <li>On the <strong>CSS</strong> tab, write CSS for this document, and give the address of a <strong>linked stylesheet</strong> — a .css file at an <code>https://</code> address, for example the client's documentation stylesheet. The linked file is applied first, then the document's styles, then its own CSS.</li>
+      <li>Choose <strong>Visual</strong> to go back to the page.</li>
+    </ol>
+    <div class="note warn">
+      <span class="tag">What is kept</span>
+      <p>Headings, paragraphs, lists, tables, images, links, sections, figures, collapsible sections, classes, ids and inline styles are kept. Scripts, event handlers, forms, frames and embedded media are always removed. The document's CSS and fonts apply only inside that document — never to Taskana or to other documents.</p>
+    </div>
+
+    <h3>A worked example: from an SME interview to a structured document</h3>
+    <ol class="steps">
+      <li><strong>New document → SME interview.</strong> Under Details, set the client, project, the task the research is for, the expert and the date.</li>
+      <li><strong>Edit document.</strong> Fill in the interview details table and the goals before the meeting.</li>
+      <li>During the interview, type freely under <em>Questions and answers</em>: <code>Q:</code> and <code>A:</code> lines, numbered steps, <code>todo:</code> for anything to check. <strong>Insert → Time stamp</strong> marks where you are in the recording.</li>
+      <li>Afterwards, select the notes and run <strong>Organize</strong>. Fix the headings, and mark the client's words as <strong>terms</strong>.</li>
+      <li>In <strong>Follow-ups</strong>, choose <strong>Create tasks from open follow-ups</strong>, so each open question becomes a task on the project.</li>
+      <li>Link the document from related ones (<strong>Insert → Link to a document</strong>), set the status to <em>In review</em> for the team lead, and to <em>Final</em> — and <strong>Locked</strong> — once agreed.</li>
+      <li><strong>Export → Word</strong> when the content goes into the client's manual.</li>
+    </ol>
+  </section>
+
   <!-- ============ 18 ============ -->
   <section class="ch" id="ch-ref" data-part="Reference" data-title="Reference">
     <div class="ch-head"><span class="ch-num">18</span><h2>Reference</h2></div>
@@ -1406,6 +1741,8 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
         <tr><td><strong>Reimbursement</strong></td><td>Submitted · Approved · Paid · Rejected</td></tr>
         <tr><td><strong>Request types</strong></td><td>Time entry · Leave request · Team loan · Team transfer · Allowance increase · New list item · Expense · Account activation · Role change · Retroactive edit</td></tr>
         <tr><td><strong>Pricing bases</strong></td><td>Money · Hours · Pages · Words · Custom</td></tr>
+        <tr><td><strong>Library document kind</strong></td><td>SME interview · Site visit · Walkthrough · Research notes · Meeting notes · Other</td></tr>
+        <tr><td><strong>Library document status</strong></td><td>Draft · In review · Final</td></tr>
       </tbody>
     </table></div>
 
@@ -1424,6 +1761,9 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
         <tr><td>Burn-rate window</td><td class="num">30 days</td><td>Fixed</td></tr>
         <tr><td>Audit rows shown</td><td class="num">400</td><td>Fixed — 4,000 retained</td></tr>
         <tr><td>Attachment on a Taskana task</td><td class="num">1 MB</td><td>Fixed</td></tr>
+        <tr><td>Image in a Library document</td><td class="num">1 MB</td><td>Fixed — the same limit as a task attachment</td></tr>
+        <tr><td>Font file uploaded to a Library document</td><td class="num">700 KB</td><td>Fixed — .woff2, .woff, .ttf or .otf</td></tr>
+        <tr><td>Library autosave</td><td class="num">0.7 s</td><td>Fixed — after the last change</td></tr>
       </tbody>
     </table></div>
 
@@ -1448,12 +1788,12 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <p>To try the other roles, change someone's role in Management → People.</p>
     <div class="fig-pair">
       <figure>
-        <img src="img/71-fin-budgets.png" alt="The Management tab's Budgets section as Finance: same cards, no edit buttons.">
-        <figcaption><span class="fno">Fig 24.1</span><span>Finance sees every budget on the Management tab, with an Export button and no edit rights.</span></figcaption>
+        <img src="img/71-fin-budgets.png" alt="The Management tab's Budgets section as Finance: the same table, no edit buttons.">
+        <figcaption><span class="fno">Fig 26.1</span><span>Finance sees every budget on the Management tab, with an Export button and no edit rights.</span></figcaption>
       </figure>
       <figure>
         <img src="img/95-view-landing.png" alt="The Time Log as a Viewer: read-only, with a message that the role carries no time-reporting rights.">
-        <figcaption><span class="fno">Fig 24.2</span><span>A Viewer's Time Log — read-only, no reporting rights.</span></figcaption>
+        <figcaption><span class="fno">Fig 26.2</span><span>A Viewer's Time Log — read-only, no reporting rights.</span></figcaption>
       </figure>
     </div>
   </section>
