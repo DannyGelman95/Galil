@@ -94,7 +94,7 @@ var storageOK = true;
 
 function emptyDB() {
   return { app: "galil-taskana", version: APP_VERSION, rosterVersion: 1, users: [], clients: [], projects: [], workOrders: [], tasks: [], comments: [], activity: [],
-    views: [], notifications: [], attachments: [], library: [], settings: { currentUserId: null, theme: null, lang: "en" } };
+    views: [], notifications: [], attachments: [], library: [], snippets: [], settings: { currentUserId: null, theme: null, lang: "en" } };
 }
 function isBackup(o) { return !!o && (o.app === "galil-taskana" || o.app === "galil-folio") && Array.isArray(o.tasks); }
 
@@ -145,7 +145,7 @@ function validateBackup(o) {
   }
   var pids = {}; o.projects.forEach(function (p) { pids[p.id] = 1; });
   for (var n = 0; n < o.tasks.length; n++) if (!pids[o.tasks[n].projectId]) return "Task “" + o.tasks[n].title + "” belongs to a project that is not in the backup.";
-  ["comments", "activity", "views", "notifications", "attachments", "workOrders", "library"].forEach(function (k2) { if (o[k2] != null && !Array.isArray(o[k2])) o[k2] = []; });
+  ["comments", "activity", "views", "notifications", "attachments", "workOrders", "library", "snippets"].forEach(function (k2) { if (o[k2] != null && !Array.isArray(o[k2])) o[k2] = []; });
   return "";
 }
 

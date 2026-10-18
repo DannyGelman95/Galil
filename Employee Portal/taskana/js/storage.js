@@ -20,7 +20,7 @@
 var GRAPH = "https://graph.microsoft.com/v1.0", GITHUB_API = "https://api.github.com";
 var CACHE_KEY = "galil-taskana-cache", PREFS_KEY = "galil-taskana-prefs", BACKUP_DAY_KEY = "galil-taskana-backup-day", GH_TOKEN_KEY = (window.GalilPortal && GalilPortal.GITHUB_TOKEN_KEY) || "galil-portal-github-token";
 var MAX_ONEDRIVE_ATTACHMENT = 50 * 1024 * 1024, MAX_GITHUB_ATTACHMENT = 10 * 1024 * 1024;
-var COLLECTIONS = ["users", "clients", "projects", "workOrders", "tasks", "comments", "activity", "views", "notifications", "attachments", "library"];
+var COLLECTIONS = ["users", "clients", "projects", "workOrders", "tasks", "comments", "activity", "views", "notifications", "attachments", "library", "snippets"];
 
 var Store = {
   remote: false, state: "idle", error: "", lastSync: null, folder: null, etag: null, base: null, baseText: null,

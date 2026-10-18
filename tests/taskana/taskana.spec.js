@@ -546,27 +546,90 @@ test.describe("GitHub storage", () => {
   });
 });
 
-test("the Library turns pasted SME notes into a structured document and saves it", async ({ page }) => {
+test("the Library editor: read by default, structured notes, real undo, tables, links, snippets and HTML mode", async ({ page }) => {
   const errors = await open(page, "library");
   await expect(page.locator(".lib-item", { hasText: "SME interview" }).first()).toBeVisible();
   await page.getByRole("button", { name: "New document" }).click();
   await page.locator(".lib-menu button", { hasText: "Blank document" }).click();
-  await page.locator("#lib-ed").click();
+  const ed = page.frameLocator(".ed-frame").locator("#doc");
+  await expect(ed).toHaveAttribute("contenteditable", "false");          // opens for reading
+  await page.locator("#lib-edit").click();
+  await expect(ed).toHaveAttribute("contenteditable", "true");
+  await ed.click();
   const notes = ["POWER-UP PROCEDURE", "1. Switch on the main breaker", "2. Turn the console key", "Q: What if BIT fails?", "A: Call maintenance.",
     "Error codes:", "- E12 cooling loop", "todo: get the amber codes", "{\"mode\":\"standby\",\"checks\":[\"tx\"]}"].join("\n");
-  await page.evaluate(t => { const dt = new DataTransfer(); dt.setData("text/plain", t); document.getElementById("lib-ed").dispatchEvent(new ClipboardEvent("paste", { clipboardData: dt, bubbles: true, cancelable: true })); }, notes);
+  await page.evaluate(t => { const d = ED.doc, dt = new DataTransfer(); dt.setData("text/plain", t); ED.root.dispatchEvent(new ClipboardEvent("paste", { clipboardData: dt, bubbles: true, cancelable: true })); }, notes);
   await page.getByRole("button", { name: "Writer tools" }).click();
-  await page.locator(".lib-menu button", { hasText: "Organize pasted notes" }).click();
-  const ed = page.locator("#lib-ed");
+  await page.locator(".ed-menu button", { hasText: "Organize pasted notes" }).click();
   await expect(ed.locator("div.toc a")).toHaveCount(2);
   await expect(ed.locator("h1")).toHaveText("Power-up procedure");
   await expect(ed.locator("ol > li")).toHaveCount(2);
   await expect(ed.locator(".qa .q")).toHaveText("What if BIT fails?");
   await expect(ed.locator("mark.fu")).toHaveText("get the amber codes");
   await expect(ed.locator("pre.lang-json")).toContainText('"mode": "standby"');
-  await expect(page.locator("#lib-foot")).toContainText("Saved");
-  const doc = (await store(page)).library.find(d => /<h1/.test(d.html) && /class="toc"/.test(d.html));
-  expect(doc).toBeTruthy();
-  expect(doc.html).not.toMatch(/<script|onerror/i);
+  /* undo takes the whole Organize step back, redo brings it again */
+  await page.locator('button[aria-label="Undo"]').click();
+  await expect(ed.locator("div.toc")).toHaveCount(0);
+  await page.locator('button[aria-label="Undo"]').click();
+  await expect(ed.locator("h1")).toHaveCount(0);
+  await page.locator('button[aria-label="Redo"]').click();
+  await page.locator('button[aria-label="Redo"]').click();
+  await expect(ed.locator("div.toc a")).toHaveCount(2);
+  /* highlighting a phrase wraps only the text — no new lines */
+  const blocksBefore = await ed.locator("p, li, h1, h2").count();
+  await ed.locator(".qa .a").click({ clickCount: 3 });
+  await page.locator('button[aria-label="Highlight"]').click();
+  await page.locator(".ed-sw .sw").first().click();
+  await expect(ed.locator(".qa .a span.hl-1")).toHaveText("Call maintenance.");
+  expect(await ed.locator("p, li, h1, h2").count()).toBe(blocksBefore);
+  /* a table from the grid, a column added, a column sized by dragging its edge */
+  await ed.locator("h2").first().click(); await page.keyboard.press("End"); await page.keyboard.press("Enter");
+  await page.locator('button[aria-label="Insert"]').click();
+  await page.locator(".ed-menu button", { hasText: /^Table$/ }).hover();
+  await page.locator('.ed-tgrid button[data-r="3"][data-c="2"]').click();
+  await expect(ed.locator("table th")).toHaveCount(2);
+  await ed.locator("table td").first().click();
+  await page.locator('button[aria-label="Table"]').click();
+  await page.locator(".ed-menu button", { hasText: "Insert column after" }).click();
+  await expect(ed.locator("table th")).toHaveCount(3);
+  const cell = ed.locator("table th").first(), box = await cell.boundingBox();
+  await page.mouse.move(box.x + box.width - 2, box.y + 8);
+  const w0 = box.width;
+  /* the drag itself as events in the frame (Playwright's mouse waits forever on a sandboxed frame mid-drag) */
+  await page.evaluate(([x, y]) => {
+    const th = ED.root.querySelector("th"), ev = (t, cx) => new ED.win.MouseEvent(t, { bubbles: true, clientX: cx, clientY: y, button: 0 });
+    th.dispatchEvent(ev("mousedown", x)); ED.doc.dispatchEvent(ev("mousemove", x + 80)); ED.doc.dispatchEvent(ev("mouseup", x + 80));
+  }, [w0 - 2 + (await ed.locator("table th").first().evaluate(e => e.getBoundingClientRect().left)), 8 + (await ed.locator("table th").first().evaluate(e => e.getBoundingClientRect().top))]);
+  await expect(ed.locator("table colgroup col")).toHaveCount(3);
+  expect(parseFloat(await ed.locator("table colgroup col").first().evaluate(c => c.style.width))).toBeGreaterThan(w0 + 60);
+  /* a link to another document */
+  await ed.locator("h1").click(); await page.keyboard.press("End");
+  await page.locator('button[aria-label="Insert"]').click();
+  await page.locator(".ed-menu button", { hasText: "Link to a document" }).click();
+  await page.locator(".ed-pick .pk", { hasText: "SME interview" }).first().click();
+  await expect(ed.locator("a.doclink")).toHaveCount(1);
+  /* a snippet saved and inserted */
+  await ed.locator(".qa").first().click(); await page.evaluate(() => { const r = ED.doc.createRange(); r.selectNode(ED.root.querySelector(".qa")); const s = ED.win.getSelection(); s.removeAllRanges(); s.addRange(r); });
+  await page.locator('button[aria-label="Insert"]').click();
+  await page.locator(".ed-menu button", { hasText: /^Snippet$/ }).hover();
+  await page.locator(".ed-menu button", { hasText: "Save the selection as a snippet" }).click();
+  await page.locator(".lib-bar input").fill("BIT question"); await page.keyboard.press("Enter");
+  expect((await store(page)).snippets.map(s => s.name)).toContain("BIT question");
+  /* HTML mode: scripts and handlers go, classes and the document's CSS stay */
+  await page.locator(".lib-moderow button", { hasText: "HTML" }).click();
+  await page.locator("textarea.ed-code").fill('<h1 class="x">Hello</h1><p class="big">Styled</p><script>alert(1)</script><img src=x onerror=alert(1)>');
+  await page.locator(".ed-srchead button", { hasText: "CSS" }).click();
+  await page.locator(".ed-cssbox textarea").fill(".big{color:rgb(200,0,0)}");
+  await page.locator(".lib-moderow button", { hasText: "Visual" }).click();
+  await expect(ed.locator("p.big")).toHaveCSS("color", "rgb(200, 0, 0)");
+  await page.locator("#lib-done").click();
+  await expect(ed).toHaveAttribute("contenteditable", "false");
+  const doc = (await store(page)).library.find(d => /Hello/.test(d.html));
+  expect(doc.css).toContain(".big");
+  expect(doc.html).not.toMatch(/<script|onerror|<img/i);
+  /* a locked document can't be switched to editing */
+  await page.locator(".lib-tabs button", { hasText: "Details" }).click();
+  await page.locator("label", { hasText: "Locked" }).locator("input").check();
+  await expect(page.locator("#lib-edit")).toBeDisabled();
   expect(errors).toEqual([]);
 });
