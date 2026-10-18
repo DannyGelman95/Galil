@@ -336,6 +336,104 @@ test.describe("WorkDesk tools", () => {
   });
 });
 
+/* ---------- Management: record details and birthdays ---------- */
+test.describe("Management details", () => {
+  const openMgmt = async (page, section) => {
+    await signIn(page, "tamir@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await page.getByRole("tab", { name: /Management/ }).click();
+    if (section) await page.getByRole("button", { name: section, exact: true }).click();
+  };
+
+  test("a client is added and edited with its VAT number, address and payment terms", async ({ page }) => {
+    const errors = await local(page);
+    await openMgmt(page, "Clients");
+    await page.locator(".band input").first().fill("Negev Robotics");
+    await page.getByRole("button", { name: "More details…" }).click();
+    const dlg = page.getByRole("dialog", { name: "New client" });
+    await expect(dlg.locator("#rec-name")).toHaveValue("Negev Robotics");
+    await dlg.locator("#rec-vatNumber").fill("51-765432-1");
+    await dlg.locator("#rec-address").fill("HaMelacha St 12");
+    await dlg.locator("#rec-city").fill("Beer Sheva");
+    await dlg.locator("#rec-paymentTerms").selectOption("Net 60");
+    await dlg.getByRole("button", { name: "+ Add" }).click();
+    let c = (await data(page)).clients.find(x => x.name === "Negev Robotics");
+    expect(c).toMatchObject({ vatNumber: "51-765432-1", city: "Beer Sheva", paymentTerms: "Net 60", initials: "NR" });
+    expect(c.createdAt).toBeTruthy();
+    const row = page.getByRole("row", { name: /Negev Robotics/ });
+    await expect(row).toContainText("51-765432-1");
+    await expect(row).toContainText("Beer Sheva");
+    await row.getByRole("button", { name: "Edit Negev Robotics" }).click();
+    await page.getByRole("dialog", { name: "Edit client" }).locator("#rec-city").fill("Ashdod");
+    await page.getByRole("dialog", { name: "Edit client" }).getByRole("button", { name: "Save", exact: true }).click();
+    c = (await data(page)).clients.find(x => x.name === "Negev Robotics");
+    expect(c.city).toBe("Ashdod");
+    expect(errors).toEqual([]);
+  });
+
+  test("projects show their dates, work orders, Taskana tasks and creation date, and edit in full", async ({ page }) => {
+    const errors = await local(page);
+    await page.evaluate(() => localStorage.setItem("galil-taskana-v1", JSON.stringify({ projects: [{ id: "p-iai1", key: "RAD" }], users: [],
+      tasks: [{ id: "t1", projectId: "p-iai1", num: 1, title: "A", status: "Done" }, { id: "t2", projectId: "p-iai1", num: 2, title: "B", status: "To do" }, { id: "t3", projectId: "p-iai1", workOrderId: "p-iai1-w1", num: 3, title: "C", status: "To do" }] })));
+    await openMgmt(page, "Projects");
+    for (const col of ["Dates", "Work orders", "Tasks", "Created"]) await expect(page.locator("th").filter({ hasText: new RegExp("^" + col + "$") }).first()).toBeVisible();
+    const row = page.getByRole("row", { name: /Radar Suite — Operator Manual/ });
+    const tasks = await page.evaluate(() => GalilPortal.taskana() ? GalilPortal.taskana().tasks.length : -1);
+    if (tasks === 3) await expect(row).toContainText("2 open");
+    await row.getByRole("button", { name: "Edit Radar Suite — Operator Manual" }).click();
+    const dlg = page.getByRole("dialog", { name: "Edit project" });
+    await dlg.locator("#rec-description").fill("Operator manual for the radar suite.");
+    await dlg.locator("#rec-endDate").fill("2027-06-30");
+    await dlg.getByRole("button", { name: "Save", exact: true }).click();
+    const pr = (await data(page)).projects.find(x => x.id === "p-iai1");
+    expect(pr).toMatchObject({ description: "Operator manual for the radar suite.", endDate: "2027-06-30" });
+    expect(errors).toEqual([]);
+  });
+
+  test("people carry a mobile and a birthday; birthdays this week are reminded on People and the home page", async ({ page }) => {
+    const errors = await local(page);
+    await openMgmt(page, "People");
+    await expect(page.locator("#people-birthdays")).toContainText("Dennis Sablin");
+    await page.getByRole("button", { name: "Edit the details of Eitan Fisch" }).click();
+    const dlg = page.getByRole("dialog", { name: "Details — Eitan Fisch" });
+    await dlg.locator("#rec-mobile").fill("054-111-2222");
+    const today = await page.evaluate(() => todayStr());
+    await dlg.locator("#rec-dob").fill("1990-" + today.slice(5));
+    await dlg.getByRole("button", { name: "Save", exact: true }).click();
+    const row = page.getByRole("row", { name: /Eitan Fisch/ });
+    await expect(row).toContainText("054-111-2222");
+    await expect(row).toContainText("Today");
+    await page.click("#to-portal");
+    await expect(page.locator("#home-birthdays")).toContainText("Eitan Fisch");
+    expect(errors).toEqual([]);
+  });
+
+  test("anyone adds their own mobile and birthday in My profile, and can keep the birthday private", async ({ page }) => {
+    const errors = await local(page);
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await page.locator('button[title="My profile"]').click();
+    await page.click("#edit-my-details");
+    const dlg = page.getByRole("dialog", { name: "My details" });
+    await dlg.locator("#rec-mobile").fill("052-333-4444");
+    await dlg.locator("#rec-dob").fill("1991-03-14");
+    await dlg.locator("#rec-hideBirthday").check();
+    await dlg.getByRole("button", { name: "Save", exact: true }).click();
+    const u = (await data(page)).users.find(x => x.id === "u-eitan");
+    expect(u).toMatchObject({ mobile: "052-333-4444", dob: "1991-03-14", hideBirthday: true });
+    expect(errors).toEqual([]);
+  });
+
+  test("work orders show their lead, team, tasks and creation date", async ({ page }) => {
+    const errors = await local(page);
+    await openMgmt(page, "Work Orders");
+    for (const col of ["Lead", "Team", "Tasks", "Created"]) await expect(page.locator("th").filter({ hasText: new RegExp("^" + col + "$") }).first()).toBeVisible();
+    await page.getByRole("button", { name: "Budgets", exact: true }).click();
+    for (const col of ["Notes", "Created"]) await expect(page.locator("th").filter({ hasText: new RegExp("^" + col + "$") }).first()).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+});
+
 /* ---------- the phone layout ---------- */
 test.describe("phone layout", () => {
   test.use({ viewport: { width: 390, height: 844 } });
