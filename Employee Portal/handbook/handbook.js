@@ -33,8 +33,6 @@ var PERM = {
   manageEmployeesRoles:  ["-","-","-","-","Y","-","Y","-","-"],
   dashboardOwn:          ["Y","Y","Y","Y","Y","Y","Y","-","Y"],
   dashboardCompany:      ["-","-","T","P","Y","Y","Y","-","Y"],
-  libraryRead:           ["Y","Y","Y","Y","Y","Y","Y","-","-"],
-  libraryWrite:          ["Y","Y","Y","Y","Y","-","Y","-","-"],
   excelExport:           ["O","O","T","P","Y","Y","Y","O","Y"],
   backupRestore:         ["-","-","-","-","Y","-","Y","-","-"],
   viewAuditLog:          ["-","-","-","-","Y","Y","Y","-","-"],
@@ -54,6 +52,8 @@ var PORTAL_PERM = {
   tkProjectSettings:["-","-","Y","Y","Y","-","Y","-","-"],
   tkBudgets:        ["-","-","Y","Y","Y","-","Y","-","-"],
   tkOwnBank:        ["Y","Y","Y","Y","Y","-","Y","Y","-"],
+  tkLibraryRead:    ["Y","Y","Y","Y","Y","Y","Y","-","Y"],
+  tkLibraryWrite:   ["Y","Y","Y","Y","Y","-","Y","-","-"],
   tkData:           ["-","-","-","-","Y","-","Y","-","-"]
 };
 var LABEL = HE ? {
@@ -63,13 +63,13 @@ var LABEL = HE ? {
   editBudgets:"יצירה / עריכה של תקציבים", createWorkOrders:"יצירת הזמנות עבודה", assignPeople:"שיבוץ אנשים לפרויקטים",
   manageClientsProjects:"ניהול לקוחות ופרויקטים", manageEmployeesRoles:"ניהול עובדים ותפקידים",
   dashboardOwn:"לוח מחוונים — נתונים אישיים", dashboardCompany:"לוח מחוונים — נתוני החברה",
-  libraryRead:"ספרייה — קריאה", libraryWrite:"ספרייה — כתיבה", excelExport:"ייצוא לאקסל",
+  excelExport:"ייצוא לאקסל",
   backupRestore:"גיבוי / שחזור", viewAuditLog:"צפייה ביומן הביקורת", manageTeams:"הקמת צוותים ומנהלים",
   openWorkdesk:"פתיחת WorkDesk", openTaskana:"פתיחת Taskana", openHandbook:"פתיחת המדריך", openKb:"פתיחת מאגר הידע",
   setPortalAccess:"הגדרת הרשאות פורטל לאנשים",
   tkSeeAll:"Taskana — צפייה בכל המשימות", tkWorkTasks:"Taskana — יצירה ועריכה של משימות", tkDeleteTasks:"Taskana — מחיקת משימות",
   tkComment:"Taskana — תגובות ושאלות", tkProjectSettings:"Taskana — הגדרות פרויקט (מפתח, סוג מסמך)",
-  tkBudgets:"Taskana — מחווני תקציב ובנק שעות של אחרים", tkOwnBank:"Taskana — בנק השעות שלי", tkData:"Taskana — נתונים, גיבוי ושחזור"
+  tkBudgets:"Taskana — מחווני תקציב ובנק שעות של אחרים", tkOwnBank:"Taskana — בנק השעות שלי", tkLibraryRead:"Taskana — קריאה בספרייה", tkLibraryWrite:"Taskana — כתיבה ועריכה בספרייה", tkData:"Taskana — נתונים, גיבוי ושחזור"
 } : {
   reportOwnTime:"Report own time", reportBlueTime:"Report Blue · management hours", viewOthersTime:"View others' time", editOthersTime:"Edit others' time",
   approveTime:"Approve time requests", planOwnWeek:"Plan own week", planOthersWeek:"Plan others' week",
@@ -77,13 +77,13 @@ var LABEL = HE ? {
   editBudgets:"Create / edit budgets", createWorkOrders:"Create work orders", assignPeople:"Assign people to projects",
   manageClientsProjects:"Manage clients & projects", manageEmployeesRoles:"Manage employees & roles",
   dashboardOwn:"Dashboard — own figures", dashboardCompany:"Dashboard — company figures",
-  libraryRead:"Library — read", libraryWrite:"Library — write", excelExport:"Excel export",
+  excelExport:"Excel export",
   backupRestore:"Backup / restore", viewAuditLog:"View audit log", manageTeams:"Set up teams & managers",
   openWorkdesk:"Open WorkDesk", openTaskana:"Open Taskana", openHandbook:"Open the Handbook", openKb:"Open the Knowledge Base",
   setPortalAccess:"Set people's portal access",
   tkSeeAll:"Taskana — see every task", tkWorkTasks:"Taskana — create and edit tasks", tkDeleteTasks:"Taskana — delete tasks",
   tkComment:"Taskana — comments and questions", tkProjectSettings:"Taskana — project settings (key, document type)",
-  tkBudgets:"Taskana — budget and others' hours-bank indicators", tkOwnBank:"Taskana — my hours bank", tkData:"Taskana — data, backup and restore"
+  tkBudgets:"Taskana — budget and others' hours-bank indicators", tkOwnBank:"Taskana — my hours bank", tkLibraryRead:"Taskana — read the Library", tkLibraryWrite:"Taskana — write and edit in the Library", tkData:"Taskana — data, backup and restore"
 };
 var SCOPE_WORD = HE ? {Y:"", O:"עצמי", T:"צוות", P:"פרויקטים"} : {Y:"", O:"own", T:"team", P:"projects"};
 var SCOPE_LETTER = {O:"O", T:"T", P:"P"};
@@ -112,7 +112,6 @@ var CH_ICON = {
   "ch-budgets": '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2 13h20"/>',
   "ch-approvals": '<circle cx="12" cy="12" r="10"/><path d="M9 12l2 2 4-4"/>',
   "ch-dashboard": '<path d="M3 3v18h18"/><path d="M8 17V11M13 17V7M18 17v-4"/>',
-  "ch-library": '<path d="M16 6l4 14M12 6v14M8 8v12M4 4v16"/>',
   "ch-mywork": '<rect x="8" y="2" width="8" height="4" rx="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2M12 11h4M12 16h4M8 11h.01M8 16h.01"/>',
   "ch-admin": '<circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/>',
   "ch-data": '<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.7-4 3-9 3s-9-1.3-9-3M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"/>',
@@ -122,6 +121,9 @@ var CH_ICON = {
   "ch-tk-wd": '<path d="M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7"/><path d="M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7"/>',
   "ch-tk-hours": '<path d="M5 22h14M5 2h14M17 22v-4.2a2 2 0 0 0-.6-1.4L12 12l-4.4 4.4a2 2 0 0 0-.6 1.4V22M7 2v4.2a2 2 0 0 0 .6 1.4L12 12l4.4-4.4a2 2 0 0 0 .6-1.4V2"/>',
   "ch-tk-roles": '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.9M16 3.1a4 4 0 0 1 0 7.8"/>',
+  "ch-tk-library": '<path d="M16 6l4 14M12 6v14M8 8v12M4 4v16"/>',
+  "ch-tk-lib-write": '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+  "ch-tk-lib-tools": '<path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>',
   "ch-ref": '<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>'
 };
 var svgOf = function (body) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (body || CH_ICON["ch-ref"]) + "</svg>"; };

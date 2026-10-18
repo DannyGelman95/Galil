@@ -1,10 +1,12 @@
 // Re-shoots the Handbook's WorkDesk and portal screenshots, in English (img/) and Hebrew (img/he/).
 // Run from tests/workdesk (for Playwright):  node ../../tools/handbook-shots.js [en|he]
-// Taskana's screenshots (t01–t03) and the expense-attachment close-up (16b) are taken by hand.
+// Taskana's board, task and budget screenshots (t01–t03) and the expense-attachment close-up (16b) are taken by hand;
+// the Library's (t10–t16) are taken here.
 const { chromium } = require(require.resolve("playwright", { paths: [process.cwd()] }));
 const path = require("path"), { execFileSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "../Employee Portal");
 const URL = "file://" + ROOT.replace(/ /g, "%20") + "/index.html";
+const TK_URL = "file://" + ROOT.replace(/ /g, "%20") + "/taskana/index.html";
 const LANGS = process.argv[2] ? [process.argv[2]] : ["en", "he"];
 const W = { width: 1366, height: 860 }, PHONE = { width: 390, height: 844 };
 
@@ -15,12 +17,14 @@ async function open(b, lang, opts = {}) {
   await page.addInitScript(([lang, user]) => {
     try {
       localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" }));
+      localStorage.setItem("galil-taskana-config", JSON.stringify({ storage: "local" }));
       localStorage.setItem("galil-portal-lang", lang);
       localStorage.setItem("galil-workdesk-theme", "light");
       if (user && !sessionStorage.getItem("shot-session")) { localStorage.setItem("galil-workdesk-session", user); sessionStorage.setItem("shot-session", "1"); }
     } catch (e) {}
   }, [lang, opts.user || null]);
   await page.goto(URL + (opts.hash || ""));
+  if (opts.taskana) { await page.waitForTimeout(500); await page.goto(TK_URL + opts.taskana); }
   if (opts.roles) {
     await page.evaluate(roles => {
       const raw = JSON.parse(localStorage.getItem("galil-workdesk-v1"));
@@ -30,10 +34,13 @@ async function open(b, lang, opts = {}) {
     await page.reload();
   }
   await page.waitForTimeout(700);
-  const T = s => page.evaluate(s => window.WDI18N ? WDI18N.t(s) : s, s);
+  const T = s => page.evaluate(s => window.WDI18N ? WDI18N.t(s) : window.tr ? tr(s) : s, s);
   return { page, ctx, T };
 }
 const wd = tab => "#/workdesk/" + tab;
+/* the Library lives in Taskana: open the portal signed in, then Taskana's Library */
+const LIB = { user: "u-danny", taskana: "#/library", viewport: { width: 1500, height: 900 } };
+async function libDoc(page) { await page.locator(".lib-item").filter({ has: page.locator(".chip.teal") }).filter({ hasText: /SME|מומחה/ }).first().click(); await page.waitForTimeout(800); }
 async function section(page, T, label) {
   await page.locator(".pill", { hasText: await T(label) }).first().click(); await page.waitForTimeout(400);
 }
@@ -62,18 +69,20 @@ const SCENES = [
     const box = await page.locator(".tblbar").first().boundingBox();
     await shot(page, f, { x: 0, y: Math.max(0, box.y - 10), width: 1366, height: 420 }); }],
   ["10-emp-timelog", { user: "u-eitan", hash: wd("time") }, async ({ page }, f) => shot(page, f)],
-  ["11-emp-timelog-form", { user: "u-eitan", hash: wd("time") }, async ({ page }, f) => shot(page, f, { x: 0, y: 0, width: 1366, height: 430 })],
+  ["11-emp-timelog-form", { user: "u-eitan", hash: wd("time") }, async ({ page }, f) => { const b = await page.locator(".tlform").boundingBox(); await shot(page, f, { x: Math.max(0, b.x - 8), y: 0, width: b.width + 16, height: 860 }); }],
   ["12-emp-planner", { user: "u-eitan", hash: wd("planner") }, async ({ page }, f) => shot(page, f)],
   ["16-emp-expenses", { user: "u-eitan", hash: wd("expenses") }, async ({ page }, f) => shot(page, f)],
   ["17-emp-dashboard", { user: "u-eitan", hash: wd("dashboard") }, async ({ page }, f) => shot(page, f)],
-  ["18-emp-library", { user: "u-eitan", hash: wd("library") }, async ({ page }, f) => shot(page, f)],
   ["19-emp-my-assignments", { user: "u-eitan", hash: wd("time") }, async ({ page, T }, f) => { await page.getByRole("button", { name: await T("My assignments and allowances") }).click(); await modal(page, f); }],
   ["20-emp-request-hours", { user: "u-eitan", hash: wd("time") }, async ({ page, T }, f) => { await page.getByRole("button", { name: await T("My assignments and allowances") }).click(); await page.waitForTimeout(300); await page.locator(".modal button", { hasText: await T("Request hours") }).first().click(); await modal(page, f); }],
   ["31-tl-approvals", { user: "u-danny", hash: wd("approvals") }, async ({ page }, f) => shot(page, f)],
   ["32-tl-decline", { user: "u-danny", hash: wd("approvals") }, async ({ page, T }, f) => { await page.getByRole("button", { name: await T("Decline"), exact: true }).first().click(); await modal(page, f); }],
-  ["33-tl-request-info", { user: "u-danny", hash: wd("approvals") }, async ({ page, T }, f) => { await page.getByRole("button", { name: await T("Request information"), exact: true }).first().click(); await modal(page, f); }],
+  ["33-tl-request-info", { user: "u-danny", hash: wd("approvals") }, async ({ page, T }, f) => { await page.getByRole("button", { name: await T("Request info"), exact: true }).first().click(); await modal(page, f); }],
   ["63-ops-approvals", { user: "u-inon", hash: wd("approvals") }, async ({ page }, f) => shot(page, f)],
   ["44-pm-dashboard", { user: "u-danny", hash: wd("dashboard") }, async ({ page }, f) => shot(page, f)],
+  ["46-pm-dashboard-custom", { user: "u-danny", hash: wd("dashboard") }, async ({ page, T }, f) => {
+    await page.getByRole("button", { name: new RegExp(await T("Customize")) }).click(); await page.waitForTimeout(200);
+    await page.getByRole("button", { name: await T("+ Add widget") }).click(); await page.waitForTimeout(400); await shot(page, f); }],
   ["40-pm-budgets", { user: "u-danny", hash: wd("management") }, async ({ page, T }, f) => { await section(page, T, "Budgets"); await shot(page, f); }],
   ["43-pm-new-budget", { user: "u-danny", hash: wd("management") }, async ({ page, T }, f) => { await section(page, T, "Budgets"); await page.getByRole("button", { name: await T("+ New budget") }).click(); await modal(page, f); }],
   ["41-pm-work-orders", { user: "u-danny", hash: wd("management") }, async ({ page, T }, f) => { await section(page, T, "Work Orders"); await shot(page, f); }],
@@ -102,6 +111,35 @@ const SCENES = [
   ["59-admin-verify", { user: "u-tamir", hash: wd("management") }, async ({ page, T }, f) => { await section(page, T, "Verification Queue"); await shot(page, f); }],
   ["71-fin-budgets", { user: "u-paul", roles: { "u-paul": "FIN" }, hash: wd("management") }, async ({ page, T }, f) => { await section(page, T, "Budgets").catch(() => {}); await shot(page, f); }],
   ["98-mobile-timelog", { user: "u-eitan", viewport: PHONE, hash: wd("time") }, async ({ page }, f) => shot(page, f)],
+  ["t10-library", LIB, async ({ page }, f) => { await libDoc(page); await shot(page, f); }],
+  ["t11-library-edit", LIB, async ({ page, T }, f) => { await libDoc(page); await page.locator("#lib-edit").click(); await page.waitForTimeout(300);
+    await page.locator('button[aria-label="' + await T("Insert") + '"]').click(); await page.waitForTimeout(200);
+    await page.locator(".ed-menu button", { hasText: await T("Content block") }).hover(); await page.waitForTimeout(500); await shot(page, f); }],
+  ["t12-library-table", LIB, async ({ page, T }, f) => { await libDoc(page); await page.locator("#lib-edit").click(); await page.waitForTimeout(300);
+    await page.frameLocator(".ed-frame").locator("table td").first().click(); await page.waitForTimeout(200);
+    await page.locator('button[aria-label="' + await T("Table") + '"]').click(); await page.waitForTimeout(200);
+    await page.locator(".ed-menu button", { hasText: await T("Autofit") }).hover(); await page.waitForTimeout(500); await shot(page, f); }],
+  ["t13-library-html", LIB, async ({ page }, f) => { await libDoc(page); await page.locator("#lib-edit").click(); await page.waitForTimeout(300);
+    await page.locator(".lib-moderow button", { hasText: "HTML" }).click(); await page.waitForTimeout(700); await shot(page, f); }],
+  ["t14-library-styles", LIB, async ({ page, T }, f) => { await libDoc(page); await page.locator("#lib-edit").click(); await page.waitForTimeout(300);
+    await page.locator(".lib-tabs button", { hasText: await T("Styles") }).click(); await page.waitForTimeout(200);
+    await page.locator('select[aria-label="' + await T("Style to edit") + '"]').selectOption("h1"); await page.waitForTimeout(300);
+    await page.locator('button[aria-label="' + await T("Paragraph style") + '"]').click(); await page.waitForTimeout(400); await shot(page, f); }],
+  ["t15-library-organize", LIB, async ({ page, T, lang }, f) => {
+    await page.getByRole("button", { name: await T("New document") }).click(); await page.locator(".lib-menu button", { hasText: await T("Blank document") }).click(); await page.waitForTimeout(600);
+    await page.locator("#lib-edit").click(); await page.waitForTimeout(300);
+    const notes = lang === "he"
+      ? ["הליך הדלקה", "1. מפעילים את המפסק הראשי", "2. מסובבים את מפתח הקונסולה", "הערה: ממתינים 40 שניות לאתחול", "ש: מה עושים אם הבדיקה העצמית נכשלת?", "ת: מתקשרים לתחזוקה ורושמים את הקוד.", "קודי שגיאה:", "- E12 מעגל הקירור", "- E31 המשדר", "לבדוק: רשימת הקודים הצהובים המלאה", "{\"mode\":\"standby\",\"timeout\":40}", "1.1 מסננים", "החלפה כל 500 שעות."]
+      : ["POWER-UP PROCEDURE", "1. Switch on the main breaker", "2. Turn the console key", "Note: wait 40 seconds for the boot screen", "Q: What if the self-test fails?", "A: Call maintenance and log the code.", "Error codes:", "- E12 cooling loop", "- E31 transmitter", "todo: get the full list of amber codes", "{\"mode\":\"standby\",\"timeout\":40}", "1.1 Filters", "Replace every 500 hours."];
+    await page.evaluate(t => { const dt = new DataTransfer(); dt.setData("text/plain", t); ED.root.dispatchEvent(new ClipboardEvent("paste", { clipboardData: dt, bubbles: true, cancelable: true })); }, notes.join("\n"));
+    await page.locator('button[aria-label="' + await T("Writer tools") + '"]').click(); await page.waitForTimeout(200);
+    await page.locator(".ed-menu button", { hasText: await T("Organize pasted notes into a document") }).click(); await page.waitForTimeout(800);
+    await page.locator(".toast").evaluateAll(t => t.forEach(x => x.remove()));
+    await shot(page, f); }],
+  ["t16-library-links", LIB, async ({ page, T }, f) => { await libDoc(page); await page.locator("#lib-edit").click(); await page.waitForTimeout(300);
+    await page.frameLocator(".ed-frame").locator("h1").nth(1).click(); await page.keyboard.press("End");
+    await page.locator('button[aria-label="' + await T("Insert") + '"]').click(); await page.waitForTimeout(200);
+    await page.locator(".ed-menu button", { hasText: await T("Link to a document, heading or task…") }).click(); await page.waitForTimeout(500); await shot(page, f); }],
   ["99-mobile-more", { user: "u-eitan", viewport: PHONE, hash: wd("time") }, async ({ page }, f) => { await page.locator(".mnav button").last().click(); await page.waitForTimeout(500); await shot(page, f); }]
 ];
 
