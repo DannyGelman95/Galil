@@ -894,7 +894,7 @@ var ARTICLES = [
   '</tbody></table>' +
   '<h2>Reading and editing</h2>' +
   '<p>A document always opens for reading, so a stray click or key can\'t change it. Links work, and nothing you type lands in the text.</p>' +
-  '<ul><li><strong>Edit document</strong> — or <code>Ctrl</code>+<code>E</code>, or a double-click in the text — switches editing on. The page gets a green frame and the toolbar appears.</li>' +
+  '<ul><li><strong>Edit document</strong> — or <code>Ctrl</code>+<code>E</code>, or a double-click in the text — switches editing on. The page gets an orange frame and the toolbar appears.</li>' +
   '<li><strong>Done editing</strong> (or <code>Ctrl</code>+<code>E</code> again) switches it off and saves.</li>' +
   '<li><strong>Visual</strong> and <strong>HTML</strong>, beside Done editing, switch between the page and its code — see <a href="#/library-html-styles">Styles, fonts and HTML mode in the Library</a>.</li>' +
   '<li><strong>Locked</strong>: under Details, the document\'s author or a manager can lock it. Nobody can switch editing on until it is unlocked — use it for a <em>Final</em> document.</li></ul>' +
@@ -961,7 +961,7 @@ var ARTICLES = [
   '</tbody></table>' +
   '<h2>קריאה ועריכה</h2>' +
   '<p>מסמך תמיד נפתח לקריאה, כך שלחיצה או הקשה מקרית לא ישנו אותו. הקישורים עובדים, ושום דבר שתקלידו לא נכנס לטקסט.</p>' +
-  '<ul><li><strong>עריכת המסמך</strong> — או <code>Ctrl</code>+<code>E</code>, או לחיצה כפולה בטקסט — מפעילה עריכה. הדף מקבל מסגרת ירוקה וסרגל הכלים מופיע.</li>' +
+  '<ul><li><strong>עריכת המסמך</strong> — או <code>Ctrl</code>+<code>E</code>, או לחיצה כפולה בטקסט — מפעילה עריכה. הדף מקבל מסגרת כתומה וסרגל הכלים מופיע.</li>' +
   '<li><strong>סיום עריכה</strong> (או <code>Ctrl</code>+<code>E</code> שוב) מכבה את העריכה ושומר.</li>' +
   '<li><strong>חזותי</strong> ו-<strong>HTML</strong>, ליד סיום עריכה, עוברים בין הדף לקוד שלו — ראו <a href="#/library-html-styles">סגנונות, גופנים ומצב HTML בספרייה</a>.</li>' +
   '<li><strong>נעול</strong>: תחת פרטים, מי שכתב את המסמך או מנהל יכולים לנעול אותו. אף אחד לא יכול להפעיל עריכה עד שהוא משוחרר — השתמשו בזה למסמך <em>סופי</em>.</li></ul>' +

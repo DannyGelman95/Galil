@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#1B2A18">
+<meta name="theme-color" content="#1C2D4A">
 <meta name="color-scheme" content="light">
 <meta name="robots" content="noindex">
 <title>GALIL Employee Portal</title>
@@ -18,10 +18,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>
   html,body,#root{height:100%}
-  body{margin:0;background:#FBFDF7}
+  body{margin:0;background:#F7F9FD}
   #boot{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;
-        gap:10px;background:#FBFDF7;color:#5B6B57;font:500 14px system-ui,sans-serif;text-align:center;padding:24px}
-  #boot b{color:#1B2A18;font:700 16px system-ui,sans-serif;letter-spacing:.18em}
+        gap:10px;background:#F7F9FD;color:#575E6B;font:500 14px system-ui,sans-serif;text-align:center;padding:24px}
+  #boot b{color:#1C2D4A;font:700 16px system-ui,sans-serif;letter-spacing:.18em}
   #boot pre{max-width:640px;white-space:pre-wrap;text-align:left;color:#C0392B;font-size:12px}
 </style>
 </head>
@@ -18098,26 +18098,26 @@ function excelSerial(dateStr) {
    10 number · 11 number banded · 12 totals label · 13 totals number · 14 totals date */
 function stylesXML() {
   var fonts = [
-    '<font><sz val="11"/><name val="Noto Sans"/><color rgb="FF1B2A18"/></font>',
+    '<font><sz val="11"/><name val="Noto Sans"/><color rgb="FF1C2D4A"/></font>',
     '<font><b/><sz val="16"/><name val="Noto Sans"/><color rgb="FFFFFFFF"/></font>',
-    '<font><sz val="10"/><name val="Noto Sans"/><color rgb="FF5B6B57"/></font>',
+    '<font><sz val="10"/><name val="Noto Sans"/><color rgb="FF575E6B"/></font>',
     '<font><b/><sz val="11"/><name val="Noto Sans"/><color rgb="FFFFFFFF"/></font>',
-    '<font><b/><sz val="11"/><name val="Noto Sans"/><color rgb="FF1B2A18"/></font>'
+    '<font><b/><sz val="11"/><name val="Noto Sans"/><color rgb="FF1C2D4A"/></font>'
   ];
   var fills = [
     '<fill><patternFill patternType="none"/></fill>',
     '<fill><patternFill patternType="gray125"/></fill>',
-    '<fill><patternFill patternType="solid"><fgColor rgb="FF8CC63E"/><bgColor indexed="64"/></patternFill></fill>',  /* 2 green band */
-    '<fill><patternFill patternType="solid"><fgColor rgb="FF1B2A18"/><bgColor indexed="64"/></patternFill></fill>',  /* 3 dark header */
+    '<fill><patternFill patternType="solid"><fgColor rgb="FFF08A24"/><bgColor indexed="64"/></patternFill></fill>',  /* 2 orange band */
+    '<fill><patternFill patternType="solid"><fgColor rgb="FF1F3A66"/><bgColor indexed="64"/></patternFill></fill>',  /* 3 dark header */
     '<fill><patternFill patternType="solid"><fgColor rgb="FFE05C4B"/><bgColor indexed="64"/></patternFill></fill>',  /* 4 red accent */
-    '<fill><patternFill patternType="solid"><fgColor rgb="FFE3AC35"/><bgColor indexed="64"/></patternFill></fill>',  /* 5 yellow accent */
-    '<fill><patternFill patternType="solid"><fgColor rgb="FFF2F8E9"/><bgColor indexed="64"/></patternFill></fill>',  /* 6 wash band */
+    '<fill><patternFill patternType="solid"><fgColor rgb="FFF0C419"/><bgColor indexed="64"/></patternFill></fill>',  /* 5 yellow accent */
+    '<fill><patternFill patternType="solid"><fgColor rgb="FFE9EEF8"/><bgColor indexed="64"/></patternFill></fill>',  /* 6 wash band */
     '<fill><patternFill patternType="solid"><fgColor rgb="FF17A3B8"/><bgColor indexed="64"/></patternFill></fill>'   /* 7 teal */
   ];
-  var thin = '<left style="thin"><color rgb="FFD8E7C4"/></left><right style="thin"><color rgb="FFD8E7C4"/></right><top style="thin"><color rgb="FFD8E7C4"/></top><bottom style="thin"><color rgb="FFD8E7C4"/></bottom>';
+  var thin = '<left style="thin"><color rgb="FFC4D1E7"/></left><right style="thin"><color rgb="FFC4D1E7"/></right><top style="thin"><color rgb="FFC4D1E7"/></top><bottom style="thin"><color rgb="FFC4D1E7"/></bottom>';
   var borders = ['<border><left/><right/><top/><bottom/><diagonal/></border>',
                  '<border>' + thin + '<diagonal/></border>',
-                 '<border><left/><right/><top style="medium"><color rgb="FF5C8B22"/></top><bottom/><diagonal/></border>'];
+                 '<border><left/><right/><top style="medium"><color rgb="FFB5600E"/></top><bottom/><diagonal/></border>'];
   var numFmts = '<numFmts count="2"><numFmt numFmtId="170" formatCode="dddd, dd/mm/yyyy"/><numFmt numFmtId="171" formatCode="0.00"/></numFmts>';
   var xf = function (font, fill, border, fmt, extra) {
     return '<xf numFmtId="' + (fmt || 0) + '" fontId="' + font + '" fillId="' + fill + '" borderId="' + border + '" xfId="0"' +
@@ -18219,7 +18219,7 @@ function sheetXML(spec) {
   }).join("");
   return '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>' +
     '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">' +
-    '<sheetPr><tabColor rgb="FF8CC63E"/></sheetPr>' +
+    '<sheetPr><tabColor rgb="FFF08A24"/></sheetPr>' +
     '<dimension ref="A1:' + last + Math.max(5, r) + '"/>' +
     '<sheetViews><sheetView workbookViewId="0" showGridLines="0"' + (WDI18N.he ? ' rightToLeft="1"' : '') + '>' +
     '<pane ySplit="4" topLeftCell="A5" activePane="bottomLeft" state="frozen"/>' +
@@ -18302,35 +18302,35 @@ function exportJSON(obj, filename) {
 var CSS = [
 /* ================= §14.1 theme tokens — light is the default ================= */
 ":root{",
-"--green:#8CC63E;--deep:#5C8B22;--deepfg:#FFFFFF;--wash:#F2F8E9;--ink:#1B2A18;--muted:#5B6B57;",
-"--line:#D8E7C4;--teal:#17A3B8;--red:#E05C4B;--yellow:#E3AC35;--blue:#3B7DD8;--amber:#F0A32C;",
-"--sick:#9C8CE8;--vac:#3FA97E;--err:#C0392B;--paper:#FBFDF7;",
-"--surface:#FFFFFF;--surface2:#FCFDFA;--sunk:#F4F6F1;--hover:#EAF3DC;",
-"--mutebg:#F1F3EF;--muteline:#E2E7DE;--barbg:#EDF1E8;",
+"--green:#F08A24;--deep:#B5600E;--deepfg:#FFFFFF;--wash:#E9EEF8;--ink:#1C2D4A;--muted:#575E6B;",
+"--line:#C4D1E7;--teal:#17A3B8;--red:#E05C4B;--yellow:#F0C419;--blue:#3B7DD8;--amber:#F0A32C;",
+"--sick:#9C8CE8;--vac:#3FA97E;--err:#C0392B;--paper:#F7F9FD;",
+"--surface:#FFFFFF;--surface2:#FAFBFD;--sunk:#F1F3F6;--hover:#DCE4F3;",
+"--mutebg:#EFF0F3;--muteline:#DEE1E7;--barbg:#E8EBF1;",
 "--amberbg:#FEF6E7;--amberline:#F5D89B;--ambertx:#7A5407;",
 "--errbg:#FBEBE9;--errline:#EBC6C1;--tealbg:#E7F6F8;--tealline:#AEE0E7;--tealtx:#0B6675;",
 "--bluebg:#E8F1FC;--blueline:#B7D2F3;--bluetx:#1E548F;",
 "--sickbg:#F1EEFC;--sickline:#D3C7F5;--sicktx:#5A48B8;--vacbg:#E8F7F0;--vacline:#B7E4D0;--vactx:#1F7A57;",
-"--sel:#1B2A18;--selfg:#FFFFFF;--onlight:#14260A;",
+"--sel:#1C2D4A;--selfg:#FFFFFF;--onlight:#1F1405;",
 /* the dark chrome bar stays dark in both themes, so text on it is always light */
-"--chrome:#1B2A18;--chrometx:#FFFFFF;--chromedim:#C9DDB4;--chromesoft:#B9CFA2;",
-"--ovl:rgba(27,42,24,.45);--shadow:rgba(27,42,24,.05);--shadow2:rgba(27,42,24,.18);",
+"--chrome:#1F3A66;--chrometx:#FFFFFF;--chromedim:#C5D3EA;--chromesoft:#B2C3E0;",
+"--ovl:rgba(28,45,74,.45);--shadow:rgba(28,45,74,.05);--shadow2:rgba(28,45,74,.18);",
 "--font:'Noto Sans','Segoe UI',Arial,sans-serif;--mono:'Noto Sans Mono','Cascadia Mono','Consolas',ui-monospace,monospace;",
 "color-scheme:light;}",
 
 /* ---- dark theme: explicit choice, and the system default when nothing is chosen ---- */
 ":root[data-theme=\"dark\"]{",
-"--green:#9FD154;--deep:#B6E072;--deepfg:#14260A;--wash:#1E2818;--ink:#E9F2DF;--muted:#9AAC90;",
-"--line:#2E3C26;--teal:#49C2D4;--red:#F07E6E;--yellow:#EEC262;--blue:#7FB2F0;--amber:#F5B84F;",
-"--sick:#B3A6F0;--vac:#5FC495;--err:#F0796B;--paper:#11170E;",
-"--surface:#182014;--surface2:#141B10;--sunk:#1B2416;--hover:#243019;",
-"--mutebg:#20281C;--muteline:#2E3C26;--barbg:#232C1D;",
+"--green:#F59A3E;--deep:#FFB46B;--deepfg:#1F1405;--wash:#171E29;--ink:#DFE6F2;--muted:#909AAC;",
+"--line:#242E3E;--teal:#49C2D4;--red:#F07E6E;--yellow:#F5D04A;--blue:#7FB2F0;--amber:#F5B84F;",
+"--sick:#B3A6F0;--vac:#5FC495;--err:#F0796B;--paper:#0D1118;",
+"--surface:#131821;--surface2:#0F141C;--sunk:#151B25;--hover:#172132;",
+"--mutebg:#1B2029;--muteline:#242E3E;--barbg:#1C222D;",
 "--amberbg:#2E2412;--amberline:#5A4720;--ambertx:#F0C270;",
 "--errbg:#2E1815;--errline:#5C2C26;--tealbg:#12333A;--tealline:#1D5763;--tealtx:#68CEDD;",
 "--bluebg:#14263D;--blueline:#28496F;--bluetx:#9CC5F5;",
 "--sickbg:#241F3D;--sickline:#4A3F73;--sicktx:#C9BFF5;--vacbg:#16291F;--vacline:#2C5540;--vactx:#8DE0BB;",
-"--sel:#9FD154;--selfg:#14260A;--onlight:#14260A;",
-"--chrome:#2B3A22;--chrometx:#FFFFFF;--chromedim:#C9DDB4;--chromesoft:#B9CFA2;",
+"--sel:#F59A3E;--selfg:#1F1405;--onlight:#1F1405;",
+"--chrome:#202A3C;--chrometx:#FFFFFF;--chromedim:#C5D3EA;--chromesoft:#B2C3E0;",
 "--ovl:rgba(0,0,0,.62);--shadow:rgba(0,0,0,.4);--shadow2:rgba(0,0,0,.7);",
 "color-scheme:dark;}",
 
@@ -18358,8 +18358,8 @@ var CSS = [
 ".spacer{flex:1}",
 ".who{display:flex;align-items:center;gap:9px;font-size:13px}",
 ".avatar{width:32px;height:32px;border-radius:50%;background:var(--green);color:var(--onlight);display:grid;place-items:center;font-weight:700;font-size:12px;flex:0 0 auto}",
-".rolechip{background:rgba(140,198,62,.18);color:var(--green);border:1px solid rgba(140,198,62,.45);padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600}",
-".iconbtn{min-width:44px;min-height:44px;display:grid;place-items:center;background:transparent;border:0;color:#D9E8C6;border-radius:10px;cursor:pointer;font-size:16px}",
+".rolechip{background:rgba(240,138,36,.18);color:var(--green);border:1px solid rgba(240,138,36,.45);padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600}",
+".iconbtn{min-width:44px;min-height:44px;display:grid;place-items:center;background:transparent;border:0;color:#D3DEF0;border-radius:10px;cursor:pointer;font-size:16px}",
 ".iconbtn:hover{background:rgba(255,255,255,.1);color:#fff}",
 ".iconbtn:disabled{opacity:.3;cursor:default;background:transparent}",
 ".ico{display:inline-block;vertical-align:-0.2em;flex:0 0 auto}",
@@ -18451,17 +18451,17 @@ var CSS = [
 ".fld>label{font-size:11.5px;font-weight:600;color:var(--muted);letter-spacing:.02em;line-height:16px;min-height:16px}",
 ".fld input,.fld select,.fld textarea{min-height:38px;padding:7px 9px;border:1px solid var(--line);border-radius:9px;background-color:var(--surface);font-size:13.5px;width:100%}",
 ".fld textarea{min-height:38px;resize:vertical}",
-".fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--deep);outline:2px solid rgba(92,139,34,.25);outline-offset:0}",
+".fld input:focus,.fld select:focus,.fld textarea:focus{border-color:var(--deep);outline:2px solid rgba(181,96,14,.25);outline-offset:0}",
 ".fld.bad input,.fld.bad select,.fld.bad textarea{border-color:var(--err);background-color:var(--errbg)}",
 ".errmsg{color:var(--err);font-size:11.5px;font-weight:600;display:flex;align-items:center;gap:4px}",
 ".ro{background-color:var(--wash)!important;color:var(--deep);font-weight:700;font-family:var(--mono);text-align:center}",
 
 /* ---- every select wears the app's own chrome, not the browser's ---- */
 "select{appearance:none;-webkit-appearance:none;-moz-appearance:none;cursor:pointer;background-color:var(--surface);",
-"background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%235C8B22' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\");",
+"background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23B5600E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\");",
 "background-repeat:no-repeat;background-position:right 9px center;background-size:11px 7px}",
 ":root[data-theme=\"dark\"] select{",
-"background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%239FD154' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")}",
+"background-image:url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 8'%3E%3Cpath d='M1 1.5 6 6.5 11 1.5' fill='none' stroke='%23F59A3E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E\")}",
 ".fld select{padding-right:28px}",
 "select:disabled{background-color:var(--sunk);color:var(--muted);cursor:not-allowed;opacity:1}",
 "option{background:var(--surface);color:var(--ink)}",
@@ -18485,7 +18485,7 @@ var CSS = [
 ".seg button:hover{background:var(--wash);color:var(--ink)}",
 ".seg button.on{color:#fff}",
 ".seg button.on.r{background:var(--red)}",
-".seg button.on.y{background:var(--yellow);color:#3B2A05}",
+".seg button.on.y{background:var(--yellow);color:#3A3000}",
 ".seg button.on.b{background:var(--blue);color:#fff}",
 ".seg button.on.g{background:var(--sel);color:var(--selfg)}",
 
@@ -18519,7 +18519,7 @@ var CSS = [
 /* ---- chips ---- */
 ".chip{display:inline-flex;align-items:center;gap:5px;padding:2px 9px;border-radius:999px;font-size:12.5px;font-weight:600;border:1px solid transparent;white-space:nowrap}",
 ".chip.red{background:rgba(224,92,75,.13);color:#A33627;border-color:rgba(224,92,75,.35)}",
-".chip.yel{background:rgba(227,172,53,.16);color:#8A6410;border-color:rgba(227,172,53,.4)}",
+".chip.yel{background:rgba(240,196,25,.16);color:#7A6200;border-color:rgba(240,196,25,.4)}",
 ".chip.blue{background:var(--bluebg);color:var(--bluetx);border-color:var(--blueline)}",
 ".chip.amber{background:var(--amberbg);color:var(--ambertx);border-color:var(--amberline)}",
 ".chip.gr{background:var(--wash);color:var(--deep);border-color:var(--line)}",
@@ -18527,7 +18527,7 @@ var CSS = [
 ".chip.err{background:var(--errbg);color:var(--err);border-color:var(--errline)}",
 ".chip.mut{background:var(--mutebg);color:var(--muted);border-color:var(--muteline)}",
 ":root[data-theme=\"dark\"] .chip.red{color:#F5A99C}",
-":root[data-theme=\"dark\"] .chip.yel{color:#EDCE85}",
+":root[data-theme=\"dark\"] .chip.yel{color:#F2DA7E}",
 ".dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto}",
 
 /* ---- tables ---- */
@@ -18559,14 +18559,14 @@ var CSS = [
 ".tbl tbody tr:last-child td:last-child{border-radius:0 0 10px 0}",
 /* STable — sortable headings, drag to move, drag the edge to resize */
 ".tbl th.srt{cursor:pointer;user-select:none}",
-".tbl th.srt:hover{background:color-mix(in srgb,var(--chrome) 80%,#8CC63E)}",
+".tbl th.srt:hover{background:color-mix(in srgb,var(--chrome) 80%,#F08A24)}",
 ".tbl th[draggable=true]{cursor:grab}",
 ".tbl th.srt[draggable=true]{cursor:pointer}",
 ".tbl th.dragging{opacity:.55}",
 ".tbl th.dragover{box-shadow:inset 3px 0 0 var(--green)}",
 ".tbl th .sa{margin-left:5px;font-size:9px;color:var(--green)}",
 ".tbl th .rz{position:absolute;top:0;right:0;width:7px;height:100%;cursor:col-resize;touch-action:none;z-index:3}",
-".tbl th .rz:hover,.tbl th .rz.on{background:rgba(140,198,62,.6)}",
+".tbl th .rz:hover,.tbl th .rz.on{background:rgba(240,138,36,.6)}",
 ".tbl.sized td,.tbl.sized th{overflow:hidden;text-overflow:ellipsis}",
 ".tbl th.c,.tbl td.c{text-align:center}",
 ".tbl td.c>.row{justify-content:center}",
@@ -18627,9 +18627,9 @@ var CSS = [
 ".toast button{background:rgba(255,255,255,.2);border:0;color:inherit;border-radius:8px;padding:5px 10px;font-weight:700;cursor:pointer;min-height:30px}",
 
 /* ---- auth ---- */
-".auth{height:100%;overflow:auto;display:grid;justify-items:center;align-content:center;background:linear-gradient(150deg,#5C8B22,#8CC63E 60%,#B7DE80);padding:20px}",
-":root[data-theme=\"dark\"] .auth{background:linear-gradient(150deg,#16210F,#2B3A22 55%,#3E5A22)}",
-".authcard{background:var(--surface);border-radius:20px;width:min(460px,100%);padding:24px 26px 20px;box-shadow:0 26px 70px rgba(20,40,10,.32)}",
+".auth{height:100%;overflow:auto;display:grid;justify-items:center;align-content:center;background:linear-gradient(150deg,#1F3A66,#2F5492 60%,#4F78BC);padding:20px}",
+":root[data-theme=\"dark\"] .auth{background:linear-gradient(150deg,#0E1522,#202A3C 55%,#2A4570)}",
+".authcard{background:var(--surface);border-radius:20px;width:min(460px,100%);padding:24px 26px 20px;box-shadow:0 26px 70px rgba(10,21,40,.32)}",
 ".authcard.wide{width:min(720px,100%)}",
 /* the Entra account list keeps the card inside the viewport */
 ".msbox{background:var(--wash);border:1px solid var(--line);border-radius:12px;padding:10px;display:flex;flex-direction:column;gap:7px}",
@@ -18677,7 +18677,7 @@ var CSS = [
 ".day{display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:12px;min-height:0;overflow:hidden}",
 ".day>h5{margin:0;padding:7px 9px;font-size:12px;font-weight:700;background:var(--wash);border-bottom:1px solid var(--line);display:flex;justify-content:space-between}",
 ".day>div{flex:1;overflow:auto;padding:6px;display:flex;flex-direction:column;gap:5px}",
-".day.today{border-color:var(--green);box-shadow:0 0 0 2px rgba(140,198,62,.3)}",
+".day.today{border-color:var(--green);box-shadow:0 0 0 2px rgba(240,138,36,.3)}",
 ".pcard{border-radius:9px;padding:6px 8px;font-size:11.5px;border-left:3px solid var(--teal);background:var(--wash);cursor:grab}",
 
 /* ---- misc ---- */
@@ -19071,7 +19071,7 @@ function MultiSelect(p) {
             key: o.value, type: "button", role: "option", "aria-selected": on ? "true" : "false",
             className: "ms-opt" + (on ? " on" : ""), onClick: function () { toggle(o.value); }
           }, h("span", { className: "tick" }, h(Icon, { n: "check", size: 12 })),
-             p.avatars ? h("span", { className: "av", style: { width: 22, height: 22, borderRadius: "50%", background: C.green, color: "#14260A", display: "grid", placeItems: "center", font: "700 9px inherit", flex: "0 0 auto" } }, initialsOf(o.label)) : null,
+             p.avatars ? h("span", { className: "av", style: { width: 22, height: 22, borderRadius: "50%", background: C.green, color: "#1F1405", display: "grid", placeItems: "center", font: "700 9px inherit", flex: "0 0 auto" } }, initialsOf(o.label)) : null,
              h("span", { style: { overflow: "hidden", textOverflow: "ellipsis" } }, o.label));
         })) : null));
 }
@@ -20051,7 +20051,7 @@ function EntryForm(p) {
           type: "button", role: "radio", "aria-checked": f.hourType === "yellow" ? "true" : "false",
           className: f.hourType === "yellow" ? "on y" : "", title: "Yellow · Client — billable, drawn from the project budget",
           onClick: function () { up("hourType", "yellow"); }
-        }, h("span", { className: "dot", style: { background: f.hourType === "yellow" ? "#3B2A05" : C.yellow } }), "Yellow"),
+        }, h("span", { className: "dot", style: { background: f.hourType === "yellow" ? "#3A3000" : C.yellow } }), "Yellow"),
         can(viewer, "reportBlueTime") ? h("button", {
           type: "button", role: "radio", "aria-checked": f.hourType === "blue" ? "true" : "false",
           className: f.hourType === "blue" ? "on b" : "", title: "Blue · Management — time spent managing a client's projects and tasks. Like Yellow, drawn from your allowance and the project budget.",
@@ -21899,7 +21899,7 @@ function buildWOPdf(db, wo, by, lang) {
     doc.addFileToVFS("Heebo-Regular.ttf", window.HEEBO_FONTS.regular); doc.addFont("Heebo-Regular.ttf", "Heebo", "normal");
     doc.addFileToVFS("Heebo-Bold.ttf", window.HEEBO_FONTS.bold); doc.addFont("Heebo-Bold.ttf", "Heebo", "bold");
     var W = 210, H = 297, M = 16, CW = W - 2 * M;
-    var INK = [27, 42, 24], GREEN = [140, 198, 62], DEEP = [92, 139, 34], MUTED = [91, 107, 87], LINE = [216, 231, 196], WASH = [242, 248, 233];
+    var INK = [28, 45, 74], NAVY = [31, 58, 102], ORANGE = [240, 138, 36], DEEP = [181, 96, 14], MUTED = [87, 94, 107], LINE = [196, 209, 231], WASH = [233, 238, 248];
     /* each string runs in the direction of its first letter, so English typed into the
        Hebrew document keeps its punctuation where it belongs */
     var rtlOf = function (t) { var m = String(t).match(/[A-Za-z\u0590-\u05FF]/); return m ? /[\u0590-\u05FF]/.test(m[0]) : RTL; };
@@ -21946,7 +21946,7 @@ function buildWOPdf(db, wo, by, lang) {
     /* the mark, the GALIL wordmark and the company name as one block: both lines
        start at the same edge, beside the mark, centred on it */
     function brand(x, top, sz, big, small) {
-      mark(x, top, sz, [255, 255, 255], GREEN);
+      mark(x, top, sz, [255, 255, 255], ORANGE);
       var tx = x + sz + 3.5, mid = top + sz / 2;
       var capH = big * 0.3528 * 0.71, gap = small ? 2.6 : 0, subH = small ? small * 0.3528 * 0.71 : 0;
       var base1 = mid - (capH + gap + subH) / 2 + capH;
@@ -21956,23 +21956,23 @@ function buildWOPdf(db, wo, by, lang) {
       doc.text("GALIL", RTL ? W - tx - ww : tx, base1);
       doc.setCharSpace(0);
       if (small) {
-        font("normal", small, [185, 207, 162]);
+        font("normal", small, [178, 195, 224]);
         var nw = doc.getTextWidth(pdfSafe(CO.name));
         doc.text(pdfSafe(CO.name), RTL ? W - tx - nw : tx, base1 + gap + subH, { isInputVisual: false, isOutputVisual: true, isInputRtl: RTL, isOutputRtl: false });
       }
     }
     function head(first) {
-      doc.setFillColor.apply(doc, INK); doc.rect(0, 0, W, first ? 34 : 16, "F");
-      doc.setFillColor.apply(doc, GREEN); doc.rect(0, first ? 34 : 16, W, 1.4, "F");
+      doc.setFillColor.apply(doc, NAVY); doc.rect(0, 0, W, first ? 34 : 16, "F");
+      doc.setFillColor.apply(doc, ORANGE); doc.rect(0, first ? 34 : 16, W, 1.4, "F");
       if (first) {
         brand(M, 7, 20, 18, 8.5);
-        font("bold", 9, GREEN); txt(RTL ? T.docTitle : T.docTitle.split("").join(" "), W - M, 13, { align: "right" });
+        font("bold", 9, ORANGE); txt(RTL ? T.docTitle : T.docTitle.split("").join(" "), W - M, 13, { align: "right" });
         font("bold", 15, [255, 255, 255]); txt(d.code, W - M, 21, { align: "right" });
-        font("normal", 8.5, [185, 207, 162]); txt(T.issued + " " + stamp(new Date(d.issuedAt)), W - M, 27, { align: "right" });
+        font("normal", 8.5, [178, 195, 224]); txt(T.issued + " " + stamp(new Date(d.issuedAt)), W - M, 27, { align: "right" });
         y = 46;
       } else {
         brand(M, 3, 10, 10, 0);
-        font("normal", 8.5, [185, 207, 162]); txt(T.untitled + " " + d.code + " — " + T.continued, W - M, 10, { align: "right" });
+        font("normal", 8.5, [178, 195, 224]); txt(T.untitled + " " + d.code + " — " + T.continued, W - M, 10, { align: "right" });
         y = 26;
       }
     }
@@ -22021,7 +22021,7 @@ function buildWOPdf(db, wo, by, lang) {
         var lines = Math.max.apply(null, cells.map(function (c) { return c.length; }));
         var hh = lines * 4.2 + 2.6;
         if (y + hh > H - 22) { doc.addPage(); head(false); drawHead(); font("normal", 9, INK); }
-        if (ri % 2) { doc.setFillColor(251, 253, 247); rect(M, y - 4, CW, hh, "F"); }
+        if (ri % 2) { doc.setFillColor(247, 249, 253); rect(M, y - 4, CW, hh, "F"); }
         var x = M; cells.forEach(function (c, i) { txt(c, x + 2, y); x += widths[i]; });
         doc.setDrawColor.apply(doc, LINE); doc.setLineWidth(0.2); line(M, y - 4 + hh, W - M, y - 4 + hh);
         y += hh;
@@ -22118,7 +22118,7 @@ function buildWOPdf(db, wo, by, lang) {
     [[T.forClient + (d.client || ""), d.clientSigner], [T.forGalil + CO.name, d.galilSigner]].forEach(function (s, i) {
       var x = M + i * (bw + 8), top = y, lx = x + 5, vx = x + 17;
       doc.setDrawColor.apply(doc, LINE); doc.setLineWidth(0.4); doc.roundedRect(RTL ? W - x - bw : x, top, bw, BOX, 2, 2, "S");
-      doc.setFillColor.apply(doc, GREEN); rect(x, top, 1.4, BOX, "F");
+      doc.setFillColor.apply(doc, ORANGE); rect(x, top, 1.4, BOX, "F");
       font("bold", 8, DEEP); txt(split(s[0], bw - 8)[0], lx, top + 6);
       font("normal", 7.5, MUTED); txt(T.name, lx, top + 13); txt(T.title, lx, top + 20);
       font("bold", 9.5, INK); txt(s[1].name || "", vx, top + 13);
@@ -22266,7 +22266,7 @@ var DASH_VIZ = [
 ];
 var DASH_SIZES = [{ value: "3", label: "¼ width" }, { value: "4", label: "⅓ width" }, { value: "6", label: "½ width" }, { value: "8", label: "⅔ width" }, { value: "12", label: "Full width" }];
 var DASH_TIME = { day: 1, week: 1, month: 1, weekday: 1 };
-var DASH_PAL = ["var(--teal)", "var(--deep)", "var(--yellow)", "var(--red)", "var(--blue)", "var(--amber)", "var(--vac)", "var(--sick)", "#7C6BB0", "#3E8E7E", "var(--muted)"];
+var DASH_PAL = ["var(--teal)", "var(--vac)", "var(--yellow)", "var(--red)", "var(--blue)", "var(--amber)", "var(--vac)", "var(--sick)", "#7C6BB0", "#3E8E7E", "var(--muted)"];
 
 /* ready-made widgets offered under "Add widget" */
 var DASH_CATALOG = [
@@ -22738,7 +22738,7 @@ function DashboardTab(p) {
     var res = dashCompute(db, src, w), f = function (v) { return dashFmt(w.metric, v, pctMode, res.total); };
     if (!w.group || w.viz === "kpi") {
       return h("div", { className: "dkpi" },
-        h("div", { className: "v", style: { color: md.col === "red" ? C.red : md.col === "yellow" ? "#8A6410" : md.col === "blue" ? C.blue : null } }, dashFmt(w.metric, res.total, false)),
+        h("div", { className: "v", style: { color: md.col === "red" ? C.red : md.col === "yellow" ? "#7A6200" : md.col === "blue" ? C.blue : null } }, dashFmt(w.metric, res.total, false)),
         (w.title || "").trim() !== md.label ? h("div", { className: "s" }, md.label) : null);
     }
     var stack = w.metric === "hours" && (w.viz === "columns") && DASH_TIME[w.group];
@@ -23862,7 +23862,7 @@ function MobileEntrySheet(p) {
           h("span", { className: "dot", style: { background: f.hourType === "red" ? "#fff" : C.red } }), "Red"),
         h("button", { type: "button", role: "radio", "aria-checked": f.hourType === "yellow" ? "true" : "false", style: { flex: 1, justifyContent: "center" },
           className: f.hourType === "yellow" ? "on y" : "", onClick: function () { up("hourType", "yellow"); } },
-          h("span", { className: "dot", style: { background: f.hourType === "yellow" ? "#3B2A05" : C.yellow } }), "Yellow"),
+          h("span", { className: "dot", style: { background: f.hourType === "yellow" ? "#3A3000" : C.yellow } }), "Yellow"),
         can(user, "reportBlueTime") ? h("button", { type: "button", role: "radio", "aria-checked": f.hourType === "blue" ? "true" : "false", style: { flex: 1, justifyContent: "center" },
           className: f.hourType === "blue" ? "on b" : "", onClick: function () { up("hourType", "blue"); } },
           h("span", { className: "dot", style: { background: f.hourType === "blue" ? "#fff" : C.blue } }), "Blue") : null)),
@@ -24611,7 +24611,7 @@ function App() {
       h("div", { className: "brand" },
         h(Mark, null),
         h("div", null, "GALIL", h("small", null, "WorkDesk")),
-        h(Chip, { k: "gr", style: { background: "rgba(255,255,255,.1)", color: "#C9DDB4", borderColor: "rgba(255,255,255,.2)" } }, WDCloud.remote ? (WDCloud.storage === "github" ? "GitHub" : "OneDrive") : "Standalone")),
+        h(Chip, { k: "gr", style: { background: "rgba(255,255,255,.1)", color: "#C5D3EA", borderColor: "rgba(255,255,255,.2)" } }, WDCloud.remote ? (WDCloud.storage === "github" ? "GitHub" : "OneDrive") : "Standalone")),
       isOnline ? null : h(Chip, { k: "amber" }, "Offline — changes cached locally"),
       h("div", { className: "spacer" }),
       h("button", {

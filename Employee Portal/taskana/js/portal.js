@@ -191,7 +191,7 @@ function canSeeBudgets() { return isManager(); }
 function numH(n) { return (Math.round((Number(n) || 0) * 10) / 10).toString(); }
 function meterBar(used, pending, total) {
   var pct = total ? Math.min(100, used / total * 100) : 0, pp = total ? Math.min(100 - pct, (pending || 0) / total * 100) : 0;
-  var col = pct >= 100 ? "var(--err)" : pct >= 90 ? "var(--amber)" : pct >= 75 ? "var(--yellow, #E3AC35)" : "var(--s-closed)";
+  var col = pct >= 100 ? "var(--err)" : pct >= 90 ? "var(--amber)" : pct >= 75 ? "var(--yellow, #F0C419)" : "var(--s-closed)";
   return h("div", { class: "trk meter", role: "progressbar", "aria-valuemin": 0, "aria-valuemax": 100, "aria-valuenow": Math.round(pct) },
     h("span", { class: "fill", style: { width: pct + "%", background: col } }),
     pp ? h("span", { class: "fill pend", style: { width: pp + "%" } }) : null);

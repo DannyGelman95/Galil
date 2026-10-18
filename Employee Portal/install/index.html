@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#1B2A18">
+<meta name="theme-color" content="#1C2D4A">
 <meta name="robots" content="noindex">
 <title>Install the GALIL Employee Portal</title>
 <link rel="icon" type="image/svg+xml" href="../icons/icon.svg">
@@ -18,20 +18,20 @@
 </script>
 <style>
 :root{
-  --bg:#FBFDF7; --card:#FFFFFF; --ink:#1B2A18; --muted:#5B6B57; --line:#DDE7D0;
-  --wash:#F1F6E8; --green:#8CC63E; --green-ink:#4E8A1E; --dark:#1B2A18; --on-dark:#FFFFFF;
+  --bg:#F7F9FD; --card:#FFFFFF; --ink:#1C2D4A; --muted:#575E6B; --line:#D0D8E7;
+  --wash:#E8EDF6; --green:#F08A24; --green-ink:#B5600E; --dark:#1F3A66; --on-dark:#FFFFFF;
   --sans:"Noto Sans","Noto Sans Hebrew",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   --mono:"Noto Sans Mono",ui-monospace,Menlo,Consolas,monospace;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#11180E; --card:#1A2416; --ink:#E9F1DF; --muted:#A3B39A; --line:#2D3B27;
-    --wash:#222E1D; --green:#8CC63E; --green-ink:#A6D86A; --dark:#0B1209; --on-dark:#E9F1DF;
+    --bg:#0D1119; --card:#151B25; --ink:#DFE6F1; --muted:#9AA3B3; --line:#262E3C;
+    --wash:#1C232F; --green:#F08A24; --green-ink:#FFAA55; --dark:#080C13; --on-dark:#DFE6F1;
   }
 }
 :root[data-theme="dark"]{
-  --bg:#11180E; --card:#1A2416; --ink:#E9F1DF; --muted:#A3B39A; --line:#2D3B27;
-  --wash:#222E1D; --green:#8CC63E; --green-ink:#A6D86A; --dark:#0B1209; --on-dark:#E9F1DF;
+  --bg:#0D1119; --card:#151B25; --ink:#DFE6F1; --muted:#9AA3B3; --line:#262E3C;
+  --wash:#1C232F; --green:#F08A24; --green-ink:#FFAA55; --dark:#080C13; --on-dark:#DFE6F1;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -42,13 +42,13 @@ code{font:13.5px/1.4 var(--mono);background:var(--wash);padding:1px 5px;border-r
 header{background:var(--dark);color:var(--on-dark);padding:20px 0 32px}
 header .bar{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:18px}
 header .brand{font:700 13px/1 var(--sans);letter-spacing:.2em;color:var(--green)}
-header .bar a{color:#DCE8CC;text-decoration:none;font-size:14px}
+header .bar a{color:#CCD6E8;text-decoration:none;font-size:14px}
 header .bar a:hover{color:var(--green)}
-.lang{margin-inline-start:auto;display:inline-flex;border:1px solid #4A5E40;border-radius:999px;overflow:hidden}
-.lang button{appearance:none;border:0;background:none;color:#DCE8CC;font:600 13px var(--sans);padding:6px 12px;min-height:32px;cursor:pointer}
-.lang button[aria-pressed="true"]{background:var(--green);color:#14210F}
+.lang{margin-inline-start:auto;display:inline-flex;border:1px solid #404B5E;border-radius:999px;overflow:hidden}
+.lang button{appearance:none;border:0;background:none;color:#CCD6E8;font:600 13px var(--sans);padding:6px 12px;min-height:32px;cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--green);color:#0E1522}
 header h1{margin:0 0 6px;font-size:clamp(24px,5vw,34px);line-height:1.2}
-header p{margin:0;color:#C9D8B8;max-width:62ch}
+header p{margin:0;color:#B8C4D8;max-width:62ch}
 main{padding:24px 0 48px}
 h2{font-size:21px;margin:36px 0 12px}
 .app{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center}
@@ -57,7 +57,7 @@ h2{font-size:21px;margin:36px 0 12px}
 .app h3{margin:0;font-size:19px}
 .app .desc{margin:2px 0 0;color:var(--muted);font-size:14px}
 .app .top+.btn{margin-top:20px}
-.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:10px;background:var(--green);color:#14210F;font-weight:700;text-decoration:none}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 18px;border-radius:10px;background:var(--green);color:#0E1522;font-weight:700;text-decoration:none}
 .btn:hover{filter:brightness(1.05)}
 .url{font:13px/1.4 var(--mono);color:var(--muted);word-break:break-all;margin-top:10px;direction:ltr;text-align:start;unicode-bidi:plaintext}
 .qr{display:flex;flex-direction:column;gap:6px;align-items:center;max-width:150px;text-align:center}

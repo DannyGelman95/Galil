@@ -22,13 +22,13 @@ function SocialIcon({ href, label, path, viewBox = '0 0 24 24' }) {
         width: 36,
         height: 36,
         borderRadius: '50%',
-        bgcolor: '#1A3822',
-        border: '1px solid #2C4A32',
-        '&:hover': { bgcolor: 'primary.main', '& svg': { fill: '#12240F' } },
+        bgcolor: '#1F3A66',
+        border: '1px solid #2F5492',
+        '&:hover': { bgcolor: 'primary.main', '& svg': { fill: '#1F1405' } },
       }}
     >
       <svg viewBox={viewBox} width={16} height={16}>
-        <path d={path} fill="#C6DABE" />
+        <path d={path} fill="#BEC8DA" />
       </svg>
     </IconButton>
   );
@@ -37,7 +37,7 @@ function SocialIcon({ href, label, path, viewBox = '0 0 24 24' }) {
 export default function Footer() {
   const { t } = useLanguage();
   return (
-    <Box component="footer" sx={{ bgcolor: '#14301C', color: '#96AE8E', py: '46px', fontSize: '14.5px' }}>
+    <Box component="footer" sx={{ bgcolor: '#182E52', color: '#8E9AAE', py: '46px', fontSize: '14.5px' }}>
       <Container maxWidth="lg">
         <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: '22px', alignItems: 'center', justifyContent: 'space-between' }}>
           <Box>
@@ -55,7 +55,7 @@ export default function Footer() {
                 key={item.to}
                 component={RouterLink}
                 to={item.to}
-                sx={{ color: '#C6DABE', textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
+                sx={{ color: '#BEC8DA', textDecoration: 'none', '&:hover': { color: 'primary.main' } }}
               >
                 {t(item.en, item.he)}
               </Box>
@@ -76,7 +76,7 @@ export default function Footer() {
             <SocialIcon href="mailto:info@galiltc.co.il" label="Email" path="M2 5h20v14H2zm2 2v.5l8 5 8-5V7z" />
           </Box>
 
-          <Box sx={{ width: '100%', borderTop: '1px solid #2C4A32', pt: '18px', fontSize: 13, color: '#7C9575' }}>
+          <Box sx={{ width: '100%', borderTop: '1px solid #2F5492', pt: '18px', fontSize: 13, color: '#758195' }}>
             {t('© 2026 GALIL Technical Writing Ltd.', '© 2026 גליל כתיבה טכנית בע״מ.')}
           </Box>
         </Box>

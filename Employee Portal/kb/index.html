@@ -13,18 +13,18 @@
 if(v!=="dark"&&v!=="light"){v=window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches?"dark":"light";}
 document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 </script>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cpath d='M78 34H42a10 10 0 00-10 10v152a10 10 0 0010 10h36' fill='none' stroke='%231F3D24' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M162 34h36a10 10 0 0110 10v152a10 10 0 01-10 10h-36' fill='none' stroke='%231F3D24' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M148 92A44 44 0 10152 148V122H122' fill='none' stroke='%238CC63E' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cpath d='M78 34H42a10 10 0 00-10 10v152a10 10 0 0010 10h36' fill='none' stroke='%231F3A66' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M162 34h36a10 10 0 0110 10v152a10 10 0 01-10 10h-36' fill='none' stroke='%231F3A66' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M148 92A44 44 0 10152 148V122H122' fill='none' stroke='%23F08A24' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../shared/fonts/fonts.css">
 <style>
 :root{
-  --paper:#FBFDF7; --surface:#FFFFFF; --wash:#F2F8E9; --sunk:#EFF4E6;
-  --ink:#1B2A18; --body:#2C3A28; --muted:#5B6B57; --faint:#8A9686;
-  --line:#D8E7C4; --line-soft:#E7F0DA;
-  --accent:#5C8B22; --accent-bright:#8CC63E; --accent-ink:#3F6116;
+  --paper:#F7F9FD; --surface:#FFFFFF; --wash:#E9EEF8; --sunk:#E6EBF4;
+  --ink:#1C2D4A; --body:#272E3B; --muted:#575E6B; --faint:#868C96;
+  --line:#C4D1E7; --line-soft:#DAE2F0;
+  --accent:#B5600E; --accent-bright:#F08A24; --accent-ink:#93500C;
   --red:#E05C4B; --amber:#F0A32C; --blue:#3B7DD8;
   --note-bg:#EAF2FC; --note-fg:#1F4E8C; --warn-bg:#FDF3E1; --warn-fg:#7A4E07;
-  --chrome-bg:#1B2A18; --chrome-fg:#EAF3E0; --chrome-fg-soft:#C4D9AE;
-  --shadow:0 1px 2px rgba(27,42,24,.05), 0 8px 24px -16px rgba(27,42,24,.28);
+  --chrome-bg:#1C2D4A; --chrome-fg:#E0E7F3; --chrome-fg-soft:#AEBED9;
+  --shadow:0 1px 2px rgba(28,45,74,.05), 0 8px 24px -16px rgba(28,45,74,.28);
   --sans:"Noto Sans","Noto Sans Hebrew",system-ui,-apple-system,"Segoe UI",sans-serif;
   --serif:"Noto Sans","Noto Sans Hebrew",system-ui,-apple-system,"Segoe UI",sans-serif;
   --mono:"Noto Sans Mono",ui-monospace,"SF Mono",Menlo,monospace;
@@ -32,25 +32,25 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 }
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
-    --paper:#11170E; --surface:#182014; --wash:#1E2818; --sunk:#141B10;
-    --ink:#E9F2DF; --body:#D2DEC6; --muted:#9AAC90; --faint:#6E7F66;
-    --line:#2E3C26; --line-soft:#26331F;
-    --accent:#9FD154; --accent-bright:#B6E072; --accent-ink:#C6E894;
+    --paper:#0D1118; --surface:#131821; --wash:#171E29; --sunk:#0F141C;
+    --ink:#DFE6F2; --body:#C6CFDE; --muted:#909AAC; --faint:#666F7F;
+    --line:#242E3E; --line-soft:#1E2635;
+    --accent:#F59A3E; --accent-bright:#FFB46B; --accent-ink:#FDCFA0;
     --red:#F07E6E; --amber:#F5B84F; --blue:#7FB2F0;
     --note-bg:#15263A; --note-fg:#A9CBF3; --warn-bg:#33270F; --warn-fg:#F3CD85;
-    --chrome-bg:#2B3A22; --chrome-fg:#EAF3E0; --chrome-fg-soft:#BFD4A9;
+    --chrome-bg:#202A3C; --chrome-fg:#E0E7F3; --chrome-fg-soft:#A9B9D4;
     --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
     color-scheme:dark;
   }
 }
 :root[data-theme="dark"]{
-  --paper:#11170E; --surface:#182014; --wash:#1E2818; --sunk:#141B10;
-  --ink:#E9F2DF; --body:#D2DEC6; --muted:#9AAC90; --faint:#6E7F66;
-  --line:#2E3C26; --line-soft:#26331F;
-  --accent:#9FD154; --accent-bright:#B6E072; --accent-ink:#C6E894;
+  --paper:#0D1118; --surface:#131821; --wash:#171E29; --sunk:#0F141C;
+  --ink:#DFE6F2; --body:#C6CFDE; --muted:#909AAC; --faint:#666F7F;
+  --line:#242E3E; --line-soft:#1E2635;
+  --accent:#F59A3E; --accent-bright:#FFB46B; --accent-ink:#FDCFA0;
   --red:#F07E6E; --amber:#F5B84F; --blue:#7FB2F0;
   --note-bg:#15263A; --note-fg:#A9CBF3; --warn-bg:#33270F; --warn-fg:#F3CD85;
-  --chrome-bg:#2B3A22; --chrome-fg:#EAF3E0; --chrome-fg-soft:#BFD4A9;
+  --chrome-bg:#202A3C; --chrome-fg:#E0E7F3; --chrome-fg-soft:#A9B9D4;
   --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
   color-scheme:dark;
 }
@@ -81,23 +81,23 @@ a:hover{color:var(--accent)}
 .themebtn:hover{border-color:var(--accent-bright); color:var(--accent-bright)}
 
 /* ---------- masthead ---------- */
-.masthead{background:#1B2A18; color:#EAF3E0; padding:30px 20px 26px; border-bottom:3px solid var(--accent)}
+.masthead{background:#1C2D4A; color:#E0E7F3; padding:30px 20px 26px; border-bottom:3px solid var(--accent)}
 .masthead-in{max-width:1180px; margin:0 auto; display:flex; flex-wrap:wrap; gap:22px; align-items:flex-end}
 .masthead .grow{flex:1 1 320px}
 .wordmark{display:flex; align-items:center; gap:12px; margin-bottom:16px}
 .wordmark svg{width:40px; height:32px; flex:0 0 auto}
 .wordmark b{font-family:var(--sans); font-weight:700; font-size:22px; letter-spacing:.16em; color:#fff; line-height:1}
-.wordmark small{display:block; font-family:var(--sans); font-size:11.5px; letter-spacing:.05em; color:#A9C489; margin-top:3px}
+.wordmark small{display:block; font-family:var(--sans); font-size:11.5px; letter-spacing:.05em; color:#899FC4; margin-top:3px}
 .masthead h1{font-family:var(--sans); font-weight:600; font-size:clamp(26px,4.2vw,38px); line-height:1.08; margin:0; color:#fff; letter-spacing:-.015em}
-.masthead .standfirst{font-size:15.5px; color:#B7CCA3; margin:9px 0 0; max-width:60ch}
+.masthead .standfirst{font-size:15.5px; color:#A3B2CC; margin:9px 0 0; max-width:60ch}
 .search{flex:1 1 280px; max-width:420px; position:relative}
 .search input{
   width:100%; font-family:var(--sans); font-size:15px; padding-block:11px; padding-inline:38px 14px;
-  border-radius:10px; border:1px solid #33462C; background:#16210F; color:#EAF3E0;
+  border-radius:10px; border:1px solid #2A3548; background:#0E1522; color:#E0E7F3;
 }
-.search input::placeholder{color:#8FA87A}
+.search input::placeholder{color:#7A8BA8}
 .search input:focus{outline:2px solid var(--accent-bright); outline-offset:1px}
-.search .ic{position:absolute; inset-inline-start:13px; top:50%; transform:translateY(-50%); color:#8FA87A; font-family:var(--sans); pointer-events:none}
+.search .ic{position:absolute; inset-inline-start:13px; top:50%; transform:translateY(-50%); color:#7A8BA8; font-family:var(--sans); pointer-events:none}
 
 /* ---------- shell: topic cards on the home screen, one focused article when reading ---------- */
 .shell{max-width:1180px; margin:0 auto; padding:0 20px 64px}
@@ -193,16 +193,16 @@ th{font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--m
 .gate p{color:var(--muted); margin:0 0 18px}
 .btn{
   display:inline-block; font-family:var(--sans); font-weight:600; font-size:14.5px; padding:10px 18px; border-radius:10px;
-  background:var(--accent); color:#0E1509; text-decoration:none;
+  background:var(--accent); color:#080D16; text-decoration:none;
 }
-.btn:hover{background:var(--accent-bright); color:#0E1509}
+.btn:hover{background:var(--accent-bright); color:#080D16}
 
 @media (max-width:860px){ .utility .who{margin-inline-start:0} }
 @media (prefers-reduced-motion:reduce){ .tcard{transition:none} }
 @media print{ .utility,.search,.pager,.backbtn{display:none} }
 .lang{display:inline-flex; border:1px solid var(--chrome-fg-soft); border-radius:999px; overflow:hidden; flex:0 0 auto}
 .lang button{border:0; background:transparent; color:var(--chrome-fg); font:600 11.5px var(--sans); padding:3px 9px; cursor:pointer}
-.lang button[aria-pressed="true"]{background:var(--accent-bright); color:#0E1509}
+.lang button[aria-pressed="true"]{background:var(--accent-bright); color:#080D16}
 .chips{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 16px}
 .chip{font-family:var(--sans); font-size:12.5px; font-weight:600; border:1px solid var(--line); background:var(--wash); color:var(--accent-ink); border-radius:999px; padding:2px 10px}
 </style>
@@ -223,7 +223,7 @@ th{font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--m
   <div class="masthead-in">
     <div class="grow">
       <div class="wordmark">
-        <svg viewBox="0 0 60 46" aria-hidden="true"><path d="M2 30 C10 6, 20 6, 28 24 S46 42, 58 12" fill="none" stroke="#8CC63E" stroke-width="6" stroke-linecap="round"/></svg>
+        <svg viewBox="0 0 60 46" aria-hidden="true"><path d="M2 30 C10 6, 20 6, 28 24 S46 42, 58 12" fill="none" stroke="#F08A24" stroke-width="6" stroke-linecap="round"/></svg>
         <div><b>GALIL</b><small data-t="kicker">Employee Portal · Knowledge Base</small></div>
       </div>
       <h1 data-t="title">Knowledge Base</h1>

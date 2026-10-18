@@ -310,13 +310,13 @@ var WDCloud = (function () {
   function paintStatus() {
     if (!api.remote || !document.body) return;
     if (!pill) {
-      pill = el("button", { id: "wd-sync", title: "", style: "position:fixed;inset-inline-start:max(12px,env(safe-area-inset-left));bottom:var(--wdsync-bottom,calc(12px + env(safe-area-inset-bottom)));z-index:900;display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#D9E4D0);background:var(--surface,#fff);color:var(--muted,#5F6E62);font:600 11.5px system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12);max-width:60vw", onclick: function () { api.showInfo(); } });
+      pill = el("button", { id: "wd-sync", title: "", style: "position:fixed;inset-inline-start:max(12px,env(safe-area-inset-left));bottom:var(--wdsync-bottom,calc(12px + env(safe-area-inset-bottom)));z-index:900;display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#D0D7E4);background:var(--surface,#fff);color:var(--muted,#5F656E);font:600 11.5px system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12);max-width:60vw", onclick: function () { api.showInfo(); } });
       document.body.appendChild(pill);
     }
     var s = S.state, w = where();
     var text = s === "saving" ? "Saving to " + w + "…" : s === "loading" ? "Opening from " + w + "…" : s === "offline" ? "Offline — changes are kept and will sync" :
       s === "error" || s === "token" ? "Not saved: " + S.error : "Saved to " + w + (S.lastSync ? " · " + S.lastSync.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "");
-    var dot = { saving: "#EDA100", loading: "#EDA100", offline: "#8A9585", error: "#C0392B", token: "#C0392B" }[s] || "#008300";
+    var dot = { saving: "#EDA100", loading: "#EDA100", offline: "#858B95", error: "#C0392B", token: "#C0392B" }[s] || "#008300";
     text = T(text);
     pill.replaceChildren(el("i", { style: "width:8px;height:8px;border-radius:50%;flex:none;background:" + dot }), el("span", { style: "overflow:hidden;text-overflow:ellipsis;white-space:nowrap" }, text));
     pill.title = text;
@@ -326,7 +326,7 @@ var WDCloud = (function () {
   };
   api.showInfo = function () {
     var f = S.folder || {};
-    var box = el("div", { style: "position:fixed;inset:0;z-index:950;background:rgba(10,20,10,.45);display:grid;place-items:center;padding:16px", onclick: function (e) { if (e.target === box) box.remove(); } },
+    var box = el("div", { style: "position:fixed;inset:0;z-index:950;background:rgba(9,13,21,.45);display:grid;place-items:center;padding:16px", onclick: function (e) { if (e.target === box) box.remove(); } },
       el("div", { class: "authcard", style: "max-width:520px" },
         el("div", { class: "h3", style: "margin-bottom:8px" }, "Where WorkDesk's data lives"),
         el("p", { style: "font-size:13.5px;margin:0 0 8px" }, (STORAGE === "github" ? "GitHub repository " : "OneDrive folder ") + (f.name || "")),
@@ -466,7 +466,7 @@ var WDCloud = (function () {
     var sel = el("select", { id: "cx-storage", style: "min-height:36px;border:1px solid var(--line);border-radius:9px;padding:6px 10px;background:var(--surface);color:var(--ink)" });
     [["local", "This browser only (demo)"], ["github", "A data file in a GitHub repository"], ["onedrive", "A OneDrive folder (needs Microsoft Entra ID)"]].forEach(function (o) { var op = el("option", { value: o[0] }, o[1]); if (STORAGE === o[0]) op.selected = true; sel.appendChild(op); });
     var v = function (id) { return document.getElementById(id).value.trim(); };
-    var box = el("div", { style: "position:fixed;inset:0;z-index:950;background:rgba(10,20,10,.45);display:grid;place-items:center;padding:16px;overflow:auto", onclick: function (e) { if (e.target === box) box.remove(); } },
+    var box = el("div", { style: "position:fixed;inset:0;z-index:950;background:rgba(9,13,21,.45);display:grid;place-items:center;padding:16px;overflow:auto", onclick: function (e) { if (e.target === box) box.remove(); } },
       el("div", { class: "authcard", style: "display:grid;gap:10px" },
         el("div", { class: "h3" }, "Connection settings"),
         el("div", { class: "cap" }, "Where WorkDesk keeps its data and how people sign in. config.js sets this for everyone; what you save here applies to this browser only."),
