@@ -59,11 +59,12 @@ function wdBase() {
   db.teams = WD_TEAMS.map(function (t) {
     return { id: t[0], name: t[1], leadUserId: t[2], department: t[3], color: t[4], code: t[5], description: "", contact: "", location: "", clientIds: [] };
   });
-  db.clients = [{ id: "c-gal", name: "GALIL (internal)", initials: "GAL", isInternal: true, contactName: "", contactEmail: "", notes: "Red hours", isVerified: true }];
+  var T0 = "2024-01-01T08:00:00.000Z";
+  db.clients = [{ id: "c-gal", name: "GALIL (internal)", initials: "GAL", isInternal: true, contactName: "", contactEmail: "", notes: "Red hours", isVerified: true, createdAt: T0 }];
   db.projects = [
-    { id: "p-int1", clientId: "c-gal", name: "Internal — Administration", status: "Active", ownerUserId: "u-inon", startDate: "2024-01-01", endDate: null, isWoTracked: false, notes: "", isVerified: true },
-    { id: "p-int2", clientId: "c-gal", name: "Internal — Business Development", status: "Active", ownerUserId: "u-tamir", startDate: "2024-01-01", endDate: null, isWoTracked: false, notes: "", isVerified: true },
-    { id: "p-int3", clientId: "c-gal", name: "Internal — Recruiting & HR", status: "Active", ownerUserId: "u-tamir", startDate: "2024-01-01", endDate: null, isWoTracked: false, notes: "", isVerified: true }
+    { id: "p-int1", clientId: "c-gal", name: "Internal — Administration", status: "Active", ownerUserId: "u-inon", startDate: "2024-01-01", endDate: null, isWoTracked: false, notes: "", isVerified: true, createdAt: T0 },
+    { id: "p-int2", clientId: "c-gal", name: "Internal — Business Development", status: "Active", ownerUserId: "u-tamir", startDate: "2024-01-01", endDate: null, isWoTracked: false, notes: "", isVerified: true, createdAt: T0 },
+    { id: "p-int3", clientId: "c-gal", name: "Internal — Recruiting & HR", status: "Active", ownerUserId: "u-tamir", startDate: "2024-01-01", endDate: null, isWoTracked: false, notes: "", isVerified: true, createdAt: T0 }
   ];
   db.expenseTypes = [
     { id: "et-1", name: "Meal", requiresEvidence: true, ceiling: 120 },
@@ -86,8 +87,11 @@ function seed(withDemo) {
 
 var WD_DEMO_KEYS = ["clients", "projects", "workOrders", "budgets", "assignments", "entries", "planned", "expenses", "attachments", "library", "approvals", "teamRequests"];
 function hasDemo(db) { return WD_DEMO_KEYS.some(function (k) { return (db[k] || []).some(function (x) { return x.demo; }); }); }
+/* the made-up personal details demo data gives the real team (mobile, date of birth) */
+var WD_DEMO_PERSON = ["mobile", "dob"];
 function removeDemo(db) {
   WD_DEMO_KEYS.forEach(function (k) { db[k] = (db[k] || []).filter(function (x) { return !x.demo; }); });
+  (db.users || []).forEach(function (u) { if (u.demoDetails) { WD_DEMO_PERSON.forEach(function (k) { u[k] = ""; }); delete u.demoDetails; } });
   /* a real record that pointed at demo work keeps working without it */
   db.teams.forEach(function (t) { t.clientIds = (t.clientIds || []).filter(function (c) { return byId(db.clients, c); }); });
   return db;
@@ -105,16 +109,30 @@ function addDemo(db) {
   var who = function (id) { var u = byId(db.users, id); if (u && u.isActive) return id; return active.length ? active[spare++ % active.length].id : null; };
   var D = function (o) { o.demo = true; return o; };
 
+  /* id, name, initials, contact, contact email, contact's role, city, street, postal code, payment terms */
   var clients = [
-    ["c-iai", "IAI", "IAI", "Ilan Barak", "ilan@iai.example"],
-    ["c-elb", "Elbit Systems", "ELB", "Rita Gold", "rita@elbit.example"],
-    ["c-mob", "Mobileye", "MOB", "Sagi Peer", "sagi@mobileye.example"],
-    ["c-cmd", "Carmel Medical Devices", "CMD", "Hila Mor", "hila@carmel-med.example"],
-    ["c-gws", "Galilee Water Systems", "GWS", "Omer Tal", "omer@galilee-water.example"],
-    ["c-hft", "Haifa FinTech", "HFT", "Lior Ben-David", "lior@haifa-fintech.example"]
+    ["c-iai", "IAI", "IAI", "Ilan Barak", "ilan@iai.example", "Documentation lead", "Lod", "Ben Gurion Airport, Building 12", "7010000", "EOM + 60"],
+    ["c-elb", "Elbit Systems", "ELB", "Rita Gold", "rita@elbit.example", "Program manager", "Haifa", "Advanced Technology Center, Building 3", "3100401", "EOM + 90"],
+    ["c-mob", "Mobileye", "MOB", "Sagi Peer", "sagi@mobileye.example", "Developer relations", "Jerusalem", "Har Hotzvim, Building 7", "9777513", "Net 45"],
+    ["c-cmd", "Carmel Medical Devices", "CMD", "Hila Mor", "hila@carmel-med.example", "Regulatory affairs", "Yokneam", "HaMada St 9", "2069200", "Net 30"],
+    ["c-gws", "Galilee Water Systems", "GWS", "Omer Tal", "omer@galilee-water.example", "Product manager", "Karmiel", "HaTaasiya St 4", "2165100", "Net 60"],
+    ["c-hft", "Haifa FinTech", "HFT", "Lior Ben-David", "lior@haifa-fintech.example", "Head of content", "Haifa", "Matam Park, Building 22", "3508409", "EOM + 30"]
   ];
+  var phone = function (pre) { return pre + "-" + between(100, 999) + "-" + between(1000, 9999); };
   clients.forEach(function (c) {
-    if (!byId(db.clients, c[0])) db.clients.push(D({ id: c[0], name: c[1], initials: c[2], isInternal: false, contactName: c[3], contactEmail: c[4], notes: "", isVerified: true }));
+    if (byId(db.clients, c[0])) return;
+    db.clients.push(D({ id: c[0], name: c[1], initials: c[2], isInternal: false, contactName: c[3], contactEmail: c[4], notes: "", isVerified: true,
+      legalName: c[1] + " Ltd.", vatNumber: "51-" + between(100000, 999999) + "-" + between(1, 9), address: c[7], city: c[6], postalCode: c[8], country: "Israel",
+      phone: phone(pick(["02", "03", "04", "08", "09"])), website: "www." + c[4].split("@")[1], paymentTerms: c[9], contactRole: c[5], contactPhone: phone("05" + between(0, 4)),
+      billingEmail: "invoices@" + c[4].split("@")[1], createdAt: new Date(Date.now() - between(220, 700) * 864e5).toISOString() }));
+  });
+  /* made-up mobiles and birthdays for the team, so Management → People and the birthday
+     reminders have something to show (two birthdays always fall this week) */
+  db.users.forEach(function (u, i) {
+    if (u.mobile || u.dob) return;
+    var b = new Date(); b.setFullYear(b.getFullYear() - between(26, 58));
+    if (i === 3) b.setDate(b.getDate() + 2); else if (i === 8) b.setDate(b.getDate() + 5); else b.setDate(b.getDate() + between(8, 365));
+    u.mobile = phone("05" + between(0, 4)); u.dob = d2s(b); u.demoDetails = true;
   });
   /* project id, client, name, status, owner (manager), team, WO code prefix, budget basis, writers, work topics */
   var P = [
@@ -129,17 +147,23 @@ function addDemo(db) {
   P.forEach(function (r) {
     var pid = r[0], cid = r[1], owner = who(r[4]), writers = r[8].map(who).filter(Boolean);
     var team = byId(db.teams, r[5]); if (team && (team.clientIds || []).indexOf(cid) < 0) team.clientIds = (team.clientIds || []).concat([cid]);
-    db.projects.push(D({ id: pid, clientId: cid, name: r[2], status: r[3], ownerUserId: owner, startDate: T(-between(60, 200)), endDate: T(between(30, 150)), isWoTracked: true, notes: "", isVerified: true }));
+    var pStart = T(-between(60, 200));
+    db.projects.push(D({ id: pid, clientId: cid, name: r[2], status: r[3], ownerUserId: owner, startDate: pStart, endDate: T(between(30, 150)), isWoTracked: true, notes: "", isVerified: true,
+      code: r[6].slice(3, 6) + "-P" + ("0" + (P.indexOf(r) + 1)).slice(-2), description: r[9].slice(0, 2).join(" · "), clientRef: "PO-" + between(70000, 79999),
+      createdAt: s2d(pStart).toISOString(), createdBy: owner }));
     var woIds = [];
     for (var w = 0; w < 2; w++) {
       var wid = pid + "-w" + (w + 1);
       woIds.push(wid);
-      db.workOrders.push(D({ id: wid, projectId: pid, code: r[6] + (w + 1) + between(10, 99), title: w ? "Phase 2 — update" : "Phase 1 — main deliverable", status: "Active", contractRef: "PO-" + between(80000, 89999), startDate: T(-between(40, 120)), endDate: T(between(20, 120)), notes: "" }));
+      var wStart = T(-between(40, 120));
+      db.workOrders.push(D({ id: wid, projectId: pid, code: r[6] + (w + 1) + between(10, 99), title: w ? "Phase 2 — update" : "Phase 1 — main deliverable", status: "Active", contractRef: "PO-" + between(80000, 89999), startDate: wStart, endDate: T(between(20, 120)), notes: "",
+        galilLeadId: owner, galilTeam: writers.filter(function (x, j) { return j % 2 === w || writers.length < 3; }), createdAt: s2d(wStart).toISOString(), createdBy: owner }));
       var hrs = between(200, 600), basis = w ? "Hours" : r[7];
       db.budgets.push(D({ id: "b-" + wid, clientId: cid, projectId: pid, workOrderId: wid, basis: basis, currency: "₪",
         amount: basis === "Money" ? hrs * 300 : null, rate: basis === "Money" ? 300 : null, hours: hrs,
         units: basis === "Pages" ? between(250, 500) : basis === "Words" ? between(40000, 80000) : null,
-        unitName: basis === "Pages" ? "pages" : basis === "Words" ? "words" : "", notes: "", history: [],
+        unitName: basis === "Pages" ? "pages" : basis === "Words" ? "words" : "", notes: w ? "Change order for the update phase" : "", history: [],
+        createdAt: s2d(wStart).toISOString(), createdBy: owner,
         produced: basis === "Pages" ? between(60, 200) : basis === "Words" ? between(8000, 30000) : undefined }));
     }
     writers.concat([owner]).forEach(function (u, i) {

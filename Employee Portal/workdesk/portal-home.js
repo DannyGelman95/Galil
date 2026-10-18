@@ -220,6 +220,9 @@ function PortalHome(p) {
           h("div", { className: "cap" }, ilLong(todayStr()), " · ", "Where would you like to start?")),
         h(Btn, { kind: "t", onClick: p.onSignOut }, "Sign out")),
 
+      /* birthday reminders: colleagues' birthdays this week (people may keep theirs private) */
+      h(BirthdayBanner, { db: db, days: 7, id: "home-birthdays", title: "Birthdays this week", mb: 0 }),
+
       h("div", { className: "tiles", role: "list" }, tiles.map(function (t) {
         return h("button", {
           key: t.k, type: "button", role: "listitem", id: "tile-" + t.k, className: "tile" + (t.on ? "" : " off"),

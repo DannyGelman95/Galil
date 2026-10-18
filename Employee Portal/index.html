@@ -19670,7 +19670,7 @@ function SignIn(p) {
 function SignUp(p) {
   var db = p.db;
   var s = useState({
-    step: 1, fullName: "", fullNameHe: "", email: "", password: "", pw2: "", mobile: "", useMs: false,
+    step: 1, fullName: "", fullNameHe: "", email: "", password: "", pw2: "", mobile: "", dob: "", useMs: false,
     role: "EMP", jobTitle: "", department: "", teamId: "", managerId: "", startDate: todayStr(),
     weeklyHours: 42, dailyHours: 9, employmentType: "full-time", photoUrl: "", accepted: false, errs: {}
   });
@@ -19705,7 +19705,7 @@ function SignUp(p) {
     if (!validate(4)) return;
     p.onSubmit({
       fullName: st.fullName.trim(), fullNameHe: st.fullNameHe.trim(), email: st.email.trim().toLowerCase(),
-      password: st.useMs ? "GalilWorkdesk1" : st.password, mobile: st.mobile.trim(),
+      password: st.useMs ? "GalilWorkdesk1" : st.password, mobile: st.mobile.trim(), dob: st.dob || "",
       role: "EMP", requestedRole: st.role, jobTitle: st.jobTitle.trim(), department: st.department.trim(),
       teamId: st.teamId || null, managerId: st.managerId || null, startDate: st.startDate,
       weeklyHours: Number(st.weeklyHours) || 42, dailyHours: Number(st.dailyHours) || 9,
@@ -19733,7 +19733,9 @@ function SignUp(p) {
               h(Inp, { label: "Password", req: true, id: "su-p", type: "password", value: st.password, err: st.errs.password, onChange: function (e) { up("password", e.target.value); } }),
               h(Inp, { label: "Confirm password", req: true, id: "su-p2", type: "password", value: st.pw2, err: st.errs.pw2, onChange: function (e) { up("pw2", e.target.value); } })),
         h("div", { className: "cap" }, "Minimum 12 characters, with upper case, lower case and a digit."),
-        h(Inp, { label: "Mobile number", req: true, id: "su-m", value: st.mobile, placeholder: "05x-000 0000", err: st.errs.mobile, onChange: function (e) { up("mobile", e.target.value); } })
+        h("div", { className: "grid2" },
+          h(Inp, { label: "Mobile number", req: true, id: "su-m", value: st.mobile, placeholder: "05x-000 0000", err: st.errs.mobile, onChange: function (e) { up("mobile", e.target.value); } }),
+          h(Inp, { label: "Date of birth (optional)", id: "su-dob", type: "date", value: st.dob, onChange: function (e) { up("dob", e.target.value); } }))
       ) : null,
 
       st.step === 2 ? h("div", { className: "col", style: { gap: 9 } },
@@ -19781,6 +19783,7 @@ function SignUp(p) {
            ["Email", st.email],
            ["Sign-in", st.useMs ? "Microsoft Entra ID with Authenticator MFA" : "Company email and password"],
            ["Mobile", st.mobile],
+           ["Date of birth", st.dob ? il(st.dob) : "—"],
            ["Requested role", roleName(st.role) + " (" + st.role + ")" + (SELF_SELECTABLE.indexOf(st.role) < 0 ? " — administrator approval required" : "")],
            ["Job title", st.jobTitle],
            ["Department", st.department],
@@ -21403,7 +21406,8 @@ function ManagementTab(p) {
         basis: f.basis, currency: f.currency, amount: f.amount === "" ? null : Number(f.amount),
         rate: f.rate === "" ? null : Number(f.rate), hours: f.hours === "" ? null : Number(f.hours),
         units: f.units === "" ? null : Number(f.units), unitName: f.unitName || "", produced: Number(f.produced) || 0,
-        notes: f.notes || "", history: f.history || []
+        notes: f.notes || "", history: f.history || [],
+        createdAt: f.createdAt || nowISO(), createdBy: f.createdBy || user.id
       };
       if (rec.basis === "Money" && rec.amount && rec.rate) rec.hours = Math.round(rec.amount / rec.rate);
       var i = d.budgets.findIndex(function (x) { return x.id === rec.id; });
@@ -21501,22 +21505,33 @@ function ManagementTab(p) {
     tab === "budgets" ? h(BudgetList, { db: db, budgets: budgets, editable: editable, flt: bf, setFlt: setBf, blank: BF0, onEdit: function (b) { setEditing(Object.assign({}, b)); }, onHistory: setHistory }) : null,
 
     tab === "wos" ? h("div", { className: "panel scroll" },
-      h(STable, { id: "mgmt-wos", grow: "Title", center: ["Status", "Dates", "Budget", "Consumed"], className: "tbl" },
-        h("thead", null, h("tr", null, ["Code", "Title", "Client / project", "Status", "Contract ref", "Dates", "Budget", "Consumed", ""].map(function (c, i) { return h("th", { key: i, className: ["Budget", "Consumed"].indexOf(c) >= 0 ? "num" : "" }, c); }))),
+      h(STable, { id: "mgmt-wos", grow: "Title", center: ["Status", "Dates", "Budget", "Consumed", "Team", "Tasks", "Created"], className: "tbl" },
+        h("thead", null, h("tr", null, ["Code", "Title", "Client / project", "Status", "Contract ref", "Lead", "Team", "Dates", "Budget", "Consumed", "Tasks", "Created", ""].map(function (c, i) { return h("th", { key: i, className: ["Budget", "Consumed"].indexOf(c) >= 0 ? "num" : "" }, c); }))),
         h("tbody", null, wos.map(function (w) {
           var pr = byId(db.projects, w.projectId) || {};
           var b = db.budgets.filter(function (x) { return x.workOrderId === w.id; })[0];
           var used = b ? budgetConsumed(db, b) : db.entries.filter(function (e) { return e.workOrderId === w.id && e.status === "registered"; }).reduce(function (a, e) { return a + allowanceHrs(e); }, 0);
+          var tk = taskanaCount(w.projectId, w.id);
+          var team = (w.galilTeam && w.galilTeam.length) ? w.galilTeam : db.assignments.filter(function (a) { return a.workOrderId === w.id; }).map(function (a) { return a.userId; });
+          var leadId = w.galilLeadId || pr.ownerUserId;
           return h("tr", { key: w.id },
             h("td", { className: "mono", style: { fontWeight: 700 } }, w.code),
-            h("td", null, w.title),
+            h("td", null, w.title, w.titleHe ? h("div", { className: "cap he" }, w.titleHe) : null,
+              w.scope ? h("div", { className: "cap", style: { maxWidth: 320, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }, title: w.scope }, w.scope) : null),
             h("td", null, nameOf(db.clients, pr.clientId), h("div", { className: "cap" }, pr.name)),
             h("td", null, h(Chip, { k: w.status === "Active" ? "gr" : "mut" }, w.status)),
             h("td", { className: "mono", style: { fontSize: 12 } }, w.contractRef || "—"),
+            h("td", { style: { whiteSpace: "nowrap" } }, leadId ? userName(db, leadId) : "—"),
+            h("td", { "data-sort": team.length, title: team.map(function (id) { return userName(db, id); }).join(", ") || null }, team.length ? h("span", { className: "row", style: { gap: 2, flexWrap: "nowrap", justifyContent: "center" } },
+              team.slice(0, 4).map(function (id) { return h("span", { key: id, className: "avatar", style: { width: 22, height: 22, fontSize: 9 } }, initialsOf(userName(db, id))); }),
+              team.length > 4 ? h("span", { className: "cap" }, "+", team.length - 4) : null) : h("span", { className: "cap" }, "—")),
             h("td", { className: "mono", style: { fontSize: 12 } }, w.startDate ? il(w.startDate) : "—", " → ", w.endDate ? il(w.endDate) : "—"),
             h("td", { className: "num" }, b && b.hours ? num(b.hours) + " h" : "—"),
             h("td", { className: "num" }, h("div", { className: "row", style: { gap: 6, flexWrap: "nowrap" } },
               b && b.hours ? h(Bar, { used: used, total: b.hours, style: { width: 76 } }) : null, num(used), " h")),
+            h("td", { "data-sort": tk ? tk.total : -1, title: tk ? tr("{n} open", { n: tk.open }) + " · " + tr("{n} done", { n: tk.done }) : "Open Taskana once on this device to count its tasks" },
+              tk && tk.total ? h("span", { style: { whiteSpace: "nowrap" } }, h("b", { className: "tnum" }, tk.total), h("span", { className: "cap" }, " \u00b7 ", tr("{n} open", { n: tk.open }))) : h("span", { className: "cap" }, tk ? "0" : "—")),
+            h("td", { "data-sort": w.createdAt || "", className: "tnum", title: w.createdBy ? tr("by {name}", { name: userName(db, w.createdBy) }) : null }, createdDay(w)),
             h("td", { style: { whiteSpace: "nowrap" } },
               h(Btn, { title: "Work order document (PDF)", "aria-label": "Work order document (PDF)", sm: true, kind: "t", className: "tap", onClick: function () { setDocWO(Object.assign({ budgetHours: b ? b.hours : "" }, w)); } }, h(Icon, { n: "file", size: 16 })),
               can(user, "createWorkOrders") ? h(Btn, { title: "Edit", "aria-label": "Edit", sm: true, kind: "t", className: "tap", onClick: function () { setWoEdit(Object.assign({ budgetHours: b ? b.hours : "" }, w)); } }, h(Icon, { n: "edit", size: 16 })) : null));
@@ -21589,8 +21604,8 @@ function BudgetList(p) {
     h("div", { className: "panel scroll" },
       rows.length === 0
         ? h("div", { className: "empty" }, p.budgets.length ? "No budgets match these filters." : "No budgets in your scope.")
-        : h(STable, { id: "mgmt-budgets", grow: "Project", center: ["Basis", "Used", "Projected exhaustion"], className: "tbl mid" },
-            h("thead", null, h("tr", null, ["Client", "Project", "Work order", "Basis", "Budgeted", "Used", "Consumed", "In approval", "Remaining", "Value / output", "Projected exhaustion", ""].map(function (c, i) {
+        : h(STable, { id: "mgmt-budgets", grow: "Project", center: ["Basis", "Used", "Projected exhaustion", "Created"], className: "tbl mid" },
+            h("thead", null, h("tr", null, ["Client", "Project", "Work order", "Basis", "Budgeted", "Used", "Consumed", "In approval", "Remaining", "Value / output", "Projected exhaustion", "Notes", "Created", ""].map(function (c, i) {
               return h("th", { key: i, className: ["Budgeted", "Consumed", "In approval", "Remaining", "Value / output"].indexOf(c) >= 0 ? "num" : "" }, c);
             }))),
             h("tbody", null, rows.map(function (r) {
@@ -21614,6 +21629,8 @@ function BudgetList(p) {
                     : ["Pages", "Words", "Custom"].indexOf(b.basis) >= 0 ? h("span", null, num(b.produced || 0), h("span", { className: "cap" }, " / ", num(b.units), " ", b.unitName))
                     : h("span", { className: "cap" }, "—")),
                 h("td", { "data-sort": r.proj === "exhausted" ? "0000" : r.proj || "9999", className: "tnum", title: "last 30 days' burn", style: { whiteSpace: "nowrap", color: r.proj === "exhausted" ? C.error : null } }, r.proj === "exhausted" ? "now" : r.proj ? il(r.proj) : "—"),
+                h("td", { title: b.notes || null }, b.notes ? h("span", { className: "cap", style: { display: "inline-block", maxWidth: 220, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", verticalAlign: "middle" } }, b.notes) : h("span", { className: "cap" }, "—")),
+                h("td", { "data-sort": b.createdAt || "", className: "tnum", title: b.createdBy ? tr("by {name}", { name: userName(db, b.createdBy) }) : null }, createdDay(b)),
                 h("td", { style: { whiteSpace: "nowrap" } },
                   p.editable ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit", "aria-label": "Edit", onClick: function () { p.onEdit(b); } }, h(Icon, { n: "edit", size: 16 })) : null,
                   (b.history || []).length ? h(Btn, { sm: true, kind: "t", title: "Budget change history", onClick: function () { p.onHistory(b); } }, "History (" + b.history.length + ")") : null));
@@ -22850,13 +22867,161 @@ function usageCount(db, kind, id) {
   return 0;
 }
 
+/* ---------- record details shared by the Management lists ---------- */
+/* the day a record was created, from its createdAt stamp */
+function createdDay(o) { return o && o.createdAt ? il(String(o.createdAt).slice(0, 10)) : "—"; }
+/* birthdays: dob is YYYY-MM-DD; reminders look at the day and month only.
+   A 29 February birthday falls on 28 February in other years. */
+function nextBirthday(dob) {
+  var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(dob || ""); if (!m) return null;
+  var mo = Number(m[2]) - 1, da = Number(m[3]);
+  var t = new Date(); t.setHours(0, 0, 0, 0);
+  var on = function (y) { var d = new Date(y, mo, da); if (d.getMonth() !== mo) d = new Date(y, mo + 1, 0); return d; };
+  var next = on(t.getFullYear()); if (next < t) next = on(t.getFullYear() + 1);
+  return { date: d2s(next), days: Math.round((next - t) / 864e5), age: next.getFullYear() - Number(m[1]) };
+}
+function dayMonth(dob) { var m = /^\d{4}-(\d{2})-(\d{2})$/.exec(dob || ""); return m ? m[2] + "/" + m[1] : ""; }
+function birthdayWhen(days) { return days === 0 ? "Today" : days === 1 ? "Tomorrow" : tr("In {n} days", { n: days }); }
+/* active people whose birthday falls within the next `days` days, soonest first */
+function upcomingBirthdays(db, days) {
+  return (db.users || []).filter(function (u) { return u.isActive && !u.pendingActivation && u.dob && !u.hideBirthday; })
+    .map(function (u) { return { u: u, b: nextBirthday(u.dob) }; })
+    .filter(function (x) { return x.b && x.b.days <= days; })
+    .sort(function (a, b) { return a.b.days - b.b.days || a.u.fullName.localeCompare(b.u.fullName); });
+}
+function BirthdayBanner(p) {
+  var list = upcomingBirthdays(p.db, p.days || 30);
+  if (!list.length) return null;
+  return h("div", { className: "banner gr row", id: p.id, style: { gap: 6, alignItems: "center", marginBottom: p.mb == null ? 8 : p.mb } },
+    h("b", null, "🎂 ", p.title || "Upcoming birthdays"),
+    list.map(function (x) {
+      return h(Chip, { key: x.u.id, k: x.b.days === 0 ? "amber" : x.b.days <= 7 ? "gr" : "mut" },
+        displayName(x.u), " · ", dayMonth(x.u.dob), " · ", birthdayWhen(x.b.days));
+    }));
+}
+/* a phone number that dials on a phone */
+function PhoneLink(p) {
+  if (!p.value) return h("span", { className: "cap" }, "—");
+  return h("a", { href: "tel:" + String(p.value).replace(/[^\d+]/g, ""), dir: "ltr", className: "tnum", style: { whiteSpace: "nowrap" } }, p.value);
+}
+function WebLink(p) {
+  if (!p.value) return null;
+  var url = /^https?:\/\//i.test(p.value) ? p.value : "https://" + p.value;
+  return h("a", { href: url, target: "_blank", rel: "noopener", dir: "ltr", className: "cap" }, String(p.value).replace(/^https?:\/\//i, "").replace(/\/$/, ""));
+}
+var PAYMENT_TERMS = ["Immediate", "Net 30", "Net 45", "Net 60", "Net 90", "EOM + 30", "EOM + 60", "EOM + 90"];
+var CLIENT_FIELDS = [
+  { key: "name", label: "Client name", req: true },
+  { key: "initials", label: "Initials", placeholder: "used in work-order codes" },
+  { key: "legalName", label: "Registered company name" },
+  { key: "vatNumber", label: "VAT / Company ID", placeholder: "e.g. 51-234567-8", ltr: true },
+  { key: "address", label: "Street address", wide: true },
+  { key: "city", label: "City" },
+  { key: "postalCode", label: "Postal code", ltr: true },
+  { key: "country", label: "Country", placeholder: "Israel" },
+  { key: "phone", label: "Office phone", type: "tel", ltr: true },
+  { key: "website", label: "Website", type: "url", placeholder: "www.example.com", ltr: true },
+  { key: "paymentTerms", label: "Payment terms", type: "select", options: function () { return PAYMENT_TERMS; } },
+  { key: "contactName", label: "Contact" },
+  { key: "contactRole", label: "Contact's role" },
+  { key: "contactEmail", label: "Contact email", type: "email", ltr: true },
+  { key: "contactPhone", label: "Contact mobile", type: "tel", ltr: true },
+  { key: "billingEmail", label: "Invoices to (email)", type: "email", ltr: true },
+  { key: "notes", label: "Notes", type: "textarea", wide: true }
+];
+var PROJECT_FIELDS = [
+  { key: "name", label: "Project name", req: true },
+  { key: "code", label: "Project code", placeholder: "e.g. IAI-RAD", ltr: true },
+  { key: "clientId", label: "Client", req: true, type: "select", options: function (d2) { return d2.clients.map(function (c) { return { value: c.id, label: c.name }; }); } },
+  { key: "status", label: "Status", type: "select", options: function () { return PROJECT_STATUSES.map(function (s) { return { value: s, label: s }; }); } },
+  { key: "ownerUserId", label: "Owner", type: "select", options: function (d2) { return d2.users.filter(function (u) { return ["PM", "TL", "OPS", "CEO"].indexOf(u.role) >= 0; }).map(function (u) { return { value: u.id, label: u.fullName }; }); } },
+  { key: "clientRef", label: "Client reference / PO", ltr: true },
+  { key: "startDate", label: "Start date", type: "date" },
+  { key: "endDate", label: "End date", type: "date" },
+  { key: "description", label: "Description", type: "textarea", wide: true },
+  { key: "notes", label: "Notes", type: "textarea", wide: true }
+];
+/* a person's details: what Management → People edits, and the part of it people edit for themselves in My profile */
+var MY_DETAIL_FIELDS = [
+  { key: "mobile", label: "Mobile", type: "tel", placeholder: "05x-000 0000", ltr: true },
+  { key: "officePhone", label: "Office phone / extension", type: "tel", ltr: true },
+  { key: "dob", label: "Date of birth", type: "date" },
+  { key: "hideBirthday", label: "Keep my birthday private (no reminders to colleagues)", type: "check" },
+  { key: "address", label: "Home address", wide: true },
+  { key: "city", label: "City" },
+  { key: "emergencyName", label: "Emergency contact" },
+  { key: "emergencyPhone", label: "Emergency contact phone", type: "tel", ltr: true }
+];
+var PERSON_FIELDS = [
+  { key: "fullNameHe", label: "Full name (Hebrew)" },
+  { key: "jobTitle", label: "Job title" },
+  { key: "department", label: "Department" },
+  { key: "employmentType", label: "Employment", type: "select", options: function () { return [{ value: "full-time", label: "Full-time" }, { value: "part-time", label: "Part-time" }, { value: "contractor", label: "Contractor" }]; } },
+  { key: "startDate", label: "Start date", type: "date" }
+].concat(MY_DETAIL_FIELDS);
+/* Taskana's tasks on a project (or one work order), as this browser last saw them; null when Taskana's data isn't here */
+function taskanaCount(projectId, workOrderId) {
+  var data = taskanaData(); if (!data || !data.tasks) return null;
+  var list = data.tasks.filter(function (t) { return workOrderId ? t.workOrderId === workOrderId : t.projectId === projectId; });
+  var done = list.filter(function (t) { return t.status === "Done"; }).length;
+  return { total: list.length, done: done, open: list.length - done };
+}
+
+/* The full editor for one Management record. Each field: key, label, type
+   (text, email, tel, url, date, number, select, textarea, check), options
+   (a function of db), req, wide (spans the row), placeholder, ltr. */
+function RecordEditor(p) {
+  var s = useState(Object.assign({}, p.value)), f = s[0], set = s[1];
+  var es = useState({}), errs = es[0], setErrs = es[1];
+  var up = function (k, v) { var n = Object.assign({}, f); n[k] = v; set(n); var e = Object.assign({}, errs); delete e[k]; setErrs(e); };
+  function save() {
+    var e = {};
+    p.fields.forEach(function (fd) { if (fd.req && !String(f[fd.key] == null ? "" : f[fd.key]).trim()) e[fd.key] = "Required."; });
+    setErrs(e); if (Object.keys(e).length) return;
+    p.onSave(f);
+  }
+  return h(Modal, { title: p.title, size: "md", onClose: p.onClose,
+    footer: [h("div", { key: "g", className: "grow" }), h(Btn, { key: "c", onClick: p.onClose }, "Cancel"), h(Btn, { key: "s", kind: "p", onClick: save }, p.saveLabel || "Save")] },
+    h("div", { className: "grid2" }, p.fields.map(function (fd) {
+      var v = f[fd.key] == null ? "" : f[fd.key];
+      var st = fd.wide ? { gridColumn: "1 / -1" } : null;
+      var id = "rec-" + fd.key;
+      var el = fd.type === "select"
+        ? h(Sel, { id: id, label: fd.label, req: fd.req, err: errs[fd.key], value: v, placeholder: "—", options: fd.options(p.db), onChange: function (e) { up(fd.key, e.target.value); } })
+        : fd.type === "textarea"
+        ? h(Txt, { id: id, label: fd.label, req: fd.req, err: errs[fd.key], rows: 3, value: v, placeholder: fd.placeholder, onChange: function (e) { up(fd.key, e.target.value); } })
+        : fd.type === "check"
+        ? h(Field, { label: " " }, h("label", { className: "row", style: { gap: 7, minHeight: 38 } }, h("input", { id: id, type: "checkbox", checked: !!f[fd.key], onChange: function (e) { up(fd.key, e.target.checked); } }), fd.label))
+        : h(Inp, { id: id, label: fd.label, req: fd.req, err: errs[fd.key], type: fd.type || "text", value: v, placeholder: fd.placeholder, dir: fd.ltr ? "ltr" : null, onChange: function (e) { up(fd.key, e.target.value); } });
+      return h("div", { key: fd.key, style: st }, el);
+    })));
+}
+
 /* ---------- shared master-list editor ---------- */
 /* the master-list columns that hold a badge, a control or a short code, so they read centred */
-var LIST_CENTER_COLS = ["Initials", "Role", "Status", "Verified", "WO tracked", "Evidence required", "Auto-approval ceiling", "Used by"];
+var LIST_CENTER_COLS = ["Initials", "Role", "Status", "Verified", "WO tracked", "Evidence required", "Auto-approval ceiling", "Used by", "Work orders", "Tasks", "Created", "Birthday", "Payment terms"];
+/* a row cell may be { v: content, sort: value } to sort by something other than its text */
+function listCell(cell, i) {
+  var sc = cell && typeof cell === "object" && !Array.isArray(cell) && !React.isValidElement(cell) && "v" in cell;
+  return h("td", { key: i, "data-sort": sc ? cell.sort : undefined }, sc ? cell.v : cell);
+}
 function ListEditor(pp) {
-  var db = pp.db, user = pp.user, kind = pp.kind, fields = pp.fields || [];
+  var db = pp.db, user = pp.user, kind = pp.kind, fields = pp.fields || [], editFields = pp.editFields || null;
   var ns = useState({}), draft = ns[0], setDraft = ns[1];
+  var rs = useState(null), rec = rs[0], setRec = rs[1];
   function addItem(obj) { pp.mutate(function (d) { d[kind].push(obj); audit(d, user.id, "Added to " + kind, kind, obj.id, null, obj); }); }
+  function saveRecord(f) {
+    if (!f.id) { var o = pp.make(f); if (!o) return; addItem(o); setDraft({}); setRec(null); toast("Added.", "ok"); return; }
+    pp.mutate(function (d) {
+      var o = byId(d[kind], f.id); if (!o) return;
+      var before = Object.assign({}, o);
+      editFields.forEach(function (fd) { o[fd.key] = typeof f[fd.key] === "string" ? f[fd.key].trim() : f[fd.key]; });
+      if (pp.fix) pp.fix(o);
+      o.updatedAt = nowISO(); o.updatedBy = user.id;
+      audit(d, user.id, "Edited " + kind + ": " + (o[pp.nameField || "name"] || ""), kind, o.id, before, o);
+    });
+    setRec(null); toast("Saved.", "ok");
+  }
   function renameItem(id, field, value) {
     pp.mutate(function (d) { var o = byId(d[kind], id); if (o) { var b = o[field]; o[field] = value; audit(d, user.id, "Renamed " + kind + ": " + b + " → " + value, kind, id, null, null); } });
   }
@@ -22873,18 +23038,21 @@ function ListEditor(pp) {
           : h(Inp, { key: f.key, label: f.label, type: f.type || "text", value: draft[f.key] || "", onChange: function (e) { var n = Object.assign({}, draft); n[f.key] = e.target.value; setDraft(n); } });
       }),
       h("div", { className: "fld", style: { flex: "0 0 auto" } }, h("label", null, " "),
-        h(Btn, { kind: "p", onClick: function () {
-          var o = pp.make(draft); if (!o) return;
-          addItem(o); setDraft({}); toast("Added.", "ok");
-        } }, "+ Add"))) : null,
+        h("div", { className: "row", style: { gap: 6, flexWrap: "nowrap" } },
+          editFields ? h(Btn, { onClick: function () { setRec(Object.assign({ id: null }, draft)); } }, "More details…") : null,
+          h(Btn, { kind: "p", onClick: function () {
+            var o = pp.make(draft); if (!o) return;
+            addItem(o); setDraft({}); toast("Added.", "ok");
+          } }, "+ Add")))) : null,
     h("div", { style: { overflowX: "auto" } },
       h(STable, { id: "mgmt-" + kind, grow: pp.cols[0], center: LIST_CENTER_COLS, className: "tbl mid" },
         h("thead", null, h("tr", null, pp.cols.map(function (c, i) { return h("th", { key: i }, c); }), h("th", null, "Used by"), pp.canEdit ? h("th", null, "") : null)),
         h("tbody", null, (db[kind] || []).map(function (o) {
           return h("tr", { key: o.id },
-            pp.row(o).map(function (cell, i) { return h("td", { key: i }, cell); }),
+            pp.row(o).map(listCell),
             h("td", { className: "num" }, h(Chip, { k: "mut" }, usageCount(db, kind, o.id), " records")),
             pp.canEdit ? h("td", { style: { whiteSpace: "nowrap" } },
+              editFields ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit", "aria-label": "Edit " + (o[pp.nameField || "name"] || ""), onClick: function () { setRec(Object.assign({}, o)); } }, h(Icon, { n: "edit", size: 16 })) :
               h(Btn, { sm: true, kind: "t", className: "tap", title: "Rename", onClick: function () {
                 var field = pp.nameField || "name", old = o[field];
                 ask({ title: "Rename " + (pp.itemLabel || "item"), input: true, label: "New name", value: old, okLabel: "Rename" }).then(function (v) {
@@ -22892,7 +23060,10 @@ function ListEditor(pp) {
                 });
               } }, h(Icon, { n: "edit", size: 16 })),
               h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove", onClick: function () { removeItem(o.id); } }, h(Icon, { n: "trash", size: 16 }))) : null);
-        })))));
+        })))),
+    rec && editFields ? h(RecordEditor, { db: db, value: rec, fields: editFields, onSave: saveRecord, onClose: function () { setRec(null); },
+      title: rec.id ? tr("Edit {item}", { item: tr(pp.itemLabel || "item") }) : tr("New {item}", { item: tr(pp.itemLabel || "item") }),
+      saveLabel: rec.id ? "Save" : "+ Add" }) : null);
 }
 
 /* ---------- the Management sections ---------- */
@@ -22980,7 +23151,7 @@ function teamRequestApprovers(db, person, requesterId) {
   });
 }
 function blankTeam(user) {
-  return { id: null, name: "", description: "", department: "", deptOther: "", leadUserId: user.id, color: TEAM_COLORS[0], code: "", contact: "", location: "", clientIds: [] };
+  return { id: null, name: "", description: "", department: "", deptOther: "", leadUserId: user.id, color: TEAM_COLORS[0], code: "", contact: "", phone: "", location: "", clientIds: [] };
 }
 
 function TeamEditor(p) {
@@ -23002,7 +23173,7 @@ function TeamEditor(p) {
       id: f.id, name: name, description: f.description.trim(), department: dept,
       leadUserId: all ? (f.leadUserId || null) : (f.id ? f.leadUserId : user.id),
       color: f.color || TEAM_COLORS[0], code: String(f.code || "").trim().toUpperCase().slice(0, 6),
-      contact: String(f.contact || "").trim(), location: String(f.location || "").trim(), clientIds: f.clientIds || []
+      contact: String(f.contact || "").trim(), phone: String(f.phone || "").trim(), location: String(f.location || "").trim(), clientIds: f.clientIds || []
     });
   }
   var managers = db.users.filter(function (u) { return u.isActive && MANAGER_ROLES.indexOf(u.role) >= 0; })
@@ -23029,8 +23200,9 @@ function TeamEditor(p) {
         h("div", { className: "row", style: { gap: 6, minHeight: 38 } }, TEAM_COLORS.map(function (c) {
           return h("button", { key: c, type: "button", className: "swatchbtn" + (f.color === c ? " on" : ""), style: { background: c }, "aria-label": "Colour " + c, "aria-pressed": f.color === c ? "true" : "false", onClick: function () { up("color", c); } });
         }))),
-      h("div", { className: "grid2" },
+      h("div", { className: "grid3" },
         h(Inp, { label: "Team email or channel (optional)", value: f.contact, placeholder: "docs-north@galiltc.co.il", onChange: function (e) { up("contact", e.target.value); } }),
+        h(Inp, { label: "Team phone (optional)", type: "tel", dir: "ltr", value: f.phone, placeholder: "04-000 0000", onChange: function (e) { up("phone", e.target.value); } }),
         h(Inp, { label: "Location (optional)", value: f.location, placeholder: "e.g. Haifa office", onChange: function (e) { up("location", e.target.value); } })),
       h(Picker, {
         label: "Main clients (optional)", value: f.clientIds || [],
@@ -23135,7 +23307,7 @@ function TeamsPanel(p) {
         var before = Object.assign({}, x); Object.assign(x, f);
         audit(d, user.id, "Team edited: " + x.name, "teams", x.id, before, x);
       } else {
-        var t = Object.assign({}, f, { id: uid("team") });
+        var t = Object.assign({}, f, { id: uid("team"), createdAt: nowISO(), createdBy: user.id });
         d.teams.push(t);
         audit(d, user.id, "Team created: " + t.name, "teams", t.id, null, t);
       }
@@ -23219,7 +23391,9 @@ function TeamsPanel(p) {
             t.code ? h(Chip, { k: "mut" }, t.code) : null))),
       h("p", { className: "teamdesc" }, t.description || h("span", { className: "cap" }, "No description yet.")),
       h("div", { className: "cap" }, "Lead ", h("b", null, t.leadUserId ? userName(db, t.leadUserId) : "—"),
-        t.location ? " · " + t.location : "", t.contact ? " · " : "", t.contact ? (t.contact.indexOf("@") > 0 ? h(EmailCopy, { value: t.contact }) : t.contact) : ""),
+        t.location ? " · " + t.location : "", t.contact ? " · " : "", t.contact ? (t.contact.indexOf("@") > 0 ? h(EmailCopy, { value: t.contact }) : t.contact) : "",
+        t.phone ? " · " : "", t.phone ? h(PhoneLink, { value: t.phone }) : "",
+        t.createdAt ? h("div", null, tr("Created {date}", { date: createdDay(t) })) : null),
       (t.clientIds || []).length ? h("div", { className: "row", style: { gap: 4 } }, t.clientIds.map(function (c) { return h(Chip, { key: c, k: "teal" }, nameOf(db.clients, c)); })) : null,
       h("div", { className: "row", style: { gap: 4, marginTop: "auto" } },
         members.slice(0, 9).map(function (u) { return h("span", { key: u.id, className: "avatar", style: { width: 26, height: 26, fontSize: 10 }, title: u.fullName + " · " + roleName(u.role) }, initialsOf(u.fullName)); }),
@@ -23346,15 +23520,31 @@ function TeamManage(p) {
 function PeoplePanel(p) {
   var db = p.db, user = p.user, isAdmin = p.isAdmin;
   var es = useState(null), editing = es[0], setEditing = es[1];
+  var ds = useState(null), details = ds[0], setDetails = ds[1];
+  function saveDetails(f) {
+    p.mutate(function (d) {
+      var t = byId(d.users, f.id); if (!t) return;
+      var before = Object.assign({}, t);
+      PERSON_FIELDS.forEach(function (fd) { t[fd.key] = typeof f[fd.key] === "string" ? f[fd.key].trim() : f[fd.key]; });
+      audit(d, user.id, "Edited the details of " + t.fullName, "users", t.id, before, t);
+    });
+    setDetails(null); toast("Saved.", "ok");
+  }
   return h(React.Fragment, null,
+    h(BirthdayBanner, { db: db, days: 30, id: "people-birthdays" }),
     isAdmin ? h("div", { className: "cap", style: { marginBottom: 8 } }, "Portal access decides which apps each person sees on the Employee Portal home page. Without a choice, it follows the WorkDesk role; ✎ changes it.") : null,
     h(ListEditor, { itemLabel: "person",
     db: db, user: user, mutate: p.mutate, kind: "users", canEdit: false,
-    cols: ["Name", "Email", "Role", "Team", "Manager", "Portal access", "Status"],
+    cols: ["Name", "Email", "Mobile", "Role", "Team", "Manager", "Birthday", "Start date", "Portal access", "Status"],
     row: function (u) {
+      var nb = u.hideBirthday && !isAdmin ? null : nextBirthday(u.dob);
       return [
-        h("div", null, h("b", null, u.fullName), u.fullNameHe ? h("div", { className: "cap he" }, u.fullNameHe) : null),
+        h("div", { className: "row", style: { gap: 6, flexWrap: "nowrap", alignItems: "flex-start" } },
+          h("div", { className: "grow" }, h("b", null, u.fullName), u.fullNameHe ? h("div", { className: "cap he" }, u.fullNameHe) : null,
+            u.jobTitle ? h("div", { className: "cap" }, u.jobTitle) : null),
+          isAdmin ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit details", "aria-label": "Edit the details of " + u.fullName, onClick: function () { setDetails(Object.assign({}, u)); } }, h(Icon, { n: "edit", size: 15 })) : null),
         h(EmailCopy, { value: u.email }),
+        h(PhoneLink, { value: u.mobile }),
         isAdmin && u.id !== user.id ? h("select", { value: u.role, onChange: function (e) {
             var v = e.target.value;
             p.mutate(function (d) { var t = byId(d.users, u.id); if (t) { var b = t.role; t.role = v; audit(d, user.id, "Role change " + b + " → " + v + " for " + t.fullName, "users", u.id, null, null); } });
@@ -23363,6 +23553,10 @@ function PeoplePanel(p) {
           : h(Chip, { k: "gr", title: u.id === user.id ? "Your own role is changed by another administrator" : null }, roleName(u.role)),
         u.teamId ? nameOf(db.teams, u.teamId) : "—",
         u.managerId ? userName(db, u.managerId) : "—",
+        nb ? { v: h("div", { className: "col", style: { gap: 2, alignItems: "center" } }, h("span", { className: "tnum" }, dayMonth(u.dob)),
+               nb.days <= 7 ? h(Chip, { k: nb.days === 0 ? "amber" : "gr" }, "\ud83c\udf82 ", birthdayWhen(nb.days)) : null), sort: nb.days }
+           : { v: "—", sort: "" },
+        { v: u.startDate ? il(u.startDate) : "—", sort: u.startDate || "" },
         h("div", { className: "row", style: { gap: 4, flexWrap: "nowrap" } }, h(AccessChips, { user: u }),
           isAdmin ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Change portal access", "aria-label": "Change portal access for " + u.fullName, onClick: function () { setEditing(u); } }, "\u270e") : null),
         h("div", { className: "row", style: { gap: 5 } },
@@ -23374,7 +23568,8 @@ function PeoplePanel(p) {
     },
     fields: [], make: function () { return null; }
   }),
-    editing ? h(AccessModal, { user: user, person: byId(db.users, editing.id) || editing, mutate: p.mutate, onClose: function () { setEditing(null); } }) : null);
+    editing ? h(AccessModal, { user: user, person: byId(db.users, editing.id) || editing, mutate: p.mutate, onClose: function () { setEditing(null); } }) : null,
+    details ? h(RecordEditor, { db: db, value: details, fields: PERSON_FIELDS, title: tr("Details — {name}", { name: details.fullName }), onSave: saveDetails, onClose: function () { setDetails(null); } }) : null);
 }
 
 function MgmtPanel(p) {
@@ -23395,7 +23590,8 @@ function MgmtPanel(p) {
           h("span", { className: "avatar" }, initialsOf(u.fullName)),
           h("div", { className: "grow col", style: { gap: 1 } },
             h("b", null, u.fullName), h(EmailCopy, { value: u.email }),
-            h("span", { className: "cap" }, u.jobTitle, " · ", u.department, " · from ", il(u.startDate))),
+            h("span", { className: "cap" }, u.jobTitle, " · ", u.department, " · from ", il(u.startDate)),
+            u.mobile || u.dob ? h("span", { className: "cap" }, u.mobile ? h(PhoneLink, { value: u.mobile }) : null, u.mobile && u.dob ? " · " : null, u.dob ? tr("born {date}", { date: il(u.dob) }) : null) : null),
           h(Chip, { k: "amber" }, "requested ", roleName(u.requestedRole || u.role))),
         h("div", { className: "band" },
           h(Sel, { label: "Confirm role", id: "act-role-" + u.id, defaultValue: u.requestedRole || u.role, options: ROLES.map(function (r) { return { value: r.code, label: r.name }; }), onChange: function () {} }),
@@ -23479,25 +23675,54 @@ function MgmtPanel(p) {
 
   if (section === "clients") return h(ListEditor, { itemLabel: "client",
     db: db, user: user, mutate: p.mutate, kind: "clients", canEdit: canLists, nameField: "name",
-    cols: ["Name", "Initials", "Contact", "Verified"],
+    cols: ["Name", "Initials", "VAT / Company ID", "Address", "Phone", "Contact", "Payment terms", "Verified", "Created"],
     row: function (c) {
-      return [c.name, h("span", { className: "tnum" }, c.initials), c.contactName || c.contactEmail ? h("div", { className: "col", style: { gap: 1, alignItems: "flex-start" } }, c.contactName ? h("span", null, c.contactName) : null, c.contactEmail ? h(EmailCopy, { value: c.contactEmail }) : null) : "—",
-        c.isVerified ? h(Chip, { k: "gr" }, "verified") : h(Chip, { k: "amber" }, "unverified")];
+      var addr = [c.address, [c.city, c.postalCode].filter(Boolean).join(" "), c.country].filter(Boolean);
+      return [
+        h("div", { className: "col", style: { gap: 1, alignItems: "flex-start" } }, h("span", null, c.name),
+          c.legalName && c.legalName !== c.name ? h("span", { className: "cap" }, c.legalName) : null, h(WebLink, { value: c.website })),
+        h("span", { className: "tnum" }, c.initials),
+        c.vatNumber ? h(CopyCell, { value: c.vatNumber }) : "—",
+        addr.length ? h("div", { className: "col", style: { gap: 0 } }, addr.map(function (x, i) { return h("span", { key: i, className: i ? "cap" : null }, x); })) : "—",
+        h(PhoneLink, { value: c.phone }),
+        c.contactName || c.contactEmail || c.contactPhone ? h("div", { className: "col", style: { gap: 1, alignItems: "flex-start" } },
+          c.contactName ? h("span", null, c.contactName, c.contactRole ? h("span", { className: "cap" }, " · ", c.contactRole) : null) : null,
+          c.contactEmail ? h(EmailCopy, { value: c.contactEmail }) : null,
+          c.contactPhone ? h(PhoneLink, { value: c.contactPhone }) : null) : "—",
+        c.paymentTerms || "—",
+        c.isVerified ? h(Chip, { k: "gr" }, "verified") : h(Chip, { k: "amber" }, "unverified"),
+        { v: createdDay(c), sort: c.createdAt || "" }];
     },
-    fields: [{ key: "name", label: "Client name" }, { key: "initials", label: "Initials" }, { key: "contactName", label: "Contact" }, { key: "contactEmail", label: "Contact email" }],
+    fields: [{ key: "name", label: "Client name" }, { key: "initials", label: "Initials" }, { key: "vatNumber", label: "VAT / Company ID" }, { key: "contactName", label: "Contact" }, { key: "contactEmail", label: "Contact email" }],
+    editFields: CLIENT_FIELDS,
+    fix: function (o) { o.initials = String(o.initials || initialsOf(o.name)).toUpperCase(); },
     make: function (d2) {
       if (!d2.name) { toast("Enter a client name.", "error"); return null; }
-      return { id: uid("c"), name: d2.name, initials: (d2.initials || initialsOf(d2.name)).toUpperCase(), isInternal: false, contactName: d2.contactName || "", contactEmail: d2.contactEmail || "", notes: "", isVerified: true };
+      var o = { id: uid("c"), isInternal: false, notes: "", isVerified: true, createdAt: nowISO(), createdBy: user.id };
+      CLIENT_FIELDS.forEach(function (fd) { o[fd.key] = String(d2[fd.key] || "").trim(); });
+      o.initials = (o.initials || initialsOf(o.name)).toUpperCase();
+      return o;
     }
   });
 
   if (section === "projects") return h(ListEditor, { itemLabel: "project",
     db: db, user: user, mutate: p.mutate, kind: "projects", canEdit: canLists, nameField: "name",
-    cols: ["Project", "Client", "Status", "Owner", "WO tracked"],
+    cols: ["Project", "Client", "Status", "Owner", "Dates", "Work orders", "Tasks", "WO tracked", "Created"],
     row: function (x) {
-      return [x.name, nameOf(db.clients, x.clientId), psChip(x.status), x.ownerUserId ? userName(db, x.ownerUserId) : "—",
-        x.isWoTracked ? h(Chip, { k: "teal" }, "yes") : h("span", { className: "cap" }, "no")];
+      var tk = taskanaCount(x.id, null), nWo = db.workOrders.filter(function (w) { return w.projectId === x.id; }).length;
+      return [
+        h("div", { className: "col", style: { gap: 1 } }, h("span", null, x.name), x.code ? h("span", { className: "cap mono" }, x.code) : null,
+          x.description ? h("span", { className: "cap", style: { maxWidth: 340 } }, x.description) : null),
+        nameOf(db.clients, x.clientId), psChip(x.status), x.ownerUserId ? userName(db, x.ownerUserId) : "—",
+        { v: h("span", { className: "mono", style: { fontSize: 12, whiteSpace: "nowrap" } }, x.startDate ? il(x.startDate) : "—", " → ", x.endDate ? il(x.endDate) : "—"), sort: x.startDate || "" },
+        { v: nWo || h("span", { className: "cap" }, "0"), sort: nWo },
+        tk ? { v: tk.total ? h("span", { title: tr("{n} open", { n: tk.open }) + " · " + tr("{n} done", { n: tk.done }), style: { whiteSpace: "nowrap" } }, h("b", { className: "tnum" }, tk.total), h("span", { className: "cap" }, " · ", tr("{n} open", { n: tk.open }))) : h("span", { className: "cap" }, "0"), sort: tk.total }
+           : { v: h("span", { className: "cap", title: "Open Taskana once on this device to count its tasks" }, "—"), sort: -1 },
+        x.isWoTracked ? h(Chip, { k: "teal" }, "yes") : h("span", { className: "cap" }, "no"),
+        { v: createdDay(x), sort: x.createdAt || "" }];
     },
+    editFields: PROJECT_FIELDS,
+    fix: function (o) { if (o.endDate && o.startDate && o.endDate < o.startDate) o.endDate = o.startDate; if (!o.endDate) o.endDate = null; },
     fields: [
       { key: "name", label: "Project name" },
       { key: "clientId", label: "Client", type: "select", options: function (d2) { return d2.clients.map(function (c) { return { value: c.id, label: c.name }; }); } },
@@ -23506,7 +23731,10 @@ function MgmtPanel(p) {
     ],
     make: function (d2) {
       if (!d2.name || !d2.clientId) { toast("Enter a name and pick a client.", "error"); return null; }
-      return { id: uid("p"), clientId: d2.clientId, name: d2.name, status: d2.status || "Active", ownerUserId: d2.ownerUserId || user.id, startDate: todayStr(), endDate: null, isWoTracked: false, notes: "", isVerified: true };
+      return { id: uid("p"), clientId: d2.clientId, name: String(d2.name).trim(), status: d2.status || "Active", ownerUserId: d2.ownerUserId || user.id,
+        code: String(d2.code || "").trim(), description: String(d2.description || "").trim(), startDate: d2.startDate || todayStr(), endDate: d2.endDate || null,
+        clientRef: String(d2.clientRef || "").trim(),
+        isWoTracked: false, notes: String(d2.notes || "").trim(), isVerified: true, createdAt: nowISO(), createdBy: user.id };
     }
   });
 
@@ -24281,7 +24509,7 @@ function MobileApp(p) {
       h(Btn, { kind: "p", style: { minHeight: 48 }, onClick: function () { p.onForceDesktop(); } }, IconLabel("monitor", "Switch to the desktop layout"))) : null,
 
     sheet === "mywork" ? h(MyWork, Object.assign({ onClose: function () { setSheet(null); } }, common)) : null,
-    sheet === "profile" ? h(Profile, { db: db, user: user, onClose: function () { setSheet(null); }, onSignOut: p.onSignOut }) : null);
+    sheet === "profile" ? h(Profile, { db: db, user: user, mutate: p.mutate, onClose: function () { setSheet(null); }, onSignOut: p.onSignOut }) : null);
 }
 </script>
 <script src="workdesk/workdesk-seed.js"></script>
@@ -24346,6 +24574,16 @@ function MyWork(p) {
 
 function Profile(p) {
   var db = p.db, user = p.user;
+  var es = useState(null), mine = es[0], setMine = es[1];
+  if (mine) return h(RecordEditor, { db: db, value: mine, fields: MY_DETAIL_FIELDS, title: "My details", onClose: function () { setMine(null); },
+    onSave: function (f) {
+      p.mutate(function (d) {
+        var t = byId(d.users, user.id); if (!t) return;
+        MY_DETAIL_FIELDS.forEach(function (fd) { t[fd.key] = typeof f[fd.key] === "string" ? f[fd.key].trim() : f[fd.key]; });
+        audit(d, user.id, "Updated my details", "users", user.id, null, null);
+      });
+      setMine(null); toast("Saved.", "ok");
+    } });
   return h(Modal, { title: "My profile", size: "sm", onClose: p.onClose,
     footer: [h(Btn, { key: "o", kind: "d", onClick: p.onSignOut }, "Sign out"), h("div", { key: "g", className: "grow" }), h(Btn, { key: "c", onClick: p.onClose }, "Close")] },
     h("div", { className: "col", style: { gap: 10 } },
@@ -24360,11 +24598,14 @@ function Profile(p) {
         [["Department", user.department], ["Team", user.teamId ? nameOf(db.teams, user.teamId) : "—"],
          ["Portal access", h(AccessChips, { user: user })],
          ["Manager", user.managerId ? userName(db, user.managerId) : "—"], ["Start date", il(user.startDate)],
+         ["Mobile", user.mobile ? h("span", { dir: "ltr" }, user.mobile) : "—"],
+         ["Birthday", user.dob ? dayMonth(user.dob) : "—"],
          ["Contracted", user.weeklyHours + " h/week · " + user.dailyHours + " h/day"],
          ["Employment", user.employmentType], ["Sign-in", user.authProvider === "microsoft" ? "Microsoft Entra ID + Authenticator" : "Company email and password"]
         ].map(function (r) {
           return h("div", { key: r[0], className: "row" }, h("span", { className: "cap", style: { width: 122 } }, r[0]), h("b", null, r[1]));
-        })),
+        }),
+        p.mutate ? h("div", { className: "row", style: { marginTop: 4 } }, h(Btn, { sm: true, id: "edit-my-details", onClick: function () { setMine(Object.assign({}, user)); } }, IconLabel("edit", "Edit my details"))) : null),
       h("div", { className: "row", style: { gap: 8, justifyContent: "space-between" } },
         h("div", { className: "col", style: { gap: 2 } }, h("div", { className: "h3" }, "Language"),
           h("span", { className: "cap" }, "English or Hebrew, for the whole Employee Portal on this device.")),
@@ -24556,7 +24797,7 @@ function App() {
         db: db, user: user, theme: theme, setTheme: setTheme, approvals: approvalCount,
         onOpen: openWorkdesk, onProfile: function () { setProfile(true); }, onSignOut: signOut
       }),
-      profile ? h(Profile, { db: db, user: user, viewPref: viewPref, setViewPref: setViewPref, onClose: function () { setProfile(false); }, onSignOut: signOut }) : null,
+      profile ? h(Profile, { db: db, user: user, mutate: mutate, viewPref: viewPref, setViewPref: setViewPref, onClose: function () { setProfile(false); }, onSignOut: signOut }) : null,
       h(Toasts, { items: toasts, dismiss: dismiss }), h(AskHost));
   }
 
@@ -24651,7 +24892,7 @@ function App() {
     tab === "dashboard" ? h(DashboardTab, common) : null,
 
     admin ? h(AdminModal, Object.assign({ onClose: function () { setAdmin(false); } }, common)) : null,
-    profile ? h(Profile, { db: db, user: user, viewPref: viewPref, setViewPref: setViewPref, onClose: function () { setProfile(false); }, onSignOut: signOut }) : null,
+    profile ? h(Profile, { db: db, user: user, mutate: mutate, viewPref: viewPref, setViewPref: setViewPref, onClose: function () { setProfile(false); }, onSignOut: signOut }) : null,
     mywork ? h(MyWork, Object.assign({ onClose: function () { setMyWork(false); } }, common)) : null,
     h(Toasts, { items: toasts, dismiss: dismiss }), h(AskHost));
 }
