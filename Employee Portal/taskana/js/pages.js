@@ -12,7 +12,7 @@ function pageFor(r) {
     case "board": return pageBoard();
     case "tasks": return pageTasks();
     case "insights": return pageInsights();
-    case "library": return pageLibrary(r[1]);
+    case "library": return pageLibrary(r[1], r[2]);
     case "view": return pageView(r[1]);
     case "clients": return r[1] ? pageClient(r[1]) : pageClients();
     case "project": return pageProject(r[1]);
