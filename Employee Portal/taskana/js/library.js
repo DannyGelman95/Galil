@@ -188,7 +188,7 @@ function libDocView(d) {
   if (lib.anchor) { ED.anchor = lib.anchor; lib.anchor = null; }   /* the frame scrolls there once it has (re)loaded */
   var tools = h("div", { class: "lib-tools", id: "lib-tools" });
   var view = h("section", { class: "lib-main" }, tools, wrap, h("div", { class: "lib-foot muted small", id: "lib-foot" }));
-  var tabs = [["outline", tr("Outline")], ["followups", tr("Follow-ups")], ["terms", tr("Terms")], ["links", tr("Links")], ["details", tr("Details")]];
+  var tabs = [["outline", tr("Outline")], ["styles", tr("Styles")], ["followups", tr("Follow-ups")], ["terms", tr("Terms")], ["links", tr("Links")], ["details", tr("Details")]];
   var aside = h("aside", { class: "card lib-side" },
     h("div", { class: "seg lib-tabs", role: "tablist" }, tabs.map(function (t) {
       return h("button", { role: "tab", "aria-selected": lib.side === t[0] ? "true" : "false", class: lib.side === t[0] ? "on" : "", onclick: function () { lib.side = t[0]; libSide(d); this.parentNode.querySelectorAll("button").forEach(function (b) { b.classList.toggle("on", b === this); b.setAttribute("aria-selected", b === this ? "true" : "false"); }, this); } }, t[1]);
@@ -204,7 +204,7 @@ function libEditMode(on) {
   if (on && !libCanWrite(d)) { toast(tr("You can read this document, not edit it.")); return; }
   if (on && d.locked) { toast(tr("This document is locked. Unlock it under Details to edit.")); return; }
   if (!on) { if (ED.mode === "html") edHtmlMode(false); if (ED.pend) edHistPush(); libFlush(); edCloseBar(); }
-  ED.editing = !!on; edEditable(); libRenderTools();
+  ED.editing = !!on; edEditable(); libRenderTools(); libFootUpdate();
   if (on) setTimeout(function () { if (ED.root) { ED.win.focus(); ED.root.focus(); } }, 0);
 }
 function libRenderTools() {
@@ -246,12 +246,12 @@ function libToolsMenu(d) {
     { label: tr("Edit the document's CSS…"), fn: function () { ED.srcTab = "css"; edHtmlMode(true); } }]; }, { wide: true, end: true });
 }
 function libExportMenu() {
-  return edMenu(h("span", { class: "row", style: { gap: "4px" } }, libIcon("down"), h("span", { class: "lbl" }, tr("Export"))), tr("Export"), [
+  return edMenu(h("span", { class: "row", style: { gap: "6px" } }, libIcon("down"), tr("Export")), tr("Export"), [
     { label: tr("Word document (.doc)"), fn: function () { libExport("doc"); } },
     { label: tr("Web page (.html)"), fn: function () { libExport("html"); } },
     { label: tr("Markdown (.md)"), fn: function () { libExport("md"); } },
     { label: tr("Copy as Markdown"), fn: function () { libFlush(); copy(libMarkdown(ED.root), tr("Markdown copied")); } },
-    { label: tr("Print or save as PDF"), keys: "Ctrl+P", fn: function () { libExport("print"); } }], { wide: true, end: true });
+    { label: tr("Print or save as PDF"), keys: "Ctrl+P", fn: function () { libExport("print"); } }], { btnClass: "btn sm", end: true });
 }
 
 /* save what is in the editor — debounced while typing */
@@ -459,6 +459,7 @@ function libSide(d) {
       canW && terms.length ? h("button", { class: "btn sm", onclick: libGlossary }, tr("Insert glossary from terms")) : null);
     return;
   }
+  if (lib.side === "styles") { libStylesPanel(d, box); return; }
   if (lib.side === "links") {
     var out = [], seen = {};
     [].slice.call(ED.root.querySelectorAll("a[href]")).forEach(function (a) {
@@ -527,8 +528,9 @@ function libExport(kind) {
   var d = libCur(); if (!d) return;
   var body = libClean(ED.root.innerHTML), title = d.title || tr("Untitled"), dir = LANG === "he" ? "rtl" : "ltr";
   /* the same look as in the editor, plus the document's own stylesheet */
-  var css = ED_CSS.replace("min-height:calc(100vh - 114px);", "") + "\n#doc{max-width:820px;margin:0 auto}\n" + libCleanCss(d.css || "");
-  var link = /^https:\/\//i.test(d.cssUrl || "") ? '<link rel="stylesheet" href="' + libEsc(d.cssUrl) + '">' : "";
+  var css = ED_CSS.replace("min-height:calc(100vh - 114px);", "") + "\n#doc{max-width:820px;margin:0 auto}\n" + edStylesCss(d) + "\n" + libCleanCss(d.css || "");
+  var fl = edFontLinks(d);
+  var link = (fl ? '<link rel="stylesheet" href="' + libEsc(fl) + '">' : "") + (/^https:\/\//i.test(d.cssUrl || "") ? '<link rel="stylesheet" href="' + libEsc(d.cssUrl) + '">' : "");
   var meta = [byId(db.clients, d.clientId), byId(db.projects, d.projectId)].filter(Boolean).map(function (x) { return x.name; });
   if (d.sme) meta.push(d.sme + (d.smeRole ? " (" + d.smeRole + ")" : ""));
   if (d.date) meta.push(fmtDate(d.date));
@@ -590,4 +592,118 @@ function libMarkdown(root) {
     return [].slice.call(n.childNodes).map(function (x) { return blk(x, depth); }).join("");
   };
   return [].slice.call(root.childNodes).map(function (x) { return blk(x, 0); }).join("").replace(/\n{3,}/g, "\n\n").trim() + "\n";
+}
+
+/* ---------- styles and fonts ---------- */
+function libStylesChanged(d) { d.updatedAt = nowISO(); d.updatedBy = me().id; save(true); edApplyStyles(); libFootUpdate(false); if (lib.side === "styles") libSide(d); }
+function libOpenStyles(what) {
+  var d = libCur(); if (!d) return;
+  lib.side = "styles"; lib.stylesFocus = what || "styles";
+  if (what === "new") lib.styleEdit = "__new";
+  document.querySelectorAll(".lib-tabs button").forEach(function (b) { var on = b.textContent === tr("Styles"); b.classList.toggle("on", on); b.setAttribute("aria-selected", on ? "true" : "false"); });
+  libSide(d);
+  var el = document.getElementById(what === "fonts" ? "lib-fonts" : "lib-styles"); if (el) el.scrollIntoView({ block: "start", behavior: "smooth" });
+}
+function libStylesPanel(d, box) {
+  var canW = libCanWrite(d) && !d.locked;
+  d.fonts = d.fonts || []; d.styles = d.styles || {}; d.cstyles = d.cstyles || [];
+  /* fonts */
+  var gIn = h("input", { class: "f", list: "lib-gfonts", placeholder: tr("Font name, e.g. Heebo"), "aria-label": tr("Google font name"), disabled: !canW });
+  var addG = function () {
+    var n = gIn.value.trim().replace(/[^\w\s֐-׿-]/g, ""); if (!n) return;
+    if (d.fonts.some(function (f) { return f.name.toLowerCase() === n.toLowerCase(); })) { toast(tr("That font is already in the document.")); return; }
+    d.fonts.push({ name: n, kind: "google" }); libStylesChanged(d); toast(tr("{f} added — pick it from the Font menu.", { f: n }));
+  };
+  gIn.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); addG(); } });
+  var file = h("input", { type: "file", accept: ".woff2,.woff,.ttf,.otf", hidden: true, onchange: function (e) {
+    var f = e.target.files && e.target.files[0]; if (!f) return; e.target.value = "";
+    if (f.size > 700 * 1024) { toast(tr("Font files up to 700 KB (a .woff2 file is usually smallest).")); return; }
+    var name = f.name.replace(/\.(woff2?|ttf|otf)$/i, "").replace(/[-_]+/g, " ").replace(/\b(regular|webfont)\b/ig, "").trim() || "Custom font";
+    var fr = new FileReader(); fr.onload = function () { d.fonts.push({ name: name, kind: "file", data: String(fr.result) }); libStylesChanged(d); toast(tr("{f} added — pick it from the Font menu.", { f: name })); }; fr.readAsDataURL(f);
+  } });
+  var baseSel = h("select", { class: "f", disabled: !canW, "aria-label": tr("Document font"), onchange: function (e) { d.baseFont = e.target.value; libStylesChanged(d); } },
+    [h("option", { value: "" }, tr("Default (Noto Sans)"))].concat(d.fonts.map(function (f) { return f.name; }).concat(ED_SYSFONTS).map(function (n) { return h("option", { value: n, selected: d.baseFont === n }, n); })));
+  var fonts = h("section", { id: "lib-fonts", class: "lib-stsec" },
+    h("h4", { class: "lib-h4" }, tr("Fonts")),
+    h("div", { class: "field" }, h("label", { class: "l" }, tr("Document font")), baseSel),
+    d.fonts.length ? h("div", { class: "lib-fontlist" }, d.fonts.map(function (f) {
+      return h("div", { class: "row lib-fontrow" }, h("span", { class: "grow", style: { fontFamily: edFontStack(f.name) } }, f.name), h("span", { class: "chip" }, f.kind === "file" ? tr("Uploaded") : "Google"),
+        canW ? h("button", { class: "btn sm ghost", title: tr("Remove"), "aria-label": tr("Remove"), onclick: function () { d.fonts = d.fonts.filter(function (x) { return x !== f; }); if (d.baseFont === f.name) d.baseFont = ""; libStylesChanged(d); } }, icon("x")) : null);
+    })) : h("p", { class: "muted small" }, tr("Only the fonts installed on most computers so far. Add a Google font by name, or upload a font file.")),
+    canW ? h("div", { class: "row" }, gIn, h("datalist", { id: "lib-gfonts" }, ED_GFONTS.map(function (n) { return h("option", { value: n }); })), h("button", { class: "btn sm", onclick: addG }, tr("Add"))) : null,
+    canW ? h("button", { class: "btn sm", style: { marginTop: "6px" }, onclick: function () { file.click(); } }, icon("upload"), tr("Upload a font file")) : null, file);
+  /* styles */
+  var key = lib.styleEdit || "p";
+  var opts = ED_BUILTIN.map(function (b) { return { value: b[0], label: tr(b[1]) }; })
+    .concat(d.cstyles.map(function (c) { return { value: c.id, label: c.name + " · " + (c.kind === "char" ? tr("character") : tr("paragraph")) }; }));
+  var own = d.cstyles.filter(function (c) { return c.id === key; })[0];
+  var props = key === "__new" ? {} : own ? (own.props = own.props || {}) : (d.styles[key] = d.styles[key] || {});
+  var setP = function (k, v) { if (v === "" || v === null) delete props[k]; else props[k] = v; libStylesChanged(d); };
+  var fld = function (label, k, input) { return h("div", { class: "field half" }, h("label", { class: "l" }, label), input); };
+  var sel = function (k, list) { return h("select", { class: "f", disabled: !canW, onchange: function (e) { setP(k, e.target.value); } }, list.map(function (o) { return h("option", { value: o[0], selected: String(props[k] || "") === String(o[0]) }, o[1]); })); };
+  var num = function (k, ph, step) { return h("input", { class: "f", type: "number", step: step || 1, value: props[k] == null ? "" : props[k], placeholder: ph || "", disabled: !canW, onchange: function (e) { setP(k, e.target.value === "" ? "" : Number(e.target.value)); } }); };
+  var col = function (k) {
+    var c = h("input", { type: "color", value: /^#[0-9a-f]{6}$/i.test(props[k] || "") ? props[k] : "#1b2a18", disabled: !canW, onchange: function (e) { setP(k, e.target.value); } });
+    return h("div", { class: "row", style: { gap: "4px", flexWrap: "nowrap" } }, c, h("button", { class: "btn sm ghost", title: tr("Automatic"), disabled: !canW, onclick: function () { setP(k, ""); } }, props[k] ? "✕" : tr("Auto")));
+  };
+  var fontOpts = [["", tr("Inherited")]].concat(d.fonts.map(function (f) { return [f.name, f.name]; }), ED_SYSFONTS.map(function (n) { return [n, n]; }));
+  var form = key === "__new" ? libNewStyleForm(d) : h("div", { class: "fields lib-stform" },
+    h("div", { class: "field" }, h("label", { class: "l" }, tr("Font")), sel("fontFamily", fontOpts)),
+    fld(tr("Size (px)"), "fontSize", num("fontSize", tr("inherited"))),
+    fld(tr("Weight"), "fontWeight", sel("fontWeight", [["", tr("Inherited")], ["normal", tr("Regular")], ["600", tr("Semibold")], ["bold", tr("Bold")]])),
+    fld(tr("Style"), "fontStyle", sel("fontStyle", [["", tr("Inherited")], ["normal", tr("Upright")], ["italic", tr("Italic")]])),
+    fld(tr("Capitals"), "textTransform", sel("textTransform", [["", tr("As typed")], ["uppercase", tr("ALL CAPS")], ["capitalize", tr("Title Case")]])),
+    fld(tr("Text colour"), "color", col("color")), fld(tr("Background"), "background", col("background")),
+    fld(tr("Alignment"), "textAlign", sel("textAlign", [["", tr("Inherited")], ["start", tr("Start")], ["center", tr("Centre")], ["end", tr("End")], ["justify", tr("Justify")]])),
+    fld(tr("Line height"), "lineHeight", num("lineHeight", "1.6", 0.05)),
+    fld(tr("Space before (px)"), "marginTop", num("marginTop")), fld(tr("Space after (px)"), "marginBottom", num("marginBottom")),
+    fld(tr("First-line indent (px)"), "textIndent", num("textIndent")), fld(tr("Letter spacing (px)"), "letterSpacing", num("letterSpacing", "0", 0.1)),
+    fld(tr("Underline"), "textDecoration", sel("textDecoration", [["", tr("Inherited")], ["none", tr("None")], ["underline", tr("Underline")]])),
+    fld(tr("Line under"), "borderBottom", sel("borderBottom", [["", tr("Inherited")], ["none", tr("None")], ["line", tr("Thin line")]])),
+    canW ? h("div", { class: "field row", style: { gap: "6px" } },
+      h("button", { class: "btn sm", title: tr("Put the caret in text that looks right, then press this"), onclick: function () { if (!ED.editing) { toast(tr("Switch on editing first.")); return; } var b = ED.root && edBlock(); if (!b) { toast(tr("Put the caret in a paragraph first.")); return; } var p2 = edReadProps(b); Object.assign(props, p2); libStylesChanged(d); } }, tr("Match the selection")),
+      h("button", { class: "btn sm", onclick: function () { Object.keys(props).forEach(function (k) { delete props[k]; }); libStylesChanged(d); } }, tr("Reset to default")),
+      own ? h("button", { class: "btn sm danger", onclick: function () { d.cstyles = d.cstyles.filter(function (c) { return c !== own; }); lib.styleEdit = "p"; libStylesChanged(d); } }, icon("trash"), tr("Delete style")) : null) : null);
+  var picker = h("select", { class: "f", "aria-label": tr("Style to edit"), onchange: function (e) { lib.styleEdit = e.target.value; libSide(d); } },
+    opts.map(function (o) { return h("option", { value: o.value, selected: key === o.value }, o.label); }).concat([h("option", { value: "__new", selected: key === "__new" }, "＋ " + tr("New style…"))]));
+  var others = libDocs().filter(function (x) { return x.id !== d.id && ((x.cstyles || []).length || Object.keys(x.styles || {}).length || (x.fonts || []).length || x.css); });
+  var styles = h("section", { id: "lib-styles", class: "lib-stsec" },
+    h("h4", { class: "lib-h4" }, tr("Styles")),
+    h("p", { class: "muted small" }, tr("Change a style here and every paragraph in that style changes. Apply styles from the style menu in the toolbar.")),
+    h("div", { class: "field" }, h("label", { class: "l" }, tr("Style")), picker),
+    form,
+    canW && others.length ? h("div", { class: "field", style: { marginTop: "10px" } }, h("label", { class: "l" }, tr("Copy the styles and fonts of another document")),
+      h("select", { class: "f", onchange: function (e) {
+        var src = byId(db.library, e.target.value); if (!src) return;
+        confirmBox(tr("Replace this document's styles?"), tr("Styles, fonts and CSS are copied from “{t}”. The text stays as it is.", { t: src.title }), tr("Copy styles"), function () {
+          d.styles = JSON.parse(JSON.stringify(src.styles || {})); d.cstyles = JSON.parse(JSON.stringify(src.cstyles || [])); d.fonts = JSON.parse(JSON.stringify(src.fonts || [])); d.baseFont = src.baseFont || ""; d.css = src.css || ""; d.cssUrl = src.cssUrl || "";
+          libStylesChanged(d); toast(tr("Styles copied."));
+        }, false);
+        e.target.value = "";
+      } }, [h("option", { value: "" }, tr("Choose a document…"))].concat(others.map(function (x) { return h("option", { value: x.id }, x.title || tr("Untitled")); })))) : null);
+  libFill(box, lib.stylesFocus === "fonts" ? fonts : styles, lib.stylesFocus === "fonts" ? styles : fonts);
+  lib.stylesFocus = null;
+}
+function libNewStyleForm(d) {
+  var name = h("input", { class: "f", placeholder: tr("e.g. Warning text, Step result, UI label"), "aria-label": tr("Style name") });
+  var kind = h("select", { class: "f" }, h("option", { value: "para" }, tr("Paragraph style")), h("option", { value: "char" }, tr("Character style (for words)")));
+  var base = h("select", { class: "f" }, ED_BUILTIN.filter(function (b) { return /^(p|h1|h2|h3|h4|lead|small|caption|blockquote|pre)$/.test(b[0]); }).map(function (b) { return h("option", { value: b[0] }, tr(b[1])); }));
+  var fromSel = h("input", { type: "checkbox", checked: true });
+  var create = function () {
+    var n = name.value.trim(); if (!n) { name.focus(); return; }
+    var id = edSlug(n), i = 2; while (d.cstyles.some(function (c) { return c.id === id; })) id = edSlug(n) + "-" + i++;
+    var props = {};
+    if (fromSel.checked && ED.root && ED.editing) { var b = edBlock(); if (b) props = edReadProps(b); }
+    d.cstyles.push({ id: id, name: n, kind: kind.value, base: base.value, props: props });
+    lib.styleEdit = id; libStylesChanged(d);
+    toast(tr("Style “{s}” created — it is in the style menu.", { s: n }));
+  };
+  name.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); create(); } });
+  setTimeout(function () { name.focus(); }, 0);
+  return h("div", { class: "lib-stform" },
+    h("div", { class: "field" }, h("label", { class: "l" }, tr("Name")), name),
+    h("div", { class: "field" }, h("label", { class: "l" }, tr("Kind")), kind),
+    h("div", { class: "field" }, h("label", { class: "l" }, tr("Based on")), base),
+    h("label", { class: "row small", style: { margin: "2px 0 10px" } }, fromSel, tr("Start from how the selected text looks")),
+    h("button", { class: "btn sm primary", onclick: create }, icon("plus"), tr("Create style")));
 }
