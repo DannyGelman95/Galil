@@ -4,6 +4,7 @@ The GALIL website and the GALIL Employee Portal.
 
 ```
 Website/            The public website — React + Material UI, English and Hebrew.
+Welcome/            A standalone page inviting employees to the Employee Portal.
 Employee Portal/    The Employee Portal — WorkDesk, Taskana, the Handbook and the
                     Knowledge Base behind one sign-in, English and Hebrew.
 tests/              Browser tests for the Employee Portal (Playwright).
@@ -86,5 +87,6 @@ cd tests/taskana  && npm ci && npx playwright install chromium && npm test   # T
 
 `.github/workflows/deploy-pages.yml` publishes to GitHub Pages on every push
 to `main`: the website at the root and the Employee Portal at
-`/employee-portal/`. `employee-portal-tests.yml` runs both test suites, and
+`/employee-portal/`, and the welcome page (`Welcome/`) at `/welcome/` — the link to
+send employees. `employee-portal-tests.yml` runs both test suites, and
 `website.yml` lints and builds the website on pull requests.
