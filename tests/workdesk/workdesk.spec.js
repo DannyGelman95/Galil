@@ -2,6 +2,7 @@
 // per-person access, Hebrew, and the GitHub / Microsoft 365 data files (APIs mocked).
 const { test, expect } = require("@playwright/test");
 const fs = require("fs"), path = require("path");
+const s2dDay = ds => new Date(ds + "T00:00:00").getDay();
 
 const SITE = path.resolve(__dirname, "../../Employee Portal");
 const data = page => page.evaluate(() => JSON.parse(localStorage.getItem("galil-workdesk-v1")).data);
@@ -530,6 +531,53 @@ test.describe("phone layout", () => {
     await page.locator(".mcal-day:not(.out)", { hasText: String(Number(monday.slice(8))) }).first().click();
     await expect(page.getByText("Chapter 4 draft")).toBeVisible();
     expect(errors).toEqual([]);
+  });
+
+  test.describe("swiping a planned card", () => {
+    test.use({ hasTouch: true, isMobile: true });
+
+    test("a planned card swipes to Copy (next day or the rest of the week) and Delete, with Undo", async ({ page, context }) => {
+      const errors = await local(page);
+      await signIn(page, "danny.gelman@galiltc.co.il");
+      await expect(page.locator("#portal-home")).toBeVisible();
+      /* a block on this week's Sunday, so Monday to Thursday are "the rest of the week" */
+      const sunday = await page.evaluate(() => {
+        const ds = d2s(startOfWeek(new Date()));
+        const raw = JSON.parse(localStorage.getItem("galil-workdesk-v1"));
+        raw.data.planned.push({ id: "pl-sw", userId: "u-danny", date: ds, start: "09:00", end: "12:00", red: 0, yellow: 3, blue: 0, clientId: null, projectId: "p-iai1", workOrderId: null, taskId: null, task: "", description: "Swipe me" });
+        localStorage.setItem("galil-workdesk-v1", JSON.stringify(raw));
+        return ds;
+      });
+      const copies = () => page.evaluate(() => JSON.parse(localStorage.getItem("galil-workdesk-v1")).data.planned.filter(x => x.description === "Swipe me").map(x => x.date).sort());
+      await page.reload(); await page.click("#tile-workdesk");
+      await page.locator(".mnav button", { hasText: "Plan" }).click();
+      const cdp = await context.newCDPSession(page);
+      const swipe = async () => {
+        const b = await page.locator('.mcard[data-plan="pl-sw"]').boundingBox();
+        const y = b.y + b.height / 2, x0 = b.x + b.width - 20;
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: x0, y }] });
+        for (let i = 1; i <= 10; i++) await cdp.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x: x0 - i * 22, y }] });
+        await cdp.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+        await page.waitForTimeout(300);
+      };
+      await swipe();
+      await expect(page.locator('.swipe.open')).toHaveCount(1);
+      await page.locator(".swipe.open .swipe-act", { hasText: "Copy" }).click();
+      await page.locator("#m-copy-next").click();
+      await expect.poll(copies).toHaveLength(2);
+      await swipe();
+      await page.locator(".swipe.open .swipe-act", { hasText: "Copy" }).first().click();
+      await page.locator("#m-copy-rest").click();
+      /* Monday was already there: only Tuesday to Thursday are added */
+      await expect.poll(copies).toHaveLength(5);
+      expect((await copies()).every(ds => [5, 6].indexOf(s2dDay(ds)) < 0)).toBe(true);
+      await swipe();
+      await page.locator(".swipe.open .swipe-act", { hasText: "Delete" }).first().click();
+      await expect.poll(copies).toHaveLength(4);
+      await page.locator(".toast", { hasText: "Planned block deleted." }).getByRole("button", { name: "Undo" }).click();
+      await expect.poll(copies).toHaveLength(5);
+      expect(errors).toEqual([]);
+    });
   });
 
   test("Approvals count only what I can act on, the list scrolls with the page, and My assignments opens full height", async ({ page }) => {
