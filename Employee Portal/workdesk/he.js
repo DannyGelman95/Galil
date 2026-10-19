@@ -1420,5 +1420,19 @@ WDI18N.add({
 "My details": "הפרטים שלי",
 "Edit my details": "עריכת הפרטים שלי",
 "Team phone (optional)": "טלפון הצוות (רשות)",
-"born {date}": "נולד/ה ב-{date}"
+"born {date}": "נולד/ה ב-{date}",
+"Plan view": "תצוגת התכנון",
+"+ plan this day": "+ תכנון היום הזה",
+"Copy this week to next week": "העתקת השבוע הזה לשבוע הבא",
+"{n} planned blocks copied to next week.": "{n} בלוקים מתוכננים הועתקו לשבוע הבא.",
+"Next week already has this week's plan.": "התכנון של השבוע הזה כבר נמצא בשבוע הבא.",
+"Tap a day to see and plan it.": "הקישו על יום כדי לראות ולתכנן אותו.",
+"Open this week": "פתיחת השבוע הזה",
+"h left": "שע׳ נותרו",
+"used": "נוצלו",
+"in approval": "באישור",
+"of": "מתוך",
+"h used": "שע׳ נוצלו",
+"h in approval": "שע׳ באישור",
+"∞ unlimited within the project budget": "∞ ללא הגבלה בתוך תקציב הפרויקט"
 });

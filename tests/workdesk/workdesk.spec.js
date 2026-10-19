@@ -115,6 +115,10 @@ test.describe("GitHub data file", () => {
     await expect(page.locator(".hubtop .brand #wd-sync")).toBeVisible();
     await page.locator("#tile-workdesk").click();
     await expect(page.locator(".topbar .brand #wd-sync")).toContainText("Saved to GitHub");
+    /* on a phone, WorkDesk's own header carries it as a dot */
+    await page.setViewportSize({ width: 390, height: 844 }); await page.reload();
+    await expect(page.locator(".mtop #wd-sync")).toBeVisible();
+    await expect(page.locator(".mtop #wd-sync span")).toBeHidden();
     expect(errors).toEqual([]);
   });
 
@@ -495,6 +499,55 @@ test.describe("phone layout", () => {
       await expect(pct).toHaveText("250%");
       expect(errors).toEqual([]);
     });
+  });
+
+  test("Plan shows a month, and copies this week's plan to next week once", async ({ page }) => {
+    const errors = await local(page);
+    await signIn(page, "danny.gelman@galiltc.co.il");
+    await expect(page.locator("#portal-home")).toBeVisible();
+    const monday = await page.evaluate(() => {
+      const d = startOfWeek(new Date()); d.setDate(d.getDate() + 1); const ds = d2s(d);
+      const raw = JSON.parse(localStorage.getItem("galil-workdesk-v1"));
+      raw.data.planned.push({ id: "pl-test1", userId: "u-danny", date: ds, start: "09:00", end: "13:00", red: 0, yellow: 4, blue: 0, clientId: null, projectId: "p-iai1", workOrderId: null, taskId: null, task: "", description: "Chapter 4 draft" });
+      localStorage.setItem("galil-workdesk-v1", JSON.stringify(raw));
+      return ds;
+    });
+    await page.reload(); await page.click("#tile-workdesk");
+    await page.locator(".mnav button", { hasText: "Plan" }).click();
+    await expect(page.getByText("Chapter 4 draft")).toBeVisible();
+    await page.locator("#m-copy-week").click();
+    const next = await page.evaluate(ds => { const d = s2d(ds); d.setDate(d.getDate() + 7); return d2s(d); }, monday);
+    const count = () => page.evaluate(ds => JSON.parse(localStorage.getItem("galil-workdesk-v1")).data.planned.filter(x => x.userId === "u-danny" && x.date === ds && x.description === "Chapter 4 draft").length, next);
+    await expect.poll(count).toBe(1);
+    await page.locator("#m-copy-week").click();                       // a second copy doesn't double it
+    await expect(page.getByText("Next week already has this week's plan.")).toBeVisible();
+    expect(await count()).toBe(1);
+    await page.getByRole("button", { name: "Next week", exact: true }).click();
+    await expect(page.getByText("Chapter 4 draft")).toBeVisible();
+    /* the month: a calendar, a tapped day lists its plan */
+    await page.getByRole("tab", { name: "Month" }).click();
+    await expect(page.locator(".mcal-day").first()).toBeVisible();
+    await page.locator(".mcal-day:not(.out)", { hasText: String(Number(monday.slice(8))) }).first().click();
+    await expect(page.getByText("Chapter 4 draft")).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+
+  test("Approvals count only what I can act on, the list scrolls with the page, and My assignments opens full height", async ({ page }) => {
+    const errors = await local(page);
+    await signIn(page, "danny.gelman@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await page.locator(".mnav button", { hasText: "More" }).click();
+    await page.locator(".sheet button", { hasText: "Approvals" }).click();
+    const cards = await page.locator(".apcard").count();
+    const counted = (await page.locator(".apfilters .pill span").allTextContents()).reduce((a, n) => a + Number(n), 0);
+    expect(counted).toBe(cards);
+    expect(await page.locator(".mob .page").evaluate(e => getComputedStyle(e).overflow)).toBe("visible");
+    await page.locator(".mnav button", { hasText: "More" }).click();
+    await page.locator(".sheet button", { hasText: "My assignments" }).click();
+    const box = await page.locator(".sheet.full > .sh").boundingBox();
+    expect(box.height).toBeGreaterThan(700);
+    await expect(page.locator(".sheet.full .mcard").first()).toBeVisible();
+    expect(errors).toEqual([]);
   });
 
   test("the Time tab lists my own time, and my team's only when I ask, each card naming who reported", async ({ page }) => {
