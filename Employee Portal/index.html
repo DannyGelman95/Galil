@@ -18945,6 +18945,20 @@ function CopyCell(p) {
     onClick: function (ev) { ev.stopPropagation(); copyText(p.value); }
   }, h("span", { className: "tnum" }, p.value), h(Icon, { n: "copy", size: 12, className: "ci" }));
 }
+/* role lists change only when opened and picked from: the mouse wheel over a closed
+   one scrolls the page around it instead of changing the role */
+document.addEventListener("wheel", function (ev) {
+  var sel = ev.target && ev.target.closest ? ev.target.closest("select.nowheel") : null;
+  if (!sel) return;
+  ev.preventDefault();
+  for (var n = sel.parentElement; n && n !== document.body; n = n.parentElement) {
+    var cs = getComputedStyle(n);
+    if ((/(auto|scroll)/.test(cs.overflowY) && n.scrollHeight > n.clientHeight) || (/(auto|scroll)/.test(cs.overflowX) && n.scrollWidth > n.clientWidth)) {
+      n.scrollBy(ev.deltaX, ev.deltaY); return;
+    }
+  }
+  window.scrollBy(ev.deltaX, ev.deltaY);
+}, { passive: false, capture: true });
 /* an email address reads as a link; clicking it copies the address */
 function EmailCopy(p) {
   if (!p.value) return h("span", { className: "cap" }, "\u2014");
@@ -19171,7 +19185,7 @@ function MonthNav(p) {
 
 /* GALIL mark */
 function Mark(p) {
-  return h("svg", { className: "mark", viewBox: "0 0 40 34", "aria-hidden": "true", style: p.style },
+  return h("svg", { className: "mark", viewBox: "0 7 40 34", "aria-hidden": "true", style: p.style },
     h("path", { d: "M3 24 C 9 12, 15 12, 20 24 S 32 36, 37 24", fill: "none", stroke: p.color || C.green, strokeWidth: 4, strokeLinecap: "round" }));
 }
 
@@ -20101,9 +20115,9 @@ function EntryForm(p) {
       el.leave,
       isDayType ? null : [line(el.client), line(el.project), line(el.workOrder), line(el.task)].map(function (x, i) { return React.cloneElement(x, { key: "l" + i }); }),
       h(Field, { label: "Description", req: true, err: errs.description },
-        h("textarea", { rows: 4, value: f.description, placeholder: descPh, "aria-invalid": errs.description ? "true" : null, onChange: function (e) { up("description", e.target.value); } })),
+        h("textarea", { rows: 1, value: f.description, placeholder: descPh, "aria-invalid": errs.description ? "true" : null, onChange: function (e) { up("description", e.target.value); } })),
       h(Field, { label: "Notes" },
-        h("textarea", { rows: 2, value: f.notes, placeholder: "Optional", onChange: function (e) { up("notes", e.target.value); } })),
+        h("textarea", { rows: 1, value: f.notes, placeholder: "Optional", onChange: function (e) { up("notes", e.target.value); } })),
       h("div", { className: "eform-go" },
         p.onCancel ? h(Btn, { onClick: p.onCancel }, "Cancel") : null,
         h(Btn, { kind: "p", className: "grow", onClick: save }, saveText)));
@@ -21005,7 +21019,7 @@ function ApprovalsTab(p) {
         h("div", { style: { fontSize: 13.5 } }, a.reason),
         h("div", { className: "row", style: { gap: 7 } },
           h("span", { className: "cap" }, "Confirm role"),
-          h("select", { id: "role-" + a.id, defaultValue: (byId(db.users, a.entityId) || {}).requestedRole || "EMP", className: "minisel", style: { minHeight: 34 } },
+          h("select", { id: "role-" + a.id, defaultValue: (byId(db.users, a.entityId) || {}).requestedRole || "EMP", className: "minisel nowheel", style: { minHeight: 34 } },
             ROLES.map(function (r) { return h("option", { key: r.code, value: r.code }, r.name); })))) : null,
       a.type === "Allowance increase" && a.payloadAfter ? h("div", { className: "banner teal" },
         "Requesting ", h("b", null, num(a.payloadAfter.hours), " additional hours"), " — ", a.payloadAfter.justification) : null,
@@ -21759,7 +21773,7 @@ var GALIL_CO = {
 /* the document's own words, in English and Hebrew */
 var WO_TX = {
   en: {
-    docTitle: "WORK ORDER", issued: "Issued", continued: "continued", untitled: "Work order",
+    docTitle: "WORK ORDER", issued: "Issued", continued: "continued", untitled: "Work Order",
     details: "Order details", client: "Client", project: "Project", workOrder: "Work order", status: "Status",
     contract: "Contract / PO reference", owner: "Project owner", start: "Start date", end: "End date",
     scope: "Scope of work", scopeDefault: "The scope is set out by the deliverables below and the referenced contract.",
@@ -21884,7 +21898,7 @@ function woDocData(db, wo, by, lang) {
   var signer = byId(db.users, wo.galilSignatoryId || "") || db.users.filter(function (u) { return u.role === "CEO" && u.isActive; })[0] || null;
   var owner = byId(db.users, pr.ownerUserId || "");
   var deliverables = String(wo.deliverables || "").split(/\n+/).map(function (x) { return x.replace(/^\s*[-•*]\s*/, "").trim(); }).filter(Boolean);
-  /* both documents are headed "Work order <code>"; the order's own title (in Hebrew,
+  /* both documents are headed "Work Order <code>"; the order's own title (in Hebrew,
      its Hebrew title when there is one) is listed in the details */
   var title = T.untitled + " " + (wo.code || ""), titleNote = (he && (wo.titleHe || "").trim()) || wo.title || "";
   return {
@@ -22196,7 +22210,7 @@ function WODocModal(p) {
     var me = p.user ? (lang === "he" && p.user.fullNameHe ? p.user.fullNameHe : p.user.fullName) + "\n" : "";
     var subject = lang === "he"
       ? "הזמנת עבודה " + d.code + " — " + d.titleNote + " (" + d.client + ")"
-      : "Work order " + d.code + " — " + d.titleNote + " (" + d.client + ")";
+      : "Work Order " + d.code + " — " + d.titleNote + " (" + d.client + ")";
     var body = lang === "he"
       ? "שלום,\n\nמצורפת הזמנת עבודה " + d.code + " עבור " + d.project + ".\n\n" + "היקף העבודה: " + (d.scope || d.titleNote) + "\n" +
         (sched ? "לוח זמנים: " + sched + "\n" : "") + "\nבברכה,\n" + me + CO.name
@@ -22902,7 +22916,10 @@ function BirthdayBanner(p) {
 /* a phone number that dials on a phone */
 function PhoneLink(p) {
   if (!p.value) return h("span", { className: "cap" }, "—");
-  return h("a", { href: "tel:" + String(p.value).replace(/[^\d+]/g, ""), dir: "ltr", className: "tnum", style: { whiteSpace: "nowrap" } }, p.value);
+  return h("button", {
+    className: "copy", title: "Click to copy " + p.value, "aria-label": "Copy " + p.value,
+    onClick: function (ev) { ev.stopPropagation(); copyText(String(p.value)); }
+  }, h("span", { dir: "ltr", className: "tnum" }, p.value), h(Icon, { n: "copy", size: 12, className: "ci" }));
 }
 function WebLink(p) {
   if (!p.value) return null;
@@ -23548,7 +23565,7 @@ function PeoplePanel(p) {
         isAdmin && u.id !== user.id ? h("select", { value: u.role, onChange: function (e) {
             var v = e.target.value;
             p.mutate(function (d) { var t = byId(d.users, u.id); if (t) { var b = t.role; t.role = v; audit(d, user.id, "Role change " + b + " → " + v + " for " + t.fullName, "users", u.id, null, null); } });
-          }, className: "minisel" },
+          }, className: "minisel nowheel", "aria-label": "Role of " + u.fullName },
             ROLES.map(function (r) { return h("option", { key: r.code, value: r.code }, r.name); }))
           : h(Chip, { k: "gr", title: u.id === user.id ? "Your own role is changed by another administrator" : null }, roleName(u.role)),
         u.teamId ? nameOf(db.teams, u.teamId) : "—",
@@ -23683,7 +23700,10 @@ function MgmtPanel(p) {
           c.legalName && c.legalName !== c.name ? h("span", { className: "cap" }, c.legalName) : null, h(WebLink, { value: c.website })),
         h("span", { className: "tnum" }, c.initials),
         c.vatNumber ? h(CopyCell, { value: c.vatNumber }) : "—",
-        addr.length ? h("div", { className: "col", style: { gap: 0 } }, addr.map(function (x, i) { return h("span", { key: i, className: i ? "cap" : null }, x); })) : "—",
+        addr.length ? h("button", {
+          className: "copy", style: { whiteSpace: "normal", alignItems: "flex-start" }, title: "Click to copy " + addr.join(", "), "aria-label": "Copy " + addr.join(", "),
+          onClick: function (ev) { ev.stopPropagation(); copyText(addr.join(", ")); }
+        }, h("span", { className: "col", style: { gap: 0 } }, addr.map(function (x, i) { return h("span", { key: i, className: i ? "cap" : null }, x); })), h(Icon, { n: "copy", size: 12, className: "ci" })) : "—",
         h(PhoneLink, { value: c.phone }),
         c.contactName || c.contactEmail || c.contactPhone ? h("div", { className: "col", style: { gap: 1, alignItems: "flex-start" } },
           c.contactName ? h("span", null, c.contactName, c.contactRole ? h("span", { className: "cap" }, " · ", c.contactRole) : null) : null,
