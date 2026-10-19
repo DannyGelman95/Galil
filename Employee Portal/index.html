@@ -18801,6 +18801,15 @@ var CSS = [
 ".toasts{bottom:calc(18px + env(safe-area-inset-bottom));max-width:calc(100vw - 24px)}",
 "}",
 ".mday{display:flex;flex-direction:column;gap:6px}",
+/* a planned card slides sideways to show Copy and Delete */
+".swipe{position:relative;border-radius:14px;overflow:hidden;touch-action:pan-y}",
+".swipe-acts{position:absolute;inset-block:0;inset-inline-end:0;width:var(--sw);display:flex}",
+".swipe-act{flex:1;border:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;font:700 12px var(--font);color:#fff;background:var(--blue);cursor:pointer}",
+".swipe-act.d{background:var(--err)}",
+".swipe-front{position:relative;transition:transform .22s ease}",
+".swipe-front.dragging{transition:none}",
+".swipe-front>.mcard{border-radius:14px}",
+".swipe.open .swipe-front>.mcard{border-start-end-radius:0;border-end-end-radius:0}",
 /* the phone's month plan: a calendar grid, a day's planned hours under its date */
 ".mcal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px}",
 ".mcal-dow{text-align:center;font:700 11px var(--font);color:var(--muted);padding:2px 0 4px}",
@@ -24307,6 +24316,51 @@ function MobileTime(p) {
 }
 
 /* ---------- Week Planner ---------- */
+/* a card that slides sideways (left; right in Hebrew) to show its actions behind it.
+   A tap on an open card closes it; a tap on a closed one is the card's own click. */
+function SwipeCard(p) {
+  var os = useState(false), open = os[0], setOpen = os[1];
+  var dx = useState(0), drag = dx[0], setDrag = dx[1];
+  var st = useRef(null);
+  var dir = WDI18N.he ? 1 : -1, W = p.width || 168;
+  function start(e) { var t = e.touches[0]; st.current = { x: t.clientX, y: t.clientY, base: open ? dir * W : 0, lock: null }; }
+  function move(e) {
+    var s0 = st.current; if (!s0) return;
+    var t = e.touches[0], mx = t.clientX - s0.x, my = t.clientY - s0.y;
+    if (s0.lock === null && Math.abs(mx) + Math.abs(my) > 8) s0.lock = Math.abs(mx) > Math.abs(my) ? "x" : "y";
+    if (s0.lock !== "x") return;
+    var v = s0.base + mx;
+    v = dir < 0 ? Math.max(-W - 30, Math.min(0, v)) : Math.min(W + 30, Math.max(0, v));
+    setDrag(v);
+  }
+  function end() {
+    var s0 = st.current; st.current = null;
+    if (!s0 || s0.lock !== "x") return;
+    setOpen(Math.abs(drag) > W / 2); setDrag(0);
+    s0.swiped = true;
+  }
+  var x = drag || (open ? dir * W : 0);
+  return h("div", { className: "swipe" + (open ? " open" : ""), style: { "--sw": W + "px" } },
+    h("div", { className: "swipe-acts", "aria-hidden": open ? null : "true" },
+      p.actions.map(function (a) {
+        return h("button", { key: a.k, type: "button", className: "swipe-act " + (a.kind || ""), tabIndex: open ? 0 : -1,
+          onClick: function () { setOpen(false); a.fn(); } }, h(Icon, { n: a.icon, size: 18 }), a.label);
+      })),
+    h("div", {
+      className: "swipe-front" + (drag ? " dragging" : ""), style: { transform: "translateX(" + x + "px)" },
+      onTouchStart: start, onTouchMove: move, onTouchEnd: end, onTouchCancel: end,
+      onClickCapture: function (e) { if (open) { e.stopPropagation(); e.preventDefault(); setOpen(false); } }
+    }, p.children));
+}
+
+/* the next working day after a date, and the working days left in its week (Sunday to Thursday) */
+function nextWorkDay(ds) { var d = s2d(ds); do { d.setDate(d.getDate() + 1); } while (d.getDay() === 5 || d.getDay() === 6); return d2s(d); }
+function restOfWeek(ds) {
+  var d = s2d(ds), out = [];
+  for (d.setDate(d.getDate() + 1); d.getDay() !== 0; d.setDate(d.getDate() + 1)) if (d.getDay() !== 5 && d.getDay() !== 6) out.push(d2s(d));
+  return out;
+}
+
 function MobilePlanner(p) {
   var db = p.db, user = p.user;
   var vs = useState("week"), view = vs[0], setView = vs[1];
@@ -24314,6 +24368,7 @@ function MobilePlanner(p) {
   var mo = useState(0), mOff = mo[0], setMOff = mo[1];
   var pk = useState(todayStr()), pick = pk[0], setPick = pk[1];
   var ms = useState(null), modal = ms[0], setModal = ms[1];
+  var cs = useState(null), copying = cs[0], setCopying = cs[1];
 
   var hrsOf = function (x) { return (Number(x.red) || 0) + (Number(x.yellow) || 0) + (Number(x.blue) || 0); };
   var sum = function (list) { return list.reduce(function (a, x) { return a + hrsOf(x); }, 0); };
@@ -24329,15 +24384,41 @@ function MobilePlanner(p) {
   var cap = Number(user.weeklyHours || db.settings.weeklyHours || 42);
 
   function newPlan(ds) { setModal({ id: null, userId: user.id, date: ds, start: "09:00", end: "17:00", hourType: "yellow", clientId: "", projectId: "", workOrderId: "", taskId: "", description: "" }); }
+  /* copy one planned block to other dates; a date that already holds the same block is skipped */
+  function copyPlan(x, dates) {
+    var made = [];
+    p.mutate(function (d) {
+      dates.forEach(function (to) {
+        var dup = d.planned.some(function (y) { return y.userId === x.userId && y.date === to && y.start === x.start && y.end === x.end && (y.projectId || "") === (x.projectId || ""); });
+        if (dup) return;
+        var rec = Object.assign({}, x, { id: uid("pl"), date: to });
+        d.planned.push(rec); made.push(rec.id);
+      });
+      if (made.length) audit(d, user.id, "Copied a planned entry to " + made.length + " day(s)", "planned_entries", x.id, null, null);
+    });
+    setCopying(null);
+    if (!made.length) { toast("Those days already have this block.", ""); return; }
+    toast(made.length === 1 ? "Copied to 1 day." : tr("Copied to {n} days.", { n: made.length }), "ok", { label: "Undo", fn: function () {
+      p.mutate(function (d) { d.planned = d.planned.filter(function (y) { return made.indexOf(y.id) < 0; }); });
+    } });
+  }
+  function deletePlan(x) {
+    var snap = JSON.parse(JSON.stringify(x));
+    p.mutate(function (d) { d.planned = d.planned.filter(function (y) { return y.id !== x.id; }); audit(d, user.id, "Plan deleted", "planned_entries", x.id, snap, null); });
+    toast("Planned block deleted.", "", { label: "Undo", fn: function () { p.mutate(function (d) { d.planned.push(snap); }); } });
+  }
   function planCard(x) {
-    return h("div", { key: x.id, className: "mcard", style: { borderLeft: "3px solid " + (Number(x.red) ? C.red : Number(x.blue) ? C.blue : C.teal) },
-      onClick: function () { setModal(Object.assign({}, x, { hourType: Number(x.red) ? "red" : Number(x.blue) ? "blue" : "yellow" })); } },
-      h("div", { className: "mhead" },
-        h("div", { className: "mt" }, x.description || "Planned block"),
-        h("span", { className: "tnum" }, num(hrsOf(x)), " h")),
-      h("div", { className: "mrow" },
-        h("span", { className: "tnum" }, x.start, "–", x.end),
-        x.projectId ? h("span", null, nameOf(db.projects, x.projectId)) : null));
+    return h(SwipeCard, { key: x.id, actions: [
+        { k: "copy", icon: "copy", label: "Copy", fn: function () { setCopying(x); } },
+        { k: "del", icon: "trash", label: "Delete", kind: "d", fn: function () { deletePlan(x); } }] },
+      h("div", { className: "mcard", "data-plan": x.id, style: { borderLeft: "3px solid " + (Number(x.red) ? C.red : Number(x.blue) ? C.blue : C.teal) },
+        onClick: function () { setModal(Object.assign({}, x, { hourType: Number(x.red) ? "red" : Number(x.blue) ? "blue" : "yellow" })); } },
+        h("div", { className: "mhead" },
+          h("div", { className: "mt" }, x.description || "Planned block"),
+          h("span", { className: "tnum" }, num(hrsOf(x)), " h")),
+        h("div", { className: "mrow" },
+          h("span", { className: "tnum" }, x.start, "–", x.end),
+          x.projectId ? h("span", null, nameOf(db.projects, x.projectId)) : null)));
   }
   function dayBlock(ds) {
     var dayPlans = mine.filter(function (x) { return x.date === ds; });
@@ -24428,9 +24509,22 @@ function MobilePlanner(p) {
     ].concat(days.map(dayBlock));
   }
 
+  var copySheet = null;
+  if (copying) {
+    var nd = nextWorkDay(copying.date), rest = restOfWeek(copying.date);
+    copySheet = h(Sheet, { title: "Copy planned block", onClose: function () { setCopying(null); } },
+      h("div", { className: "cap" }, copying.description || "Planned block", " · ", DOW_FULL[s2d(copying.date).getDay()], " ", il(copying.date), " · ", copying.start, "–", copying.end),
+      h(Btn, { id: "m-copy-next", style: { minHeight: 52, justifyContent: "space-between" }, onClick: function () { copyPlan(copying, [nd]); } },
+        h("span", { style: { textAlign: "start" } }, "To the next day"), h("span", { className: "cap", style: { textAlign: "end" } }, DOW_FULL[s2d(nd).getDay()], " ", il(nd))),
+      h(Btn, { id: "m-copy-rest", style: { minHeight: 52, justifyContent: "space-between" }, disabled: !rest.length, onClick: function () { copyPlan(copying, rest); } },
+        h("span", { style: { textAlign: "start" } }, "To the rest of this week"),
+        h("span", { className: "cap", style: { textAlign: "end" } }, rest.length ? il(rest[0]) + (rest.length > 1 ? " – " + il(rest[rest.length - 1]) : "") + " · " + tr(rest.length === 1 ? "1 day" : "{n} days", { n: rest.length }) : "no working days left")));
+  }
+
   return h(React.Fragment, null,
     switcher,
     body,
+    copySheet,
     modal ? h(PlanEditor, {
       db: db, user: user, value: modal,
       onSave: function (f) { if (savePlanned(p.mutate, user, f)) { setModal(null); toast("Plan saved.", "ok"); } },
