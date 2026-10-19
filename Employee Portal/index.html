@@ -18343,7 +18343,10 @@ var CSS = [
 ".mob>.mbody{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}",
 /* the save-status pill sits above the bottom bar, and steps aside while a sheet or dialog is open */
 "body:has(.mnav){--wdsync-bottom:calc(66px + env(safe-area-inset-bottom))}",
-"body:has(.sheet) #wd-sync,body:has(.ovl) #wd-sync{display:none!important}",
+"body:has(.sheet) #wd-sync.float,body:has(.ovl) #wd-sync.float{display:none!important}",
+/* in the header the pill shows just its dot on a phone; a tap tells the rest */
+".syncdock{display:inline-flex;min-width:0}",
+"@media(max-width:680px){#wd-sync.docked{padding:6px!important}#wd-sync.docked span{display:none}}",
 "body{background:var(--paper);color:var(--ink);font:400 14px/1.45 var(--font);-webkit-font-smoothing:antialiased}",
 "button,input,select,textarea{font:inherit;color:inherit}",
 "a{color:var(--deep)}",
@@ -18420,8 +18423,8 @@ var CSS = [
 ".tlsplit>.tlform{min-height:0;overflow:auto;display:flex;flex-direction:column;padding-bottom:0}",
 ".tlsplit>.tlform.tlnone{align-self:start;padding-bottom:12px}",
 /* the sync pill runs the width of the form column, under it */
-"@media(min-width:1025px){body:has(.tlsplit #wd-sync-slot) #wd-sync{inset-inline-start:16px!important;bottom:14px!important;width:var(--tlw);max-width:none!important;justify-content:center;border-radius:12px!important;padding:9px 12px!important;box-shadow:0 1px 2px var(--shadow)!important}}",
-"body:has(#wd-sync) .tlsplit>.tlform{margin-bottom:46px}",
+"@media(min-width:1025px){body:has(.tlsplit #wd-sync-slot) #wd-sync.float{inset-inline-start:16px!important;bottom:14px!important;width:var(--tlw);max-width:none!important;justify-content:center;border-radius:12px!important;padding:9px 12px!important;box-shadow:0 1px 2px var(--shadow)!important}}",
+"body:has(#wd-sync.float) .tlsplit>.tlform{margin-bottom:46px}",
 /* the report form, one field under another */
 ".eform.stack{flex:1;display:flex;flex-direction:column;gap:10px}",
 ".eform.stack .band{flex-wrap:nowrap}",
@@ -18967,6 +18970,8 @@ function EmailCopy(p) {
     onClick: function (ev) { ev.stopPropagation(); copyText(p.value); }
   }, h("span", { dir: "ltr" }, p.value), h(Icon, { n: "copy", size: 12, className: "ci" }));
 }
+/* the header's slot for the save-status pill (WDCloud moves its pill in and out) */
+function dockSync(n) { if (window.WDCloud && WDCloud.dock) WDCloud.dock(n); }
 function StatusDot(p) { return h("span", { className: "dot", style: { background: p.color } }); }
 
 /* dialogs and sheets are drawn at the top of the page (straight under <body>), not inside
@@ -24872,7 +24877,8 @@ function App() {
       h("div", { className: "brand" },
         h(Mark, null),
         h("div", null, "GALIL", h("small", null, "WorkDesk")),
-        h(Chip, { k: "gr", style: { background: "rgba(255,255,255,.1)", color: "#C5D3EA", borderColor: "rgba(255,255,255,.2)" } }, WDCloud.remote ? (WDCloud.storage === "github" ? "GitHub" : "OneDrive") : "Standalone")),
+        WDCloud.remote ? h("span", { className: "syncdock", ref: dockSync })
+          : h(Chip, { k: "gr", style: { background: "rgba(255,255,255,.1)", color: "#C5D3EA", borderColor: "rgba(255,255,255,.2)" } }, "Standalone")),
       isOnline ? null : h(Chip, { k: "amber" }, "Offline — changes cached locally"),
       h("div", { className: "spacer" }),
       h("button", {

@@ -201,7 +201,8 @@ function PortalHome(p) {
 
   return h("div", { className: "hub" },
     h("div", { className: "hubtop" },
-      h("div", { className: "brand" }, h(Mark, null), h("div", null, "GALIL", h("small", null, tr("Employee Portal")))),
+      h("div", { className: "brand" }, h(Mark, null), h("div", null, "GALIL", h("small", null, tr("Employee Portal"))),
+        WDCloud.remote ? h("span", { className: "syncdock", ref: dockSync }) : null),
       h("div", { className: "spacer" }),
       h(LangSwitch, null),
       h("button", {

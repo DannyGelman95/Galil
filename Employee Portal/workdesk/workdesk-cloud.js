@@ -305,21 +305,28 @@ var WDCloud = (function () {
   };
   api.pollNow = function () { poll(true); };
 
-  /* ---------- status pill ---------- */
-  var pill = null;
+  /* ---------- status pill ----------
+     It sits in the header, next to the GALIL mark, wherever the page offers a dock
+     (api.dock); a page without one shows it floating at the bottom corner. */
+  var pill = null, dockEl = null;
+  var FLOAT_CSS = "position:fixed;inset-inline-start:max(12px,env(safe-area-inset-left));bottom:var(--wdsync-bottom,calc(12px + env(safe-area-inset-bottom)));z-index:900;display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#D0D7E4);background:var(--surface,#fff);color:var(--muted,#5F656E);font:600 11.5px system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12);max-width:60vw";
+  var DOCK_CSS = "position:static;display:inline-flex;align-items:center;gap:7px;padding:3px 10px;border-radius:999px;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.1);color:#C5D3EA;font:600 11.5px/1.4 var(--font,system-ui,sans-serif);letter-spacing:normal;cursor:pointer;max-width:min(300px,40vw);min-width:0";
+  api.dock = function (n) { dockEl = n || null; paintStatus(); };
   function paintStatus() {
     if (!api.remote || !document.body) return;
-    if (!pill) {
-      pill = el("button", { id: "wd-sync", title: "", style: "position:fixed;inset-inline-start:max(12px,env(safe-area-inset-left));bottom:var(--wdsync-bottom,calc(12px + env(safe-area-inset-bottom)));z-index:900;display:flex;align-items:center;gap:7px;padding:5px 11px;border-radius:999px;border:1px solid var(--line,#D0D7E4);background:var(--surface,#fff);color:var(--muted,#5F656E);font:600 11.5px system-ui,sans-serif;cursor:pointer;box-shadow:0 4px 14px rgba(0,0,0,.12);max-width:60vw", onclick: function () { api.showInfo(); } });
-      document.body.appendChild(pill);
-    }
+    if (!pill) pill = el("button", { id: "wd-sync", type: "button", title: "", onclick: function () { api.showInfo(); } });
+    var docked = !!(dockEl && dockEl.isConnected);
+    var home = docked ? dockEl : document.body;
+    if (pill.parentNode !== home) home.appendChild(pill);
+    pill.className = docked ? "docked" : "float";
+    pill.style.cssText = docked ? DOCK_CSS : FLOAT_CSS;
     var s = S.state, w = where();
     var text = s === "saving" ? "Saving to " + w + "…" : s === "loading" ? "Opening from " + w + "…" : s === "offline" ? "Offline — changes are kept and will sync" :
       s === "error" || s === "token" ? "Not saved: " + S.error : "Saved to " + w + (S.lastSync ? " · " + S.lastSync.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }) : "");
     var dot = { saving: "#EDA100", loading: "#EDA100", offline: "#858B95", error: "#C0392B", token: "#C0392B" }[s] || "#008300";
     text = T(text);
     pill.replaceChildren(el("i", { style: "width:8px;height:8px;border-radius:50%;flex:none;background:" + dot }), el("span", { style: "overflow:hidden;text-overflow:ellipsis;white-space:nowrap" }, text));
-    pill.title = text;
+    pill.title = text; pill.setAttribute("aria-label", text);
   }
   api.describe = function () {
     return { storage: STORAGE, where: where(), folder: S.folder, file: FILE, size: S.size, state: S.state, error: S.error, entra: ENTRA, lastSync: S.lastSync };
