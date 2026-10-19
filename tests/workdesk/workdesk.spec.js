@@ -466,27 +466,35 @@ test.describe("Management details", () => {
 test.describe("phone layout", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
-  test("a Handbook screenshot pinches to zoom once opened; the page itself stays unzoomable", async ({ page }) => {
-    const errors = await serve(page);
-    await page.addInitScript(() => localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" })));
-    await page.goto(ORIGIN + "/index.html"); await signIn(page, "danny.gelman@galiltc.co.il");
-    await expect(page.locator("#portal-home")).toBeVisible();
-    await page.goto(ORIGIN + "/handbook/index.html");
-    expect(await page.locator('meta[name="viewport"]').getAttribute("content")).toContain("user-scalable=no");
-    await page.goto(ORIGIN + "/handbook/index.html#ch-portal");
-    await page.locator('#ch-portal figure img').first().click();
-    const pct = page.locator(".lightbox-pct");
-    await expect(pct).toHaveText("100%");
-    /* two fingers moving apart over the image */
-    await page.locator(".lightbox").evaluate(box => {
-      const fire = (type, id, x) => box.dispatchEvent(new PointerEvent(type, { pointerId: id, pointerType: "touch", clientX: x, clientY: 420, bubbles: true }));
-      fire("pointerdown", 1, 170); fire("pointerdown", 2, 220);
-      for (let i = 1; i <= 8; i++) { fire("pointermove", 1, 170 - i * 12); fire("pointermove", 2, 220 + i * 12); }
-      fire("pointerup", 1, 74); fire("pointerup", 2, 316);
+  test.describe("on a touch screen", () => {
+    test.use({ hasTouch: true, isMobile: true });
+
+    test("a Handbook screenshot pinches and double-taps to zoom once opened; the page itself stays unzoomable", async ({ page, context }) => {
+      const errors = await serve(page);
+      await page.addInitScript(() => localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" })));
+      await page.goto(ORIGIN + "/index.html"); await signIn(page, "danny.gelman@galiltc.co.il");
+      await expect(page.locator("#portal-home")).toBeVisible();
+      await page.goto(ORIGIN + "/handbook/index.html#ch-portal");
+      expect(await page.locator('meta[name="viewport"]').getAttribute("content")).toContain("user-scalable=no");
+      await page.locator("#ch-portal figure img").first().tap();
+      const pct = page.locator(".lightbox-pct");
+      await expect(pct).toHaveText("100%");
+      /* real touches, as a phone sends them: two fingers moving apart over the image */
+      const cdp = await context.newCDPSession(page);
+      const touch = (type, pts) => cdp.send("Input.dispatchTouchEvent", { type, touchPoints: pts.map((p, i) => ({ x: p[0], y: p[1], id: i })) });
+      await touch("touchStart", [[170, 420], [220, 420]]);
+      for (let i = 1; i <= 8; i++) await touch("touchMove", [[170 - i * 12, 420], [220 + i * 12, 420]]);
+      await touch("touchEnd", []);
+      await expect.poll(async () => parseInt(await pct.textContent())).toBeGreaterThan(250);
+      await expect(page.locator(".lightbox.on")).toHaveCount(1);
+      expect(await page.evaluate(() => window.visualViewport.scale)).toBe(1);   // the page didn't zoom
+      /* back to fit, then a double-tap zooms in */
+      await pct.tap(); await expect(pct).toHaveText("100%");
+      await page.waitForTimeout(400);
+      await page.touchscreen.tap(195, 420); await page.waitForTimeout(120); await page.touchscreen.tap(195, 420);
+      await expect(pct).toHaveText("250%");
+      expect(errors).toEqual([]);
     });
-    await expect.poll(async () => parseInt(await pct.textContent())).toBeGreaterThan(250);
-    await expect(page.locator(".lightbox.on")).toHaveCount(1);
-    expect(errors).toEqual([]);
   });
 
   test("the Time tab lists my own time, and my team's only when I ask, each card naming who reported", async ({ page }) => {
