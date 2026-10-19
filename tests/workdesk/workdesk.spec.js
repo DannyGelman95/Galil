@@ -261,6 +261,30 @@ test.describe("Employee Portal", () => {
     await expect(page.locator('a.tcard[href="#ch-portal"]')).toBeVisible();
     await expect(page.getByText(/No access to/)).toHaveCount(0);
   });
+
+  test("an opened Handbook screenshot zooms with the wheel, the buttons and a double-click, and drags", async ({ page }) => {
+    const errors = await serve(page);
+    await page.addInitScript(() => localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" })));
+    await page.goto(ORIGIN + "/index.html"); await signIn(page, "danny.gelman@galiltc.co.il");
+    await expect(page.locator("#portal-home")).toBeVisible();
+    await page.goto(ORIGIN + "/handbook/index.html");
+    await page.goto(ORIGIN + "/handbook/index.html#ch-portal");
+    await page.locator('#ch-portal figure img').first().click();
+    const pct = page.locator(".lightbox-pct");
+    await expect(pct).toHaveText("100%");
+    await page.mouse.move(683, 450); await page.mouse.wheel(0, -400);
+    await expect.poll(async () => parseInt(await pct.textContent())).toBeGreaterThan(150);
+    await page.mouse.down(); await page.mouse.move(560, 350, { steps: 5 }); await page.mouse.up();
+    await expect(page.locator(".lightbox.on")).toHaveCount(1);              // a drag doesn't close it
+    await pct.click(); await expect(pct).toHaveText("100%");
+    await page.locator(".lightbox img").click(); await expect(page.locator(".lightbox.on")).toHaveCount(1);   // only the backdrop closes it
+    await page.waitForTimeout(400);
+    await page.locator('.lightbox [data-z="in"]').click(); await expect(pct).toHaveText("150%");
+    await page.locator('.lightbox [data-z="out"]').click(); await expect(pct).toHaveText("100%");
+    await page.locator(".lightbox img").dblclick(); await expect(pct).toHaveText("250%");
+    await page.keyboard.press("Escape"); await expect(page.locator(".lightbox.on")).toHaveCount(0);
+    expect(errors).toEqual([]);
+  });
 });
 
 /* ---------- icons, Back, email copy and the work order document ---------- */
@@ -441,6 +465,29 @@ test.describe("Management details", () => {
 /* ---------- the phone layout ---------- */
 test.describe("phone layout", () => {
   test.use({ viewport: { width: 390, height: 844 } });
+
+  test("a Handbook screenshot pinches to zoom once opened; the page itself stays unzoomable", async ({ page }) => {
+    const errors = await serve(page);
+    await page.addInitScript(() => localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" })));
+    await page.goto(ORIGIN + "/index.html"); await signIn(page, "danny.gelman@galiltc.co.il");
+    await expect(page.locator("#portal-home")).toBeVisible();
+    await page.goto(ORIGIN + "/handbook/index.html");
+    expect(await page.locator('meta[name="viewport"]').getAttribute("content")).toContain("user-scalable=no");
+    await page.goto(ORIGIN + "/handbook/index.html#ch-portal");
+    await page.locator('#ch-portal figure img').first().click();
+    const pct = page.locator(".lightbox-pct");
+    await expect(pct).toHaveText("100%");
+    /* two fingers moving apart over the image */
+    await page.locator(".lightbox").evaluate(box => {
+      const fire = (type, id, x) => box.dispatchEvent(new PointerEvent(type, { pointerId: id, pointerType: "touch", clientX: x, clientY: 420, bubbles: true }));
+      fire("pointerdown", 1, 170); fire("pointerdown", 2, 220);
+      for (let i = 1; i <= 8; i++) { fire("pointermove", 1, 170 - i * 12); fire("pointermove", 2, 220 + i * 12); }
+      fire("pointerup", 1, 74); fire("pointerup", 2, 316);
+    });
+    await expect.poll(async () => parseInt(await pct.textContent())).toBeGreaterThan(250);
+    await expect(page.locator(".lightbox.on")).toHaveCount(1);
+    expect(errors).toEqual([]);
+  });
 
   test("the Time tab lists my own time, and my team's only when I ask, each card naming who reported", async ({ page }) => {
     const errors = await local(page);

@@ -334,20 +334,116 @@ drawMatrix("portal-matrix", PORTAL_PERM);
   if (saved && ROLE_ORDER.indexOf(saved) >= 0) apply(saved);
 })();
 
-/* ---- figure lightbox — click any screenshot to view it full size ---- */
+/* ---- figure lightbox — click any screenshot to view it full size, then zoom it:
+   pinch or double-tap on a phone, the mouse wheel, double-click or the + / − buttons on a computer,
+   and drag to move around. Only the opened image zooms; the page itself never does. ---- */
 (function () {
   var box = document.createElement("div");
   box.className = "lightbox";
-  box.innerHTML = '<button type="button" class="lightbox-close" aria-label="' + L("Close", "סגירה") + '" title="' + L("Close", "סגירה") + '">×</button><img alt="">';
+  box.innerHTML = '<div class="lightbox-tools">' +
+    '<button type="button" data-z="out" aria-label="' + L("Zoom out", "הקטנה") + '" title="' + L("Zoom out", "הקטנה") + '">−</button>' +
+    '<button type="button" data-z="reset" class="lightbox-pct" aria-label="' + L("Fit to screen", "התאמה למסך") + '" title="' + L("Fit to screen", "התאמה למסך") + '">100%</button>' +
+    '<button type="button" data-z="in" aria-label="' + L("Zoom in", "הגדלה") + '" title="' + L("Zoom in", "הגדלה") + '">+</button>' +
+    '<button type="button" data-z="close" class="lightbox-close" aria-label="' + L("Close", "סגירה") + '" title="' + L("Close", "סגירה") + '">×</button>' +
+    '</div><img alt="" draggable="false">';
   document.body.appendChild(box);
-  var img = box.querySelector("img");
-  function open(src, alt) { img.src = src; img.alt = alt || ""; box.classList.add("on"); document.body.style.overflow = "hidden"; }
-  function close() { box.classList.remove("on"); img.src = ""; document.body.style.overflow = ""; }
+  var img = box.querySelector("img"), pct = box.querySelector(".lightbox-pct");
+  var MIN = 1, MAX = 6, z = 1, x = 0, y = 0;
+  var pts = {}, start = null, moved = false, lastTap = 0;
+
+  function paint() {
+    img.style.transform = "translate(" + x + "px," + y + "px) scale(" + z + ")";
+    pct.textContent = Math.round(z * 100) + "%";
+    box.classList.toggle("zoomed", z > 1);
+  }
+  /* keep the zoomed image covering the screen: it can't be dragged off into empty space */
+  function clamp() {
+    var w = img.offsetWidth, h = img.offsetHeight;
+    var mx = Math.max(0, (w * z - box.clientWidth) / 2), my = Math.max(0, (h * z - box.clientHeight) / 2);
+    x = Math.min(mx, Math.max(-mx, x)); y = Math.min(my, Math.max(-my, y));
+  }
+  /* zoom to nz around a point on the screen (cx, cy), so what is under the finger or the pointer stays there */
+  function zoomAt(nz, cx, cy) {
+    nz = Math.min(MAX, Math.max(MIN, nz));
+    var r = box.getBoundingClientRect();
+    var ox = (cx == null ? r.width / 2 : cx - r.left) - r.width / 2, oy = (cy == null ? r.height / 2 : cy - r.top) - r.height / 2;
+    x = ox - (ox - x) * (nz / z); y = oy - (oy - y) * (nz / z); z = nz;
+    if (z === 1) { x = 0; y = 0; }
+    clamp(); paint();
+  }
+  function reset() { z = 1; x = 0; y = 0; paint(); }
+  function open(src, alt) { img.src = src; img.alt = alt || ""; reset(); box.classList.add("on"); document.body.style.overflow = "hidden"; }
+  function close() { box.classList.remove("on"); img.src = ""; document.body.style.overflow = ""; pts = {}; start = null; }
+
   document.querySelectorAll("figure img").forEach(function (el) {
     el.addEventListener("click", function () { open(el.getAttribute("src"), el.getAttribute("alt")); });
   });
-  box.addEventListener("click", close);
-  document.addEventListener("keydown", function (e) { if (e.key === "Escape" && box.classList.contains("on")) close(); });
+  box.querySelector(".lightbox-tools").addEventListener("click", function (e) {
+    var b = e.target.closest("button"); if (!b) return;
+    e.stopPropagation();
+    var k = b.getAttribute("data-z");
+    if (k === "close") close(); else if (k === "reset") reset(); else zoomAt(k === "in" ? z * 1.5 : z / 1.5);
+  });
+  /* a click on the dark backdrop closes; a click that ended a drag or a pinch doesn't */
+  box.addEventListener("click", function (e) { if (moved) { moved = false; return; } if (e.target === box) close(); });
+  img.addEventListener("dblclick", function (e) { if (z > 1) reset(); else zoomAt(2.5, e.clientX, e.clientY); });
+  box.addEventListener("wheel", function (e) {
+    if (!box.classList.contains("on")) return;
+    e.preventDefault();
+    zoomAt(z * Math.exp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.002)), e.clientX, e.clientY);
+  }, { passive: false });
+
+  /* pointers: one drags the zoomed image, two pinch (followed on the window, so a drag
+     that leaves the image keeps going and a click still lands on what was clicked) */
+  function snapshot() {
+    var ids = Object.keys(pts);
+    if (ids.length === 1) { var p = pts[ids[0]]; start = { kind: "pan", px: p.x, py: p.y, x: x, y: y }; }
+    else if (ids.length >= 2) {
+      var a = pts[ids[0]], b = pts[ids[1]];
+      start = { kind: "pinch", d: Math.hypot(a.x - b.x, a.y - b.y) || 1, z: z, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2, x: x, y: y };
+    } else start = null;
+  }
+  box.addEventListener("pointerdown", function (e) {
+    if (e.target.closest(".lightbox-tools")) return;
+    pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+    moved = false; snapshot();
+  });
+  window.addEventListener("pointermove", function (e) {
+    if (!pts[e.pointerId] || !start) return;
+    pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+    if (start.kind === "pan") {
+      var dx = e.clientX - start.px, dy = e.clientY - start.py;
+      if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+      if (z > 1) { x = start.x + dx; y = start.y + dy; clamp(); paint(); }
+    } else {
+      var ids = Object.keys(pts), a = pts[ids[0]], b = pts[ids[1]];
+      var d = Math.hypot(a.x - b.x, a.y - b.y), cx = (a.x + b.x) / 2, cy = (a.y + b.y) / 2;
+      moved = true;
+      z = start.z; x = start.x + (cx - start.cx); y = start.y + (cy - start.cy);
+      zoomAt(start.z * d / start.d, cx, cy);
+    }
+  });
+  function up(e) {
+    if (!pts[e.pointerId]) return;
+    delete pts[e.pointerId];
+    /* a double-tap on a phone zooms in where it landed, or back out */
+    if (e.pointerType === "touch" && !moved && !Object.keys(pts).length && e.target === img) {
+      var now = Date.now();
+      if (now - lastTap < 300) { if (z > 1) reset(); else zoomAt(2.5, e.clientX, e.clientY); lastTap = 0; moved = true; }
+      else lastTap = now;
+    }
+    snapshot();
+  }
+  window.addEventListener("pointerup", up);
+  window.addEventListener("pointercancel", up);
+  document.addEventListener("keydown", function (e) {
+    if (!box.classList.contains("on")) return;
+    if (e.key === "Escape") close();
+    else if (e.key === "+" || e.key === "=") zoomAt(z * 1.5);
+    else if (e.key === "-") zoomAt(z / 1.5);
+    else if (e.key === "0") reset();
+  });
+  window.addEventListener("resize", function () { if (box.classList.contains("on")) { clamp(); paint(); } });
 })();
 
 /* ---- light / dark theme — the Employee Portal's, so it matches every part of the portal ---- */
