@@ -32,6 +32,8 @@ var PORTAL_CSS = [
 ".tile::before{content:'';position:absolute;inset:0 0 auto 0;height:5px;background:var(--tc,var(--green))}",
 ".tile .ticon{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;background:var(--tbg,var(--wash));color:var(--tc,var(--deep));flex:0 0 auto}",
 ".tile .ticon svg{width:30px;height:30px}",
+/* the Handbook's deep purple, lifted in the dark theme so it reads on the dark tile */
+":root[data-theme=\"dark\"] #tile-handbook{--tc:#B48CE6!important;--tbg:rgba(180,140,230,.16)!important}",
 ".tile .tname{font:700 19px/1.2 var(--font)}",
 ".tile .tdesc{font-size:13.5px;color:var(--muted);line-height:1.5}",
 ".tile .tstats{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}",
@@ -184,7 +186,7 @@ function PortalHome(p) {
       open: go("taskana/index.html")
     },
     {
-      k: "handbook", name: "Handbook", on: acc.handbook, color: "#B0661C", bg: "rgba(227,172,53,.18)",
+      k: "handbook", name: "Handbook", on: acc.handbook, color: "#5B2A86", bg: "rgba(91,42,134,.13)",
       desc: "Step-by-step guides to the Employee Portal, WorkDesk and Taskana — what each role does, screen by screen.",
       stats: [h(Chip, { key: "c", k: "mut" }, "WorkDesk · Taskana · Portal")],
       open: go("handbook/index.html")
@@ -199,7 +201,8 @@ function PortalHome(p) {
 
   return h("div", { className: "hub" },
     h("div", { className: "hubtop" },
-      h("div", { className: "brand" }, h(Mark, null), h("div", null, "GALIL", h("small", null, tr("Employee Portal")))),
+      h("div", { className: "brand" }, h(Mark, null), h("div", null, "GALIL", h("small", null, tr("Employee Portal"))),
+        WDCloud.remote ? h("span", { className: "syncdock", ref: dockSync }) : null),
       h("div", { className: "spacer" }),
       h(LangSwitch, null),
       h("button", {

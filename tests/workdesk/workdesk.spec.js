@@ -111,6 +111,10 @@ test.describe("GitHub data file", () => {
     await expect(page.getByText("Signed in as Danny Gelman")).toBeVisible();
     await expect.poll(() => JSON.parse(repo.text).data.audit.some(a => /Sign-in/.test(a.action)), { timeout: 10000 }).toBe(true);
     await expect(page.locator("#wd-sync")).toContainText("Saved to GitHub", { timeout: 10000 });
+    /* the save status sits in the header, next to the GALIL mark, on the home page and in WorkDesk */
+    await expect(page.locator(".hubtop .brand #wd-sync")).toBeVisible();
+    await page.locator("#tile-workdesk").click();
+    await expect(page.locator(".topbar .brand #wd-sync")).toContainText("Saved to GitHub");
     expect(errors).toEqual([]);
   });
 
