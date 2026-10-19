@@ -393,8 +393,10 @@ drawMatrix("portal-matrix", PORTAL_PERM);
     zoomAt(z * Math.exp(-e.deltaY * (e.deltaMode === 1 ? 0.05 : 0.002)), e.clientX, e.clientY);
   }, { passive: false });
 
-  /* pointers: one drags the zoomed image, two pinch (followed on the window, so a drag
-     that leaves the image keeps going and a click still lands on what was clicked) */
+  /* one finger or the mouse drags the zoomed image, two fingers pinch. Fingers are read from
+     touch events (every phone browser has them, and they can't be taken over by the page's own
+     scrolling); the mouse and pen from pointer events, followed on the window so a drag that
+     leaves the image keeps going and a click still lands on what was clicked. */
   function snapshot() {
     var ids = Object.keys(pts);
     if (ids.length === 1) { var p = pts[ids[0]]; start = { kind: "pan", px: p.x, py: p.y, x: x, y: y }; }
@@ -403,17 +405,13 @@ drawMatrix("portal-matrix", PORTAL_PERM);
       start = { kind: "pinch", d: Math.hypot(a.x - b.x, a.y - b.y) || 1, z: z, cx: (a.x + b.x) / 2, cy: (a.y + b.y) / 2, x: x, y: y };
     } else start = null;
   }
-  box.addEventListener("pointerdown", function (e) {
-    if (e.target.closest(".lightbox-tools")) return;
-    pts[e.pointerId] = { x: e.clientX, y: e.clientY };
-    moved = false; snapshot();
-  });
-  window.addEventListener("pointermove", function (e) {
-    if (!pts[e.pointerId] || !start) return;
-    pts[e.pointerId] = { x: e.clientX, y: e.clientY };
+  function down(id, px, py) { pts[id] = { x: px, y: py }; if (Object.keys(pts).length === 1) moved = false; snapshot(); }
+  function move(id, px, py) {
+    if (!pts[id] || !start) return;
+    pts[id] = { x: px, y: py };
     if (start.kind === "pan") {
-      var dx = e.clientX - start.px, dy = e.clientY - start.py;
-      if (Math.abs(dx) + Math.abs(dy) > 4) moved = true;
+      var dx = px - start.px, dy = py - start.py;
+      if (Math.abs(dx) + Math.abs(dy) > 6) moved = true;
       if (z > 1) { x = start.x + dx; y = start.y + dy; clamp(); paint(); }
     } else {
       var ids = Object.keys(pts), a = pts[ids[0]], b = pts[ids[1]];
@@ -422,20 +420,41 @@ drawMatrix("portal-matrix", PORTAL_PERM);
       z = start.z; x = start.x + (cx - start.cx); y = start.y + (cy - start.cy);
       zoomAt(start.z * d / start.d, cx, cy);
     }
-  });
-  function up(e) {
-    if (!pts[e.pointerId]) return;
-    delete pts[e.pointerId];
-    /* a double-tap on a phone zooms in where it landed, or back out */
-    if (e.pointerType === "touch" && !moved && !Object.keys(pts).length && e.target === img) {
+  }
+  function lift(id) { if (!pts[id]) return false; delete pts[id]; snapshot(); return true; }
+
+  box.addEventListener("touchstart", function (e) {
+    if (e.target.closest(".lightbox-tools")) return;
+    if (e.touches.length > 1) e.preventDefault();
+    [].forEach.call(e.changedTouches, function (t) { down("t" + t.identifier, t.clientX, t.clientY); });
+  }, { passive: false });
+  box.addEventListener("touchmove", function (e) {
+    if (!box.classList.contains("on")) return;
+    e.preventDefault();
+    [].forEach.call(e.changedTouches, function (t) { move("t" + t.identifier, t.clientX, t.clientY); });
+  }, { passive: false });
+  function touchEnd(e) {
+    var t = e.changedTouches[0];
+    [].forEach.call(e.changedTouches, function (t) { lift("t" + t.identifier); });
+    /* a double-tap on the image zooms in where it landed, or back out */
+    if (e.type === "touchend" && !moved && !e.touches.length && e.target === img && t) {
       var now = Date.now();
-      if (now - lastTap < 300) { if (z > 1) reset(); else zoomAt(2.5, e.clientX, e.clientY); lastTap = 0; moved = true; }
+      if (now - lastTap < 320) { e.preventDefault(); if (z > 1) reset(); else zoomAt(2.5, t.clientX, t.clientY); lastTap = 0; }
       else lastTap = now;
     }
-    snapshot();
   }
-  window.addEventListener("pointerup", up);
-  window.addEventListener("pointercancel", up);
+  box.addEventListener("touchend", touchEnd, { passive: false });
+  box.addEventListener("touchcancel", touchEnd, { passive: false });
+  /* Safari's own pinch gesture must not zoom the page behind */
+  ["gesturestart", "gesturechange", "gestureend"].forEach(function (n) { box.addEventListener(n, function (e) { e.preventDefault(); }, { passive: false }); });
+
+  box.addEventListener("pointerdown", function (e) {
+    if (e.pointerType === "touch" || e.target.closest(".lightbox-tools")) return;
+    down("p" + e.pointerId, e.clientX, e.clientY);
+  });
+  window.addEventListener("pointermove", function (e) { if (e.pointerType !== "touch") move("p" + e.pointerId, e.clientX, e.clientY); });
+  window.addEventListener("pointerup", function (e) { if (e.pointerType !== "touch") lift("p" + e.pointerId); });
+  window.addEventListener("pointercancel", function (e) { if (e.pointerType !== "touch") lift("p" + e.pointerId); });
   document.addEventListener("keydown", function (e) {
     if (!box.classList.contains("on")) return;
     if (e.key === "Escape") close();
