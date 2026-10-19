@@ -18338,6 +18338,8 @@ var CSS = [
 "html,body,#root{height:100%;margin:0}",
 /* the page doesn't zoom: no pinch, no double-tap zoom */
 "html,body{touch-action:pan-x pan-y;overscroll-behavior:none;-webkit-text-size-adjust:100%;text-size-adjust:100%}",
+/* no rubber-band pull: a scrolling area held at its top or bottom doesn't drag empty space into view */
+"*{overscroll-behavior:none}",
 /* screens with rounded corners and a home indicator: keep the top bar and bottom bar clear of them */
 ".mob>.mtop{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right));padding-top:max(8px,env(safe-area-inset-top))}",
 ".mob>.mbody{padding-left:max(12px,env(safe-area-inset-left));padding-right:max(12px,env(safe-area-inset-right))}",
@@ -18773,6 +18775,7 @@ var CSS = [
 ".sheet>.sh>header{display:flex;align-items:center;gap:9px;padding:12px 14px;border-bottom:1px solid var(--line);background:var(--wash);flex:0 0 auto}",
 ".sheet>.sh>.sb{padding:13px 14px;overflow:auto;flex:1;min-height:0;display:flex;flex-direction:column;gap:10px}",
 ".sheet>.sh>footer{display:flex;gap:8px;padding:11px 14px calc(11px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--surface2);flex:0 0 auto}",
+".sheet.full>.sh{height:92vh;height:calc(100dvh - 24px - env(safe-area-inset-top))}",
 ".sheet .grab{width:38px;height:4px;border-radius:999px;background:var(--line);margin:7px auto 0}",
 ".mseg{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none}",
 ".mseg::-webkit-scrollbar{display:none}",
@@ -18798,6 +18801,28 @@ var CSS = [
 ".toasts{bottom:calc(18px + env(safe-area-inset-bottom));max-width:calc(100vw - 24px)}",
 "}",
 ".mday{display:flex;flex-direction:column;gap:6px}",
+/* the phone's month plan: a calendar grid, a day's planned hours under its date */
+".mcal{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:8px}",
+".mcal-dow{text-align:center;font:700 11px var(--font);color:var(--muted);padding:2px 0 4px}",
+".mcal-day{aspect-ratio:1/1.05;min-height:42px;border:1px solid transparent;border-radius:10px;background:var(--surface2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font:600 13px var(--font);color:var(--ink);cursor:pointer;padding:0}",
+".mcal-day .h{font-size:10.5px;font-weight:700;color:var(--tealtx);background:var(--tealbg);border-radius:999px;padding:0 5px;line-height:1.5}",
+".mcal-day.out{opacity:.4}",
+".mcal-day.today{border-color:var(--deep)}",
+".mcal-day.on{background:var(--sel);color:var(--selfg)}",
+".mcal-day.on .h{background:rgba(255,255,255,.2);color:inherit}",
+/* Approvals on a phone: the whole screen scrolls as one, the type filter is a single sideways row */
+".mob .page{flex:none;overflow:visible;padding:0}",
+".mob .page>.scroll{flex:none;overflow:visible}",
+".mob .apfilters{flex-wrap:wrap;gap:8px}",
+".mob .apfilters .h2{flex:1 1 auto}",
+".mob .apfilters .pillbar{order:3;flex:1 1 100%;flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none;padding-bottom:2px}",
+".mob .apfilters .pillbar::-webkit-scrollbar{display:none}",
+".mob .apfilters .pillbar .pill{flex:0 0 auto}",
+".mob .apfilters>.grow{display:none}",
+".mob .apfilters .fld label{display:none}",
+".mob .apfilters>div:has(>.fld){min-width:0!important;flex:0 0 130px}",
+/* phone: My assignments as cards */
+".mwork .mbar{display:flex;align-items:center;gap:8px}",
 ".mday>h5{margin:0;font:700 12.5px var(--font);color:var(--muted);display:flex;justify-content:space-between;align-items:center;letter-spacing:.02em}",
 
 /* ---- §14.3 responsive: stack below 1024px ---- */
@@ -20960,7 +20985,9 @@ function ApprovalsTab(p) {
   }
 
   var counts = {};
-  REQ_TYPES.forEach(function (t) { counts[t] = db.approvals.filter(function (a) { return a.status === "pending" && a.type === t && a.requesterId !== user.id; }).length; });
+  /* the counts are of the requests this person can act on, as the list below shows them */
+  var actionable = openApprovalsFor(db, user);
+  REQ_TYPES.forEach(function (t) { counts[t] = actionable.filter(function (a) { return a.type === t; }).length; });
 
   function Card(pp) {
     var a = pp.a, e = entryOf(a), x = expenseOf(a);
@@ -21060,7 +21087,7 @@ function ApprovalsTab(p) {
   }
 
   return h("div", { className: "page" },
-    h("div", { className: "panel pad row", style: { gap: 9 } },
+    h("div", { className: "panel pad row apfilters", style: { gap: 9 } },
       h("div", { className: "h2" }, "Approvals"),
       h("div", { className: "pillbar" },
         h("button", { className: "pill" + (typeFlt === "" ? " on" : ""), onClick: function () { setType(""); } }, "All"),
@@ -24037,7 +24064,7 @@ function Sheet(p) {
     var f = function (e) { if (e.key === "Escape" && p.onClose) p.onClose(); };
     window.addEventListener("keydown", f); return function () { window.removeEventListener("keydown", f); };
   }, [p.onClose]);
-  return onTop(h("div", { className: "sheet", onMouseDown: function (e) { if (e.target === e.currentTarget && p.onClose) p.onClose(); } },
+  return onTop(h("div", { className: "sheet" + (p.full ? " full" : ""), onMouseDown: function (e) { if (e.target === e.currentTarget && p.onClose) p.onClose(); } },
     h("div", { className: "sh", role: "dialog", "aria-modal": "true", "aria-label": p.title },
       h("div", { className: "grab", "aria-hidden": "true" }),
       h("header", null, h("div", { className: "h2 grow" }, p.title),
@@ -24282,54 +24309,128 @@ function MobileTime(p) {
 /* ---------- Week Planner ---------- */
 function MobilePlanner(p) {
   var db = p.db, user = p.user;
+  var vs = useState("week"), view = vs[0], setView = vs[1];
   var os = useState(0), off = os[0], setOff = os[1];
+  var mo = useState(0), mOff = mo[0], setMOff = mo[1];
+  var pk = useState(todayStr()), pick = pk[0], setPick = pk[1];
   var ms = useState(null), modal = ms[0], setModal = ms[1];
+
+  var hrsOf = function (x) { return (Number(x.red) || 0) + (Number(x.yellow) || 0) + (Number(x.blue) || 0); };
+  var sum = function (list) { return list.reduce(function (a, x) { return a + hrsOf(x); }, 0); };
+  var mine = db.planned.filter(function (x) { return x.userId === user.id; });
+  var myActs = db.entries.filter(function (e) { return e.assignee === user.id && e.status !== "cancelled"; });
 
   var sow = startOfWeek(new Date()); sow.setDate(sow.getDate() + off * 7);
   var days = [];
   for (var i = 0; i < 7; i++) { var d = new Date(sow); d.setDate(sow.getDate() + i); days.push(d2s(d)); }
-  var plans = db.planned.filter(function (x) { return x.userId === user.id && days.indexOf(x.date) >= 0; });
-  var actuals = db.entries.filter(function (e) { return e.assignee === user.id && days.indexOf(e.date) >= 0 && e.status !== "cancelled"; });
-  var planned = plans.reduce(function (a, x) { return a + (Number(x.red) || 0) + (Number(x.yellow) || 0) + (Number(x.blue) || 0); }, 0);
-  var actual = actuals.reduce(function (a, e) { return a + (Number(e.red) || 0) + (Number(e.yellow) || 0) + (Number(e.blue) || 0); }, 0);
+  var plans = mine.filter(function (x) { return days.indexOf(x.date) >= 0; });
+  var actuals = myActs.filter(function (e) { return days.indexOf(e.date) >= 0; });
+  var planned = sum(plans), actual = sum(actuals);
   var cap = Number(user.weeklyHours || db.settings.weeklyHours || 42);
 
+  function newPlan(ds) { setModal({ id: null, userId: user.id, date: ds, start: "09:00", end: "17:00", hourType: "yellow", clientId: "", projectId: "", workOrderId: "", taskId: "", description: "" }); }
+  function planCard(x) {
+    return h("div", { key: x.id, className: "mcard", style: { borderLeft: "3px solid " + (Number(x.red) ? C.red : Number(x.blue) ? C.blue : C.teal) },
+      onClick: function () { setModal(Object.assign({}, x, { hourType: Number(x.red) ? "red" : Number(x.blue) ? "blue" : "yellow" })); } },
+      h("div", { className: "mhead" },
+        h("div", { className: "mt" }, x.description || "Planned block"),
+        h("span", { className: "tnum" }, num(hrsOf(x)), " h")),
+      h("div", { className: "mrow" },
+        h("span", { className: "tnum" }, x.start, "–", x.end),
+        x.projectId ? h("span", null, nameOf(db.projects, x.projectId)) : null));
+  }
+  function dayBlock(ds) {
+    var dayPlans = mine.filter(function (x) { return x.date === ds; });
+    return h("div", { key: ds, className: "mday" },
+      h("h5", null,
+        h("span", null, DOW_FULL[s2d(ds).getDay()], " · ", il(ds), ds === todayStr() ? "  • today" : ""),
+        h("span", { className: "tnum" }, num(sum(dayPlans)), " p / ", num(sum(myActs.filter(function (e) { return e.date === ds; }))), " a")),
+      dayPlans.map(planCard),
+      h(Btn, { sm: true, kind: "t", onClick: function () { newPlan(ds); } }, "+ plan this day"));
+  }
+
+  /* this week's plan, one week later — blocks already there are not doubled */
+  function copyToNextWeek() {
+    var made = [];
+    p.mutate(function (d) {
+      plans.forEach(function (x) {
+        var nd = s2d(x.date); nd.setDate(nd.getDate() + 7);
+        var to = d2s(nd);
+        var dup = d.planned.some(function (y) { return y.userId === x.userId && y.date === to && y.start === x.start && y.end === x.end && (y.projectId || "") === (x.projectId || ""); });
+        if (dup) return;
+        var rec = Object.assign({}, x, { id: uid("pl"), date: to });
+        d.planned.push(rec); made.push(rec.id);
+      });
+      if (made.length) audit(d, user.id, "Copied " + made.length + " planned entries forward one week", "planned_entries", "-", null, null);
+    });
+    if (!made.length) { toast("Next week already has this week's plan.", ""); return; }
+    toast(tr("{n} planned blocks copied to next week.", { n: made.length }), "ok", { label: "Undo", fn: function () {
+      p.mutate(function (d) { d.planned = d.planned.filter(function (x) { return made.indexOf(x.id) < 0; }); });
+    } });
+  }
+
+  var switcher = h("div", { className: "pillbar", role: "tablist", "aria-label": "Plan view" },
+    [["week", "Week"], ["month", "Month"]].map(function (v) {
+      return h("button", { key: v[0], role: "tab", "aria-selected": view === v[0] ? "true" : "false", className: "pill" + (view === v[0] ? " on" : ""), onClick: function () { setView(v[0]); } }, v[1]);
+    }));
+
+  var body;
+  if (view === "month") {
+    var now = new Date(), first = new Date(now.getFullYear(), now.getMonth() + mOff, 1);
+    var mKey = d2s(first).slice(0, 7);
+    var gs = startOfWeek(first), cells = [];
+    for (var c = 0; c < 42; c++) { var cd = new Date(gs); cd.setDate(gs.getDate() + c); cells.push(d2s(cd)); }
+    while (cells.length > 35 && cells.slice(-7).every(function (x) { return x.slice(0, 7) !== mKey; })) cells = cells.slice(0, -7);
+    var inMonth = mine.filter(function (x) { return x.date.slice(0, 7) === mKey; });
+    var mActs = myActs.filter(function (e) { return String(e.date).slice(0, 7) === mKey; });
+    var selected = pick.slice(0, 7) === mKey ? pick : null;
+    body = [
+      h("div", { key: "nav", className: "mrow", style: { justifyContent: "space-between" } },
+        h("div", { className: "row", style: { gap: 4 } },
+          h("button", { className: "iconbtn ink", onClick: function () { setMOff(mOff - 1); }, "aria-label": "Previous month" }, WDI18N.he ? "›" : "‹"),
+          h("b", null, MONTHS_FULL[first.getMonth()], " ", first.getFullYear()),
+          h("button", { className: "iconbtn ink", onClick: function () { setMOff(mOff + 1); }, "aria-label": "Next month" }, WDI18N.he ? "‹" : "›")),
+        h(Btn, { sm: true, kind: "t", onClick: function () { setMOff(0); setPick(todayStr()); } }, "This month")),
+      h("div", { key: "chips", className: "row", style: { gap: 6 } },
+        h(Chip, { k: "teal" }, "Planned ", num(sum(inMonth)), " h"),
+        h(Chip, { k: "gr" }, "Actual ", num(sum(mActs)), " h")),
+      h("div", { key: "cal", className: "mcal", role: "grid", "aria-label": MONTHS_FULL[first.getMonth()] + " " + first.getFullYear() },
+        DOW.map(function (w, i) { return h("div", { key: "w" + i, className: "mcal-dow", "aria-hidden": "true" }, w); }),
+        cells.map(function (ds) {
+          var pl = sum(mine.filter(function (x) { return x.date === ds; }));
+          var out = ds.slice(0, 7) !== mKey;
+          return h("button", {
+            key: ds, type: "button", role: "gridcell",
+            className: "mcal-day" + (out ? " out" : "") + (ds === todayStr() ? " today" : "") + (ds === selected ? " on" : ""),
+            "aria-label": il(ds) + (pl ? " · " + num(pl) + " h" : ""), "aria-selected": ds === selected ? "true" : "false",
+            onClick: function () { setPick(ds); if (out) setMOff(mOff + (ds < mKey ? -1 : 1)); }
+          }, h("span", { className: "n" }, s2d(ds).getDate()), pl ? h("span", { className: "h tnum" }, num(pl)) : null);
+        })),
+      selected ? dayBlock(selected) : h("div", { key: "hint", className: "cap", style: { textAlign: "center" } }, "Tap a day to see and plan it."),
+      selected ? h(Btn, { key: "wk", sm: true, kind: "t", onClick: function () {
+        setOff(Math.round((startOfWeek(s2d(selected)) - startOfWeek(new Date())) / 864e5 / 7)); setView("week");
+      } }, "Open this week") : null
+    ];
+  } else {
+    body = [
+      h("div", { key: "nav", className: "mrow", style: { justifyContent: "space-between" } },
+        h("div", { className: "row", style: { gap: 4 } },
+          h("button", { className: "iconbtn ink", onClick: function () { setOff(off - 1); }, "aria-label": "Previous week" }, WDI18N.he ? "›" : "‹"),
+          h("b", null, il(days[0]), " – ", il(days[6])),
+          h("button", { className: "iconbtn ink", onClick: function () { setOff(off + 1); }, "aria-label": "Next week" }, WDI18N.he ? "‹" : "›")),
+        h(Btn, { sm: true, kind: "t", onClick: function () { setOff(0); } }, "This week")),
+      h("div", { key: "chips", className: "row", style: { gap: 6 } },
+        h(Chip, { k: "teal" }, "Planned ", num(planned), " h"),
+        h(Chip, { k: "gr" }, "Actual ", num(actual), " h"),
+        h(Chip, { k: planned > cap ? "amber" : "mut" }, "Capacity ", num(cap), " h")),
+      plans.length ? h(Btn, { key: "copy", id: "m-copy-week", style: { minHeight: 42 }, onClick: copyToNextWeek }, IconLabel("copy", "Copy this week to next week")) : null,
+      planned > cap ? h("div", { key: "warn", className: "banner amber" }, h(Icon, { n: "warn", size: 15 }), "This week is planned past your contracted hours.") : null
+    ].concat(days.map(dayBlock));
+  }
+
   return h(React.Fragment, null,
-    h("div", { className: "mrow", style: { justifyContent: "space-between" } },
-      h("div", { className: "row", style: { gap: 4 } },
-        h("button", { className: "iconbtn ink", onClick: function () { setOff(off - 1); }, "aria-label": "Previous week" }, WDI18N.he ? "›" : "‹"),
-        h("b", null, il(days[0]), " – ", il(days[6])),
-        h("button", { className: "iconbtn ink", onClick: function () { setOff(off + 1); }, "aria-label": "Next week" }, WDI18N.he ? "‹" : "›")),
-      h(Btn, { sm: true, kind: "t", onClick: function () { setOff(0); } }, "This week")),
-    h("div", { className: "row", style: { gap: 6 } },
-      h(Chip, { k: "teal" }, "Planned ", num(planned), " h"),
-      h(Chip, { k: "gr" }, "Actual ", num(actual), " h"),
-      h(Chip, { k: planned > cap ? "amber" : "mut" }, "Capacity ", num(cap), " h")),
-    planned > cap ? h("div", { className: "banner amber" }, h(Icon, { n: "warn", size: 15 }), "This week is planned past your contracted hours.") : null,
-
-    days.map(function (ds) {
-      var dayPlans = plans.filter(function (x) { return x.date === ds; });
-      var dayAct = actuals.filter(function (e) { return e.date === ds; }).reduce(function (a, e) { return a + (Number(e.red) || 0) + (Number(e.yellow) || 0) + (Number(e.blue) || 0); }, 0);
-      var dayPl = dayPlans.reduce(function (a, x) { return a + (Number(x.red) || 0) + (Number(x.yellow) || 0) + (Number(x.blue) || 0); }, 0);
-      return h("div", { key: ds, className: "mday" },
-        h("h5", null,
-          h("span", null, DOW_FULL[s2d(ds).getDay()], " · ", il(ds), ds === todayStr() ? "  • today" : ""),
-          h("span", { className: "tnum" }, num(dayPl), " p / ", num(dayAct), " a")),
-        dayPlans.map(function (x) {
-          return h("div", { key: x.id, className: "mcard", style: { borderLeft: "3px solid " + (Number(x.red) ? C.red : Number(x.blue) ? C.blue : C.teal) },
-            onClick: function () { setModal(Object.assign({}, x, { hourType: Number(x.red) ? "red" : Number(x.blue) ? "blue" : "yellow" })); } },
-            h("div", { className: "mhead" },
-              h("div", { className: "mt" }, x.description || "Planned block"),
-              h("span", { className: "tnum" }, num((Number(x.red) || 0) + (Number(x.yellow) || 0) + (Number(x.blue) || 0)), " h")),
-            h("div", { className: "mrow" },
-              h("span", { className: "tnum" }, x.start, "–", x.end),
-              x.projectId ? h("span", null, nameOf(db.projects, x.projectId)) : null));
-        }),
-        h(Btn, { sm: true, kind: "t", onClick: function () {
-          setModal({ id: null, userId: user.id, date: ds, start: "09:00", end: "17:00", hourType: "yellow", clientId: "", projectId: "", workOrderId: "", taskId: "", description: "" });
-        } }, "+ plan this day"));
-    }),
-
+    switcher,
+    body,
     modal ? h(PlanEditor, {
       db: db, user: user, value: modal,
       onSave: function (f) { if (savePlanned(p.mutate, user, f)) { setModal(null); toast("Plan saved.", "ok"); } },
@@ -24492,9 +24593,11 @@ function MobileApp(p) {
     h("div", { className: "mtop" },
       h("button", { className: "iconbtn", id: "to-portal", onClick: p.onHome, "aria-label": "Back to the Employee Portal home", style: { minWidth: 38 } }, h(Icon, { n: "home", size: 20 })),
       h(Mark, { style: { width: 26, height: 22 } }),
-      h("div", { className: "grow", style: { lineHeight: 1.1 } },
+      h("div", { style: { lineHeight: 1.1 } },
         h("b", { style: { letterSpacing: ".14em", fontSize: 13 } }, "GALIL"),
         h("div", { style: { fontSize: 10, color: "var(--chromesoft)" } }, "WorkDesk")),
+      WDCloud.remote ? h("span", { className: "syncdock", ref: dockSync }) : null,
+      h("div", { className: "grow" }),
       h("button", {
         className: "iconbtn", onClick: function () { p.setTheme(p.theme === "dark" ? "light" : "dark"); },
         "aria-label": p.theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme"
@@ -24533,7 +24636,7 @@ function MobileApp(p) {
       h("div", { className: "cap" }, "The Dashboard, Management and System administration are laid out for a larger screen. Switch to the desktop layout to reach them — this phone will keep that choice."),
       h(Btn, { kind: "p", style: { minHeight: 48 }, onClick: function () { p.onForceDesktop(); } }, IconLabel("monitor", "Switch to the desktop layout"))) : null,
 
-    sheet === "mywork" ? h(MyWork, Object.assign({ onClose: function () { setSheet(null); } }, common)) : null,
+    sheet === "mywork" ? h(MyWork, Object.assign({ mobile: true, onClose: function () { setSheet(null); } }, common)) : null,
     sheet === "profile" ? h(Profile, { db: db, user: user, mutate: p.mutate, onClose: function () { setSheet(null); }, onSignOut: p.onSignOut }) : null);
 }
 </script>
@@ -24557,9 +24660,41 @@ function MyWork(p) {
   var db = p.db, user = p.user;
   var rs = useState(null), req = rs[0], setReq = rs[1];
   var mine = db.assignments.filter(function (a) { return a.userId === user.id; });
-  if (!mine.length) return h(Modal, { title: "My assignments and allowances", size: "md", onClose: p.onClose },
+  if (!mine.length) return h(p.mobile ? Sheet : Modal, { title: "My assignments and allowances", size: "md", onClose: p.onClose },
     h("div", { className: "empty" }, "You hold no project or work-order assignments yet."),
     h("div", { className: "cap", style: { textAlign: "center" } }, "Yellow time on an unassigned project is accepted, but routed to approval. A manager grants assignments under Management \u2192 Assignments & allowances."));
+  var requestModal = req ? h(RequestHoursModal, {
+    db: db, user: user, assignment: req, onClose: function () { setReq(null); },
+    onSubmit: function (hours, justification) {
+      p.mutate(function (d) {
+        var ar = raiseApproval(d, "Allowance increase", "allowance", req.id, user.id, "Allowance increase requested");
+        ar.payloadAfter = { hours: hours, justification: justification };
+      });
+      toast("Request submitted to the approval queue.", "ok");
+      setReq(null);
+    }
+  }) : null;
+  /* on a phone: a full-height sheet of cards, one per assignment */
+  if (p.mobile) return h(Sheet, { title: "My assignments and allowances", full: true, onClose: p.onClose },
+    h("div", { className: "col mwork", style: { gap: 10 } }, mine.map(function (a) {
+      var used = consumedOn(db, user.id, a), pend = pendingOn(db, user.id, a);
+      var unlimited = a.allowanceHours === null || a.allowanceHours === undefined || a.allowanceHours === "";
+      var pct = unlimited ? 0 : (used / (Number(a.allowanceHours) || 1)) * 100;
+      var wo = a.workOrderId ? nameOf(db.workOrders, a.workOrderId, "code") : "";
+      return h("div", { key: a.id, className: "mcard" },
+        h("div", { className: "mhead" },
+          h("div", { className: "grow col", style: { gap: 1 } },
+            h("div", { className: "mt" }, nameOf(db.projects, a.projectId)),
+            h("span", { className: "cap" }, nameOf(db.clients, (byId(db.projects, a.projectId) || {}).clientId))),
+          !unlimited && pct >= 75 ? h(Chip, { k: pct >= 100 ? "err" : pct >= 90 ? "amber" : "gr" }, num(pct, 0), "%") : null),
+        wo ? h("div", { className: "mrow" }, h("span", null, "Work order"), h(CopyCell, { value: wo })) : null,
+        unlimited
+          ? h("div", { className: "mrow" }, h(Chip, { k: "gr" }, "∞ unlimited within the project budget"), h("span", { className: "tnum" }, num(used), " h used"), pend ? h("span", { className: "tnum", style: { color: C.amber } }, num(pend), " h in approval") : null)
+          : [h("div", { key: "b", className: "mbar" }, h(Bar, { used: used, pending: pend, total: a.allowanceHours, style: { flex: 1 } }), h("b", { className: "tnum" }, num(Number(a.allowanceHours) - used), " h left")),
+             h("div", { key: "n", className: "mrow" }, h("span", { className: "tnum" }, num(used), " used"), h("span", { className: "tnum", style: { color: C.amber } }, num(pend), " in approval"), h("span", { className: "tnum" }, "of ", num(a.allowanceHours), " h"))],
+        h(Btn, { sm: true, style: { alignSelf: "flex-start" }, onClick: function () { setReq(a); } }, "Request hours"));
+    })),
+    requestModal);
   return h(Modal, { title: "My assignments and allowances", size: "lg", onClose: p.onClose },
     h("div", { style: { overflowX: "auto" } },
     h(STable, { id: "my-assignments", grow: "Project", center: ["Allowance", "Consumed", "In approval", "Remaining"], className: "tbl mid" },
@@ -24584,17 +24719,7 @@ function MyWork(p) {
                   pct >= 75 ? h(Chip, { k: pct >= 100 ? "err" : pct >= 90 ? "amber" : "gr" }, num(pct, 0), "%") : null))),
           h("td", { style: { whiteSpace: "nowrap" } }, h(Btn, { sm: true, onClick: function () { setReq(a); } }, "Request hours")));
       })))),
-    req ? h(RequestHoursModal, {
-      db: db, user: user, assignment: req, onClose: function () { setReq(null); },
-      onSubmit: function (hours, justification) {
-        p.mutate(function (d) {
-          var ar = raiseApproval(d, "Allowance increase", "allowance", req.id, user.id, "Allowance increase requested");
-          ar.payloadAfter = { hours: hours, justification: justification };
-        });
-        toast("Request submitted to the approval queue.", "ok");
-        setReq(null);
-      }
-    }) : null);
+    requestModal);
 }
 
 function Profile(p) {
