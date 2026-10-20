@@ -20645,6 +20645,16 @@ function taskanaTasksOf(db, userId) {
   if (!tkUser) return [];
   return (data.tasks || []).filter(function (t) { return t.assigneeId === tkUser.id && t.status !== "Done"; });
 }
+/* open Taskana tasks on an assignment's project (and its work order, when it has one) */
+function taskanaTasksOn(a) {
+  var data = taskanaData();
+  if (!data || !a.projectId) return [];
+  return (data.tasks || []).filter(function (t) {
+    if (t.projectId !== a.projectId || t.status === "Done") return false;
+    return !a.workOrderId || !t.workOrderId || t.workOrderId === a.workOrderId;
+  }).sort(function (x, y) { return (x.num || 0) - (y.num || 0); })
+    .map(function (t) { return { id: t.id, key: taskanaKey(t, data), label: taskanaLabel(t, data) }; });
+}
 /* the label kept on the entry, so it still reads well where Taskana's data isn't loaded */
 function taskanaTaskLabel(id) {
   var data = taskanaData(); if (!data || !id) return "";
@@ -23725,15 +23735,23 @@ function MgmtPanel(p) {
         } }, "+ Assign"))) : null,
     h("div", { style: { overflowX: "auto" } },
       h(STable, { id: "mgmt-assignments", grow: "Project", center: ["Allowance", "Consumed", "In approval", "Remaining"], className: "tbl mid" },
-        h("thead", null, h("tr", null, ["Person", "Project", "Work order", "Allowance", "Consumed", "In approval", "Remaining", ""].map(function (c, i) { return h("th", { key: i, className: ["Allowance", "Consumed", "In approval"].indexOf(c) >= 0 ? "num" : "" }, c); }))),
+        h("thead", null, h("tr", null, ["Person", "Client", "Project", "Tasks", "Work order", "Allowance", "Consumed", "In approval", "Remaining", ""].map(function (c, i) { return h("th", { key: i, className: ["Allowance", "Consumed", "In approval"].indexOf(c) >= 0 ? "num" : "" }, c); }))),
         h("tbody", null, db.assignments.map(function (a) {
           var used = consumedOn(db, a.userId, a), pend = pendingOn(db, a.userId, a);
+          var pr = byId(db.projects, a.projectId), tasks = taskanaTasksOn(a);
           var unlimited = a.allowanceHours === null || a.allowanceHours === undefined || a.allowanceHours === "";
           var pct = unlimited ? 0 : (used / (Number(a.allowanceHours) || 1)) * 100;
           return h("tr", { key: a.id },
             h("td", { style: { whiteSpace: "nowrap" } }, userName(db, a.userId)),
+            h("td", { style: { whiteSpace: "nowrap" } }, pr ? nameOf(db.clients, pr.clientId) : "—"),
             h("td", { style: { whiteSpace: "nowrap" } }, nameOf(db.projects, a.projectId),
               a.until ? h("div", { className: "cap" }, "team loan \u00b7 ", il(a.from), " \u2013 ", il(a.until)) : null),
+            h("td", { "data-sort": tasks.length }, tasks.length ? h("div", { className: "row", style: { gap: 4, flexWrap: "nowrap" } },
+              tasks.slice(0, 3).map(function (t) {
+                return h("a", { key: t.id, className: "chip gr", href: "taskana/index.html#/task/" + encodeURIComponent(t.key), title: t.label, style: { textDecoration: "none", whiteSpace: "nowrap" } }, t.key);
+              }),
+              tasks.length > 3 ? h("span", { className: "cap", title: tasks.slice(3).map(function (t) { return t.label; }).join("\n") }, "+" + (tasks.length - 3)) : null)
+              : h("span", { className: "cap" }, "—")),
             h("td", null, h(CopyCell, { value: a.workOrderId ? nameOf(db.workOrders, a.workOrderId, "code") : "" })),
             h("td", { className: "num", "data-sort": unlimited ? "" : Number(a.allowanceHours) }, a.userId === user.id
               ? h("span", { className: "tnum", title: "Your own allowance is raised through My assignments → Request hours" }, unlimited ? "∞" : num(a.allowanceHours))
