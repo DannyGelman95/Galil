@@ -169,6 +169,11 @@ function cardOf(ch) {
     '<span class="n">' + String(i + 1).padStart(2, "0") + '</span></span><b>' + hbEsc(ch.dataset.title) + '</b><span class="s">' + hbEsc(summaryOf(ch)) + "</span>" +
     "<em>" + (locked ? L("Not available to ", "לא זמין ל") + hbEsc(ROLE_NAME[role] || role) : minutesOf(ch) + L(" min read", " דק׳ קריאה")) + "</em></a>";
 }
+function hbGroups() {
+  var groups = [];
+  chapters.forEach(function (ch) { var g = groups[groups.length - 1]; if (!g || g.title !== ch.dataset.group) groups.push(g = { title: ch.dataset.group, chs: [] }); g.chs.push(ch); });
+  return groups;
+}
 function hbCards() {
   var term = (qEl.value || "").trim().toLowerCase();
   if (term) {
@@ -179,11 +184,9 @@ function hbCards() {
         : '<p class="home-sub">' + L("Nothing matches. Try another word, or ", "אין תוצאות. נסו מילה אחרת, או ") + '<a href="#" data-clear>' + L("browse all topics", "עיינו בכל הנושאים") + "</a>.</p>");
     return;
   }
-  var groups = [];
-  chapters.forEach(function (ch) { var g = groups[groups.length - 1]; if (!g || g.title !== ch.dataset.group) groups.push(g = { title: ch.dataset.group, chs: [] }); g.chs.push(ch); });
   homeEl.innerHTML = '<h2 class="home-h">' + L("What do you need to do?", "במה אפשר לעזור?") + '</h2><p class="home-sub">' +
     L("Pick a topic, or search above. Choose your role in the bar above to see what applies to you.", "בחרו נושא, או חפשו למעלה. בחרו את התפקיד שלכם בסרגל שלמעלה כדי לראות מה רלוונטי לכם.") + "</p>" +
-    groups.map(function (g) { return '<section class="group"><h2 class="group-h">' + hbEsc(g.title) + '</h2><div class="tcards">' + g.chs.map(cardOf).join("") + "</div></section>"; }).join("");
+    hbGroups().map(function (g, i) { return '<section class="group" id="grp-' + i + '"><h2 class="group-h">' + hbEsc(g.title) + '</h2><div class="tcards">' + g.chs.map(cardOf).join("") + "</div></section>"; }).join("");
 }
 function hbRoute() {
   var id = decodeURIComponent((location.hash || "").replace(/^#\/?/, ""));
@@ -194,8 +197,31 @@ function hbRoute() {
   document.body.classList.toggle("reading", !!ch);
   document.title = (ch ? ch.dataset.title + " · " : "") + L("GALIL Employee Portal Handbook", "המדריך לפורטל העובדים של גליל");
   if (!ch) hbCards();
+  hbToc();
   if (ch && target !== ch) target.scrollIntoView(); else window.scrollTo(0, 0);
+  if (window.GalilToc) GalilToc.spy();
 }
+/* the floating table of contents: the parts and chapters on the home screen, the chapter's headings while reading */
+function hbToc() {
+  var tocEl = document.getElementById("toc");
+  if (!tocEl || !window.GalilToc) return;
+  var ch = homeEl.hidden ? chapters.filter(function (c) { return !c.hidden; })[0] : null;
+  if (!ch) {
+    if ((qEl.value || "").trim()) { tocEl.innerHTML = ""; return; }
+    GalilToc.render(tocEl, [{ title: L("Contents", "תוכן העניינים"), items: [].concat.apply([], hbGroups().map(function (g, i) {
+      return [{ text: g.title, target: "grp-" + i }].concat(g.chs.map(function (c) { return { text: c.dataset.title, href: "#" + c.id, level: 2, cls: c.classList.contains("is-locked") ? "locked" : "" }; }));
+    })) }]);
+    return;
+  }
+  var heads = Array.prototype.filter.call(ch.querySelectorAll("h3"), function (h, i) { if (!h.id) h.id = ch.id + "--" + (i + 1); return h.offsetParent !== null; });
+  GalilToc.render(tocEl, [
+    { title: L("On this page", "בעמוד זה"), items: heads.map(function (h) { return { text: h.textContent, target: h.id }; }) },
+    { title: ch.dataset.group, items: chapters.filter(function (c) { return c.dataset.group === ch.dataset.group; }).map(function (c) {
+      return { text: c.dataset.title, href: "#" + c.id, cur: c === ch, cls: c.classList.contains("is-locked") ? "locked" : "" };
+    }) }
+  ]);
+}
+if (window.GalilToc) GalilToc.track(document.getElementById("topbar"), document.querySelector(".rolebar"));
 window.addEventListener("hashchange", hbRoute);
 window.addEventListener("popstate", hbRoute);
 qEl.addEventListener("input", function () {
@@ -323,6 +349,7 @@ drawMatrix("portal-matrix", PORTAL_PERM);
       : ALL_NOTE;
     try { current ? localStorage.setItem("wd-handbook-role", current) : localStorage.removeItem("wd-handbook-role"); } catch (e) {}
     if (!homeEl.hidden) hbCards();
+    hbToc();
   }
   set.addEventListener("click", function (e) { var b = e.target.closest(".rolebtn"); if (b) apply(b.dataset.role); });
   note.textContent = ALL_NOTE;

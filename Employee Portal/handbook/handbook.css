@@ -57,53 +57,24 @@ a{color:var(--accent-ink); text-underline-offset:2px; text-decoration-thickness:
 a:hover{color:var(--accent)}
 :focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
 
-/* ---------- utility strip ---------- */
-.utility{background:var(--chrome-bg); color:var(--chrome-fg-soft); font-family:var(--sans); font-size:12.5px}
-.utility-in{max-width:1180px; margin:0 auto; padding:8px 20px; display:flex; align-items:center; gap:18px; flex-wrap:wrap}
-.utility a{color:var(--chrome-fg); text-decoration:none; white-space:nowrap; flex-shrink:0}
-.utility a:hover{color:var(--accent-bright)}
-.utility span{color:var(--chrome-fg-soft)}
-.utility .themebtn{
-  margin-inline-start:auto; flex:0 0 auto; width:26px; height:26px; border-radius:999px; cursor:pointer;
+/* ---------- top bar (shared/chrome.css): the theme and language buttons ---------- */
+.topbar .themebtn{
+  flex:0 0 auto; width:26px; height:26px; border-radius:999px; cursor:pointer;
   border:1px solid var(--chrome-fg-soft); background:transparent; color:var(--chrome-fg);
   display:grid; place-items:center; font-size:13px; line-height:1;
 }
-.utility .themebtn:hover{border-color:var(--accent-bright); color:var(--accent-bright)}
-
-/* ---------- masthead ---------- */
-.masthead{
-  background:#1C2D4A; color:#E0E7F3;
-  padding-block:34px 30px; padding-inline:20px;
-  border-bottom:3px solid var(--accent);
-}
-.masthead-in{max-width:1180px; margin:0 auto; display:flex; flex-wrap:wrap; gap:26px; align-items:flex-end}
-.wordmark{display:flex; align-items:center; gap:12px}
-.wordmark svg{width:40px; height:32px; flex:0 0 auto}
-.wordmark b{font-family:var(--sans); font-weight:700; font-size:22px; letter-spacing:.16em; color:#fff; line-height:1}
-.wordmark small{display:block; font-family:var(--sans); font-size:11.5px; letter-spacing:.05em; color:#899FC4; margin-top:3px}
-.masthead h1{
-  font-family:var(--sans); font-weight:600; font-size:clamp(26px,4.2vw,40px);
-  line-height:1.08; margin:0; color:#fff; text-wrap:balance; letter-spacing:-.015em;
-}
-.masthead .standfirst{font-size:15.5px; color:#A3B2CC; margin:9px 0 0; max-width:60ch}
-.masthead .grow{flex:1 1 300px}
-.stamp{
-  font-family:var(--mono); font-size:11.5px; letter-spacing:.04em; color:#7A8BA8;
-  border:1px solid #2A3548; border-radius:8px; padding:9px 12px; background:#0E1522;
-  display:flex; flex-direction:column; gap:3px;
-}
-.stamp b{color:#C5D3EA; font-weight:500}
+.topbar .themebtn:hover{border-color:var(--accent-bright); color:var(--accent-bright)}
 
 /* ---------- role bar ---------- */
 .rolebar{
-  position:sticky; top:0; z-index:40;
+  position:sticky; top:var(--hdr, 57px); z-index:40;
   background:var(--paper);
   background:color-mix(in srgb, var(--paper) 92%, transparent);
   backdrop-filter:blur(10px);
   border-bottom:1px solid var(--line);
   padding-inline:20px;
 }
-.rolebar-in{max-width:1180px; margin:0 auto; display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; padding-block:11px}
+.rolebar-in{max-width:1400px; margin:0 auto; display:flex; flex-wrap:wrap; gap:10px 14px; align-items:center; padding-block:11px}
 .rolebar .lead{font-family:var(--sans); font-size:11.5px; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); flex:0 0 auto}
 .roleset{display:flex; flex-wrap:wrap; gap:5px}
 .rolebtn{
@@ -118,20 +89,9 @@ a:hover{color:var(--accent)}
 .rolenote b{color:var(--ink); font-weight:600}
 
 /* ---------- shell: topic cards on the home screen, one chapter at a time when reading ---------- */
-.shell{max-width:1180px; margin:0 auto; padding-inline:20px; padding-block:0 64px}
+.shell{max-width:1400px; margin:0 auto; padding-inline:20px; padding-block:0 64px}
 [hidden]{display:none !important}
-.search{flex:1 1 260px; max-width:400px; position:relative; align-self:flex-end}
-.search input{
-  width:100%; font-family:var(--sans); font-size:15px; padding-block:11px; padding-inline:38px 14px;
-  border-radius:10px; border:1px solid #2A3548; background:#0E1522; color:#E0E7F3;
-}
-.search input::placeholder{color:#7A8BA8}
-.search input:focus{outline:2px solid var(--accent-bright); outline-offset:1px}
-.search .ic{position:absolute; inset-inline-start:13px; top:50%; transform:translateY(-50%); color:#7A8BA8; pointer-events:none; display:flex}
-body.reading .masthead{padding-block:16px 14px}
-body.reading .masthead h1, body.reading .masthead .standfirst, body.reading .stamp{display:none}
-body.reading .masthead-in{align-items:center}
-body.reading .wordmark{margin-bottom:0}
+
 
 .home-h{font-family:var(--sans); font-weight:600; font-size:22px; color:var(--ink); margin:0 0 4px}
 .home-sub{font-family:var(--sans); color:var(--muted); margin:0 0 24px; font-size:15px}
@@ -173,8 +133,8 @@ body.reading .wordmark{margin-bottom:0}
 main{padding-block:30px; min-width:0}
 
 /* ---------- chapters ---------- */
-.ch{padding-block:0 8px; scroll-margin-top:72px}
-.ch [id]{scroll-margin-top:72px}
+.ch{padding-block:0 8px; scroll-margin-top:calc(var(--stick, 110px) + 16px)}
+.ch [id]{scroll-margin-top:calc(var(--stick, 110px) + 16px)}
 .ch-head{display:flex; gap:16px; align-items:baseline; flex-wrap:wrap; margin-bottom:6px}
 .ch-num{font-family:var(--mono); font-size:13px; font-weight:500; color:var(--accent); border:1px solid var(--line); border-radius:6px; padding:2px 8px; background:var(--wash); flex:0 0 auto}
 .ch h2{font-family:var(--sans); font-weight:600; font-size:clamp(22px,3vw,29px); line-height:1.15; margin:0; color:var(--ink); letter-spacing:-.015em; text-wrap:balance}
@@ -312,23 +272,25 @@ table code{background:transparent; padding:0}
 .foot h3{margin-top:0; font-size:15px; color:var(--ink)}
 .foot ul{padding-inline-start:20px}
 .foot a{color:var(--accent-ink)}
+.foot .stampline{font-family:var(--mono); font-size:11.5px; color:var(--faint); margin:18px 0 0}
+.foot .stampline b{color:var(--muted); font-weight:500}
 
 @media (max-width:900px){
-  .stamp{display:none}
+  .rolebar{position:static}
   main{padding-block:22px}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
 
 /* ---------- portal additions ---------- */
 .part{font-family:var(--sans); font-size:11.5px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--accent); margin:0 0 10px}
-.utility .langbtn{flex:0 0 auto; border:1px solid var(--chrome-fg-soft); background:transparent; color:var(--chrome-fg); border-radius:999px; padding:3px 10px; font:inherit; font-size:12px; cursor:pointer}
-.utility .langbtn:hover{border-color:var(--accent-bright); color:var(--accent-bright)}
+.topbar .langbtn{flex:0 0 auto; border:1px solid var(--chrome-fg-soft); background:transparent; color:var(--chrome-fg); border-radius:999px; padding:3px 10px; font:inherit; font-size:12px; cursor:pointer}
+.topbar .langbtn:hover{border-color:var(--accent-bright); color:var(--accent-bright)}
 .tiles{display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:12px; margin:0 0 24px}
 .tile{border:1px solid var(--line); border-radius:8px; background:var(--surface); padding:14px 16px; font-family:var(--sans); font-size:14px}
 .tile b{display:block; color:var(--ink); font-size:15px; margin-bottom:4px}
 [dir="rtl"] .tnum, [dir="rtl"] code, [dir="rtl"] .mono, [dir="rtl"] td.num{unicode-bidi:plaintext}
-[dir="rtl"] .rolebtn, [dir="rtl"] .rc, [dir="rtl"] .stamp, [dir="rtl"] .ch-num{direction:ltr}
-[dir="rtl"] .masthead h1, [dir="rtl"] .ch h2, [dir="rtl"] h3{letter-spacing:0}
+[dir="rtl"] .rolebtn, [dir="rtl"] .rc, [dir="rtl"] .ch-num{direction:ltr}
+[dir="rtl"] .ch h2, [dir="rtl"] h3{letter-spacing:0}
 [dir="rtl"] .rolebar .lead, [dir="rtl"] h4, [dir="rtl"] .part{letter-spacing:0; text-transform:none}
 @media (prefers-reduced-motion:reduce){ .tcard{transition:none} }
 .ui-ic{display:inline-block; width:1.05em; height:1.05em; vertical-align:-.17em; color:var(--accent-ink)}
