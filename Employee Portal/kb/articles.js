@@ -9,7 +9,13 @@ var CATS = [
   { k: "onboarding", icon: "👋", title: { en: "Onboarding", he: "קליטה" }, desc: { en: "Your first days and weeks at GALIL.", he: "הימים והשבועות הראשונים שלך בגליל." } },
   { k: "portal", icon: "🧭", title: { en: "The Employee Portal", he: "פורטל העובדים" }, desc: { en: "WorkDesk, Taskana, the Handbook and this Knowledge Base — one sign-in.", he: "WorkDesk, ‏Taskana, המדריך למשתמש ומאגר הידע הזה — כניסה אחת." } },
   { k: "rules", icon: "📜", title: { en: "Company rules", he: "כללי החברה" }, desc: { en: "Policies every employee is expected to follow.", he: "נהלים שכל עובד ועובדת מצופים לפעול לפיהם." } },
-  { k: "training", icon: "🎓", title: { en: "Training & how-to's", he: "הדרכות ומדריכים" }, desc: { en: "Step-by-step guides for the tools we use.", he: "מדריכים צעד אחר צעד לכלים שאנחנו עובדים איתם." } }
+  { k: "training", icon: "🎓", title: { en: "Training & how-to's", he: "הדרכות ומדריכים" }, desc: { en: "Step-by-step guides for the tools we use.", he: "מדריכים צעד אחר צעד לכלים שאנחנו עובדים איתם." } },
+  { k: "techwriting", icon: "✍️", title: { en: "Technical Writing Training", he: "הדרכת כתיבה טכנית" }, desc: { en: "Microsoft Office for technical writers — Word, Excel and PowerPoint.", he: "Microsoft Office לכותבים טכניים — Word, ‏Excel ו-PowerPoint." },
+    subs: [
+      { k: "word", title: { en: "Word", he: "Word" } },
+      { k: "excel", title: { en: "Excel", he: "Excel" } },
+      { k: "powerpoint", title: { en: "PowerPoint", he: "PowerPoint" } }
+    ] }
 ];
 
 var ARTICLES = [
@@ -1407,8 +1413,36 @@ var ARTICLES = [
   '<div class="callout tip"><b>טיפ:</b> כשאפשר, העדיפו סגנונות על פני CSS: עמית שמעולם לא ראה את ה-CSS שלכם עדיין יכול לשנות סגנון בלשונית סגנונות. המדריך מכסה את זה במלואו — ראו <a href="../handbook/he.html#ch-tk-lib-tools">כלי הספרייה: מבנה, סגנונות ו-HTML</a>.</div>'
   } },
 
-/* ======================= Word for technical writers (course) ======================= */
-{ id: "word-course", cat: "training", updated: "20 Oct 2026",
+{ id: "phishing", cat: "training", updated: "30 Sep 2026",
+  title: { en: "Spotting and reporting phishing", he: "זיהוי ודיווח על פישינג" },
+  summary: { en: "Recognise suspicious emails and know what to do.", he: "זיהוי הודעות דוא\"ל חשודות ומה עושים." },
+  body: {
+  en:
+  '<h2>Warning signs</h2>' +
+  '<ul><li>Urgent requests to pay, change bank details or buy gift cards.</li>' +
+  '<li>A sender address that is almost — but not quite — right.</li>' +
+  '<li>Unexpected attachments or links asking you to "sign in again".</li></ul>' +
+  '<h2>What to do</h2>' +
+  '<ol class="steps">' +
+  '<li>Don\'t click links or open attachments.</li>' +
+  '<li>Use <strong>Report → Phishing</strong> in Outlook.</li>' +
+  '<li>If you already clicked or entered your password, change it immediately and tell Operations.</li>' +
+  '</ol>',
+  he:
+  '<h2>סימני אזהרה</h2>' +
+  '<ul><li>בקשות דחופות לשלם, לשנות פרטי בנק או לקנות כרטיסי מתנה.</li>' +
+  '<li>כתובת שולח שנראית כמעט — אבל לא בדיוק — נכונה.</li>' +
+  '<li>קבצים מצורפים או קישורים לא צפויים שמבקשים "להתחבר שוב".</li></ul>' +
+  '<h2>מה עושים</h2>' +
+  '<ol class="steps">' +
+  '<li>אל תלחצו על קישורים ואל תפתחו קבצים מצורפים.</li>' +
+  '<li>השתמשו ב-<strong>Report ← Phishing</strong> ב-Outlook.</li>' +
+  '<li>אם כבר לחצתם או הזנתם סיסמה, החליפו אותה מיד והודיעו לתפעול.</li>' +
+  '</ol>'
+  } },
+
+/* ======================= Technical Writing Training — Word ======================= */
+{ id: "word-course", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Word for technical writers — crash course (start here)' },
   summary: { en: 'A fast, hands-on course in Word for Microsoft 365: styles, paragraphs, lists, headings, the table of contents, tables, page layout and the documents we write for the defense industry.' },
   body: {
@@ -1447,7 +1481,7 @@ var ARTICLES = [
   '<div class="callout tip"><b>Tip:</b> Need practice text fast? In an empty paragraph, type <code>=rand(5,4)</code> and press <code>Enter</code>. Word writes five paragraphs of four sentences each. <code>=lorem(3,5)</code> does the same in Latin.</div>'
   } },
 
-{ id: "word-1-mindset", cat: "training", updated: "20 Oct 2026",
+{ id: "word-1-mindset", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Lesson 1 — Think like a technical writer' },
   summary: { en: 'Who reads our documents, what they need, and the writing rules that follow — with what is special about the defense industry in Israel.' },
   body: {
@@ -1488,7 +1522,7 @@ var ARTICLES = [
   '<p>Compare with the answer at the end of <a href="#/word-12-final">lesson 12</a>.</p>'
   } },
 
-{ id: "word-2-setup", cat: "training", updated: "20 Oct 2026",
+{ id: "word-2-setup", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Lesson 2 — Set up Word for technical writing' },
   summary: { en: 'Ten minutes of settings that let you see what is really in a document: formatting marks, the Navigation pane, the Styles pane and the style area.' },
   body: {
@@ -1528,7 +1562,7 @@ var ARTICLES = [
   '<p>Make all the settings above. Create a new blank document, type <code>=rand(3,3)</code> and press <code>Enter</code>, switch to <strong>View → Draft</strong> and check that you see <em>Normal</em> beside each paragraph in the style area.</p>'
   } },
 
-{ id: "word-3-styles", cat: "training", updated: "20 Oct 2026",
+{ id: "word-3-styles", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Lesson 3 — Styles: the one habit that matters' },
   summary: { en: 'What styles are, why every paragraph must have one, how to apply and change them, and which style to use for what.' },
   body: {
@@ -1594,7 +1628,7 @@ var ARTICLES = [
   '</ol>'
   } },
 
-{ id: "word-4-paragraphs", cat: "training", updated: "20 Oct 2026",
+{ id: "word-4-paragraphs", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Lesson 4 — Paragraphs, spacing and page flow' },
   summary: { en: 'Spacing without empty lines, indents, line and page breaks, keeping things together, special spaces, and Hebrew right-to-left paragraphs.' },
   body: {
@@ -1641,7 +1675,7 @@ var ARTICLES = [
   '</ol>'
   } },
 
-{ id: "word-5-lists", cat: "training", updated: "20 Oct 2026",
+{ id: "word-5-lists", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Lesson 5 — Bulleted and numbered lists' },
   summary: { en: 'When to use bullets and when to use numbers, how to write list items, and how to make Word\'s numbering behave.' },
   body: {
@@ -1696,7 +1730,7 @@ var ARTICLES = [
   '</ol>'
   } },
 
-{ id: "word-6-headings-toc", cat: "training", updated: "20 Oct 2026",
+{ id: "word-6-headings-toc", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Lesson 6 — Headings, numbering and the table of contents' },
   summary: { en: 'Heading levels, numbered headings (1, 1.1, 1.1.1), moving chapters in the Navigation pane, and a table of contents that builds itself.' },
   body: {
@@ -1749,7 +1783,7 @@ var ARTICLES = [
   '</ol>'
   } },
 
-{ id: "word-7-tables-figures", cat: "training", updated: "20 Oct 2026",
+{ id: "word-7-tables-figures", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Lesson 7 — Tables, figures, captions and safety notices' },
   summary: { en: 'Tables that survive page breaks, pictures that stay put, numbered captions with cross-references, lists of figures and tables, and WARNING / CAUTION / NOTE.' },
   body: {
@@ -1811,7 +1845,7 @@ var ARTICLES = [
   '</ol>'
   } },
 
-{ id: "word-8-layout", cat: "training", updated: "20 Oct 2026",
+{ id: "word-8-layout", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Lesson 8 — Page layout: sections, headers, footers and markings' },
   summary: { en: 'Section breaks, a landscape page in a portrait document, headers and footers with the document number, revision, page X of Y and the classification marking.' },
   body: {
@@ -1862,7 +1896,7 @@ var ARTICLES = [
   '</ol>'
   } },
 
-{ id: "word-9-documents", cat: "training", updated: "20 Oct 2026",
+{ id: "word-9-documents", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Lesson 9 — What our documents look like' },
   summary: { en: 'The documents GALIL writes for defense customers — manuals, software documents, test procedures, interface documents and training material — and the structure of each.' },
   body: {
@@ -1903,7 +1937,7 @@ var ARTICLES = [
   '<p>Take your practice document and turn it into the skeleton of an Operator\'s Manual: title page, record of changes table, table of contents, list of figures and tables, and the chapters <em>Introduction</em>, <em>System Description</em>, <em>Operation</em>, <em>Maintenance</em>, <em>Troubleshooting</em>, and <em>Appendix A — Acronyms</em>. Add a three-row troubleshooting table.</p>'
   } },
 
-{ id: "word-10-review", cat: "training", updated: "20 Oct 2026",
+{ id: "word-10-review", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Lesson 10 — Review, track changes and delivery' },
   summary: { en: 'Comments and Track Changes, comparing versions, the final checks, removing hidden data and exporting a PDF with bookmarks.' },
   body: {
@@ -1951,7 +1985,7 @@ var ARTICLES = [
   '</ol>'
   } },
 
-{ id: "word-11-advanced", cat: "training", updated: "20 Oct 2026",
+{ id: "word-11-advanced", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Lesson 11 — A step further: templates, Quick Parts and power tools' },
   summary: { en: 'Templates, reusable text with Quick Parts, copying styles between documents, finding and replacing by style, fields, content controls and protecting a template\'s styles.' },
   body: {
@@ -1997,7 +2031,7 @@ var ARTICLES = [
   '</ol>'
   } },
 
-{ id: "word-12-final", cat: "training", updated: "20 Oct 2026",
+{ id: "word-12-final", cat: "techwriting", sub: "word", updated: "20 Oct 2026",
   title: { en: 'Lesson 12 — Final exercise, checklist and shortcut sheet' },
   summary: { en: 'Put it all together in a short operator\'s manual, check it against the delivery checklist, and keep the shortcut sheet by your keyboard.' },
   body: {
@@ -2074,33 +2108,5 @@ var ARTICLES = [
   '<li>Keep this course bookmarked — the lessons double as a reference.</li>' +
   '<li>Back to the <a href="#/word-course">course overview</a>.</li>' +
   '</ul>'
-  } },
-
-{ id: "phishing", cat: "training", updated: "30 Sep 2026",
-  title: { en: "Spotting and reporting phishing", he: "זיהוי ודיווח על פישינג" },
-  summary: { en: "Recognise suspicious emails and know what to do.", he: "זיהוי הודעות דוא\"ל חשודות ומה עושים." },
-  body: {
-  en:
-  '<h2>Warning signs</h2>' +
-  '<ul><li>Urgent requests to pay, change bank details or buy gift cards.</li>' +
-  '<li>A sender address that is almost — but not quite — right.</li>' +
-  '<li>Unexpected attachments or links asking you to "sign in again".</li></ul>' +
-  '<h2>What to do</h2>' +
-  '<ol class="steps">' +
-  '<li>Don\'t click links or open attachments.</li>' +
-  '<li>Use <strong>Report → Phishing</strong> in Outlook.</li>' +
-  '<li>If you already clicked or entered your password, change it immediately and tell Operations.</li>' +
-  '</ol>',
-  he:
-  '<h2>סימני אזהרה</h2>' +
-  '<ul><li>בקשות דחופות לשלם, לשנות פרטי בנק או לקנות כרטיסי מתנה.</li>' +
-  '<li>כתובת שולח שנראית כמעט — אבל לא בדיוק — נכונה.</li>' +
-  '<li>קבצים מצורפים או קישורים לא צפויים שמבקשים "להתחבר שוב".</li></ul>' +
-  '<h2>מה עושים</h2>' +
-  '<ol class="steps">' +
-  '<li>אל תלחצו על קישורים ואל תפתחו קבצים מצורפים.</li>' +
-  '<li>השתמשו ב-<strong>Report ← Phishing</strong> ב-Outlook.</li>' +
-  '<li>אם כבר לחצתם או הזנתם סיסמה, החליפו אותה מיד והודיעו לתפעול.</li>' +
-  '</ol>'
   } }
 ];
