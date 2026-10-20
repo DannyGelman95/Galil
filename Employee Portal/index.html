@@ -18577,6 +18577,8 @@ var CSS = [
 ".tbl td.c>.row{justify-content:center}",
 ".tbl td.c input{text-align:center}",
 ".tblbar{display:flex;align-items:center;gap:6px 16px;flex-wrap:wrap;padding:6px 8px;font-size:12px}",
+".tblbar .tblfilter{width:170px;text-align:start}",
+".tbg .tbl-l.tblcount{text-transform:none;letter-spacing:0;font-weight:600;color:var(--muted)}",
 ".tbg{display:flex;align-items:center;gap:4px;flex-wrap:nowrap}",
 ".tbg .tbl-l{font-size:10.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:2px;white-space:nowrap}",
 ".tbg .minisel{max-width:190px}",
@@ -19288,9 +19290,9 @@ function tvSetSaved(id, rec) {
   try { localStorage.setItem(TV_KEY, JSON.stringify(all)); return true; }
   catch (e) { toast("Could not save the view in this browser.", "error"); return false; }
 }
-function tvBlank() { return { sort: null, order: null, widths: null, view: null }; }
+function tvBlank() { return { sort: null, order: null, widths: null, filter: null, view: null }; }
 function tvFromView(v) {
-  return { sort: v.sort || null, order: v.order ? v.order.slice() : null, widths: v.widths ? Object.assign({}, v.widths) : null, view: v.name };
+  return { sort: v.sort || null, order: v.order ? v.order.slice() : null, widths: v.widths ? Object.assign({}, v.widths) : null, filter: v.filter ? Object.assign({}, v.filter) : null, view: v.name };
 }
 function tvGet(id) {
   var k = tvUser() + "|" + id;
@@ -19321,6 +19323,12 @@ function cellText(n) {
     if (pp.label !== undefined) return String(pp.label);
   }
   return "";
+}
+/* what a filter looks through in a cell: the text it shows, and its sort value */
+function cellFilterText(td) {
+  var shown = td && td.props ? cellText(td.props.children) : cellText(td);
+  var key = td && td.props && td.props["data-sort"] !== undefined && td.props["data-sort"] !== null ? String(td.props["data-sort"]) : "";
+  return (shown + " " + key).replace(/\s+/g, " ").trim().toLowerCase();
 }
 function cellSortKey(td) {
   var raw = td && td.props && td.props["data-sort"] !== undefined && td.props["data-sort"] !== null ? td.props["data-sort"] : cellText(td);
@@ -19412,6 +19420,29 @@ function STable(p) {
     var ok = cells.length === n && !cells.some(function (c) { return c.props && c.props.colSpan > 1; });
     if (ok) regular.push({ tr: tr, cells: cells }); else other.push(tr);
   });
+  /* filter: words typed, looked for in one column or in all of them (every word must match) */
+  var filter = live.filter && live.filter.q ? live.filter : null;
+  var fcol = live.filter && live.filter.col && byCid[live.filter.col] ? live.filter.col : "";
+  var total = regular.length;
+  if (filter) {
+    var words = String(filter.q).toLowerCase().split(/\s+/).filter(Boolean);
+    regular = regular.filter(function (r) {
+      var hay = fcol ? cellFilterText(r.cells[byCid[fcol].idx]) : r.cells.map(cellFilterText).join(" ");
+      return words.every(function (w) { return hay.indexOf(w) >= 0; });
+    });
+  }
+  /* the values in the chosen column, offered as the filter is typed */
+  var fVals = [];
+  if (fcol) {
+    var fseen = {};
+    rows.forEach(function (tr) {
+      var cells = tr && tr.props ? React.Children.toArray(tr.props.children) : [];
+      if (cells.length !== n) return;
+      var t = cellText(cells[byCid[fcol].idx].props ? cells[byCid[fcol].idx].props.children : cells[byCid[fcol].idx]).replace(/\s+/g, " ").trim();
+      if (t && t !== "—" && !fseen[t] && fVals.length < 200) { fseen[t] = 1; fVals.push(t); }
+    });
+    fVals.sort(function (a, b) { return a.localeCompare(b, undefined, { numeric: true, sensitivity: "base" }); });
+  }
   if (sort) {
     var si = byCid[sort.col].idx, dir = sort.dir === "desc" ? -1 : 1;
     regular = regular.map(function (r, i) { return { r: r, k: cellSortKey(r.cells[si]), i: i }; })
@@ -19549,8 +19580,8 @@ function STable(p) {
   var cur = live.view ? saved.views.filter(function (v) { return v.name === live.view; })[0] : null;
   function applyView(v) { tvSet(id, tvFromView(v)); toast("View “" + v.name + "” applied.", "ok"); }
   function saveView() {
-    var snap = { sort: sort, order: live.order ? order.slice() : null, widths: sized ? Object.assign({}, widths) : null };
-    ask({ title: "Save view", message: "Saves the current sort, column order and column widths of this table under a name.", input: true, label: "View name", value: live.view || "", placeholder: "e.g. Newest first", okLabel: "Save view" }).then(function (name) {
+    var snap = { sort: sort, order: live.order ? order.slice() : null, widths: sized ? Object.assign({}, widths) : null, filter: filter ? Object.assign({}, filter) : null };
+    ask({ title: "Save view", message: "Saves the current filter, sort, column order and column widths of this table under a name.", input: true, label: "View name", value: live.view || "", placeholder: "e.g. Newest first", okLabel: "Save view" }).then(function (name) {
       if (!name) return null;
       var exists = tvSaved(id).views.some(function (v) { return v.name === name; });
       var go = exists ? ask({ title: "Replace view?", message: "A view called \u201c" + name + "\u201d already exists on this table. Replace it with the current layout?", okLabel: "Replace" }) : Promise.resolve(true);
@@ -19587,9 +19618,24 @@ function STable(p) {
         onChange: function (e) { var v = saved.views.filter(function (x) { return x.name === e.target.value; })[0]; if (v) applyView(v); else tvSet(id, { view: null }); }
       }, h("option", { value: "" }, saved.views.length ? "— choose a saved view —" : "— no saved views —"),
         saved.views.map(function (v) { return h("option", { key: v.name, value: v.name }, v.name + (saved.dflt === v.name ? " ★" : "")); })),
-      h("button", { className: "tblbtn", title: "Save the current sort, column order and widths as a view", onClick: saveView }, "＋ Save"),
+      h("button", { className: "tblbtn", title: "Save the current filter, sort, column order and widths as a view", onClick: saveView }, "＋ Save"),
       h("button", { className: "tblbtn ic" + (isD ? " on" : ""), disabled: !cur, title: !cur ? "Choose a saved view first" : isD ? "Stop opening this view by default" : "Open this table with this view", "aria-label": isD ? "Unset default view" : "Set as default view", onClick: function () { toggleDefault(cur); } }, h(Icon, { n: "star", size: 15, fill: isD })),
       h("button", { className: "tblbtn ic", disabled: !cur, title: cur ? "Delete this saved view" : "Choose a saved view first", "aria-label": "Delete saved view", onClick: function () { delView(cur); } }, h(Icon, { n: "trash", size: 16 }))),
+    h("div", { className: "tbg" },
+      h("span", { className: "tbl-l" }, "Filter"),
+      h("select", {
+        className: "minisel", "aria-label": "Column to filter", value: fcol,
+        onChange: function (e) { tvSet(id, { filter: { col: e.target.value, q: (live.filter && live.filter.q) || "" }, view: null }); }
+      }, h("option", { value: "" }, "— all columns —"),
+        cols.filter(function (c) { return c.label; }).map(function (c) { return h("option", { key: c.id, value: c.id }, c.label); })),
+      h("input", {
+        type: "search", className: "miniinp tblfilter", "aria-label": "Filter text", placeholder: "Type to filter…", list: fcol ? "tf-" + id : undefined,
+        value: (live.filter && live.filter.q) || "",
+        onChange: function (e) { tvSet(id, { filter: { col: fcol, q: e.target.value }, view: null }); }
+      }),
+      fcol ? h("datalist", { id: "tf-" + id }, fVals.map(function (v) { return h("option", { key: v, value: v }); })) : null,
+      h("button", { className: "tblbtn ic", disabled: !live.filter || (!live.filter.q && !live.filter.col), title: "Clear the filter", "aria-label": "Clear the filter", onClick: function () { tvSet(id, { filter: null, view: null }); } }, h(Icon, { n: "close", size: 14 })),
+      filter ? h("span", { className: "tbl-l tblcount" }, regular.length + " of " + total + " rows") : null),
     h("div", { className: "tbg" },
       h("span", { className: "tbl-l" }, "Sort"),
       h("select", {
@@ -19611,7 +19657,7 @@ function STable(p) {
       h("span", { className: "tbl-l" }, "Reset"),
       h("button", { className: "tblbtn", disabled: !sized, title: "Automatic widths that fit the content", onClick: function () { tvSet(id, { widths: null, view: null }); } }, h(Icon, { n: "widths", size: 13 }), "Widths"),
       h("button", { className: "tblbtn", disabled: !live.order, title: "Original column order", onClick: function () { tvSet(id, { order: null, view: null }); } }, h(Icon, { n: "order", size: 13 }), "Order"),
-      h("button", { className: "tblbtn", disabled: !sort && !sized && !live.order && !live.view, title: "Reset the sort, order and widths", onClick: function () { tvSet(id, tvBlank()); } }, h(Icon, { n: "reset", size: 13 }), "All")));
+      h("button", { className: "tblbtn", disabled: !sort && !sized && !live.order && !live.view && !live.filter, title: "Reset the filter, sort, order and widths", onClick: function () { tvSet(id, tvBlank()); } }, h(Icon, { n: "reset", size: 13 }), "All")));
 
   return h(React.Fragment, null, bar, table);
 }

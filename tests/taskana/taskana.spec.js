@@ -634,6 +634,29 @@ test("the Library editor: read by default, structured notes, real undo, tables, 
   expect(errors).toEqual([]);
 });
 
+test("WorkDesk Management tables filter by any column or one column, and the filter saves with a view", async ({ page }) => {
+  const errors = await open(page, "home");
+  await page.goto(ORIGIN + "/index.html#/workdesk/time");
+  await page.getByText("Management", { exact: true }).first().click();
+  await page.getByText("Assignments & Allowances", { exact: true }).first().click();
+  const rows = page.locator("table.tbl tbody tr");
+  const all = await rows.count();
+  await page.locator('input[aria-label="Filter text"]').fill("elbit");
+  await expect(page.locator(".tblcount")).toHaveText(new RegExp("^\\d+ of " + all + " rows$"));
+  const n = await rows.count();
+  expect(n).toBeGreaterThan(0); expect(n).toBeLessThan(all);
+  for (let i = 0; i < n; i++) await expect(rows.nth(i)).toContainText("Elbit");
+  /* one column only: the client column has no "radar" */
+  await page.locator('select[aria-label="Column to filter"]').selectOption("Client");
+  await page.locator('input[aria-label="Filter text"]').fill("radar");
+  await expect(rows).toHaveCount(0);
+  await page.locator('select[aria-label="Column to filter"]').selectOption("Project");
+  await expect(rows.first()).toContainText("Radar");
+  await page.getByRole("button", { name: "Clear the filter" }).click();
+  await expect(rows).toHaveCount(all);
+  expect(errors).toEqual([]);
+});
+
 test("the Library editor: Hebrew examples open right to left, and one button turns a document either way", async ({ page }) => {
   const errors = await open(page, "library");
   const ed = page.frameLocator(".ed-frame").locator("#doc");
