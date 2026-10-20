@@ -141,6 +141,9 @@ function overlay() {
     shots.push({ file, t: f.metadata.timestamp });
     try { await cdp.send("Page.screencastFrameAck", { sessionId: f.sessionId }); } catch (e) {}
   });
+  /* the film opens on the title backdrop, never on a glimpse of the app: the backdrop is up before the camera rolls */
+  await page.evaluate(() => { const c = document.querySelector("#tut .card"); c.style.transition = "none"; c.innerHTML = ""; c.classList.add("on"); __tut.hideCursor(true); void c.offsetWidth; c.style.transition = ""; });
+  await page.waitForTimeout(300);
   await cdp.send("Page.startScreencast", { format: "jpeg", quality: 92, maxWidth: 1920, maxHeight: 1080, everyNthFrame: 1 });
   const T0 = Date.now() / 1000;
   const cues = [];
@@ -165,6 +168,7 @@ function overlay() {
     },
     /* a caption, with the spotlight on what it is about; it stays up for secs */
     say: async (text, opts = {}) => {
+      await T.uncover();
       const loc = opts.spot || null;
       if (loc) await loc.first().scrollIntoViewIfNeeded().catch(() => {});
       const el = loc ? await loc.first().elementHandle() : null;
@@ -188,7 +192,10 @@ function overlay() {
     clear: async () => { await page.evaluate(() => { __tut.caption(null); __tut.spot(null); }); await wait(150); },
     /* once an action is done its caption and spotlight go at once — unless { hold: true }, for a next action under the same caption */
     done: async opts => { if (!(opts && opts.hold)) await page.evaluate(() => { __tut.caption(null); __tut.spot(null); }); },
-    point: async (loc, speed) => { const c = await center(loc.first()); await page.evaluate(([x, y, s]) => __tut.move(x, y, s), [c.x, c.y, speed || null]); await wait(speed === "slow" ? 1150 : 750); return c; },
+    /* a scene that doesn't open with a title card: take the opening backdrop away first */
+    uncover: () => page.evaluate(() => { const c = document.querySelector("#tut .card"); if (c.classList.contains("on") && !c.innerHTML) { __tut.card(null); __tut.hideCursor(false); } }),
+    point: async (loc, speed) => { await T.uncover();
+      const c = await center(loc.first()); await page.evaluate(([x, y, s]) => __tut.move(x, y, s), [c.x, c.y, speed || null]); await wait(speed === "slow" ? 1150 : 750); return c; },
     click: async (loc, after = 650, opts) => {
       await loc.first().scrollIntoViewIfNeeded().catch(() => {});
       await T.point(loc); await page.evaluate(() => __tut.ring()); await wait(140);
