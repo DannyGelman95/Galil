@@ -3,7 +3,7 @@
 `make.js` films a tutorial of the Employee Portal from a scene script in `scenes/`.
 It drives the real app in a browser with the demo data, and draws an on-screen
 cursor, a spotlight on the part being explained and large captions. The output is a
-1080p MP4 with calm generated background music (`music.py`, no licence needed) and
+1080p MP4 with upbeat generated background music (`music.py`, no licence needed; a scene can set `music: "calm"` for the slower track) and
 the captions as a subtitle track, plus a `.srt` beside it.
 
 ```bash

@@ -28,7 +28,7 @@ module.exports = {
     const day = n => page.locator(".week .day").nth(n);
     const fld = label => page.locator(".modal .fld").filter({ has: page.locator("label", { hasText: new RegExp("^" + label) }) }).locator("select, input").first();
 
-    await T.card("WorkDesk tutorial · on a computer", "The Week Planner", "Plan your hours ahead — and see how they compare with the time you actually report.", 7);
+    await T.card("WorkDesk tutorial · on a computer", "The Week Planner", "Plan your hours ahead — and see how they compare with the time you actually report.", 5.5);
 
     await T.say("The Week Planner is one of WorkDesk's tabs. Let's open it from the tab bar at the top.", { spot: page.locator(".tabs .tab").filter({ hasText: "Week Planner" }), keep: true });
     await T.click(page.locator(".tabs .tab").filter({ hasText: "Week Planner" }), 1400);
@@ -43,14 +43,14 @@ module.exports = {
     await T.click(day(2).getByRole("button", { name: "+ plan" }), 1300);
     await T.clear();
     await T.say("A planned entry opens. Set the <b>start</b> and the <b>end</b> — the number of hours is worked out for you.", { spot: page.locator(".modal .grid3"), keep: true });
-    await T.fill(fld("Start"), "09:00");
+    await T.fill(fld("Start"), "09:00", { hold: true });
     await T.fill(fld("End"), "13:00");
     await T.clear();
     await T.say("Choose the <b>hour type</b>: <b>Yellow</b> for client work, <b>Red</b> for company time — and <b>Blue</b> for management, if your role has it.", { spot: fld("Hour type"), keep: true });
     await T.select(fld("Hour type"), "Yellow · Client");
     await T.clear();
     await T.say("Then pick the <b>client</b> and the <b>project</b>. The project list only shows that client's projects.", { spot: fld("Client"), keep: true });
-    await T.select(fld("Client"), "Elbit Systems");
+    await T.select(fld("Client"), "Elbit Systems", { hold: true });
     await T.select(fld("Project"), "Avionics Help System");
     await T.clear();
     await T.say("If you like, tie it to a <b>work order</b> and to one of your <b>Taskana tasks</b> — or leave them empty.", { spot: page.locator(".modal .grid2"), keep: true });
@@ -106,14 +106,14 @@ module.exports = {
 
     /* views */
     await T.say("Switch between a <b>Day</b>, a <b>Week</b> and a four-week <b>Month</b> view.", { spot: page.locator(".pillbar").first(), keep: true });
-    await T.click(page.locator(".pill", { hasText: /^Month$/ }), 1800);
-    await T.click(page.locator(".pill", { hasText: /^Day$/ }), 1800);
+    await T.click(page.locator(".pill", { hasText: /^Month$/ }), 1500, { hold: true });
+    await T.click(page.locator(".pill", { hasText: /^Day$/ }), 1500, { hold: true });
     await T.click(page.locator(".pill", { hasText: /^Week$/ }), 1200);
     await T.clear();
 
     await T.say("And <b>Export</b> downloads the plan next to the actual hours as an Excel workbook — handy for a weekly review.", { spot: page.getByRole("button", { name: "Export" }) });
     await T.say("If a week is planned past your contracted hours, an orange warning tells you — so you can spread the work in time.", { spot: page.locator(".chip").filter({ hasText: "Capacity" }) });
 
-    await T.card("That's the Week Planner", "Plan · compare · adjust", "Plan ahead, report as you go, and see the difference. More help: the Handbook → Week Planner.", 7);
+    await T.card("That's the Week Planner", "Plan · compare · adjust", "Plan ahead, report as you go, and see the difference. More help: the Handbook → Week Planner.", 5.5);
   }
 };

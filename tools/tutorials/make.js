@@ -25,20 +25,20 @@ function overlay() {
   if (window.__tut) return;
   var css = [
     "#tut{position:fixed;inset:0;pointer-events:none;z-index:2147483647;font-family:'Noto Sans','Segoe UI',Arial,sans-serif}",
-    "#tut .spot{position:fixed;border:3px solid #F08A24;border-radius:12px;box-shadow:0 0 0 4000px rgba(12,22,40,.40),0 0 24px rgba(240,138,36,.55);opacity:0;transition:opacity .45s,left .55s,top .55s,width .55s,height .55s}",
+    "#tut .spot{position:fixed;border:3px solid #F08A24;border-radius:12px;box-shadow:0 0 0 4000px rgba(12,22,40,.40),0 0 24px rgba(240,138,36,.55);opacity:0;transition:opacity .22s ease-out}",
     "#tut .spot.on{opacity:1}",
-    "#tut .cap{position:fixed;left:50%;bottom:34px;transform:translate(-50%,16px);max-width:min(1120px,86vw);background:rgba(22,38,66,.96);color:#fff;border-radius:16px;padding:18px 28px 18px 24px;font-size:25px;line-height:1.42;font-weight:500;box-shadow:0 18px 50px rgba(0,0,0,.35);border-inline-start:6px solid #F08A24;opacity:0;transition:opacity .45s,transform .45s,top .45s,bottom .45s}",
+    "#tut .cap{position:fixed;left:50%;bottom:34px;transform:translate(-50%,12px);max-width:min(1120px,86vw);background:rgba(22,38,66,.96);color:#fff;border-radius:16px;padding:18px 28px 18px 24px;font-size:25px;line-height:1.42;font-weight:500;box-shadow:0 18px 50px rgba(0,0,0,.35);border-inline-start:6px solid #F08A24;opacity:0;transition:opacity .3s,transform .3s}",
     "#tut .cap.on{opacity:1;transform:translate(-50%,0)}",
     "#tut .cap.top{bottom:auto;top:30px}",
     "#tut .cap b{color:#FFB46B;font-weight:700}",
     "#tut .cap .n{display:block;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:#B2C3E0;margin-bottom:4px;font-weight:700}",
-    "#tut .cur{position:fixed;left:0;top:0;width:30px;height:30px;transition:transform .95s cubic-bezier(.45,.05,.25,1);filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}",
+    "#tut .cur{position:fixed;left:0;top:0;width:30px;height:30px;transition:transform .7s cubic-bezier(.45,.05,.25,1);filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}",
     "#tut .cur.fast{transition:transform .25s ease}",
-    "#tut .cur.slow{transition:transform 1.5s cubic-bezier(.45,.05,.25,1)}",
+    "#tut .cur.slow{transition:transform 1.1s cubic-bezier(.45,.05,.25,1)}",
     "#tut .ring{position:fixed;width:44px;height:44px;margin:-22px 0 0 -22px;border-radius:50%;border:3px solid #F08A24;opacity:.9;animation:tutring .7s ease-out forwards}",
     "@keyframes tutring{from{transform:scale(.3);opacity:.95}to{transform:scale(1.6);opacity:0}}",
-    "#tut .ghost{position:fixed;left:0;top:0;opacity:.88;transform-origin:0 0;transition:transform 1.5s cubic-bezier(.45,.05,.25,1);box-shadow:0 14px 34px rgba(0,0,0,.3);border-radius:9px;background:#fff}",
-    "#tut .card{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff;text-align:center;opacity:0;transition:opacity .8s;",
+    "#tut .ghost{position:fixed;left:0;top:0;opacity:.88;transform-origin:0 0;transition:transform 1.1s cubic-bezier(.45,.05,.25,1);box-shadow:0 14px 34px rgba(0,0,0,.3);border-radius:9px;background:#fff}",
+    "#tut .card{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;color:#fff;text-align:center;opacity:0;transition:opacity .6s;",
     "background:radial-gradient(1100px 600px at 80% -10%,rgba(240,138,36,.35),transparent 60%),linear-gradient(160deg,#1F3A66,#14284A)}",
     "#tut .card.on{opacity:1}",
     "#tut .card .k{font-size:18px;letter-spacing:.32em;text-transform:uppercase;color:#FFB46B;font-weight:700}",
@@ -53,7 +53,16 @@ function overlay() {
   document.documentElement.appendChild(root);
   var spot = root.querySelector(".spot"), cap = root.querySelector(".cap"), cur = root.querySelector(".cur"), card = root.querySelector(".card");
   var target = null, pad = 8;
+  function place1() {
+    if (target && target.isConnected) {
+      var r = target.getBoundingClientRect();
+      spot.style.left = (r.left - pad) + "px"; spot.style.top = (r.top - pad) + "px";
+      spot.style.width = (r.width + pad * 2) + "px"; spot.style.height = (r.height + pad * 2) + "px";
+      cap.classList.toggle("top", r.bottom > innerHeight - 230 && r.top > 200);
+    }
+  }
   function place() {
+    if (target && !target.isConnected) { target = null; spot.classList.remove("on"); }
     if (target && target.isConnected) {
       var r = target.getBoundingClientRect();
       spot.style.left = (r.left - pad) + "px"; spot.style.top = (r.top - pad) + "px";
@@ -66,7 +75,13 @@ function overlay() {
   var cx = innerWidth * 0.62, cy = innerHeight * 0.62;
   cur.style.transform = "translate(" + cx + "px," + cy + "px)";
   window.__tut = {
-    spot: function (el, p) { target = el; pad = p == null ? 8 : p; spot.classList.toggle("on", !!el); if (!el) cap.classList.remove("top"); },
+    /* a new target: the ring jumps there unseen and fades in, so it never slides across the screen */
+    spot: function (el, p) {
+      pad = p == null ? 8 : p;
+      if (!el) { target = null; spot.classList.remove("on"); cap.classList.remove("top"); return; }
+      if (target !== el) { spot.style.transition = "none"; spot.classList.remove("on"); target = el; place1(); void spot.offsetWidth; spot.style.transition = ""; }
+      spot.classList.add("on");
+    },
     caption: function (html, n) { if (!html) { cap.classList.remove("on"); return; } cap.innerHTML = (n ? '<span class="n">' + n + '</span>' : "") + html; cap.classList.add("on"); },
     move: function (x, y, speed) { cur.classList.remove("fast", "slow"); if (speed) cur.classList.add(speed); cx = x; cy = y; cur.style.transform = "translate(" + (x - 4) + "px," + (y - 2) + "px)"; },
     ring: function () { var r = document.createElement("div"); r.className = "ring"; r.style.left = cx + "px"; r.style.top = cy + "px"; root.appendChild(r); setTimeout(function () { r.remove(); }, 800); },
@@ -74,7 +89,7 @@ function overlay() {
       var r = el.getBoundingClientRect(), g = el.cloneNode(true); g.className += " ghost"; g.style.width = r.width + "px";
       g.style.transform = "translate(" + r.left + "px," + r.top + "px)"; root.appendChild(g);
       requestAnimationFrame(function () { requestAnimationFrame(function () { g.style.transform = "translate(" + (x1 - r.width / 2) + "px," + (y1 - 12) + "px) rotate(-2deg)"; }); });
-      setTimeout(function () { g.remove(); }, 1700);
+      setTimeout(function () { g.remove(); }, 1250);
     },
     card: function (html) { if (html) card.innerHTML = html; card.classList.toggle("on", !!html); },
     hideCursor: function (h) { cur.style.opacity = h ? "0" : "1"; }
@@ -146,7 +161,7 @@ function overlay() {
       await wait(secs * 1000);
       await page.evaluate(() => { __tut.card(null); __tut.hideCursor(false); });
       cues.push({ a: t + 0.4, b: Date.now() / 1000 - T0, text: [title, sub].filter(Boolean).join(" — ").replace(/<[^>]+>/g, "") });
-      await wait(900);
+      await wait(600);
     },
     /* a caption, with the spotlight on what it is about; it stays up for secs */
     say: async (text, opts = {}) => {
@@ -154,35 +169,43 @@ function overlay() {
       if (loc) await loc.first().scrollIntoViewIfNeeded().catch(() => {});
       const el = loc ? await loc.first().elementHandle() : null;
       stepNo++;
+      if (el) await page.evaluate(el => new Promise(done => {           // until it stops moving (a dialog opening)
+        let last = "", same = 0, n = 0;
+        (function look() { const r = el.getBoundingClientRect(), k = [r.x, r.y, r.width, r.height].map(Math.round).join();
+          same = k === last ? same + 1 : 0; last = k; if (same >= 3 || ++n > 60) done(); else requestAnimationFrame(look); })();
+      }), el);
       await page.evaluate(([el, pad]) => __tut.spot(el, pad), [el, opts.pad == null ? 8 : opts.pad]);
-      await wait(350);
+      await wait(200);
       const words = text.replace(/<[^>]+>/g, "").split(/\s+/).length;
-      const secs = opts.secs || Math.max(4.5, 1.5 + words * 0.32);
+      const secs = opts.secs || Math.max(3.4, 1.1 + words * 0.25);
       const t = Date.now() / 1000 - T0;
       await page.evaluate(([h, n]) => __tut.caption(h, n), [text, opts.label || ""]);
       if (opts.during) await opts.during();
       await wait(secs * 1000);
       cues.push({ a: t, b: Date.now() / 1000 - T0, text: text.replace(/<[^>]+>/g, "") });
-      if (!opts.keep) { await page.evaluate(() => { __tut.caption(null); __tut.spot(null); }); await wait(600); }
+      if (!opts.keep) { await page.evaluate(() => { __tut.caption(null); __tut.spot(null); }); await wait(300); }
     },
-    clear: async () => { await page.evaluate(() => { __tut.caption(null); __tut.spot(null); }); await wait(500); },
-    point: async (loc, speed) => { const c = await center(loc.first()); await page.evaluate(([x, y, s]) => __tut.move(x, y, s), [c.x, c.y, speed || null]); await wait(speed === "slow" ? 1600 : 1050); return c; },
-    click: async (loc, after = 900) => {
+    clear: async () => { await page.evaluate(() => { __tut.caption(null); __tut.spot(null); }); await wait(150); },
+    /* once an action is done its caption and spotlight go at once — unless { hold: true }, for a next action under the same caption */
+    done: async opts => { if (!(opts && opts.hold)) await page.evaluate(() => { __tut.caption(null); __tut.spot(null); }); },
+    point: async (loc, speed) => { const c = await center(loc.first()); await page.evaluate(([x, y, s]) => __tut.move(x, y, s), [c.x, c.y, speed || null]); await wait(speed === "slow" ? 1150 : 750); return c; },
+    click: async (loc, after = 650, opts) => {
       await loc.first().scrollIntoViewIfNeeded().catch(() => {});
-      await T.point(loc); await page.evaluate(() => __tut.ring()); await wait(180);
-      await loc.first().click(); await wait(after);
+      await T.point(loc); await page.evaluate(() => __tut.ring()); await wait(140);
+      await T.done(opts); await loc.first().click(); await wait(after);
     },
-    type: async (loc, text) => { await T.click(loc, 300); await loc.first().pressSequentially(text, { delay: 85 }); await wait(700); },
-    fill: async (loc, value) => { await T.click(loc, 300); await loc.first().fill(value); await wait(800); },
-    select: async (loc, label) => { await T.point(loc); await page.evaluate(() => __tut.ring()); await loc.first().selectOption({ label }); await wait(1000); },
+    type: async (loc, text, opts) => { await T.click(loc, 200, { hold: true }); await loc.first().pressSequentially(text, { delay: 55 }); await wait(450); await T.done(opts); },
+    fill: async (loc, value, opts) => { await T.click(loc, 200, { hold: true }); await loc.first().fill(value); await wait(550); await T.done(opts); },
+    select: async (loc, label, opts) => { await T.point(loc); await page.evaluate(() => __tut.ring()); await loc.first().selectOption({ label }); await wait(700); await T.done(opts); },
     /* drag one thing onto another: the cursor carries a copy of it across */
     drag: async (src, dst) => {
       const a = await T.point(src); await page.evaluate(() => __tut.ring()); await wait(250);
       const b = await center(dst.first());
+      await T.done();
       await page.evaluate(([el, x, y]) => { __tut.ghost(el, x, y); __tut.move(x, y, "slow"); }, [await src.first().elementHandle(), b.x, b.y]);
-      await wait(1550);
+      await wait(1150);
       await src.first().dragTo(dst.first(), { targetPosition: { x: Math.min(60, b.b.width / 2), y: Math.min(80, b.b.height / 2) } });
-      await wait(900);
+      await wait(600);
     }
   };
 
@@ -206,7 +229,7 @@ function overlay() {
   fs.writeFileSync(base + ".srt", srt);
 
   const music = path.join(frames, "music.wav");
-  execFileSync("python3", [path.join(__dirname, "music.py"), String(Math.ceil(dur) + 1), music, String(scene.seed || 7)]);
+  execFileSync("python3", [path.join(__dirname, "music.py"), String(Math.ceil(dur) + 1), music, String(scene.seed || 7), scene.music || "bright"]);
   execFileSync("ffmpeg", ["-v", "error", "-y",
     "-f", "concat", "-safe", "0", "-i", path.join(frames, "list.txt"),
     "-i", music, "-i", base + ".srt",

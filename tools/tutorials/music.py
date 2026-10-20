@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 """Background music for the tutorial films: a calm, original piano-and-pad loop.
 
-    python3 music.py <seconds> <out.wav> [seed]
+    python3 music.py <seconds> <out.wav> [seed] [style]
 
-Chords I–vi–IV–V in C at 72 bpm: a soft pad, a low bass note on each bar, a
-gentle bell arpeggio and a touch of reverb. Generated, so there is nothing to
-license. The film mixes it in quietly under the captions.
+style "bright" (the default): an upbeat, light track at 104 bpm in D — plucked
+electric-piano chords on an off-beat rhythm, a round bass, soft kick, snap and
+shaker, and a short bell motif.
+style "calm": chords I–vi–IV–V in C at 72 bpm, a soft pad and a gentle bell arpeggio.
+Generated, so there is nothing to license. The film mixes it in quietly under the captions.
 """
 import sys, wave
 import numpy as np
@@ -13,6 +15,7 @@ import numpy as np
 SR = 44100
 secs = float(sys.argv[1]); out = sys.argv[2]
 rng = np.random.default_rng(int(sys.argv[3]) if len(sys.argv) > 3 else 7)
+STYLE = sys.argv[4] if len(sys.argv) > 4 else "bright"
 N = int(SR * (secs + 4))
 L = np.zeros(N); R = np.zeros(N)
 
@@ -46,16 +49,61 @@ def bass(f, dur):
     env = np.minimum(1, t / 0.05) * np.exp(-t * 0.7)
     return (np.sin(2 * np.pi * f * t) + 0.2 * np.sin(2 * np.pi * 2 * f * t)) * env
 
-t0 = 0.0; k = 0
-while t0 < secs + 2:
-    ch = CHORDS[k % 4]
-    for j, m in enumerate(ch): add(pad(hz(m), CH), t0, pan=(j - 2) * 0.18, gain=0.055)
-    for b in range(2): add(bass(hz(ch[0] - 12), BAR), t0 + b * BAR, gain=0.16)
-    if k >= 1:                                     # the arpeggio comes in after the first chord
-        for i, m in enumerate(ARP[k % 4] * 2):
-            if rng.random() < 0.12: continue           # a few rests, so it breathes
-            add(bell(hz(m)), t0 + i * BEAT / 2, pan=rng.uniform(-0.35, 0.35), gain=0.075 * rng.uniform(0.65, 1.0))
-    t0 += CH; k += 1
+def pluck(f, dur=0.5):
+    """an electric-piano pluck: a few harmonics, a quick bright attack, a short tail"""
+    t = np.arange(int(SR * dur)) / SR
+    env = np.minimum(1, t / 0.004) * np.exp(-t * 7.5)
+    tone = np.sin(2 * np.pi * f * t) + 0.42 * np.sin(2 * np.pi * 2 * f * t) * np.exp(-t * 10) + 0.16 * np.sin(2 * np.pi * 3 * f * t) * np.exp(-t * 16)
+    return tone * env * (1 + 0.15 * np.sin(2 * np.pi * 5.5 * t))
+
+def kick():
+    t = np.arange(int(SR * 0.32)) / SR
+    f = 46 + 90 * np.exp(-t * 32)
+    return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 11)
+
+def noise_hit(dur, decay, hp):
+    n = rng.standard_normal(int(SR * dur))
+    n = n - np.convolve(n, np.ones(hp) / hp, "same")            # a crude high-pass: keep the hiss
+    return n * np.exp(-np.arange(len(n)) / SR * decay)
+
+def bright():
+    beat = 60 / 104; bar = 4 * beat
+    # D major: G – D – A – Bm  (IV – I – V – vi), voiced around middle C
+    chords = [[55, 59, 62, 66], [50, 57, 62, 66], [57, 61, 64, 69], [59, 62, 66, 69]]
+    roots = [43, 38, 45, 47]
+    motif = [[74, 76, 78, None, 76, 74, None, 71], [74, None, 73, 74, 76, None, 74, None],
+             [73, 76, 78, None, 81, 78, 76, None], [74, None, 71, 73, 74, None, None, None]]
+    rhythm = [0, 0.75, 1.5, 2.0, 2.75, 3.5]                        # an off-beat pluck pattern, in beats
+    t0, k = 0.0, 0
+    while t0 < secs + 2:
+        i = k % 4
+        for b in rhythm:
+            for j, m in enumerate(chords[i]):
+                add(pluck(hz(m)), t0 + b * beat, pan=(j - 1.5) * 0.22, gain=0.05 * (1.1 if b in (0, 2.0) else 0.85))
+        for b, o in ((0, 0), (1.5, 0), (2, 12), (3, 0), (3.5, 7)):
+            add(bass(hz(roots[i] + o), beat * 0.9), t0 + b * beat, gain=0.14)
+        if k >= 2:                                                   # the drums come in on the third bar
+            for b in (0, 2): add(kick(), t0 + b * beat, gain=0.32)
+            for b in (1, 3): add(noise_hit(0.12, 38, 3), t0 + b * beat, gain=0.045)
+            for b in range(8): add(noise_hit(0.05, 90, 2), t0 + b * beat / 2 + (0.02 if b % 2 else 0), pan=0.3, gain=0.018 if b % 2 else 0.011)
+        if k >= 4 and (k // 4) % 2 == 0:                             # the bell motif, every other phrase
+            for b, m in enumerate(motif[i]):
+                if m: add(bell(hz(m)), t0 + b * beat / 2, pan=-0.2, gain=0.06)
+        t0 += bar; k += 1
+
+def calm():
+    t0 = 0.0; k = 0
+    while t0 < secs + 2:
+        ch = CHORDS[k % 4]
+        for j, m in enumerate(ch): add(pad(hz(m), CH), t0, pan=(j - 2) * 0.18, gain=0.055)
+        for b in range(2): add(bass(hz(ch[0] - 12), BAR), t0 + b * BAR, gain=0.16)
+        if k >= 1:                                     # the arpeggio comes in after the first chord
+            for i, m in enumerate(ARP[k % 4] * 2):
+                if rng.random() < 0.12: continue           # a few rests, so it breathes
+                add(bell(hz(m)), t0 + i * BEAT / 2, pan=rng.uniform(-0.35, 0.35), gain=0.075 * rng.uniform(0.65, 1.0))
+        t0 += CH; k += 1
+
+bright() if STYLE == "bright" else calm()
 
 # reverb: a 2.6 s decaying noise tail, different per side
 def verb(x, seed):
@@ -63,7 +111,8 @@ def verb(x, seed):
     ir = r.standard_normal(n) * np.exp(-np.arange(n) / SR * 2.4); ir /= np.sqrt((ir ** 2).sum())
     size = 1 << int(np.ceil(np.log2(len(x) + n)))
     return np.fft.irfft(np.fft.rfft(x, size) * np.fft.rfft(ir, size), size)[: len(x)]
-L, R = L + 0.32 * verb(L, 1), R + 0.32 * verb(R, 2)
+wet = 0.2 if STYLE == "bright" else 0.32
+L, R = L + wet * verb(L, 1), R + wet * verb(R, 2)
 
 n = int(SR * secs); L, R = L[:n], R[:n]
 fade = np.ones(n); fi, fo = int(SR * 2.5), int(SR * 5)
