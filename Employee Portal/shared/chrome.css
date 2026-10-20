@@ -16,7 +16,7 @@
 .topbar .wordmark svg{width:32px; height:25px; flex:0 0 auto}
 .topbar .wordmark b{display:block; font-family:var(--sans); font-weight:700; font-size:17px; letter-spacing:.16em; color:#fff; line-height:1}
 .topbar .wordmark small{display:block; font-family:var(--sans); font-size:11px; letter-spacing:.05em; color:#899FC4; margin-top:3px; white-space:nowrap}
-.topbar .search{flex:1 1 240px; max-width:420px; position:relative; align-self:center}
+.topbar .search{flex:1 1 320px; max-width:620px; margin-inline:auto; position:relative; align-self:center}
 .topbar .search input{
   width:100%; font-family:var(--sans); font-size:14.5px; padding-block:7px; padding-inline:36px 12px;
   border-radius:9px; border:1px solid #2A3548; background:#0E1522; color:#E0E7F3;
