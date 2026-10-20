@@ -1,0 +1,119 @@
+1
+00:00:00,384 --> 00:00:06,990
+The Week Planner — Plan your hours ahead — and see how they compare with the time you actually report.
+
+2
+00:00:08,347 --> 00:00:15,610
+The Week Planner is one of WorkDesk's tabs. Let's open it from the tab bar at the top.
+
+3
+00:00:19,379 --> 00:00:27,281
+Each column is one day. Today is outlined in orange, and the blocks you have planned sit on their day.
+
+4
+00:00:28,296 --> 00:00:36,206
+The top of each day shows two numbers: the hours you planned (p) and the hours you actually reported (a).
+
+5
+00:00:37,189 --> 00:00:46,054
+Up here are the totals for the period: Planned, Actual, the Variance between them, and your Capacity — the hours in your contract.
+
+6
+00:00:47,056 --> 00:00:53,360
+To plan time, click + plan on the day you want. Let's plan Tuesday morning.
+
+7
+00:00:56,947 --> 00:01:04,852
+A planned entry opens. Set the start and the end — the number of hours is worked out for you.
+
+8
+00:01:10,695 --> 00:01:19,239
+Choose the hour type: Yellow for client work, Red for company time — and Blue for management, if your role has it.
+
+9
+00:01:22,224 --> 00:01:28,528
+Then pick the client and the project. The project list only shows that client's projects.
+
+10
+00:01:33,587 --> 00:01:41,808
+If you like, tie it to a work order and to one of your Taskana tasks — or leave them empty.
+
+11
+00:01:44,822 --> 00:01:50,165
+Add a short description, so you remember what the time is for.
+
+12
+00:01:56,630 --> 00:02:05,823
+Remember: a plan is only a plan. Planned entries don't count as reported hours — you still report your time in the Time Log.
+
+13
+00:02:06,811 --> 00:02:11,315
+Click Save, and the block appears on Tuesday.
+
+14
+00:02:14,287 --> 00:02:19,630
+Here it is. The totals at the top have been updated too.
+
+15
+00:02:20,637 --> 00:02:26,620
+Click a block to change any of its details — or to delete it.
+
+16
+00:02:29,607 --> 00:02:35,278
+Delete is at the bottom left. We'll keep this one, so let's cancel.
+
+17
+00:02:38,450 --> 00:02:44,115
+Plans change. To move a block to another day, just drag it there.
+
+18
+00:02:48,984 --> 00:02:53,492
+It moved to Wednesday.
+
+19
+00:02:54,483 --> 00:03:00,147
+Your open Taskana tasks that have a due date are suggested up here.
+
+20
+00:03:01,149 --> 00:03:03,663
+Drag one onto a day…
+
+21
+00:03:08,489 --> 00:03:17,031
+…and the planner fills in the client, the project, the task and the description for you. Just set the hours and save.
+
+22
+00:03:20,592 --> 00:03:27,535
+Team leads and managers can plan for their team as well. Choose the person under Planning for.
+
+23
+00:03:30,016 --> 00:03:35,680
+Now you see Eitan's week. When you change someone's plan, they are notified.
+
+24
+00:03:38,789 --> 00:03:47,986
+Happy with this week? Copy week puts every block into next week too — a quick start for a week that looks the same.
+
+25
+00:03:51,545 --> 00:03:57,211
+Use the arrows to move between weeks. Here's next week — already planned.
+
+26
+00:04:01,105 --> 00:04:05,608
+This week always brings you back to today.
+
+27
+00:04:09,130 --> 00:04:14,152
+Switch between a Day, a Week and a four-week Month view.
+
+28
+00:04:23,944 --> 00:04:31,855
+And Export downloads the plan next to the actual hours as an Excel workbook — handy for a weekly review.
+
+29
+00:04:32,853 --> 00:04:41,715
+If a week is planned past your contracted hours, an orange warning tells you — so you can spread the work in time.
+
+30
+00:04:42,718 --> 00:04:49,326
+Plan · compare · adjust — Plan ahead, report as you go, and see the difference. More help: the Handbook → Week Planner.
