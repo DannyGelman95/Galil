@@ -506,6 +506,7 @@ test.describe("phone layout", () => {
     const errors = await local(page);
     await signIn(page, "danny.gelman@galiltc.co.il");
     await expect(page.locator("#portal-home")).toBeVisible();
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("galil-workdesk-session"))).toBeTruthy();   // signed in for good, before the reload
     const monday = await page.evaluate(() => {
       const d = startOfWeek(new Date()); d.setDate(d.getDate() + 1); const ds = d2s(d);
       const raw = JSON.parse(localStorage.getItem("galil-workdesk-v1"));
@@ -540,6 +541,7 @@ test.describe("phone layout", () => {
       const errors = await local(page);
       await signIn(page, "danny.gelman@galiltc.co.il");
       await expect(page.locator("#portal-home")).toBeVisible();
+      await expect.poll(() => page.evaluate(() => localStorage.getItem("galil-workdesk-session"))).toBeTruthy();
       /* a block on this week's Sunday, so Monday to Thursday are "the rest of the week" */
       const sunday = await page.evaluate(() => {
         const ds = d2s(startOfWeek(new Date()));
@@ -580,7 +582,7 @@ test.describe("phone layout", () => {
     });
   });
 
-  test("Approvals count only what I can act on, the list scrolls with the page, and My assignments opens full height", async ({ page }) => {
+  test("Approvals count only what I can act on, the list scrolls with the page, and My assignments and My profile are screens", async ({ page }) => {
     const errors = await local(page);
     await signIn(page, "danny.gelman@galiltc.co.il");
     await page.click("#tile-workdesk");
@@ -594,11 +596,17 @@ test.describe("phone layout", () => {
     const counted = (await page.locator(".apfilters .pill span").allTextContents()).reduce((a, n) => a + Number(n), 0);
     expect(counted).toBe(cards);
     expect(await page.locator(".mob .page").evaluate(e => getComputedStyle(e).overflow)).toBe("visible");
+    /* My assignments and My profile open as screens of their own, under the More tab */
     await page.locator(".mnav button", { hasText: "More" }).click();
     await page.locator("#more-mywork").click();
-    const box = await page.locator(".sheet.full > .sh").boundingBox();
-    expect(box.height).toBeGreaterThan(700);
-    await expect(page.locator(".sheet.full .mcard").first()).toBeVisible();
+    await expect(page.locator(".sheet")).toHaveCount(0);
+    await expect(page.locator("#m-mywork .mcard").first()).toBeVisible();
+    await expect(page.locator(".mnav button.on")).toHaveText(/More/);
+    await page.getByRole("button", { name: "‹ More" }).click();
+    await page.locator("#more-profile").click();
+    await expect(page.locator(".sheet, .modal")).toHaveCount(0);
+    await expect(page.locator("#m-profile")).toContainText("Danny Gelman");
+    await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
     expect(errors).toEqual([]);
   });
 
