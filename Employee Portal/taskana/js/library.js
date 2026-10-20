@@ -43,6 +43,11 @@ function libInit() {
   });
   if (!db.library.some(function (d) { return d.kind === "SME interview"; }) && db.projects.some(function (p) { return /^p-(iai|elb|mob|cmd|gws|hft)1$/.test(p.id); })) db.library.push(libSample());
   db.libraryImported = true;
+  /* the Hebrew examples, right to left — added once, also to libraries made before they existed */
+  if (!db.libraryHebrew && db.projects.some(function (p) { return /^p-(iai|elb|mob|cmd|gws|hft)1$/.test(p.id); })) {
+    libSamplesHe().forEach(function (d) { db.library.push(d); });
+    db.libraryHebrew = true;
+  }
   save(true);
 }
 function libSample() {
@@ -50,12 +55,54 @@ function libSample() {
   var t = nowISO();
   return { id: uid("lib"), title: "SME interview — radar power-up and self-test", kind: "SME interview", status: "Draft",
     clientId: p.clientId || "", projectId: p.id || "", taskId: "", sme: "Yossi Levi", smeRole: "Senior systems engineer",
-    date: today(), place: "Client site — integration lab", tags: ["power-up", "BIT"], private: false,
+    date: today(), place: "Client site — integration lab", tags: ["power-up", "BIT"], private: false, dir: "ltr",
     authorId: me().id, createdAt: t, updatedAt: t, updatedBy: me().id,
     html: libClean(libTemplate("SME interview")
       .replace("<p>What we need to learn in this session.</p>", "<p>Confirm the power-up sequence and the built-in test (BIT) the operator sees, for chapter 3 of the Operator Manual.</p>")
       .replace('<p class="q">Question</p><p class="a">Answer</p>', '<p class="q">What does the operator do first when powering up?</p><p class="a">Main breaker on the rack, then the console switch. The console shows the boot screen for about 40 seconds before BIT starts.</p><p class="q">Which BIT results stop the operator?</p><p class="a">Any red result on the transmitter or the cooling loop. Amber results are logged and the operator may continue. <mark class="fu">Get the full list of amber codes from Yossi.</mark></p>'))
   };
+}
+
+/* worked examples in Hebrew, laid out right to left */
+function libSamplesHe() {
+  var p = db.projects.filter(function (x) { return /^p-iai1$/.test(x.id); })[0] || db.projects[0] || {};
+  /* a minute older than the English example, so that one stays first in the list */
+  var t = new Date(Date.now() - 60000).toISOString(), base = { clientId: p.clientId || "", projectId: p.id || "", taskId: "", private: false, dir: "rtl",
+    authorId: me().id, createdAt: t, updatedAt: t, updatedBy: me().id };
+  var row = function (k, v) { return "<tr><th>" + k + "</th><td>" + v + "</td></tr>"; };
+  var qa = function (q, a) { return '<p class="q">' + q + '</p><p class="a">' + a + "</p>"; };
+  var mk = function (o) { var d = Object.assign({ id: uid("lib") }, base, o); d.html = libClean(o.html.replace(/<(p|li|h1|h2|h3|h4|td|th|dt|dd)(?=[\s>])/g, '<$1 dir="rtl"')); return d; };
+  return [
+    mk({ title: "ראיון מומחה — הדלקת המכ״ם ובדיקה עצמית", kind: "SME interview", status: "Draft", sme: "יוסי לוי", smeRole: "מהנדס מערכת בכיר",
+      date: today(), place: "אתר הלקוח — מעבדת האינטגרציה", tags: ["הדלקה", "BIT"],
+      html: "<h1>פרטי הראיון</h1><table><tbody>" + row("מומחה/ית תוכן", "יוסי לוי") + row("תפקיד", "מהנדס מערכת בכיר") + row("תאריך ומקום", fmtDate(today()) + ", מעבדת האינטגרציה") +
+        row("משתתפים", "תמיר ניסמן, דני גלמן") + row("הקלטה", "לא הוקלט — סיכום בכתב בלבד") + "</tbody></table>" +
+        "<h1>מטרות</h1><p>לאשר את סדר ההדלקה ואת הבדיקה העצמית (<span class=\"term\">BIT</span>) שהמפעיל רואה, לפרק 3 של מדריך המפעיל.</p>" +
+        "<h1>שאלות ותשובות</h1><div class=\"qa\">" +
+        qa("מה המפעיל עושה ראשון בהדלקה?", "מפסק ראשי בארון, ואחר כך מתג הקונסולה. הקונסולה מציגה מסך אתחול כ-40 שניות לפני שה-BIT מתחיל.") +
+        qa("אילו תוצאות BIT עוצרות את המפעיל?", "כל תוצאה אדומה במשדר או בלולאת הקירור. תוצאות כתומות נרשמות ביומן והמפעיל רשאי להמשיך. <mark class=\"fu\">לקבל מיוסי את הרשימה המלאה של הקודים הכתומים.</mark>") +
+        qa("כמה זמן נמשכת ההדלקה כולה?", "כשלוש דקות מהמפסק הראשי ועד מצב המתנה (Standby).") + "</div>" +
+        "<h1>נהלים שתוארו</h1><div class=\"procedure\"><h4>הדלקת המערכת</h4><ol class=\"l-dec\"><li>להעביר את המפסק הראשי בארון למצב ON.</li><li>לסובב את מפתח הקונסולה למצב פעולה.</li><li>להמתין למסך האתחול (כ-40 שניות).</li><li>לעקוב אחר תוצאות ה-BIT על המסך.</li></ol><p class=\"result\">התוצאה: המערכת במצב המתנה, וכל תוצאות ה-BIT ירוקות או כתומות.</p></div>" +
+        "<div class=\"callout warn\"><p><strong>אזהרה:</strong> אין להדליק את המשדר לפני שלולאת הקירור מדווחת על זרימה תקינה.</p></div>" +
+        "<h1>מונחים</h1><dl><dt>BIT</dt><dd>Built-In Test — בדיקה עצמית שהמערכת מריצה בהדלקה ובמהלך הפעולה.</dd><dt>מצב המתנה</dt><dd>המערכת דלוקה ומוכנה, אך המשדר אינו משדר.</dd></dl>" +
+        "<h1>המשך טיפול</h1><ul class=\"check\"><li>לקבל את רשימת הקודים הכתומים.</li><li>לצלם את מסך האתחול לפרק 3.</li><li class=\"done\">לתאם ביקור שני במעבדה.</li></ul>" }),
+    mk({ title: "ביקור באתר — חדר הבקרה הראשי", kind: "Site visit", status: "In review", sme: "מיכל כהן", smeRole: "ראש צוות תפעול",
+      date: today(), place: "אתר הלקוח — חדר הבקרה", tags: ["ביקור", "קונסולה"],
+      html: "<h1>פרטי הביקור</h1><table><tbody>" + row("אתר", "חדר הבקרה הראשי, בניין 4") + row("תאריך", fmtDate(today())) + row("מארח/ת", "מיכל כהן, ראש צוות תפעול") + row("ציוד וגרסאות", "קונסולה דגם C-200, תוכנה גרסה 5.2") + "</tbody></table>" +
+        "<h1>מה ראינו</h1><p>שלוש עמדות מפעיל זהות, כל אחת עם שני מסכים. המפעילים עובדים במשמרות של שמונה שעות, ובכל החלפת משמרת נערכת בדיקת תקינות קצרה.</p>" +
+        "<h1>נהלים שנצפו</h1><ol class=\"l-dec\"><li>החלפת משמרת: מסירת יומן האירועים והתראות פתוחות.</li><li>בדיקת תקינות: הרצת BIT ידני מכל עמדה.</li><li>אישור בכתב של המפעיל הנכנס.</li></ol>" +
+        "<h1>מסכים והודעות</h1><table><thead><tr><th>מסך</th><th>מה הוא עושה</th><th>הערות</th></tr></thead><tbody>" +
+        "<tr><td>מסך ראשי</td><td>תמונת מצב של כל המערכות</td><td>צבעים: ירוק, כתום, אדום</td></tr><tr><td>יומן אירועים</td><td>כל ההתראות לפי זמן</td><td>אפשר לסנן לפי חומרה</td></tr><tr><td>תחזוקה</td><td>הרצת בדיקות ידניות</td><td>דורש הרשאת אחראי משמרת</td></tr></tbody></table>" +
+        "<div class=\"callout warn\"><p><strong>הערות בטיחות:</strong> הכניסה לחדר הציוד שמאחורי חדר הבקרה רק בליווי ועם תג מבקר.</p></div>" +
+        "<h1>המשך טיפול</h1><ul class=\"check\"><li><mark class=\"fu\">לבקש צילומי מסך של מסך התחזוקה.</mark></li><li>לברר מי מאשר שינויים בנוהל החלפת המשמרת.</li></ul>" }),
+    mk({ title: "סיכום פגישה — תכנון מדריך המפעיל", kind: "Meeting notes", status: "Final", sme: "", smeRole: "", date: today(), place: "משרדי GALIL", tags: ["תכנון"],
+      html: "<h1>סדר יום</h1><ol class=\"l-dec\"><li>מבנה מדריך המפעיל.</li><li>לוח זמנים לפרקים.</li><li>חלוקת ראיונות עם מומחים.</li></ol>" +
+        "<h1>החלטות</h1><ul><li>המדריך ייכתב בעברית, עם מונחים טכניים באנגלית בסוגריים.</li><li>כל פרק נפתח ב„לפני שמתחילים” ונסגר ב„פתרון תקלות”.</li><li>טיוטה ראשונה של פרק 3 תוגש בעוד שבועיים.</li></ul>" +
+        "<div class=\"callout tip\"><p><strong>טיפ:</strong> לסמן כל שאלה פתוחה כ„המשך טיפול”, כדי שתופיע בלשונית ההמשך ואפשר יהיה להפוך אותה למשימה.</p></div>" +
+        "<h1>משימות</h1><table><thead><tr><th>משימה</th><th>אחראי/ת</th><th>מועד</th></tr></thead><tbody>" +
+        "<tr><td>לתאם ראיון עם יוסי לוי</td><td>תמיר</td><td>יום ראשון</td></tr><tr><td>להכין תבנית לפרק</td><td>דני</td><td>יום שלישי</td></tr><tr><td>לאסוף צילומי מסך</td><td>מיכל</td><td>סוף השבוע</td></tr></tbody></table>" +
+        "<ul class=\"check\"><li class=\"done\">לשלוח סיכום פגישה לכל המשתתפים.</li><li>לפתוח משימות ב-Taskana לכל פרק.</li></ul>" })
+  ];
 }
 
 /* ---------- templates ---------- */
@@ -123,7 +170,7 @@ function libCreate(kind) {
   var t = nowISO(), f = ui.filters || {};
   var d = { id: uid("lib"), title: kind === "Blank" ? tr("Untitled") : tr(kind) + " — " + fmtDate(today()), kind: kind === "Blank" ? "Other" : kind, status: "Draft",
     clientId: lib.clientId || f.clientId || "", projectId: "", taskId: "", sme: "", smeRole: "", date: today(), place: "", tags: [], private: false,
-    html: libClean(libTemplate(kind)), authorId: me().id, createdAt: t, updatedAt: t, updatedBy: me().id };
+    dir: LANG === "he" ? "rtl" : "ltr", html: libClean(libTemplate(kind)), authorId: me().id, createdAt: t, updatedAt: t, updatedBy: me().id };
   db.library.unshift(d); save(true);
   lib.side = "details";
   go("library/" + d.id);
@@ -526,7 +573,7 @@ function libFuToTasks(d, marks) {
 function libExport(kind) {
   libFlush();
   var d = libCur(); if (!d) return;
-  var body = libClean(ED.root.innerHTML), title = d.title || tr("Untitled"), dir = LANG === "he" ? "rtl" : "ltr";
+  var body = libClean(ED.root.innerHTML), title = d.title || tr("Untitled"), dir = libDir(d);
   /* the same look as in the editor, plus the document's own stylesheet */
   var css = ED_CSS.replace("min-height:calc(100vh - 114px);", "") + "\n#doc{max-width:820px;margin:0 auto}\n" + edStylesCss(d) + "\n" + libCleanCss(d.css || "");
   var fl = edFontLinks(d);
@@ -534,7 +581,7 @@ function libExport(kind) {
   var meta = [byId(db.clients, d.clientId), byId(db.projects, d.projectId)].filter(Boolean).map(function (x) { return x.name; });
   if (d.sme) meta.push(d.sme + (d.smeRole ? " (" + d.smeRole + ")" : ""));
   if (d.date) meta.push(fmtDate(d.date));
-  var doc = "<!doctype html><html dir=\"" + dir + "\"><head><meta charset=\"utf-8\"><title>" + libEsc(title) + "</title><style>" + css + "</style>" + link + "</head><body><main id=\"doc\">" +
+  var doc = "<!doctype html><html lang=\"" + (dir === "rtl" ? "he" : "en") + "\" dir=\"" + dir + "\"><head><meta charset=\"utf-8\"><title>" + libEsc(title) + "</title><style>" + css + "</style>" + link + "</head><body><main id=\"doc\">" +
     "<h1 class=\"doc-title\" style=\"border:0;font-size:26px\">" + libEsc(title) + "</h1>" + (meta.length ? "<p class=\"doc-meta\" style=\"color:#5F656E\">" + libEsc(meta.join(" · ")) + "</p>" : "") +
     body + "</main></body></html>";
   var name = (title.replace(/[\\/:*?"<>|]+/g, " ").trim() || "document").slice(0, 80);

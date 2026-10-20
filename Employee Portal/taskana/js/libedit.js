@@ -133,7 +133,8 @@ var ED_CSS = [
   ".ed-find{background:#FFE08A;outline:1px solid #EDA100}"
 ].join("\n");
 function edSrcdoc() {
-  return "<!doctype html><html lang=\"" + LANG + "\" dir=\"" + (LANG === "he" ? "rtl" : "ltr") + "\"><head><meta charset=\"utf-8\">" +
+  var dir = libDir(ED.d);
+  return "<!doctype html><html lang=\"" + (dir === "rtl" ? "he" : "en") + "\" dir=\"" + dir + "\"><head><meta charset=\"utf-8\">" +
     "<meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; style-src 'self' 'unsafe-inline' https:; img-src data: https:; font-src 'self' https: data:\">" +
     "<link rel=\"stylesheet\" href=\"../shared/fonts/fonts.css\"><style id=\"ed-base\">" + ED_CSS + "</style><link id=\"ed-ext\" rel=\"stylesheet\"><style id=\"ed-user\"></style></head>" +
     "<body><main id=\"doc\" spellcheck=\"true\"></main></body></html>";
@@ -156,6 +157,7 @@ function edOnLoad() {
   if (!ED.root) return;
   ED.root.innerHTML = ED.html;
   ED.root.classList.toggle("numbered", !!(ED.d && ED.d.numbered));
+  edApplyDir();
   edApplyStyles();
   edEditable();
   edWire();
@@ -169,6 +171,37 @@ function edEditable() {
   if (ED.wrap) ED.wrap.classList.toggle("editing", ED.editing);
 }
 function edScrollTo(id) { var el = ED.root && ED.root.querySelector("#" + CSS.escape(id)); if (el) el.scrollIntoView({ block: "start", behavior: "smooth" }); }
+
+/* ---------- direction: each document is right to left or left to right, whatever the interface's language ---------- */
+var ED_DIR_BLOCKS = "p,li,h1,h2,h3,h4,h5,h6,td,th,blockquote,dt,dd,figcaption,summary,caption";
+/* a document without a direction of its own takes the direction of most of its letters */
+function libGuessDir(html) {
+  var t = libText(html), he = (t.match(/[\u0590-\u05FF]/g) || []).length, la = (t.match(/[A-Za-z]/g) || []).length;
+  return he || la ? (he >= la ? "rtl" : "ltr") : "";
+}
+function libDir(d) { return d && (d.dir === "rtl" || d.dir === "ltr") ? d.dir : (d && libGuessDir(d.html)) || (LANG === "he" ? "rtl" : "ltr"); }
+function edApplyDir() {
+  if (!ED.doc || !ED.d) return;
+  var dir = libDir(ED.d), el = ED.doc.documentElement;
+  el.setAttribute("dir", dir); el.setAttribute("lang", dir === "rtl" ? "he" : "en");
+  edToolState();
+}
+/* the whole document turns: its own direction and every paragraph's, as in Word */
+function edSetDocDir(dir) {
+  var d = libCur(); if (!d || !ED.root) return;
+  if (libNeedEdit()) return;
+  d.dir = dir; ED.d.dir = dir;
+  edChange(function () { [].slice.call(ED.root.querySelectorAll(ED_DIR_BLOCKS)).forEach(function (b) { b.setAttribute("dir", dir); }); });
+  edApplyDir();
+  d.updatedAt = nowISO(); d.updatedBy = me().id; save(true);
+  toast(dir === "rtl" ? tr("The document is now right to left.") : tr("The document is now left to right."));
+}
+function edToggleDocDir() { edSetDocDir(libDir(ED.d) === "rtl" ? "ltr" : "rtl"); }
+/* the selected paragraphs only: right to left, left to right, or by their own text (auto) */
+function edParaDir(dir) {
+  var bl = edBlocks(); if (!bl.length) { toast(tr("Put the caret in a paragraph first.")); return; }
+  edChange(function () { bl.forEach(function (b) { b.setAttribute("dir", dir); }); });
+}
 
 /* ---------- selection ---------- */
 function edSel() { return ED.win ? ED.win.getSelection() : null; }
@@ -827,6 +860,8 @@ var LIB_IC = {
   link: "M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1",
   image: "M4 5h16v14H4zM4 15l4-4 4 4 3-3 5 5M15 9h.01", table: "M4 5h16v14H4zM4 10h16M4 15h16M10 5v14M15 5v14", hr: "M4 12h16",
   find: "M11 18a7 7 0 100-14 7 7 0 000 14zM20 20l-4-4", tools: "M14 7l3-3 3 3-3 3M17 4l-9 9M4 20l4-1 9-9-3-3-9 9z", down: "M12 4v12M7 11l5 5 5-5M5 20h14",
+  pdir: "M8 4v10M12 4v10M6 4h8M8 4a3 3 0 000 6M4 19h16M7 16l-3 3 3 3M17 16l3 3-3 3",
+  rtl: "M11 3v12M15 3v12M9 3h8M11 3a3 3 0 000 6M4 20h16M7 17l-3 3 3 3", ltr: "M9 3v12M13 3v12M7 3h8M9 3a3 3 0 000 6M4 20h16M17 17l3 3-3 3",
   alignL: "M4 6h16M4 10h10M4 14h16M4 18h10", alignC: "M4 6h16M7 10h10M4 14h16M7 18h10", alignR: "M4 6h16M10 10h10M4 14h16M10 18h10", alignJ: "M4 6h16M4 10h16M4 14h16M4 18h16",
   spacing: "M8 6h12M8 12h12M8 18h12M4 4v16M2.5 6L4 4l1.5 2M2.5 18L4 20l1.5-2", plus: "M12 5v14M5 12h14", block: "M4 4h16v6H4zM4 14h7v6H4zM15 14h5v6h-5z",
   snippet: "M8 4H5v16h3M16 4h3v16h-3M10 9l-2 3 2 3M14 9l2 3-2 3", doc: "M6 3h9l4 4v14H6zM14 3v5h5M9 13h7M9 17h7", chev: "M9 6l6 6-6 6",
@@ -1035,6 +1070,15 @@ function edToolbar(d) {
     edMenu(libIcon("alignL"), tr("Alignment"), function () { return [["", "Align to start", "alignL"], ["al-c", "Centre", "alignC"], ["al-e", "Align to end", "alignR"], ["al-j", "Justify", "alignJ"]].map(function (x) { return { label: tr(x[1]), icon: x[2], fn: function () { edRestore(); edBlockClass("al-", x[0]); } }; }); }),
     edMenu(libIcon("ul"), tr("Bullets"), function () { return [["b-disc", "• Bullets"], ["b-circle", "◦ Circles"], ["b-square", "▪ Squares"], ["b-dash", "– Dashes"], ["b-arrow", "➔ Arrows"], ["check", "☐ Checklist"]].map(function (x) { return { label: tr(x[1]), fn: function () { edRestore(); edList("ul", x[0]); } }; }).concat(["—", { label: tr("Remove the list"), fn: function () { edRestore(); edListOff(); } }]); }),
     edMenu(libIcon("ol"), tr("Numbering"), function () { return [["l-dec", "1. 2. 3."], ["l-la", "a. b. c."], ["l-ua", "A. B. C."], ["l-lr", "i. ii. iii."], ["l-ur", "I. II. III."], "—", ["l-ml", "Multilevel 1 · 1.1 · 1.1.1"], ["l-out", "Outline 1 · a · i"]].map(function (x) { return x === "—" ? x : { label: tr(x[1]), fn: function () { edRestore(); edList("ol", x[0]); } }; }).concat(["—", { label: tr("Start at…"), fn: edStartAtBar }, { label: tr("Remove the list"), fn: function () { edRestore(); edListOff(); } }]); }),
+    h("button", { type: "button", class: "tb wide", id: "ed-dir", onmousedown: function (e) { e.preventDefault(); }, onclick: edToggleDocDir }),
+    edMenu(libIcon("pdir"), tr("Text direction"), function () { var cur = libDir(ED.d); return [
+      { head: tr("Whole document") },
+      { label: tr("Right to left"), icon: "rtl", fn: function () { edSetDocDir("rtl"); }, on: function () { return cur === "rtl"; } },
+      { label: tr("Left to right"), icon: "ltr", fn: function () { edSetDocDir("ltr"); }, on: function () { return cur === "ltr"; } },
+      "—", { head: tr("Selected paragraphs") },
+      { label: tr("Right to left"), icon: "rtl", fn: function () { edRestore(); edParaDir("rtl"); } },
+      { label: tr("Left to right"), icon: "ltr", fn: function () { edRestore(); edParaDir("ltr"); } },
+      { label: tr("By the paragraph's own text"), fn: function () { edRestore(); edParaDir("auto"); } }]; }),
     edBtn("outdent", tr("Decrease indent"), function () { edIndent(-1); }, "Shift+Tab"), edBtn("indent", tr("Increase indent"), function () { edIndent(1); }, "Tab"),
     edMenu(libIcon("spacing"), tr("Spacing and indents"), function () { return [{ head: tr("Line spacing") }].concat([["lh-10", "1.0"], ["", "1.15 — normal"], ["lh-15", "1.5"], ["lh-20", "2.0"]].map(function (x) { return { label: x[1], fn: function () { edRestore(); edBlockClass("lh-", x[0]); } }; }),
       ["—", { head: tr("Space after paragraphs") }], [["sa-0", "None"], ["", "Normal"], ["sa-2", "Large"]].map(function (x) { return { label: tr(x[1]), fn: function () { edRestore(); edBlockClass("sa-", x[0]); } }; }),
@@ -1088,6 +1132,12 @@ function edToolState() {
     var on = false; try { on = ED.doc.queryCommandState(c); } catch (e) {}
     b.classList.toggle("on", !!on && !!edRange());
   });
+  var dirB = document.getElementById("ed-dir");
+  if (dirB && ED.d) {
+    var rtl = libDir(ED.d) === "rtl", lbl = rtl ? tr("Right to left — switch to left to right") : tr("Left to right — switch to right to left");
+    dirB.replaceChildren(libIcon(rtl ? "rtl" : "ltr"), h("span", null, rtl ? "RTL" : "LTR"));
+    dirB.title = lbl; dirB.setAttribute("aria-label", lbl);
+  }
   var u = ED.tb.querySelector('[data-cmd="undo"]'), r = ED.tb.querySelector('[data-cmd="redo"]');
   if (u) u.disabled = ED.hi <= 0 && !ED.pend; if (r) r.disabled = ED.hi >= ED.hist.length - 1;
   var lab = document.getElementById("ed-style"), b0 = edBlock();

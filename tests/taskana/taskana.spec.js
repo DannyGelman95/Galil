@@ -634,6 +634,36 @@ test("the Library editor: read by default, structured notes, real undo, tables, 
   expect(errors).toEqual([]);
 });
 
+test("the Library editor: Hebrew examples open right to left, and one button turns a document either way", async ({ page }) => {
+  const errors = await open(page, "library");
+  const ed = page.frameLocator(".ed-frame").locator("#doc");
+  const html = page.frameLocator(".ed-frame").locator("html");
+  /* the Hebrew example is right to left in the English interface, the English one left to right */
+  await page.locator(".lib-item", { hasText: "ראיון מומחה" }).click();
+  await expect(html).toHaveAttribute("dir", "rtl");
+  await expect(ed.locator("h1").first()).toHaveCSS("direction", "rtl");
+  const en = (await store(page)).library.find(d => /radar power-up/.test(d.title));
+  await go(page, "library/" + en.id);
+  await expect(html).toHaveAttribute("dir", "ltr");
+  /* the toggle turns the whole document, and the choice is kept */
+  await page.locator("#lib-edit").click();
+  await page.locator("#ed-dir").click();
+  await expect(html).toHaveAttribute("dir", "rtl");
+  await expect(page.locator("#ed-dir")).toHaveText("RTL");
+  await expect(ed.locator("h1").first()).toHaveCSS("direction", "rtl");
+  await expect(ed.locator("table th").first()).toHaveAttribute("dir", "rtl");
+  /* one paragraph back to left to right */
+  await ed.locator("h1").nth(1).click();
+  await page.locator('button[aria-label="Text direction"]').click();
+  await page.locator(".ed-menu button", { hasText: "Left to right" }).nth(1).click();
+  await expect(ed.locator("h1").nth(1)).toHaveAttribute("dir", "ltr");
+  await page.locator("#lib-done").click();
+  const doc = (await store(page)).library.find(d => /radar power-up/.test(d.title));
+  expect(doc.dir).toBe("rtl");
+  expect((await store(page)).library.filter(d => d.dir === "rtl").length).toBeGreaterThanOrEqual(3);
+  expect(errors).toEqual([]);
+});
+
 test("the Library editor: floating menus close on a click in the text, classes, fonts and styles", async ({ page }) => {
   const errors = await open(page, "library");
   await page.locator(".lib-item", { hasText: "SME interview" }).first().click();
