@@ -1,0 +1,83 @@
+1
+00:00:00,363 --> 00:00:05,472
+The Time Log — Report your work, sick and vacation time — and find, fix and export what you reported.
+
+2
+00:00:06,496 --> 00:00:14,100
+The Time Log is where you report your time. The form is on the left; everything reported this month is in the table on the right.
+
+3
+00:00:14,813 --> 00:00:20,166
+The date starts on today. Pick another day in the calendar, or press Today to come back.
+
+4
+00:00:20,838 --> 00:00:24,440
+The type is Work, Sick or Vacation. We're reporting work.
+
+5
+00:00:25,124 --> 00:00:28,977
+Set when you started and finished. WorkDesk works out the hours.
+
+6
+00:00:32,649 --> 00:00:40,202
+Then the hour type. Yellow is client work, billed and drawn from the project's budget. Red is company time. Blue is managing a client's projects.
+
+7
+00:00:41,027 --> 00:00:46,635
+Choose the client and the project. Not in the list? Type it — a manager verifies it later.
+
+8
+00:00:50,158 --> 00:00:55,524
+If the work belongs to a work order or one of your Taskana tasks, pick them too.
+
+9
+00:00:57,542 --> 00:01:01,462
+A short description is required — what did you work on?
+
+10
+00:01:07,004 --> 00:01:09,212
+Press Add entry.
+
+11
+00:01:12,289 --> 00:01:19,331
+It's in the table. Its status shows whether it went straight in or is waiting for a manager's approval — over an allowance, for example.
+
+12
+00:01:20,027 --> 00:01:23,640
+At the end of each row: edit, duplicate and delete.
+
+13
+00:01:24,309 --> 00:01:31,418
+Duplicate copies the entry to other days in one go — the next day, the rest of the week, or a date you choose.
+
+14
+00:01:34,494 --> 00:01:39,003
+Pick where it should go. We'll close this for now.
+
+15
+00:01:40,213 --> 00:01:47,829
+For a day off, set the type to Sick or Vacation. You choose a date range, and WorkDesk counts the working days and shows your balance.
+
+16
+00:01:49,877 --> 00:01:54,384
+Leave goes to your manager for approval. We'll switch back to Work.
+
+17
+00:01:56,895 --> 00:02:03,755
+Above the table: move between months, and the totals of what you see — by hour colour, sick days and what's in approval.
+
+18
+00:02:04,629 --> 00:02:10,743
+Managers can see their team's time too. The filters narrow it down by employee, client, project, work order or status.
+
+19
+00:02:11,560 --> 00:02:17,170
+This view exports exactly what you see to Excel; Everything exports all the time you're allowed to see.
+
+20
+00:02:18,303 --> 00:02:24,682
+And every table can be shaped to suit you: save views, sort, move and resize columns — and reset it all.
+
+21
+00:02:25,394 --> 00:02:30,077
+Report · check · export — Report as you go — it takes a minute a day. More help: the Handbook → Time Log.

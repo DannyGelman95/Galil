@@ -18912,6 +18912,7 @@ var ICONS = {
   help: [{ c: [12, 12, 10] }, "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", "M12 17h.01"],
   phone: [{ r: [5, 2, 14, 20, 2] }, "M12 18h.01"],
   monitor: [{ r: [2, 3, 20, 14, 2] }, "M8 21h8M12 17v4"],
+  logout: ["M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4", "M16 17l5-5-5-5", "M21 12H9"],
   globe: [{ c: [12, 12, 9] }, "M3 12h18", "M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9s1.3-6.5 3.8-9"],
   back: ["M19 12H5M12 19l-7-7 7-7"],
   edit: ["M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z", "M15 5l4 4"],
@@ -24656,7 +24657,6 @@ var MOBILE_TABS = [
 function MobileApp(p) {
   var db = p.db, user = p.user;
   var ts = useState("time"), tab = ts[0], setTab = ts[1];
-  var ms = useState(null), sheet = ms[0], setSheet = ms[1];
 
   var allowed = MOBILE_TABS.filter(function (t) {
     if (t.k === "time") return can(user, "reportOwnTime") || can(user, "viewOthersTime");
@@ -24664,9 +24664,9 @@ function MobileApp(p) {
     if (t.k === "expenses") return can(user, "reportExpenses") || can(user, "approveExpenses");
     return true;
   });
-  /* "approvals" is reached through the More sheet, not the bottom bar, so it is
-     never in MOBILE_TABS — but a valid tab all the same. (The Library is in Taskana.) */
-  var moreTabs = [];
+  /* Approvals, My assignments and My profile are reached from the More screen, not the
+     bottom bar, so they are never in MOBILE_TABS — but valid tabs all the same. (The Library is in Taskana.) */
+  var moreTabs = ["mywork", "profile"];
   if (can(user, "approveTime") || can(user, "approveExpenses")) moreTabs.push("approvals");
   if (allowed.concat(moreTabs.map(function (k) { return { k: k }; })).every(function (t) { return t.k !== tab; })) {
     tab = allowed.length ? allowed[0].k : "more";
@@ -24693,6 +24693,8 @@ function MobileApp(p) {
     tab === "planner" ? h(MobilePlanner, common) :
     tab === "expenses" ? h(MobileExpenses, common) :
     tab === "approvals" ? h(ApprovalsTab, common) :
+    tab === "mywork" ? h(MyWork, Object.assign({ mobile: true, screen: true }, common)) :
+    tab === "profile" ? h(Profile, { db: db, user: user, mutate: p.mutate, screen: true, onSignOut: p.onSignOut }) :
     moreScreen();
 
   /* More: a screen like the other tabs — grouped rows, each opening a part of the portal */
@@ -24710,8 +24712,8 @@ function MobileApp(p) {
       h("div", { className: "mh1" }, "More"),
       group("WorkDesk", [
         can(user, "approveTime") || can(user, "approveExpenses") ? { k: "approvals", icon: "approve", label: "Approvals", badge: approvals, fn: function () { setTab("approvals"); } } : null,
-        { k: "mywork", icon: "assignments", label: "My assignments and allowances", fn: function () { setSheet("mywork"); } },
-        { k: "profile", icon: "user", label: "My profile", fn: function () { setSheet("profile"); } }]),
+        { k: "mywork", icon: "assignments", label: "My assignments and allowances", fn: function () { setTab("mywork"); } },
+        { k: "profile", icon: "user", label: "My profile", fn: function () { setTab("profile"); } }]),
       group("Employee Portal", [
         { k: "home", icon: "home", label: "Employee Portal home", fn: p.onHome },
         acc.taskana !== "none" ? { k: "tasks", icon: "tasks", label: "My tasks in Taskana", href: "taskana/index.html#/my" } : null,
@@ -24742,11 +24744,11 @@ function MobileApp(p) {
         className: "iconbtn", onClick: function () { p.setTheme(p.theme === "dark" ? "light" : "dark"); },
         "aria-label": p.theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme"
       }, h(Icon, { n: p.theme === "dark" ? "sun" : "moon" })),
-      h("button", { className: "iconbtn", onClick: function () { setSheet("profile"); }, "aria-label": "My profile" },
+      h("button", { className: "iconbtn", onClick: function () { setTab("profile"); }, "aria-label": "My profile" },
         h("span", { className: "avatar", style: { width: 28, height: 28, fontSize: 11 } }, initialsOf(user.fullName)))),
 
     h("div", { className: "mbody" },
-      tab === "approvals" ? h("div", { className: "mrow" },
+      ["approvals", "mywork", "profile"].indexOf(tab) >= 0 ? h("div", { className: "mrow" },
         /* ApprovalsTab (reused from the desktop build) renders its own heading */
         h(Btn, { sm: true, kind: "t", onClick: function () { setTab("more"); } }, "‹ More")) : null,
       body),
@@ -24754,16 +24756,13 @@ function MobileApp(p) {
     h("div", { className: "mnav", role: "tablist" },
       allowed.map(function (t) {
         var badge = t.k === "more" ? approvals : 0;
-        var on = tab === t.k || (t.k === "more" && ["approvals", "more"].indexOf(tab) >= 0);
+        var on = tab === t.k || (t.k === "more" && ["approvals", "mywork", "profile", "more"].indexOf(tab) >= 0);
         return h("button", {
           key: t.k, role: "tab", "aria-selected": on ? "true" : "false", className: on ? "on" : "",
           onClick: function () { setTab(t.k); }
         }, h("span", { className: "ic", "aria-hidden": "true" }, h(Icon, { n: t.icon, size: 20 })), t.label,
            badge ? h("span", { className: "badge" }, badge) : null);
-      })),
-
-    sheet === "mywork" ? h(MyWork, Object.assign({ mobile: true, onClose: function () { setSheet(null); } }, common)) : null,
-    sheet === "profile" ? h(Profile, { db: db, user: user, mutate: p.mutate, onClose: function () { setSheet(null); }, onSignOut: p.onSignOut }) : null);
+      })));
 }
 </script>
 <script src="workdesk/workdesk-seed.js"></script>
@@ -24786,6 +24785,9 @@ function MyWork(p) {
   var db = p.db, user = p.user;
   var rs = useState(null), req = rs[0], setReq = rs[1];
   var mine = db.assignments.filter(function (a) { return a.userId === user.id; });
+  if (!mine.length && p.screen) return h(React.Fragment, null, h("div", { className: "mh1" }, "My assignments and allowances"),
+    h("div", { className: "mcard" }, h("div", { className: "empty" }, "You hold no project or work-order assignments yet."),
+      h("div", { className: "cap", style: { textAlign: "center" } }, "Yellow time on an unassigned project is accepted, but routed to approval. A manager grants assignments under Management \u2192 Assignments & allowances.")));
   if (!mine.length) return h(p.mobile ? Sheet : Modal, { title: "My assignments and allowances", size: "md", onClose: p.onClose },
     h("div", { className: "empty" }, "You hold no project or work-order assignments yet."),
     h("div", { className: "cap", style: { textAlign: "center" } }, "Yellow time on an unassigned project is accepted, but routed to approval. A manager grants assignments under Management \u2192 Assignments & allowances."));
@@ -24801,8 +24803,9 @@ function MyWork(p) {
     }
   }) : null;
   /* on a phone: a full-height sheet of cards, one per assignment */
-  if (p.mobile) return h(Sheet, { title: "My assignments and allowances", full: true, onClose: p.onClose },
-    h("div", { className: "col mwork", style: { gap: 10 } }, mine.map(function (a) {
+  if (p.mobile) return h(p.screen ? React.Fragment : Sheet, p.screen ? null : { title: "My assignments and allowances", full: true, onClose: p.onClose },
+    p.screen ? h("div", { className: "mh1" }, "My assignments and allowances") : null,
+    h("div", { className: "col mwork", id: "m-mywork", style: { gap: 10 } }, mine.map(function (a) {
       var used = consumedOn(db, user.id, a), pend = pendingOn(db, user.id, a);
       var unlimited = a.allowanceHours === null || a.allowanceHours === undefined || a.allowanceHours === "";
       var pct = unlimited ? 0 : (used / (Number(a.allowanceHours) || 1)) * 100;
@@ -24860,8 +24863,13 @@ function Profile(p) {
       });
       setMine(null); toast("Saved.", "ok");
     } });
-  return h(Modal, { title: "My profile", size: "sm", onClose: p.onClose,
-    footer: [h(Btn, { key: "o", kind: "d", onClick: p.onSignOut }, "Sign out"), h("div", { key: "g", className: "grow" }), h(Btn, { key: "c", onClick: p.onClose }, "Close")] },
+  /* on a phone it is a screen of its own, like the other tabs; on a computer, a dialog */
+  var wrap = p.screen
+    ? function (body) { return h(React.Fragment, null, h("div", { className: "mh1" }, "My profile"), h("div", { className: "mcard", id: "m-profile" }, body),
+        h(Btn, { kind: "d", style: { minHeight: 46 }, onClick: p.onSignOut }, IconLabel("logout", "Sign out"))); }
+    : function (body) { return h(Modal, { title: "My profile", size: "sm", onClose: p.onClose,
+        footer: [h(Btn, { key: "o", kind: "d", onClick: p.onSignOut }, "Sign out"), h("div", { key: "g", className: "grow" }), h(Btn, { key: "c", onClick: p.onClose }, "Close")] }, body); };
+  return wrap(
     h("div", { className: "col", style: { gap: 10 } },
       h("div", { className: "row", style: { gap: 11 } },
         h("span", { className: "avatar", style: { width: 54, height: 54, fontSize: 18, backgroundImage: user.photoUrl ? "url(" + user.photoUrl + ")" : "none", backgroundSize: "cover" } }, user.photoUrl ? "" : initialsOf(user.fullName)),

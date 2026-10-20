@@ -73,6 +73,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <p class="part">Part A · The Employee Portal</p>
     <div class="ch-head"><span class="ch-num">01</span><h2>The Employee Portal</h2></div>
     <p class="lede">One address, one sign-in, four products. The Employee Portal is where every GALIL employee starts the day: the home page offers WorkDesk, Taskana, this Handbook and the Knowledge Base, each as its own tile, and opens the ones your access includes.</p>
+    <div class="films" data-films="portal-home-desktop portal-home-phone"></div>
 
     <figure>
       <img src="img/p01-portal-home.png" alt="The Employee Portal home page: a greeting, four tiles for WorkDesk, Taskana, the Handbook and the Knowledge Base, and shortcuts below.">
@@ -121,6 +122,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-signin" data-part="Employee Portal" data-title="Signing in and signing up">
     <div class="ch-head"><span class="ch-num">02</span><h2>Signing in and signing up</h2></div>
     <p class="lede">You sign in once, on the portal. WorkDesk, Taskana, the Handbook and the Knowledge Base all use that one session — none of them asks again. Only <code>@galiltc.co.il</code> addresses may sign in; external contractors do not sign themselves up — an administrator provisions them.</p>
+    <div class="films" data-films="portal-signin-desktop"></div>
 
     <figure>
       <img src="img/p02-signin.png" alt="The Employee Portal sign-in card, with a Microsoft button above an email and password form.">
@@ -175,6 +177,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-access" data-part="Employee Portal" data-title="Portal access" data-caps="openWorkdesk">
     <div class="ch-head"><span class="ch-num">03</span><h2>Portal access</h2></div>
     <p class="lede">Each person has their own access across the portal: whether they may open WorkDesk, which role they have in Taskana, and whether they may read the Handbook and the Knowledge Base. It starts from their WorkDesk role and can be changed person by person.</p>
+    <div class="films" data-films="workdesk-management-people-desktop"></div>
     <div class="locked-note"></div>
 
     <h3>The defaults</h3>
@@ -490,6 +493,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-screen" data-title="Finding your way around">
     <div class="ch-head"><span class="ch-num">05</span><h2>Finding your way around</h2></div>
     <p class="lede">One dark top bar, one row of tabs, and a few icon buttons that open everything that is not a tab. The ← button steps back to the screen you were on; the <i class="ui-ic" data-ic="home"></i> button takes you to the portal home page.</p>
+    <div class="films" data-films="workdesk-mywork-desktop workdesk-more-phone"></div>
 
     <figure>
       <img src="img/50-ops-timelog.png" alt="The full WorkDesk window: dark top bar with brand, icon buttons and user chip; tab row; Time Log page beneath.">
@@ -566,6 +570,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-time" data-title="Time Log" data-caps="reportOwnTime,reportBlueTime,viewOthersTime">
     <div class="ch-head"><span class="ch-num">06</span><h2>Time Log</h2></div>
     <p class="lede">Where the day is reported. The report form runs down a narrow column on the left (on the right in Hebrew), the month of entries fills the rest of the screen beside it, and an engine in between decides whether each entry registers or goes to an approver.</p>
+    <div class="films" data-films="workdesk-timelog-desktop workdesk-time-phone"></div>
     <div class="locked-note"></div>
     <div class="perm" data-perm="reportOwnTime,reportBlueTime,viewOthersTime,editOthersTime,excelExport"></div>
 
@@ -684,6 +689,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-planner" data-title="Week Planner" data-caps="planOwnWeek">
     <div class="ch-head"><span class="ch-num">07</span><h2>Week Planner</h2></div>
     <p class="lede">Intent, not record. Planned entries never count as reported hours — they exist so you can see the week before it happens and compare it afterwards.</p>
+    <div class="films" data-films="workdesk-planner-desktop workdesk-plan-phone"></div>
     <div class="locked-note"></div>
     <div class="perm" data-perm="planOwnWeek,planOthersWeek,excelExport"></div>
 
@@ -719,6 +725,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-expenses" data-title="Expenses" data-caps="reportExpenses,approveExpenses">
     <div class="ch-head"><span class="ch-num">09</span><h2>Expenses</h2></div>
     <p class="lede">Money or hours, attached to a client and project, with evidence where the expense type demands it.</p>
+    <div class="films" data-films="workdesk-expenses-desktop workdesk-expenses-phone"></div>
     <div class="locked-note"></div>
     <div class="perm" data-perm="reportExpenses,approveExpenses,excelExport"></div>
 
@@ -767,6 +774,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-budgets" data-title="Management" data-caps="viewBudgets,editBudgets,createWorkOrders,assignPeople,manageClientsProjects,manageEmployeesRoles">
     <div class="ch-head"><span class="ch-num">10</span><h2>Management</h2></div>
     <p class="lede">The day-to-day operational tab — budgets, work orders and the company's master records — behind one <strong>Management</strong> tab in the top bar. Up to V7, budgets and work orders lived on their own tab while people, assignments, clients, projects, expense types and the verification queue lived behind the <i class="ui-ic" data-ic="settings"></i> button; V7.1 brings all of it together here. Its sub-tabs run, left to right: <strong>People · Teams · Clients · Projects · Work Orders · Budgets · Assignments &amp; Allowances · Expense Types · Verification Queue</strong>, with <strong>Pending Activation</strong> last for Operations and the CEO. Which of them you see depends on your role. For how these records relate to each other, see <a href="#ch-model">How WorkDesk fits together</a>. Everything kept here — people, clients, projects and work orders — also appears in Taskana, read-only, as soon as it is saved.</p>
+    <div class="films" data-films="workdesk-management-work-desktop"></div>
     <div class="locked-note"></div>
     <div class="perm" data-perm="viewBudgets,editBudgets,createWorkOrders,assignPeople,manageTeams,manageClientsProjects,manageEmployeesRoles"></div>
 
@@ -869,6 +877,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </div>
 
     <h3>People</h3>
+    <div class="films" data-films="workdesk-management-people-desktop"></div>
     <p>Everyone, with email, role, team, manager and status. Operations Managers and the CEO change roles from the dropdown here and can <strong>Deactivate</strong> or <strong>Reactivate</strong> an account — except their own, which another administrator changes. Everyone else sees the same list read-only. Click an email address to copy it — every email address in WorkDesk works the same way. The <strong>Used by</strong> column counts the records each person is attached to. The <strong>Portal access</strong> column shows which parts of the portal the person can open and their Taskana role; Operations Managers and the CEO change it with <strong><i class="ui-ic" data-ic="edit"></i></strong> — see <a href="#ch-access">Portal access</a>.</p>
     <figure>
       <img src="img/51-admin-people.png" alt="The Management tab's People section listing staff with role dropdowns, team, manager and active status.">
@@ -976,6 +985,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-approvals" data-title="Approvals" data-caps="approveTime,approveExpenses">
     <div class="ch-head"><span class="ch-num">11</span><h2>Approvals</h2></div>
     <p class="lede">One queue for everything the engine could not decide by itself: time entries, allowance increases, unlisted list items, over-ceiling expenses, new accounts, role changes and retroactive edits.</p>
+    <div class="films" data-films="workdesk-approvals-desktop"></div>
     <div class="locked-note"></div>
     <div class="perm" data-perm="approveTime,approveExpenses,manageEmployeesRoles"></div>
 
@@ -1042,6 +1052,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-dashboard" data-title="Dashboard" data-caps="dashboardOwn,dashboardCompany">
     <div class="ch-head"><span class="ch-num">12</span><h2>Dashboard</h2></div>
     <p class="lede">Registered time only, over a period you choose — laid out the way you want. Each person keeps their own dashboards, each a set of widgets you pick from a catalogue or build yourself, with a manager cockpit for anyone who has people or budgets to watch.</p>
+    <div class="films" data-films="workdesk-dashboard-desktop"></div>
     <div class="locked-note"></div>
     <div class="perm" data-perm="dashboardOwn,dashboardCompany,excelExport"></div>
 
@@ -1102,6 +1113,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-mywork" data-title="My assignments and allowances" data-caps="reportOwnTime">
     <div class="ch-head"><span class="ch-num">14</span><h2>My assignments and allowances</h2></div>
     <p class="lede">The <i class="ui-ic" data-ic="assignments"></i> button in the top bar. Where your funded work lives, and where you ask for more hours before you run out. Taskana shows the same figures as <em>My hours banks</em> on My work.</p>
+    <div class="films" data-films="workdesk-mywork-desktop workdesk-more-phone"></div>
     <div class="locked-note"></div>
 
     <figure>
@@ -1131,6 +1143,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-admin" data-title="System administration" data-caps="backupRestore,viewAuditLog">
     <div class="ch-head"><span class="ch-num">15</span><h2>System administration</h2></div>
     <p class="lede">One modal behind the <i class="ui-ic" data-ic="settings"></i> button, with sections down its left side. Up to V7 this was called <strong>Lists &amp; data administration</strong> and held everything from people to the audit log; in V7.1 the day-to-day record-keeping (people, activation, assignments, clients, projects, expense types, verification) moved to the <a href="#ch-budgets">Management</a> tab, so this modal now holds only the settings a company runs once and rarely touches.</p>
+    <div class="films" data-films="workdesk-admin-desktop"></div>
     <div class="locked-note"></div>
     <div class="perm" data-perm="backupRestore,viewAuditLog"></div>
 
@@ -1235,6 +1248,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <p class="part">Part C · Taskana</p>
     <div class="ch-head"><span class="ch-num">19</span><h2>What Taskana is</h2></div>
     <p class="lede">Taskana is where the work itself is planned and followed: every writing, editing, review, illustration and translation task on every client project, on a board and in lists, with comments, questions and sub-tasks. It holds tasks only — the people, clients, projects and work orders it works on come from WorkDesk.</p>
+    <div class="films" data-films="taskana-tasks-desktop taskana-phone"></div>
     <div class="locked-note"></div>
 
     <figure>
@@ -1403,6 +1417,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-tk-library" data-part="Taskana" data-title="The Library" data-caps="tkLibraryRead,tkLibraryWrite">
     <div class="ch-head"><span class="ch-num">24</span><h2>The Library</h2></div>
     <p class="lede">The team's research notebook: rich documents for collecting and working through what subject-matter experts tell you — in interviews, on site visits and in product walkthroughs at the client — and for the house notes the team keeps. It lives in Taskana, beside the tasks the research is for.</p>
+    <div class="films" data-films="taskana-library-desktop"></div>
     <div class="locked-note"></div>
     <div class="perm" data-perm="tkLibraryRead,tkLibraryWrite"></div>
 
@@ -1810,6 +1825,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
 <script src="../config.js"></script>
 <script src="../shared/portal.js"></script>
-<script src="handbook.js?v=21"></script>
+<script src="../shared/films.js?v=1"></script>
+<script src="handbook.js?v=22"></script>
 </body>
 </html>

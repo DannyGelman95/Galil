@@ -2,15 +2,21 @@
 
 `make.js` films a tutorial of the Employee Portal from a scene script in `scenes/`.
 It drives the real app in a browser with the demo data, and draws an on-screen
-cursor, a spotlight on the part being explained and large captions. The output is a
-1080p MP4 with upbeat generated background music (`music.py`, no licence needed; a scene can set `music: "calm"` for the slower track) and
+cursor (a fingertip on a phone), a spotlight on the part being explained and large
+captions. The output is an MP4 — 1080p for a computer, portrait for a phone — with upbeat generated background music (`music.py`, no licence needed; a scene can set `music: "calm"` for the slower track) and
 the captions as a subtitle track, plus a `.srt` beside it.
 
 ```bash
 cd tests/workdesk          # for Playwright
 node ../../tools/tutorials/make.js workdesk-planner-desktop en
-# → docs/films/tutorials/workdesk-planner-desktop.en.mp4 and .en.srt
+# → Employee Portal/handbook/films/workdesk-planner-desktop.en.mp4, .vtt, .srt and .jpg (poster)
+FAST=1 node ../../tools/tutorials/make.js workdesk-planner-desktop   # a dry run: checks every step, films nothing
 ```
+
+The films play in the Handbook chapters and Knowledge Base articles through
+`Employee Portal/shared/films.js` — its list names each film; a page marks the place with
+`<div class="films" data-films="…">`. A phone scene sets `phone: true`, `scale: 2` and a
+390 × 844 viewport.
 
 Needs `ffmpeg`, and `python3` with `numpy`.
 
@@ -24,3 +30,5 @@ A scene exports `user`, `viewport`, `start` (the screen to open), an optional
 | `T.click(locator)` / `T.fill` / `T.type` / `T.select` | the cursor moves there, then acts |
 | `T.drag(from, to)` | the cursor carries a copy of `from` onto `to`, then drops it |
 | `T.clear()` | takes the caption and the spotlight away |
+| `T.field(label, scope)` | the input of a labelled field |
+| `T.scroll(loc)` / `T.goto(url)` / `T.swipe(loc, dx)` | scroll smoothly, open another page, swipe with a finger |

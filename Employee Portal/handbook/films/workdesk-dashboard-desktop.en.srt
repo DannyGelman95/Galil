@@ -1,0 +1,51 @@
+1
+00:00:00,336 --> 00:00:05,474
+The Dashboard — Hours, utilisation, budgets and approvals at a glance — and dashboards you build yourself.
+
+2
+00:00:06,640 --> 00:00:11,792
+Choose the period: this week, this month, the last three months, the year or all time.
+
+3
+00:00:16,820 --> 00:00:21,930
+Values or % switches the charts between hours and shares; Export saves the numbers to Excel.
+
+4
+00:00:22,677 --> 00:00:28,783
+The filters narrow everything to one person, client, project or work order. You see only the people in your scope.
+
+5
+00:00:29,459 --> 00:00:36,464
+The manager cockpit shows what needs you: approvals waiting, projects close to their budget, people over capacity and hours still in approval.
+
+6
+00:00:37,243 --> 00:00:42,852
+Then the totals: all hours, Yellow client hours, Red company hours, and utilisation — the share of Yellow.
+
+7
+00:00:44,440 --> 00:00:49,614
+Below, the charts: hours over time, by client, plan against actual, sick and vacation days, expenses…
+
+8
+00:00:51,191 --> 00:00:56,806
+You can build your own. + New dashboard starts an empty one; Customize changes the one you're on.
+
+9
+00:00:59,412 --> 00:01:05,957
+Now every widget has buttons to move it, change its settings or remove it — and the bar has Rename, Duplicate, Reset and Delete.
+
+10
+00:01:06,780 --> 00:01:09,285
++ Add widget offers ready-made widgets…
+
+11
+00:01:11,879 --> 00:01:16,748
+…or Build your own from any measure, grouping and chart. Let's add Hours by project.
+
+12
+00:01:19,613 --> 00:01:25,045
+It's added at the end. When you're happy, press Done — the dashboard is saved for you.
+
+13
+00:01:27,524 --> 00:01:31,709
+See · narrow · build your own — More help: the Handbook → Dashboard.

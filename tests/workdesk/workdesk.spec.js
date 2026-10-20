@@ -67,6 +67,15 @@ async function serve(page) {
   });
   return errors;
 }
+/* the app at an https address: a test that reloads the page needs it — straight from a file,
+   the browser can lose what was just stored when the page reloads */
+async function served(page) {
+  const errors = await serve(page);
+  await page.addInitScript(() => { try { localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" })); } catch (e) {} });
+  await page.goto(ORIGIN + "/index.html");
+  await expect(page.locator("#si-email")).toBeVisible();
+  return errors;
+}
 
 test.describe("GitHub data file", () => {
   const b64 = t => Buffer.from(t, "utf8").toString("base64"), unb64 = t => Buffer.from(t, "base64").toString("utf8");
@@ -239,9 +248,10 @@ test.describe("Employee Portal", () => {
   });
 
   test("one click switches the portal and WorkDesk to Hebrew, right to left", async ({ page }) => {
-    const errors = await local(page);
+    const errors = await served(page);
     await signIn(page, "danny.gelman@galiltc.co.il");
-    await page.getByRole("button", { name: "עב" }).click();
+    await expect(page.locator("#portal-home")).toBeVisible();
+    await page.locator(".hubtop").getByRole("button", { name: "עב" }).click();
     await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
     await expect(page.locator("#tile-workdesk")).toContainText("דיווח שעות");
     await page.click("#tile-workdesk");
@@ -265,6 +275,27 @@ test.describe("Employee Portal", () => {
     await page.goto(base + "handbook/index.html");
     await expect(page.locator('a.tcard[href="#ch-portal"]')).toBeVisible();
     await expect(page.getByText(/No access to/)).toHaveCount(0);
+  });
+
+  test("tutorial films play in the Handbook chapters and the matching Knowledge Base articles", async ({ page }) => {
+    const errors = await serve(page);
+    await page.addInitScript(() => localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" })));
+    await page.goto(ORIGIN + "/index.html"); await signIn(page, "danny.gelman@galiltc.co.il");
+    await expect(page.locator("#portal-home")).toBeVisible();
+    await page.goto(ORIGIN + "/handbook/index.html#ch-time");
+    const time = page.locator("#ch-time .films");
+    await expect(time.locator("video")).toHaveCount(2);
+    await expect(time).toHaveClass(/pair/);
+    /* every film the pages name exists, with its poster and captions */
+    const srcs = await page.locator(".films video source").evaluateAll(v => v.map(s => s.getAttribute("src")));
+    expect(srcs.length).toBeGreaterThanOrEqual(19);
+    for (const src of new Set(srcs)) for (const ext of [".mp4", ".jpg", ".vtt"]) {
+      expect(fs.existsSync(path.join(SITE, "handbook", src.replace(/\.mp4$/, ext))), src + ext).toBe(true);
+    }
+    await page.goto(ORIGIN + "/kb/index.html#/workdesk-plan");
+    await expect(page.locator("article .films video")).toHaveCount(2);
+    await expect(page.locator("article .films source").first()).toHaveAttribute("src", "../handbook/films/workdesk-planner-desktop.en.mp4");
+    expect(errors).toEqual([]);
   });
 
   test("an opened Handbook screenshot zooms with the wheel, the buttons and a double-click, and drags", async ({ page }) => {
@@ -503,9 +534,10 @@ test.describe("phone layout", () => {
   });
 
   test("Plan shows a month, and copies this week's plan to next week once", async ({ page }) => {
-    const errors = await local(page);
+    const errors = await served(page);
     await signIn(page, "danny.gelman@galiltc.co.il");
     await expect(page.locator("#portal-home")).toBeVisible();
+    await expect.poll(() => page.evaluate(() => localStorage.getItem("galil-workdesk-session"))).toBeTruthy();   // signed in for good, before the reload
     const monday = await page.evaluate(() => {
       const d = startOfWeek(new Date()); d.setDate(d.getDate() + 1); const ds = d2s(d);
       const raw = JSON.parse(localStorage.getItem("galil-workdesk-v1"));
@@ -537,9 +569,10 @@ test.describe("phone layout", () => {
     test.use({ hasTouch: true, isMobile: true });
 
     test("a planned card swipes to Copy (next day or the rest of the week) and Delete, with Undo", async ({ page, context }) => {
-      const errors = await local(page);
+      const errors = await served(page);
       await signIn(page, "danny.gelman@galiltc.co.il");
       await expect(page.locator("#portal-home")).toBeVisible();
+      await expect.poll(() => page.evaluate(() => localStorage.getItem("galil-workdesk-session"))).toBeTruthy();
       /* a block on this week's Sunday, so Monday to Thursday are "the rest of the week" */
       const sunday = await page.evaluate(() => {
         const ds = d2s(startOfWeek(new Date()));
@@ -580,7 +613,7 @@ test.describe("phone layout", () => {
     });
   });
 
-  test("Approvals count only what I can act on, the list scrolls with the page, and My assignments opens full height", async ({ page }) => {
+  test("Approvals count only what I can act on, the list scrolls with the page, and My assignments and My profile are screens", async ({ page }) => {
     const errors = await local(page);
     await signIn(page, "danny.gelman@galiltc.co.il");
     await page.click("#tile-workdesk");
@@ -594,11 +627,17 @@ test.describe("phone layout", () => {
     const counted = (await page.locator(".apfilters .pill span").allTextContents()).reduce((a, n) => a + Number(n), 0);
     expect(counted).toBe(cards);
     expect(await page.locator(".mob .page").evaluate(e => getComputedStyle(e).overflow)).toBe("visible");
+    /* My assignments and My profile open as screens of their own, under the More tab */
     await page.locator(".mnav button", { hasText: "More" }).click();
     await page.locator("#more-mywork").click();
-    const box = await page.locator(".sheet.full > .sh").boundingBox();
-    expect(box.height).toBeGreaterThan(700);
-    await expect(page.locator(".sheet.full .mcard").first()).toBeVisible();
+    await expect(page.locator(".sheet")).toHaveCount(0);
+    await expect(page.locator("#m-mywork .mcard").first()).toBeVisible();
+    await expect(page.locator(".mnav button.on")).toHaveText(/More/);
+    await page.getByRole("button", { name: "‹ More" }).click();
+    await page.locator("#more-profile").click();
+    await expect(page.locator(".sheet, .modal")).toHaveCount(0);
+    await expect(page.locator("#m-profile")).toContainText("Danny Gelman");
+    await expect(page.getByRole("button", { name: "Sign out" })).toBeVisible();
     expect(errors).toEqual([]);
   });
 
