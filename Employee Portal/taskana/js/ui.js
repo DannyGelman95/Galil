@@ -78,6 +78,14 @@ function icon(name, label) {
   p.setAttribute("d", ICONS[name] || ""); s.appendChild(p);
   return s;
 }
+/* the Employee Portal's wave, as on the portal sign-in screen */
+function wave() {
+  var ns = "http://www.w3.org/2000/svg", s = document.createElementNS(ns, "svg"), p = document.createElementNS(ns, "path");
+  s.setAttribute("viewBox", "0 0 60 46"); s.setAttribute("class", "wave"); s.setAttribute("aria-hidden", "true");
+  p.setAttribute("d", "M2 30 C10 6, 20 6, 28 24 S46 42, 58 12"); p.setAttribute("fill", "none"); p.setAttribute("stroke", "#F08A24");
+  p.setAttribute("stroke-width", "6"); p.setAttribute("stroke-linecap", "round"); s.appendChild(p);
+  return s;
+}
 /* the GALIL mark: a "G" between square brackets */
 function logo(size) {
   var ns = "http://www.w3.org/2000/svg", s = document.createElementNS(ns, "svg");
@@ -186,7 +194,7 @@ function sidebar() {
   var views = visibleViews();
   return [h("aside", { class: "side" + (ui.sideOpen ? " open" : ""), "aria-label": tr("Main menu") },
     h("div", { class: "brand" }, logo(34), h("div", null, h("b", null, "Taskana"), h("small", null, tr("by GALIL")))),
-    h("a", { class: "portal-link", id: "to-portal", href: "../index.html" }, icon("home"), h("span", { class: "lbl" }, tr("Employee Portal"))),
+    h("a", { class: "portal-link", id: "to-portal", href: "../index.html" }, wave(), h("span", { class: "lbl" }, tr("Employee Portal"))),
     h("nav", { class: "nav", "aria-label": tr("Pages") },
       item("home", "home", tr("Overview")),
       item("inbox", "bell", tr("Inbox"), unread, trn(unread, "{n} unread", "{n} unread")),
