@@ -269,7 +269,7 @@ var ARTICLES = [
   '<p><strong>הספרייה</strong> — המסמכים של הצוות מראיונות עם מומחי תוכן, מביקורי אתר ומהדגמות — אינה עוד לשונית ב-WorkDesk. פותחים אותה ב-Taskana מהסרגל הצדדי (<strong>ספרייה</strong>), ליד המשימות שהתחקיר נועד להן. ראו <a href="#/library-start">צעדים ראשונים בספרייה</a>.</p>'
   } },
 
-{ id: "portal-around", cat: "portal", updated: "17 Oct 2026",
+{ id: "portal-around", cat: "portal", updated: "20 Oct 2026",
   title: { en: "Getting around WorkDesk", he: "התמצאות ב-WorkDesk" },
   summary: { en: "The top-bar buttons, the Back button, copying email addresses, and how the Handbook and this Knowledge Base are laid out.", he: "כפתורי הסרגל העליון, כפתור החזרה, העתקת כתובות דוא״ל, ואיך בנויים המדריך ומאגר הידע." },
   body: {
@@ -287,7 +287,7 @@ var ARTICLES = [
   '<h2>Copying an email address</h2>' +
   '<p>Every email address in WorkDesk — in People, Clients, Teams, Pending activation and your profile — is a link. Click it and the address is copied, ready to paste into a message.</p>' +
   '<h2>Reading the Handbook and this Knowledge Base</h2>' +
-  '<ol class="steps"><li>Search at the top, or pick a topic card.</li><li>The chapter or article opens on its own page.</li><li><strong>All topics</strong> takes you back to the cards; <strong>Previous</strong> and <strong>Next</strong> at the bottom move through them in order.</li></ol>' +
+  '<ol class="steps"><li>Search at the top, or pick a topic card.</li><li>The chapter or article opens on its own page.</li><li><strong>All topics</strong> takes you back to the cards; <strong>Previous</strong> and <strong>Next</strong> at the bottom move through them in order.</li><li>The <strong>Contents</strong> column beside the text (on the right in Hebrew) lists the sections; click one to jump to it. Your place is marked as you scroll. While reading, it lists the page\'s headings and the other lessons of the same section.</li><li>The top bar stays in place as you scroll. <i class="ui-ic" data-ic="home"></i> returns to the Employee Portal home page; <i class="ui-ic" data-ic="book"></i> opens the Handbook from the Knowledge Base, and the Handbook has icons for WorkDesk, Taskana and the Knowledge Base. Hover over an icon to see its name.</li></ol>' +
   '<div class="callout tip"><b>Tip:</b> In the Handbook, choose your role in the <strong>Read as</strong> bar — the cards you cannot use are dimmed.</div>',
   he:
   '<p class="lede">ב-WorkDesk כל מה שאינו לשונית נמצא מאחורי כמה כפתורי סמל בסרגל העליון הכהה. זה מה שכל אחד עושה.</p>' +
@@ -303,7 +303,7 @@ var ARTICLES = [
   '<h2>העתקת כתובת דוא״ל</h2>' +
   '<p>כל כתובת דוא״ל ב-WorkDesk — באנשים, בלקוחות, בצוותים, בהמתנה להפעלה ובפרופיל שלכם — היא קישור. לחיצה עליה מעתיקה את הכתובת, מוכנה להדבקה בהודעה.</p>' +
   '<h2>קריאה במדריך ובמאגר הידע</h2>' +
-  '<ol class="steps"><li>חפשו למעלה, או בחרו כרטיס נושא.</li><li>הפרק או המאמר נפתח בעמוד משלו.</li><li><strong>כל הנושאים</strong> מחזיר לכרטיסים; <strong>הקודם</strong> ו<strong>הבא</strong> בתחתית עוברים ביניהם לפי הסדר.</li></ol>' +
+  '<ol class="steps"><li>חפשו למעלה, או בחרו כרטיס נושא.</li><li>הפרק או המאמר נפתח בעמוד משלו.</li><li><strong>כל הנושאים</strong> מחזיר לכרטיסים; <strong>הקודם</strong> ו<strong>הבא</strong> בתחתית עוברים ביניהם לפי הסדר.</li><li>עמודת <strong>תוכן העניינים</strong> שליד הטקסט (משמאל באנגלית) מציגה את החלקים; לחיצה על אחד מהם קופצת אליו, והמקום שלכם מסומן תוך כדי גלילה. בזמן קריאה היא מציגה את כותרות העמוד ואת שאר השיעורים באותו חלק.</li><li>הסרגל העליון נשאר במקומו בזמן הגלילה. <i class="ui-ic" data-ic="home"></i> מחזיר לדף הבית של פורטל העובדים; <i class="ui-ic" data-ic="book"></i> פותח את המדריך ממאגר הידע, ובמדריך יש סמלים ל-WorkDesk, ל-Taskana ולמאגר הידע. העבירו את העכבר מעל סמל כדי לראות את שמו.</li></ol>' +
   '<div class="callout tip"><b>טיפ:</b> במדריך, בחרו את התפקיד שלכם בסרגל <strong>קריאה בתור</strong> — הכרטיסים שאינם רלוונטיים לכם מעומעמים.</div>'
   } },
 

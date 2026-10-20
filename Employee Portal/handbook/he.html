@@ -15,42 +15,29 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 </script>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cpath d='M78 34H42a10 10 0 00-10 10v152a10 10 0 0010 10h36' fill='none' stroke='%231F3A66' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M162 34h36a10 10 0 0110 10v152a10 10 0 01-10 10h-36' fill='none' stroke='%231F3A66' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M148 92A44 44 0 10152 148V122H122' fill='none' stroke='%23F08A24' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../shared/fonts/fonts.css">
-<link rel="stylesheet" href="handbook.css?v=21">
+<link rel="stylesheet" href="../shared/chrome.css?v=1">
+<link rel="stylesheet" href="handbook.css?v=22">
 </head>
 <body>
 
-<div class="utility">
-  <div class="utility-in">
-    <a href="../index.html"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="vertical-align:-1px"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg> פורטל העובדים</a>
-    <a href="../index.html#/workdesk/time">WorkDesk</a>
-    <a href="../taskana/index.html">Taskana</a>
-    <a href="../kb/index.html">מאגר הידע</a>
-    <span>·</span>
-    <span>המדריך</span>
-    <button type="button" class="langbtn" id="langbtn" lang="en" title="English — אנגלית" style="margin-inline-start:auto">English</button>
-    <button type="button" class="themebtn" id="themebtn" aria-pressed="false" title="החלפת ערכת נושא" aria-label="החלפת ערכת נושא" style="margin-inline-start:0">◐</button>
-  </div>
-</div>
-
-<header class="masthead">
-  <div class="masthead-in">
-    <div class="grow">
-      <div class="wordmark">
-        <svg viewBox="0 0 60 46" aria-hidden="true"><path d="M2 30 C10 6, 20 6, 28 24 S46 42, 58 12" fill="none" stroke="#F08A24" stroke-width="6" stroke-linecap="round"/></svg>
-        <div><b>GALIL</b><small>כתיבה טכנית · הדרכה · הטמעה</small></div>
-      </div>
-      <h1 style="margin-top:22px">המדריך לפורטל העובדים</h1>
-      <p class="standfirst">כל פונקציה בפורטל העובדים של GALIL — כניסה, הרשאות פורטל, WorkDesk ו-Taskana — מה היא עושה, איך עושים אותה ואילו תפקידים רשאים. בחרו את התפקיד שלכם בסרגל שלמטה, והמדריך יסמן את מה שרלוונטי לכם.</p>
-    </div>
+<header class="topbar" id="topbar">
+  <div class="topbar-in">
+    <a class="wordmark" href="#">
+      <svg viewBox="0 0 60 46" aria-hidden="true"><path d="M2 30 C10 6, 20 6, 28 24 S46 42, 58 12" fill="none" stroke="#F08A24" stroke-width="6" stroke-linecap="round"/></svg>
+      <div><b>GALIL</b><small>פורטל העובדים · המדריך</small></div>
+    </a>
     <div class="search">
       <span class="ic" aria-hidden="true"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg></span>
       <input type="search" id="q" placeholder="חיפוש במדריך" aria-label="חיפוש במדריך" autocomplete="off">
     </div>
-    <div class="stamp">
-      <span>יישום <b>פורטל העובדים של GALIL</b></span>
-      <span>מכסה <b>פורטל · WorkDesk · Taskana</b></span>
-      <span>עדכון אחרון <b>18/10/2026</b></span>
-      <span>שפה <b>עברית · English</b></span>
+    <div class="tools">
+      <a class="iconlink" href="../index.html" id="to-portal" title="דף הבית של פורטל העובדים" aria-label="דף הבית של פורטל העובדים"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V9.5"/></svg></a>
+      <a class="iconlink" href="../index.html#/workdesk/time" title="WorkDesk" aria-label="WorkDesk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M2 13h20"/></svg></a>
+      <a class="iconlink" href="../taskana/index.html" title="Taskana" aria-label="Taskana"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 12l3 3 5-6"/></svg></a>
+      <a class="iconlink" href="../kb/index.html" title="מאגר הידע" aria-label="מאגר הידע"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 22h4"/><path d="M12 2a7 7 0 0 0-4 12.7V17h8v-2.3A7 7 0 0 0 12 2z"/></svg></a>
+      <span class="sep" aria-hidden="true"></span>
+      <button type="button" class="langbtn" id="langbtn" lang="en" title="English — אנגלית">English</button>
+      <button type="button" class="themebtn" id="themebtn" aria-pressed="false" title="החלפת ערכת נושא" aria-label="החלפת ערכת נושא">◐</button>
     </div>
   </div>
 </header>
@@ -63,7 +50,8 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   </div>
 </nav>
 
-<div class="shell">
+<div class="shell layout">
+  <nav class="toc" id="toc" aria-label="תוכן העניינים"></nav>
   <main id="main">
 
   <div id="home"></div>
@@ -1817,11 +1805,13 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <h3>שמירה על המדריך עדכני</h3>
   <p>המדריך מתאר את <strong>פורטל העובדים של GALIL</strong>: דף הבית של הפורטל והכניסה, WorkDesk ו-Taskana. טבלאות ההרשאות נוצרות משתי טבלאות בקובץ <code>handbook.js</code>, כך ששינוי הרשאה שם הוא עריכה של שורה אחת שמעדכנת את הטבלאות, התגים וסינון התפקידים יחד — בשתי השפות.</p>
   <p>שאלות שהמדריך אינו עונה עליהן: <a href="mailto:info@galiltc.co.il">info@galiltc.co.il</a>.</p>
+  <p class="stampline"><span>יישום <b>פורטל העובדים של GALIL</b></span> · <span>מכסה <b>פורטל · WorkDesk · Taskana</b></span> · <span>עדכון אחרון <b>18/10/2026</b></span> · <span>שפה <b>עברית · English</b></span></p>
 </footer>
 
 <script src="../config.js"></script>
 <script src="../shared/portal.js"></script>
 <script src="../shared/films.js?v=1"></script>
-<script src="handbook.js?v=22"></script>
+<script src="../shared/toc.js?v=1"></script>
+<script src="handbook.js?v=23"></script>
 </body>
 </html>

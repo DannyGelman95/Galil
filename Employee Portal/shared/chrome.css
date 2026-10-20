@@ -1,0 +1,70 @@
+/* =====================================================================
+   The Handbook's and the Knowledge Base's shared chrome: one thin top bar
+   that stays put while the page scrolls, and the floating table of
+   contents beside the text (left in English, right in Hebrew).
+   Each page defines the colour tokens (--chrome-*, --accent, --line …).
+   ===================================================================== */
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:sticky; top:0; z-index:60;
+  background:#1C2D4A; color:#E0E7F3; font-family:var(--sans);
+  border-bottom:3px solid var(--accent);
+}
+.topbar-in{max-width:1400px; margin:0 auto; padding:7px 20px; min-height:54px; display:flex; flex-wrap:wrap; align-items:center; gap:8px 18px}
+.topbar .wordmark{display:flex; align-items:center; gap:10px; margin:0; flex:0 0 auto; text-decoration:none}
+.topbar .wordmark svg{width:32px; height:25px; flex:0 0 auto}
+.topbar .wordmark b{display:block; font-family:var(--sans); font-weight:700; font-size:17px; letter-spacing:.16em; color:#fff; line-height:1}
+.topbar .wordmark small{display:block; font-family:var(--sans); font-size:11px; letter-spacing:.05em; color:#899FC4; margin-top:3px; white-space:nowrap}
+.topbar .search{flex:1 1 240px; max-width:420px; position:relative; align-self:center}
+.topbar .search input{
+  width:100%; font-family:var(--sans); font-size:14.5px; padding-block:7px; padding-inline:36px 12px;
+  border-radius:9px; border:1px solid #2A3548; background:#0E1522; color:#E0E7F3;
+}
+.topbar .search input::placeholder{color:#7A8BA8}
+.topbar .search input:focus{outline:2px solid var(--accent-bright); outline-offset:1px}
+.topbar .search .ic{position:absolute; inset-inline-start:12px; top:50%; transform:translateY(-50%); color:#7A8BA8; pointer-events:none; display:flex}
+.topbar .tools{margin-inline-start:auto; display:flex; align-items:center; gap:6px; flex:0 0 auto}
+.topbar .who{font-size:12.5px; color:var(--chrome-fg-soft); white-space:nowrap; margin-inline-end:6px}
+.topbar .who b{color:var(--chrome-fg); font-weight:600}
+.iconlink{
+  width:32px; height:32px; display:grid; place-items:center; flex:0 0 auto;
+  border-radius:8px; color:#E0E7F3; text-decoration:none;
+}
+.iconlink:hover{background:rgba(255,255,255,.1); color:var(--accent-bright)}
+.iconlink svg{width:18px; height:18px; display:block}
+.topbar .sep{width:1px; height:20px; background:rgba(255,255,255,.18); margin-inline:4px}
+
+@media (max-width:860px){
+  .topbar .who{display:none}
+  .topbar .search{order:3; flex-basis:100%; max-width:none}
+}
+
+/* ---------- page layout: the contents column and the text ---------- */
+.layout{display:grid; grid-template-columns:240px minmax(0,1fr); gap:40px; align-items:start}
+.toc{
+  position:sticky; top:calc(var(--stick, 57px) + 18px);
+  max-height:calc(100vh - var(--stick, 57px) - 36px); overflow-y:auto; overscroll-behavior:contain;
+  margin-top:30px; padding-inline-end:4px; font-family:var(--sans); font-size:13.5px;
+  scrollbar-width:thin;
+}
+.toc:empty{display:none}
+.toc h2{font-family:var(--sans); font-size:11px; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--muted); margin:0 0 8px}
+[dir="rtl"] .toc h2{letter-spacing:0; text-transform:none; font-size:12px}
+.toc ol{list-style:none; margin:0 0 22px; padding:0; border-inline-start:1px solid var(--line)}
+.toc li{margin:0}
+.toc a{
+  display:block; padding:4px 12px; margin-inline-start:-1px; border-inline-start:2px solid transparent;
+  color:var(--muted); text-decoration:none; line-height:1.35;
+}
+.toc a:hover{color:var(--ink); border-inline-start-color:var(--line)}
+.toc a.l2{padding-inline-start:24px; font-size:13px}
+.toc a.cur{color:var(--ink); font-weight:600}
+.toc a.on{color:var(--accent-ink); border-inline-start-color:var(--accent); font-weight:600}
+.toc a.locked{opacity:.5}
+
+@media (max-width:1020px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .toc{display:none}
+}
+@media print{ .topbar,.toc{display:none} .layout{display:block} }
