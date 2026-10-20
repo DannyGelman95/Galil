@@ -1422,6 +1422,8 @@ WDI18N.add({
 "Team phone (optional)": "טלפון הצוות (רשות)",
 "born {date}": "נולד/ה ב-{date}",
 "Plan view": "תצוגת התכנון",
+"Settings": "הגדרות",
+"Desktop layout": "תצוגת מחשב",
 "Copy": "העתקה",
 "Copy planned block": "העתקת בלוק מתוכנן",
 "To the next day": "ליום הבא",

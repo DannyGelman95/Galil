@@ -10,6 +10,10 @@
   Hebrew and English subtitles are inside the file (choose them in the
   player) and beside it as `.srt` files.
 
+- `films/tutorials/` — tutorial films of the Employee Portal, screen by screen, made
+  with `tools/tutorials/` (captions inside the file and as `.srt`):
+  - `workdesk-planner-desktop.en.mp4` — WorkDesk → Week Planner, on a computer.
+
 Other new documents and films for the Employee Portal are still to be made. Until
 then, the current reference is the Handbook, the Knowledge Base and the
 administrator section of the install guide, all inside `Employee Portal/`.

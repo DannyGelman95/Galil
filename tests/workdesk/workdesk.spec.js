@@ -585,13 +585,17 @@ test.describe("phone layout", () => {
     await signIn(page, "danny.gelman@galiltc.co.il");
     await page.click("#tile-workdesk");
     await page.locator(".mnav button", { hasText: "More" }).click();
-    await page.locator(".sheet button", { hasText: "Approvals" }).click();
+    /* More is a screen like the other tabs, not a pop-up menu */
+    await expect(page.locator(".sheet")).toHaveCount(0);
+    await expect(page.locator(".mnav button.on")).toHaveText(/More/);
+    for (const k of ["approvals", "mywork", "profile", "home"]) await expect(page.locator("#more-" + k)).toBeVisible();
+    await page.locator("#more-approvals").click();
     const cards = await page.locator(".apcard").count();
     const counted = (await page.locator(".apfilters .pill span").allTextContents()).reduce((a, n) => a + Number(n), 0);
     expect(counted).toBe(cards);
     expect(await page.locator(".mob .page").evaluate(e => getComputedStyle(e).overflow)).toBe("visible");
     await page.locator(".mnav button", { hasText: "More" }).click();
-    await page.locator(".sheet button", { hasText: "My assignments" }).click();
+    await page.locator("#more-mywork").click();
     const box = await page.locator(".sheet.full > .sh").boundingBox();
     expect(box.height).toBeGreaterThan(700);
     await expect(page.locator(".sheet.full .mcard").first()).toBeVisible();

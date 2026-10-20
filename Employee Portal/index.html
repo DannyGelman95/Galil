@@ -18801,6 +18801,17 @@ var CSS = [
 ".toasts{bottom:calc(18px + env(safe-area-inset-bottom));max-width:calc(100vw - 24px)}",
 "}",
 ".mday{display:flex;flex-direction:column;gap:6px}",
+/* the phone's More screen: grouped rows, like a settings page */
+".mh1{font:700 20px/1.2 var(--font);color:var(--ink);margin:2px 2px 0}",
+".mgroup{display:flex;flex-direction:column;gap:6px}",
+".mgroup>h5{margin:4px 4px 0;font:700 11.5px var(--font);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}",
+".mlist{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;box-shadow:0 1px 2px var(--shadow)}",
+".mlink{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:8px 14px;border:0;border-top:1px solid var(--line);background:transparent;color:var(--ink);font:600 14.5px var(--font);text-align:start;text-decoration:none;cursor:pointer}",
+".mlist>.mlink:first-child{border-top:0}",
+".mlink:active{background:var(--hover)}",
+".mlink.static{cursor:default}",
+".mlink .mic{width:32px;height:32px;border-radius:9px;display:grid;place-items:center;background:var(--wash);color:var(--deep);flex:0 0 auto}",
+".mlink .mchev{color:var(--muted);font-size:20px;line-height:1}",
 /* a planned card slides sideways to show Copy and Delete */
 ".swipe{position:relative;border-radius:14px;overflow:hidden;touch-action:pan-y}",
 ".swipe-acts{position:absolute;inset-block:0;inset-inline-end:0;width:var(--sw);display:flex}",
@@ -18901,6 +18912,7 @@ var ICONS = {
   help: [{ c: [12, 12, 10] }, "M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3", "M12 17h.01"],
   phone: [{ r: [5, 2, 14, 20, 2] }, "M12 18h.01"],
   monitor: [{ r: [2, 3, 20, 14, 2] }, "M8 21h8M12 17v4"],
+  globe: [{ c: [12, 12, 9] }, "M3 12h18", "M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9s1.3-6.5 3.8-9"],
   back: ["M19 12H5M12 19l-7-7 7-7"],
   edit: ["M21.17 6.81a1 1 0 0 0-3.99-3.99L3.84 16.17a2 2 0 0 0-.5.83l-1.32 4.35a.5.5 0 0 0 .62.62l4.35-1.32a2 2 0 0 0 .83-.5z", "M15 5l4 4"],
   trash: ["M3 6h18M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2M10 11v6M14 11v6"],
@@ -24681,7 +24693,41 @@ function MobileApp(p) {
     tab === "planner" ? h(MobilePlanner, common) :
     tab === "expenses" ? h(MobileExpenses, common) :
     tab === "approvals" ? h(ApprovalsTab, common) :
-    h("div", { className: "mcard" }, h("span", { className: "cap" }, "Choose something from the More menu."));
+    moreScreen();
+
+  /* More: a screen like the other tabs — grouped rows, each opening a part of the portal */
+  function moreScreen() {
+    var row = function (o) {
+      var inner = [h("span", { key: "i", className: "mic", "aria-hidden": "true" }, h(Icon, { n: o.icon, size: 19 })),
+        h("span", { key: "l", className: "grow" }, o.label),
+        o.badge ? h(Chip, { key: "b", k: "amber" }, o.badge) : null,
+        h("span", { key: "c", className: "mchev", "aria-hidden": "true" }, WDI18N.he ? "‹" : "›")];
+      return o.href ? h("a", { key: o.k, id: "more-" + o.k, className: "mlink", href: o.href }, inner)
+        : h("button", { key: o.k, id: "more-" + o.k, type: "button", className: "mlink", onClick: o.fn }, inner);
+    };
+    var group = function (title, rows) { rows = rows.filter(Boolean); return rows.length ? h("section", { key: title, className: "mgroup" }, h("h5", null, title), h("div", { className: "mlist" }, rows.map(row))) : null; };
+    return h(React.Fragment, null,
+      h("div", { className: "mh1" }, "More"),
+      group("WorkDesk", [
+        can(user, "approveTime") || can(user, "approveExpenses") ? { k: "approvals", icon: "approve", label: "Approvals", badge: approvals, fn: function () { setTab("approvals"); } } : null,
+        { k: "mywork", icon: "assignments", label: "My assignments and allowances", fn: function () { setSheet("mywork"); } },
+        { k: "profile", icon: "user", label: "My profile", fn: function () { setSheet("profile"); } }]),
+      group("Employee Portal", [
+        { k: "home", icon: "home", label: "Employee Portal home", fn: p.onHome },
+        acc.taskana !== "none" ? { k: "tasks", icon: "tasks", label: "My tasks in Taskana", href: "taskana/index.html#/my" } : null,
+        acc.taskana !== "none" ? { k: "library", icon: "library", label: "Library in Taskana", href: "taskana/index.html#/library" } : null,
+        acc.kb ? { k: "kb", icon: "book", label: "Knowledge Base", href: "kb/index.html" } : null,
+        acc.handbook ? { k: "help", icon: "help", label: "Help — the Handbook", href: "handbook/index.html#workdesk" } : null]),
+      h("section", { className: "mgroup" }, h("h5", null, "Settings"),
+        h("div", { className: "mlist" },
+          h("div", { className: "mlink static" },
+            h("span", { className: "mic", "aria-hidden": "true" }, h(Icon, { n: "globe", size: 19 })),
+            h("span", { className: "grow" }, "Language"), h(LangSwitch, { light: true })))),
+      h("section", { className: "mgroup" }, h("h5", null, "Desktop layout"),
+        h("div", { className: "mcard" },
+          h("div", { className: "cap" }, "The Dashboard, Management and System administration are laid out for a larger screen. Switch to the desktop layout to reach them — this phone will keep that choice."),
+          h(Btn, { kind: "p", style: { minHeight: 46 }, onClick: function () { p.onForceDesktop(); } }, IconLabel("monitor", "Switch to the desktop layout")))));
+  }
 
   return h("div", { className: "mob" },
     h("div", { className: "mtop" },
@@ -24711,24 +24757,10 @@ function MobileApp(p) {
         var on = tab === t.k || (t.k === "more" && ["approvals", "more"].indexOf(tab) >= 0);
         return h("button", {
           key: t.k, role: "tab", "aria-selected": on ? "true" : "false", className: on ? "on" : "",
-          onClick: function () { if (t.k === "more") setSheet("more"); else setTab(t.k); }
+          onClick: function () { setTab(t.k); }
         }, h("span", { className: "ic", "aria-hidden": "true" }, h(Icon, { n: t.icon, size: 20 })), t.label,
            badge ? h("span", { className: "badge" }, badge) : null);
       })),
-
-    sheet === "more" ? h(Sheet, { title: "More", onClose: function () { setSheet(null); } },
-      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); p.onHome(); } }, IconLabel("home", "Employee Portal home")),
-      acc.taskana !== "none" ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "taskana/index.html#/my" }, IconLabel("tasks", "My tasks in Taskana")) : null,
-      acc.taskana !== "none" ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "taskana/index.html#/library" }, IconLabel("library", "Library in Taskana")) : null,
-      can(user, "approveTime") || can(user, "approveExpenses") ? h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet(null); setTab("approvals"); } }, IconLabel("approve", "Approvals"), approvals ? h(Chip, { k: "amber" }, approvals) : null) : null,
-      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet("mywork"); } }, IconLabel("assignments", "My assignments and allowances")),
-      h(Btn, { style: { minHeight: 48, justifyContent: "flex-start" }, onClick: function () { setSheet("profile"); } }, IconLabel("user", "My profile")),
-      acc.kb ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "kb/index.html" }, IconLabel("book", "Knowledge Base")) : null,
-      acc.handbook ? h("a", { className: "btn", style: { minHeight: 48, justifyContent: "flex-start", textDecoration: "none" }, href: "handbook/index.html#workdesk" }, IconLabel("help", "Help — the Handbook")) : null,
-      h("div", { className: "row", style: { justifyContent: "space-between" } }, h("span", { className: "cap" }, "Language"), h(LangSwitch, { light: true })),
-      h("div", { className: "sep" }),
-      h("div", { className: "cap" }, "The Dashboard, Management and System administration are laid out for a larger screen. Switch to the desktop layout to reach them — this phone will keep that choice."),
-      h(Btn, { kind: "p", style: { minHeight: 48 }, onClick: function () { p.onForceDesktop(); } }, IconLabel("monitor", "Switch to the desktop layout"))) : null,
 
     sheet === "mywork" ? h(MyWork, Object.assign({ mobile: true, onClose: function () { setSheet(null); } }, common)) : null,
     sheet === "profile" ? h(Profile, { db: db, user: user, mutate: p.mutate, onClose: function () { setSheet(null); }, onSignOut: p.onSignOut }) : null);
