@@ -22203,8 +22203,14 @@ function buildWOPdf(db, wo, lang) {
     var bw = (CW - 8) / 2;
     [[T.forClient + (d.client || ""), d.clientSigner], [T.forGalil + CO.name, d.galilSigner]].forEach(function (s, i) {
       var x = M + i * (bw + 8), top = y, lx = x + 5, vx = x + 17;
-      doc.setDrawColor.apply(doc, LINE); doc.setLineWidth(0.4); doc.roundedRect(RTL ? W - x - bw : x, top, bw, BOX, 2, 2, "S");
-      doc.setFillColor.apply(doc, ORANGE); rect(x, top, 1.4, BOX, "F");
+      var bx = RTL ? W - x - bw : x;
+      doc.setDrawColor.apply(doc, LINE); doc.setLineWidth(0.4); doc.roundedRect(bx, top, bw, BOX, 2, 2, "S");
+      /* the orange stripe follows the box's rounded corners: clipped to the box's
+         outline, so it covers the border on its side and ends in the same curve */
+      doc.saveGraphicsState();
+      doc.roundedRect(bx - 0.2, top - 0.2, bw + 0.4, BOX + 0.4, 2.2, 2.2, null); doc.clip(); doc.discardPath();
+      doc.setFillColor.apply(doc, ORANGE); rect(x - 0.2, top - 0.2, 1.8, BOX + 0.4, "F");
+      doc.restoreGraphicsState();
       font("bold", 8, DEEP); txt(split(s[0], bw - 8)[0], lx, top + 6);
       font("normal", 7.5, MUTED); txt(T.name, lx, top + 13); txt(T.title, lx, top + 20);
       font("bold", 9.5, INK); txt(s[1].name || "", vx, top + 13);
