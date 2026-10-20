@@ -34,6 +34,15 @@
 .iconlink:hover{background:rgba(255,255,255,.1); color:var(--accent-bright)}
 .iconlink svg{width:18px; height:18px; display:block}
 .topbar .sep{width:1px; height:20px; background:rgba(255,255,255,.18); margin-inline:4px}
+/* the language and theme buttons: the same on every page */
+.topbar .langbtn{flex:0 0 auto; border:1px solid var(--chrome-fg-soft); background:transparent; color:var(--chrome-fg); border-radius:999px; padding:3px 10px; font-family:var(--sans); font-size:12px; line-height:1.4; cursor:pointer}
+.topbar .langbtn:hover{border-color:var(--accent-bright); color:var(--accent-bright)}
+.topbar .themebtn{
+  flex:0 0 auto; width:26px; height:26px; border-radius:999px; cursor:pointer;
+  border:1px solid var(--chrome-fg-soft); background:transparent; color:var(--chrome-fg);
+  display:grid; place-items:center; font-size:13px; line-height:1; padding:0;
+}
+.topbar .themebtn:hover{border-color:var(--accent-bright); color:var(--accent-bright)}
 
 @media (max-width:860px){
   .topbar .who{display:none}
