@@ -1,0 +1,35 @@
+1
+00:00:00,319 --> 00:00:04,929
+Expenses — Report an expense the moment you pay — with a photo of the receipt.
+
+2
+00:00:08,010 --> 00:00:12,113
+Expenses lists what you've reported this month, each with its reimbursement status.
+
+3
+00:00:12,723 --> 00:00:15,227
+Tap the button at the top to report a new one.
+
+4
+00:00:17,696 --> 00:00:22,049
+Pick the expense type — some have a ceiling — and the amount.
+
+5
+00:00:25,626 --> 00:00:28,128
+The client and project, and a few words.
+
+6
+00:00:33,292 --> 00:00:37,301
+Attach the receipt — on a phone, you can take a photo of it right here.
+
+7
+00:00:38,571 --> 00:00:40,376
+And save.
+
+8
+00:00:43,131 --> 00:00:47,986
+It's on the list — Submitted until a manager approves it and finance pays it.
+
+9
+00:00:48,694 --> 00:00:52,800
+Snap · report · get paid — More help: the Handbook → Expenses.

@@ -1,10 +1,12 @@
 // Makes a tutorial film of the Employee Portal: a scene script drives the real app in a
 // browser, an on-screen cursor, a spotlight and large captions show what happens and why,
-// and the result is a 1080p MP4 with calm background music and subtitle tracks.
+// and the result is an MP4 (1080p on a computer, portrait on a phone) with background
+// music and subtitles, ready for the Handbook.
 //
 // Run from tests/workdesk (for Playwright):
 //   node ../../tools/tutorials/make.js workdesk-planner-desktop [en]
-// Output: docs/films/tutorials/<scene>.<lang>.mp4 and .srt
+//   FAST=1 node ../../tools/tutorials/make.js <scene>     a quick dry run: checks every step, films nothing
+// Output, beside the Handbook: Employee Portal/handbook/films/<scene>.<lang>.mp4, .vtt (captions) and .jpg (poster)
 //
 // Needs ffmpeg and python3 with numpy (for the music).
 const { chromium } = require(require.resolve("playwright", { paths: [process.cwd()] }));
@@ -13,7 +15,8 @@ const path = require("path"), fs = require("fs"), { execFileSync } = require("ch
 const REPO = path.resolve(__dirname, "../..");
 const SITE = path.join(REPO, "Employee Portal");
 const ORIGIN = "https://portal.test";
-const OUT = path.join(REPO, "docs/films/tutorials");
+const OUT = path.join(SITE, "handbook/films");
+const FAST = !!process.env.FAST;
 
 const sceneName = process.argv[2];
 const lang = process.argv[3] || "en";
@@ -30,7 +33,9 @@ function overlay() {
     "#tut .cap{position:fixed;left:50%;bottom:34px;transform:translate(-50%,12px);max-width:min(1120px,86vw);background:rgba(22,38,66,.96);color:#fff;border-radius:16px;padding:18px 28px 18px 24px;font-size:25px;line-height:1.42;font-weight:500;box-shadow:0 18px 50px rgba(0,0,0,.35);border-inline-start:6px solid #F08A24;opacity:0;transition:opacity .3s,transform .3s}",
     "#tut .cap.on{opacity:1;transform:translate(-50%,0)}",
     "#tut .cap.top{bottom:auto;top:30px}",
-    "#tut .cap b{color:#FFB46B;font-weight:700}",
+    "#tut .cap b{color:#FFB46B;font-weight:700;display:inline!important;font-size:inherit;margin:0;padding:0;letter-spacing:normal;text-transform:none}",
+    "#tut .cap,#tut .card{letter-spacing:normal;text-transform:none;text-align:start}",
+    "#tut .card{text-align:center}",
     "#tut .cap .n{display:block;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:#B2C3E0;margin-bottom:4px;font-weight:700}",
     "#tut .cur{position:fixed;left:0;top:0;width:30px;height:30px;transition:transform .7s cubic-bezier(.45,.05,.25,1);filter:drop-shadow(0 3px 4px rgba(0,0,0,.35))}",
     "#tut .cur.fast{transition:transform .25s ease}",
@@ -44,11 +49,24 @@ function overlay() {
     "#tut .card .k{font-size:18px;letter-spacing:.32em;text-transform:uppercase;color:#FFB46B;font-weight:700}",
     "#tut .card h1{margin:0;font-size:66px;line-height:1.1;font-weight:800;letter-spacing:-.01em}",
     "#tut .card p{margin:0;font-size:26px;color:#C5D3EA;max-width:980px;line-height:1.45}",
-    "#tut .card .mark{width:84px;height:72px;margin-bottom:6px}"
+    "#tut .card .mark{width:84px;height:72px;margin-bottom:6px}",
+    /* on a phone: the same look, sized for a narrow screen, and a fingertip instead of an arrow */
+    "#tut.phone .cap{bottom:84px;max-width:92vw;width:92vw;font-size:15.5px;line-height:1.4;padding:11px 14px 11px 13px;border-radius:13px;border-inline-start-width:5px}",
+    "#tut.phone .cap.top{top:70px;bottom:auto}",
+    "#tut.phone .spot{border-width:2.5px;border-radius:10px}",
+    "#tut.phone .card{gap:12px;padding:0 26px}",
+    "#tut.phone .card .k{font-size:11px;letter-spacing:.26em}",
+    "#tut.phone .card h1{font-size:34px}",
+    "#tut.phone .card p{font-size:16px}",
+    "#tut.phone .card .mark{width:58px;height:50px}",
+    "#tut.phone .cur{width:34px;height:34px}",
+    "#tut.phone .ring{width:40px;height:40px;margin:-20px 0 0 -20px}"
   ].join("\n");
   var root = document.createElement("div"); root.id = "tut";
+  var phone = innerWidth < 600; if (phone) root.className = "phone";
   root.innerHTML = '<style>' + css + '</style><div class="spot"></div><div class="cap"></div>' +
-    '<svg class="cur" viewBox="0 0 24 24"><path d="M4 2 L4 19 L8.6 14.8 L11.6 21.5 L14.4 20.3 L11.4 13.7 L17.6 13.7 Z" fill="#fff" stroke="#14284A" stroke-width="1.6" stroke-linejoin="round"/></svg>' +
+    (phone ? '<svg class="cur" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="rgba(255,255,255,.55)" stroke="#14284A" stroke-width="1.4"/><circle cx="12" cy="12" r="4" fill="rgba(240,138,36,.9)"/></svg>'
+      : '<svg class="cur" viewBox="0 0 24 24"><path d="M4 2 L4 19 L8.6 14.8 L11.6 21.5 L14.4 20.3 L11.4 13.7 L17.6 13.7 Z" fill="#fff" stroke="#14284A" stroke-width="1.6" stroke-linejoin="round"/></svg>') +
     '<div class="card"></div>';
   document.documentElement.appendChild(root);
   var spot = root.querySelector(".spot"), cap = root.querySelector(".cap"), cur = root.querySelector(".cur"), card = root.querySelector(".card");
@@ -58,7 +76,7 @@ function overlay() {
       var r = target.getBoundingClientRect();
       spot.style.left = (r.left - pad) + "px"; spot.style.top = (r.top - pad) + "px";
       spot.style.width = (r.width + pad * 2) + "px"; spot.style.height = (r.height + pad * 2) + "px";
-      cap.classList.toggle("top", r.bottom > innerHeight - 230 && r.top > 200);
+      cap.classList.toggle("top", r.bottom > innerHeight - (phone ? 200 : 230) && r.top > (phone ? 170 : 200));
     }
   }
   function place() {
@@ -67,7 +85,7 @@ function overlay() {
       var r = target.getBoundingClientRect();
       spot.style.left = (r.left - pad) + "px"; spot.style.top = (r.top - pad) + "px";
       spot.style.width = (r.width + pad * 2) + "px"; spot.style.height = (r.height + pad * 2) + "px";
-      cap.classList.toggle("top", r.bottom > innerHeight - 230 && r.top > 200);
+      cap.classList.toggle("top", r.bottom > innerHeight - (phone ? 200 : 230) && r.top > (phone ? 170 : 200));
     }
     requestAnimationFrame(place);
   }
@@ -83,7 +101,7 @@ function overlay() {
       spot.classList.add("on");
     },
     caption: function (html, n) { if (!html) { cap.classList.remove("on"); return; } cap.innerHTML = (n ? '<span class="n">' + n + '</span>' : "") + html; cap.classList.add("on"); },
-    move: function (x, y, speed) { cur.classList.remove("fast", "slow"); if (speed) cur.classList.add(speed); cx = x; cy = y; cur.style.transform = "translate(" + (x - 4) + "px," + (y - 2) + "px)"; },
+    move: function (x, y, speed) { cur.classList.remove("fast", "slow"); if (speed) cur.classList.add(speed); cx = x; cy = y; cur.style.transform = phone ? "translate(" + (x - 17) + "px," + (y - 17) + "px)" : "translate(" + (x - 4) + "px," + (y - 2) + "px)"; },
     ring: function () { var r = document.createElement("div"); r.className = "ring"; r.style.left = cx + "px"; r.style.top = cy + "px"; root.appendChild(r); setTimeout(function () { r.remove(); }, 800); },
     ghost: function (el, x1, y1) {
       var r = el.getBoundingClientRect(), g = el.cloneNode(true); g.className += " ghost"; g.style.width = r.width + "px";
@@ -99,14 +117,14 @@ function overlay() {
 (async () => {
   const frames = path.join(OUT, ".frames-" + sceneName + "-" + lang);
   fs.rmSync(frames, { recursive: true, force: true }); fs.mkdirSync(frames, { recursive: true });
-  const vp = scene.viewport || { width: 1600, height: 900 }, scale = 1920 / vp.width;
+  const vp = scene.viewport || { width: 1600, height: 900 }, scale = scene.scale || 1920 / vp.width;
 
   /* the screencast films the browser window itself, so the window is sized to the page and scaled to 1080p */
   const browser = await chromium.launch({ executablePath: process.env.PW_CHROMIUM || undefined,
     args: ["--window-size=" + vp.width + "," + vp.height, "--force-device-scale-factor=" + scale, "--lang=" + (lang === "he" ? "he-IL" : "en-GB")],
     /* date and time fields follow the system language: day/month/year and a 24-hour clock, as in Israel */
     env: Object.assign({}, process.env, { LANG: (lang === "he" ? "he_IL" : "en_GB") + ".UTF-8", LANGUAGE: lang === "he" ? "he" : "en_GB", LC_ALL: (lang === "he" ? "he_IL" : "en_GB") + ".UTF-8" }) });
-  const ctx = await browser.newContext({ viewport: vp, deviceScaleFactor: scale, acceptDownloads: true, locale: lang === "he" ? "he-IL" : "en-GB", timezoneId: "Asia/Jerusalem", hasTouch: !!scene.touch, isMobile: !!scene.touch });
+  const ctx = await browser.newContext({ viewport: vp, deviceScaleFactor: scale, acceptDownloads: true, locale: lang === "he" ? "he-IL" : "en-GB", timezoneId: "Asia/Jerusalem", hasTouch: !!scene.phone, isMobile: !!scene.phone });
   const page = await ctx.newPage();
   page.on("pageerror", e => console.log("  page error:", e.message));
   await page.route(ORIGIN + "/**", r => {
@@ -130,7 +148,13 @@ function overlay() {
   /* the data is changed from a page of the same address where the app isn't running, so the app can't write over it */
   if (scene.setup) { await page.goto(ORIGIN + "/__blank"); await scene.setup(page); }
   await page.goto(ORIGIN + "/" + scene.start); await page.waitForTimeout(1200);
-  await page.evaluate("(" + overlay.toString() + ")()");
+  /* the overlay, and a slow repaint that keeps the camera running while nothing moves — again after any page load */
+  const ensureOverlay = async () => {
+    try { await page.waitForLoadState("domcontentloaded"); } catch (e) {}
+    await page.evaluate("(" + overlay.toString() + ")()");
+    await page.evaluate(() => { if (window.__tick) return; window.__tick = 1; const d = document.createElement("div"); d.style.cssText = "position:fixed;left:0;top:0;width:1px;height:1px;opacity:.01;z-index:2147483647;pointer-events:none"; document.documentElement.appendChild(d); let k = 0; setInterval(() => { d.style.background = (k++ % 2) ? "#000" : "#fff"; }, 100); });
+  };
+  await ensureOverlay();
 
   /* the camera: every repaint as a JPEG with its time */
   const cdp = await ctx.newCDPSession(page);
@@ -144,17 +168,28 @@ function overlay() {
   /* the film opens on the title backdrop, never on a glimpse of the app: the backdrop is up before the camera rolls */
   await page.evaluate(() => { const c = document.querySelector("#tut .card"); c.style.transition = "none"; c.innerHTML = ""; c.classList.add("on"); __tut.hideCursor(true); void c.offsetWidth; c.style.transition = ""; });
   await page.waitForTimeout(300);
-  await cdp.send("Page.startScreencast", { format: "jpeg", quality: 92, maxWidth: 1920, maxHeight: 1080, everyNthFrame: 1 });
+  /* a phone is filmed by taking pictures in a loop: the screencast (and CDP's own capture) crop an emulated phone screen */
+  let filming = !FAST && !!scene.phone;
+  const loop = (async () => {
+    while (filming) {
+      try {
+        const file = path.join(frames, String(shots.length).padStart(6, "0") + ".jpg");
+        await page.screenshot({ path: file, type: "jpeg", quality: 90, animations: "allow", caret: "initial" });
+        shots.push({ file, t: Date.now() / 1000 });
+      } catch (e) { await new Promise(r => setTimeout(r, 30)); }
+    }
+  })();
+  if (!FAST && !scene.phone) await cdp.send("Page.startScreencast", { format: "jpeg", quality: 92, maxWidth: Math.round(vp.width * scale), maxHeight: Math.round(vp.height * scale), everyNthFrame: 1 });
   const T0 = Date.now() / 1000;
   const cues = [];
-  const wait = ms => page.waitForTimeout(ms);
-  /* a slow repaint keeps the camera running while nothing moves */
-  await page.evaluate(() => { const d = document.createElement("div"); d.style.cssText = "position:fixed;left:0;top:0;width:1px;height:1px;opacity:.01;z-index:2147483647;pointer-events:none"; document.documentElement.appendChild(d); let k = 0; setInterval(() => { d.style.background = (k++ % 2) ? "#000" : "#fff"; }, 100); });
+  const wait = ms => page.waitForTimeout(FAST ? Math.min(ms, 60) : ms);
 
   const center = async loc => { const b = await loc.boundingBox(); if (!b) throw new Error("not on screen: " + loc); return { x: b.x + b.width / 2, y: b.y + b.height / 2, b }; };
   let stepNo = 0;
   const T = {
     page, lang, wait,
+    /* the input of a labelled field: T.field("Client"), or T.field("Client", page.locator(".modal")) */
+    field: (label, scope) => (scope || page).locator(".fld").filter({ has: page.locator("label", { hasText: new RegExp("^\\s*" + label.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")) }) }).locator("input, select, textarea").first(),
     /* a title card, full screen */
     card: async (kicker, title, sub, secs = 6) => {
       const html = '<svg class="mark" viewBox="0 7 40 34"><path d="M3 24 C 9 12, 15 12, 20 24 S 32 36, 37 24" fill="none" stroke="#F08A24" stroke-width="4" stroke-linecap="round"/></svg>' +
@@ -200,6 +235,21 @@ function overlay() {
       await loc.first().scrollIntoViewIfNeeded().catch(() => {});
       await T.point(loc); await page.evaluate(() => __tut.ring()); await wait(140);
       await T.done(opts); await loc.first().click(); await wait(after);
+      if (!(await page.evaluate(() => !!window.__tut).catch(() => false))) { await ensureOverlay(); await wait(400); }
+    },
+    /* open another page of the portal (Taskana, the Handbook…) */
+    goto: async url => { await page.goto(ORIGIN + "/" + url); await ensureOverlay(); await wait(900); },
+    /* scroll something into view, smoothly */
+    scroll: async loc => { await loc.first().evaluate(e => e.scrollIntoView({ behavior: "smooth", block: "center" })); await wait(900); },
+    /* a finger swipe across something, on a phone (dx < 0 is to the left) */
+    swipe: async (loc, dx) => {
+      const b = await loc.first().boundingBox(), y = b.y + b.height / 2, x0 = dx < 0 ? b.x + b.width - 24 : b.x + 24;
+      await page.evaluate(([x, y]) => __tut.move(x, y), [x0, y]); await wait(750);
+      const cdp2 = await ctx.newCDPSession(page);
+      await cdp2.send("Input.dispatchTouchEvent", { type: "touchStart", touchPoints: [{ x: x0, y }] });
+      for (let i = 1; i <= 14; i++) { const x = x0 + dx * i / 14; await cdp2.send("Input.dispatchTouchEvent", { type: "touchMove", touchPoints: [{ x, y }] }); await page.evaluate(([x, y]) => __tut.move(x, y, "fast"), [x, y]); await wait(30); }
+      await cdp2.send("Input.dispatchTouchEvent", { type: "touchEnd", touchPoints: [] });
+      await wait(600);
     },
     type: async (loc, text, opts) => { await T.click(loc, 200, { hold: true }); await loc.first().pressSequentially(text, { delay: 55 }); await wait(450); await T.done(opts); },
     fill: async (loc, value, opts) => { await T.click(loc, 200, { hold: true }); await loc.first().fill(value); await wait(550); await T.done(opts); },
@@ -216,11 +266,14 @@ function overlay() {
     }
   };
 
+  let failed = false;
   try { await scene.steps(T); }
-  catch (e) { console.log("SCENE FAILED:", e.message); await page.screenshot({ path: path.join(OUT, sceneName + ".failed.png") }); }
+  catch (e) { failed = true; console.log("SCENE FAILED:", e.message.split("\n").filter(l => /locator|waiting for|Error/.test(l)).slice(0, 3).join(" | ")); await page.screenshot({ path: path.join(OUT, sceneName + ".failed.png") }); }
   await wait(1200);
-  await cdp.send("Page.stopScreencast");
+  if (FAST) { await browser.close(); fs.rmSync(frames, { recursive: true, force: true }); console.log(sceneName, failed ? "dry run FAILED" : "dry run ok"); process.exit(failed ? 1 : 0); }
+  if (scene.phone) { filming = false; await loop; } else await cdp.send("Page.stopScreencast");
   await browser.close();
+  if (failed) process.exit(1);
 
   /* frames → video: each frame lasts until the next one */
   const end = Date.now() / 1000;
@@ -234,17 +287,21 @@ function overlay() {
   const srt = cues.map((c, i) => (i + 1) + "\n" + ts(c.a - shift) + " --> " + ts(c.b - shift) + "\n" + c.text + "\n").join("\n");
   const base = path.join(OUT, sceneName + "." + lang);
   fs.writeFileSync(base + ".srt", srt);
+  /* the same captions as WebVTT, for the Handbook's video player */
+  fs.writeFileSync(base + ".vtt", "WEBVTT\n\n" + cues.map(c => ts(c.a - shift).replace(",", ".") + " --> " + ts(c.b - shift).replace(",", ".") + "\n" + c.text + "\n").join("\n"));
 
   const music = path.join(frames, "music.wav");
   execFileSync("python3", [path.join(__dirname, "music.py"), String(Math.ceil(dur) + 1), music, String(scene.seed || 7), scene.music || "bright"]);
   execFileSync("ffmpeg", ["-v", "error", "-y",
     "-f", "concat", "-safe", "0", "-i", path.join(frames, "list.txt"),
     "-i", music, "-i", base + ".srt",
-    "-filter_complex", "[0:v]fps=30,scale=1920:1080:flags=lanczos,format=yuv420p[v];[1:a]volume=0.55[a]",
+    "-filter_complex", "[0:v]fps=30,scale=" + (Math.round(vp.width * scale / 2) * 2) + ":" + (Math.round(vp.height * scale / 2) * 2) + ":flags=lanczos,format=yuv420p[v];[1:a]volume=0.55[a]",
     "-map", "[v]", "-map", "[a]", "-map", "2:s",
-    "-c:v", "libx264", "-preset", "slow", "-crf", "20", "-tune", "stillimage",
+    "-c:v", "libx264", "-preset", "slow", "-crf", "27", "-tune", "stillimage", "-g", "300",
     "-c:a", "aac", "-b:a", "160k", "-c:s", "mov_text", "-metadata:s:s:0", "language=" + (lang === "he" ? "heb" : "eng"),
     "-shortest", "-movflags", "+faststart", base + ".mp4"]);
+  /* a poster for the player: the title card */
+  execFileSync("ffmpeg", ["-v", "error", "-y", "-ss", "2.5", "-i", base + ".mp4", "-frames:v", "1", "-vf", "scale=" + (scene.phone ? 540 : 960) + ":-2", "-q:v", "4", base + ".jpg"]);
   fs.rmSync(frames, { recursive: true, force: true });
-  console.log("wrote", path.relative(REPO, base + ".mp4"), "and", path.relative(REPO, base + ".srt"));
+  console.log("wrote", path.relative(REPO, base + ".mp4"), "(" + (fs.statSync(base + ".mp4").size / 1048576).toFixed(1) + " MB), .vtt, .srt and .jpg");
 })();

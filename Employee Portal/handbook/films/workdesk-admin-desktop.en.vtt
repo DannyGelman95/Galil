@@ -1,0 +1,34 @@
+WEBVTT
+
+00:00:00.362 --> 00:00:05.469
+System administration — Roles and permissions, company settings, backups and the audit log — for the CEO and Operations.
+
+00:00:07.197 --> 00:00:12.802
+System administration is behind the gear in the top bar. Only the CEO and Operations managers see it.
+
+00:00:17.403 --> 00:00:24.906
+Roles &amp; permissions: what each of the nine roles may do. Y is allowed, T for their own team, P for their own projects, – not allowed.
+
+00:00:25.642 --> 00:00:28.867
+Each person's role is set on Management → People.
+
+00:00:29.637 --> 00:00:36.261
+Company settings: the daily and weekly hour limits, the default contract hours, and the month-end close that locks a month for payroll.
+
+00:00:39.217 --> 00:00:43.250
+Changes here apply to everyone, from the next entry on.
+
+00:00:44.032 --> 00:00:49.635
+Backup &amp; restore: download all of WorkDesk's data as one file, and bring it back if ever needed.
+
+00:00:52.538 --> 00:00:57.559
+The data is also saved automatically after every change — this is for an extra copy you keep yourself.
+
+00:00:58.332 --> 00:01:03.189
+The Audit log records every change: who did what, when, and what it was before.
+
+00:01:06.211 --> 00:01:10.218
+Search and filter it to answer "who changed this?" in seconds.
+
+00:01:12.914 --> 00:01:17.022
+Roles · settings · backups · audit — More help: the Handbook → System administration.

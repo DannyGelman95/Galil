@@ -1,0 +1,71 @@
+1
+00:00:00,358 --> 00:00:05,463
+Boards and tasks — Every client project's tasks, reviews and questions — from backlog to done.
+
+2
+00:00:06,427 --> 00:00:12,936
+Taskana is GALIL's task manager. Its pages are on the left: your Overview, Inbox, My work, the Board, all tasks, the Library and Insights.
+
+3
+00:00:13,585 --> 00:00:19,598
+The Board shows the workflow, left to right: Backlog, To Do, Writing, Peer Review, SME Review and Done.
+
+4
+00:00:20,226 --> 00:00:27,236
+Each card is a task: its key and type, the title, the project, the priority, the due date, comments and open questions — and who it's assigned to.
+
+5
+00:00:27,859 --> 00:00:34,867
+Search, and filter by client, project, person, type or priority. Overdue and Open questions are one click; Save view keeps a filter in the sidebar.
+
+6
+00:00:35,586 --> 00:00:37,788
+Let's create one. New task…
+
+7
+00:00:40,259 --> 00:00:46,123
+Pick the project — projects, work orders and people all come from WorkDesk — and give it a title.
+
+8
+00:00:51,755 --> 00:00:56,108
+Then the type, priority, who it's for, its status, dates and an estimate.
+
+9
+00:01:01,381 --> 00:01:04,184
+Press Create. Eitan sees it in his Inbox and My work.
+
+10
+00:01:06,960 --> 00:01:12,967
+The task holds everything about the work: the description, a checklist, sub-tasks, linked tasks, files and links.
+
+11
+00:01:19,887 --> 00:01:26,905
+On the right: status, assignee, dates and estimate — and the hours reported in WorkDesk on this task, against its estimate and the budget.
+
+12
+00:01:27,605 --> 00:01:32,709
+Below, the comments. Mark one as a Question and it stays open until someone answers it.
+
+13
+00:01:43,533 --> 00:01:49,135
+To move a task along, drag its card to the next column — or use its Move menu.
+
+14
+00:01:51,293 --> 00:01:56,158
+It's in Writing now. Peer Review and SME Review are the review rounds before Done.
+
+15
+00:01:59,381 --> 00:02:03,890
+My work: everything assigned to you, by due date — overdue first.
+
+16
+00:02:06,923 --> 00:02:12,440
+The Inbox: new assignments, comments, questions for you and reviews waiting — the number shows what's unread.
+
+17
+00:02:13,121 --> 00:02:16,625
+Employee Portal at the top takes you back to the home page.
+
+18
+00:02:17,329 --> 00:02:21,455
+Plan · write · review · done — More help: the Handbook → Taskana.

@@ -503,3 +503,6 @@ drawMatrix("portal-matrix", PORTAL_PERM);
 
 /* ---- the portal gate: the Handbook opens for signed-in people whose access includes it ---- */
 if (window.GalilPortal) GalilPortal.gate("handbook");
+
+/* ---- tutorial films, beside the chapters they explain (shared/films.js) ---- */
+if (window.GalilFilms) GalilFilms.fill(document, "films/");

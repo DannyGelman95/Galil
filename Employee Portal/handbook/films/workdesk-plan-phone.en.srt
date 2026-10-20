@@ -1,0 +1,43 @@
+1
+00:00:00,314 --> 00:00:04,920
+Planning your week — Plan ahead, by week or by month — and copy what repeats.
+
+2
+00:00:08,041 --> 00:00:14,164
+Plan shows your week, day by day, with planned (p) and actual (a) hours, and your totals at the top.
+
+3
+00:00:14,784 --> 00:00:19,288
++ plan this day adds a block: times, hour type, client, project and a description.
+
+4
+00:00:19,880 --> 00:00:22,691
+Swipe a block to the left for its actions…
+
+5
+00:00:25,413 --> 00:00:27,923
+…Copy and Delete.
+
+6
+00:00:30,279 --> 00:00:34,782
+Copy it to the next day, or to the rest of this week — working days only.
+
+7
+00:00:37,449 --> 00:00:41,952
+Done — Monday to Thursday now have it too. Every copy and delete has Undo.
+
+8
+00:00:42,579 --> 00:00:46,582
+Copy this week to next week repeats the whole week in one go.
+
+9
+00:00:47,180 --> 00:00:49,982
+Switch to Month for the whole month at a glance.
+
+10
+00:00:52,376 --> 00:00:56,379
+Each day shows its planned hours. Tap a day to see and plan it.
+
+11
+00:01:01,232 --> 00:01:05,338
+Plan · copy · adjust — More help: the Handbook → Week Planner.

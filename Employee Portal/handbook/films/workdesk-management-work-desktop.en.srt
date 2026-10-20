@@ -1,0 +1,63 @@
+1
+00:00:00,369 --> 00:00:05,482
+Management · clients and budgets — Clients, projects, work orders and budgets — the records every hour is counted against.
+
+2
+00:00:06,644 --> 00:00:12,680
+Client work is set up in order: a client, its projects, a work order for each piece of work, and a budget for it.
+
+3
+00:00:15,740 --> 00:00:20,871
+Clients: add one with its name and initials — the initials go into its work-order codes.
+
+4
+00:00:32,172 --> 00:00:38,703
+More details… adds the legal name, address, VAT number and payment terms. In the table, a click copies a phone, VAT number or address.
+
+5
+00:00:41,933 --> 00:00:47,554
+Projects belong to a client, with a status, an owner, dates and their work orders and Taskana tasks.
+
+6
+00:00:51,056 --> 00:00:56,165
+Work Orders: each piece of client work, with its code, lead, team, budget use and tasks.
+
+7
+00:00:56,903 --> 00:01:02,762
++ New work order opens the full order: title, dates, scope, deliverables, the lead and team, and who signs.
+
+8
+00:01:05,863 --> 00:01:10,867
+The code is made for you from the client's initials. Everything here also goes on the signed document.
+
+9
+00:01:13,541 --> 00:01:19,546
+The document button makes the official work-order PDF, in English or Hebrew, ready to download or email to the client.
+
+10
+00:01:22,735 --> 00:01:28,753
+Budgets: one row per work order. The bar shows how much is used, what's waiting in approval, and what remains.
+
+11
+00:01:29,414 --> 00:01:35,418
+A budget can be counted in hours, money, pages or words; Projected exhaustion estimates when it will run out.
+
+12
+00:01:36,170 --> 00:01:41,815
+The filters find budgets by client, project, basis or how much is used — say, everything above 90%.
+
+13
+00:01:42,470 --> 00:01:44,974
++ New budget sets one up for a work order.
+
+14
+00:01:47,370 --> 00:01:52,885
+Pick the client, project and work order, the pricing basis and the amount. Every change is kept in the budget's history.
+
+15
+00:01:55,269 --> 00:01:58,883
+Expense Types sets the kinds of expense and their ceilings.
+
+16
+00:01:59,620 --> 00:02:03,737
+Client · project · work order · budget — More help: the Handbook → Management.

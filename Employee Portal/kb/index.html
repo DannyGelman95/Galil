@@ -242,6 +242,7 @@ th{font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--m
 
 <script src="../config.js"></script>
 <script src="../shared/portal.js"></script>
+<script src="../shared/films.js?v=1"></script>
 <script src="articles.js"></script>
 <script>
 "use strict";
@@ -328,18 +329,35 @@ function renderHome() {
         '<div class="tcards">' + inCat(c.k).map(function (a) { return card(a, a.id === "first-week" ? "start" : ""); }).join("") + '</div></section>';
     }).join("");
 }
+/* the Handbook's tutorial films for the article, right after its opening paragraph */
+var ARTICLE_FILMS = {
+  "portal-signin": "portal-signin-desktop", "portal-access": "workdesk-management-people-desktop",
+  "portal-around": "workdesk-mywork-desktop workdesk-more-phone", "portal-install": "portal-home-phone",
+  "portal-how": "portal-home-desktop",
+  "workdesk-time": "workdesk-timelog-desktop workdesk-time-phone", "workdesk-leave": "workdesk-timelog-desktop",
+  "workdesk-plan": "workdesk-planner-desktop workdesk-plan-phone", "workdesk-dashboard": "workdesk-dashboard-desktop",
+  "workdesk-expenses": "workdesk-expenses-desktop workdesk-expenses-phone", "workdesk-wo-document": "workdesk-management-work-desktop",
+  "taskana-tasks": "taskana-tasks-desktop taskana-phone", "library-start": "taskana-library-desktop"
+};
+function withFilms(a, html) {
+  var ids = ARTICLE_FILMS[a.id];
+  if (!ids || !window.GalilFilms) return html;
+  var block = '<div class="films" data-films="' + ids + '"></div>', k = html.indexOf("</p>");
+  return k < 0 ? block + html : html.slice(0, k + 4) + block + html.slice(k + 4);
+}
 function renderArticle(a) {
   var list = ARTICLES, i = list.indexOf(a), prev = list[i - 1], next = list[i + 1], c = catOf(a.cat);
   document.title = L(a.title) + " · " + T("siteTitle");
   setReading(true);
   main.innerHTML = '<div class="reader"><a class="backbtn" href="#/">' + icon("back") + T("allTopics") + '</a>' +
     '<div class="crumbs"><a href="#/">' + T("title") + '</a> › ' + esc(L(c.title)) + '</div>' +
-    '<article><h1>' + esc(L(a.title)) + '</h1><div class="meta">' + T("minRead").replace("{n}", minutes(a)) + ' · ' + T("updated") + ' ' + esc(when(a.updated)) + '</div>' + L(a.body) + '</article>' +
+    '<article><h1>' + esc(L(a.title)) + '</h1><div class="meta">' + T("minRead").replace("{n}", minutes(a)) + ' · ' + T("updated") + ' ' + esc(when(a.updated)) + '</div>' + withFilms(a, L(a.body)) + '</article>' +
     '<div class="pager">' +
       (prev ? '<a href="#/' + prev.id + '"><small>' + T("prev") + '</small>' + esc(L(prev.title)) + '</a>' : '') +
       (next ? '<a class="next" href="#/' + next.id + '"><small>' + T("next") + '</small>' + esc(L(next.title)) + '</a>' : '') +
     '</div></div>';
   paintIcons(main);
+  if (window.GalilFilms) GalilFilms.fill(main, "../handbook/films/");
 }
 function renderSearch(term) {
   var t = term.trim().toLowerCase();
