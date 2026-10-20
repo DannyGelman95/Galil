@@ -1,0 +1,908 @@
+<title>Word Crash Course</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Noto+Sans+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F7F9FD; --surface:#FFFFFF; --wash:#E9EEF8; --sunk:#E6EBF4;
+  --ink:#1C2D4A; --body:#272E3B; --muted:#575E6B; --faint:#868C96;
+  --line:#C4D1E7; --line-soft:#DAE2F0;
+  --accent:#B5600E; --accent-bright:#F08A24; --accent-ink:#93500C;
+  --red:#E05C4B; --amber:#F0A32C; --blue:#3B7DD8;
+  --note-bg:#EAF2FC; --note-fg:#1F4E8C; --warn-bg:#FDF3E1; --warn-fg:#7A4E07;
+  --chrome-bg:#1C2D4A; --chrome-fg:#E0E7F3; --chrome-fg-soft:#AEBED9;
+  --shadow:0 1px 2px rgba(28,45,74,.05), 0 8px 24px -16px rgba(28,45,74,.28);
+  --sans:"Noto Sans","Noto Sans Hebrew",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Noto Sans","Noto Sans Hebrew",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"Noto Sans Mono",ui-monospace,"SF Mono",Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#0D1118; --surface:#131821; --wash:#171E29; --sunk:#0F141C;
+    --ink:#DFE6F2; --body:#C6CFDE; --muted:#909AAC; --faint:#666F7F;
+    --line:#242E3E; --line-soft:#1E2635;
+    --accent:#F59A3E; --accent-bright:#FFB46B; --accent-ink:#FDCFA0;
+    --red:#F07E6E; --amber:#F5B84F; --blue:#7FB2F0;
+    --note-bg:#15263A; --note-fg:#A9CBF3; --warn-bg:#33270F; --warn-fg:#F3CD85;
+    --chrome-bg:#202A3C; --chrome-fg:#E0E7F3; --chrome-fg-soft:#A9B9D4;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0D1118; --surface:#131821; --wash:#171E29; --sunk:#0F141C;
+  --ink:#DFE6F2; --body:#C6CFDE; --muted:#909AAC; --faint:#666F7F;
+  --line:#242E3E; --line-soft:#1E2635;
+  --accent:#F59A3E; --accent-bright:#FFB46B; --accent-ink:#FDCFA0;
+  --red:#F07E6E; --amber:#F5B84F; --blue:#7FB2F0;
+  --note-bg:#15263A; --note-fg:#A9CBF3; --warn-bg:#33270F; --warn-fg:#F3CD85;
+  --chrome-bg:#202A3C; --chrome-fg:#E0E7F3; --chrome-fg-soft:#A9B9D4;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 8px 24px -16px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0; background:var(--paper); color:var(--body);
+  font-family:var(--serif); font-size:16.5px; line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+a{color:var(--accent-ink); text-underline-offset:2px; text-decoration-thickness:1px}
+a:hover{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent); outline-offset:2px; border-radius:3px}
+[hidden]{display:none !important}
+
+/* ---------- utility strip ---------- */
+.utility{background:var(--chrome-bg); color:var(--chrome-fg-soft); font-family:var(--sans); font-size:12.5px}
+.utility-in{max-width:1180px; margin:0 auto; padding:8px 20px; display:flex; align-items:center; gap:18px; flex-wrap:wrap}
+.utility a{color:var(--chrome-fg); text-decoration:none; white-space:nowrap}
+.utility a:hover{color:var(--accent-bright)}
+.utility .who{margin-inline-start:auto; color:var(--chrome-fg-soft)}
+.utility .who b{color:var(--chrome-fg); font-weight:600}
+.themebtn{
+  flex:0 0 auto; width:26px; height:26px; border-radius:999px; cursor:pointer;
+  border:1px solid var(--chrome-fg-soft); background:transparent; color:var(--chrome-fg);
+  display:grid; place-items:center; font-size:13px; line-height:1;
+}
+.themebtn:hover{border-color:var(--accent-bright); color:var(--accent-bright)}
+
+/* ---------- masthead ---------- */
+.masthead{background:#1C2D4A; color:#E0E7F3; padding:30px 20px 26px; border-bottom:3px solid var(--accent)}
+.masthead-in{max-width:1180px; margin:0 auto; display:flex; flex-wrap:wrap; gap:22px; align-items:flex-end}
+.masthead .grow{flex:1 1 320px}
+.wordmark{display:flex; align-items:center; gap:12px; margin-bottom:16px}
+.wordmark svg{width:40px; height:32px; flex:0 0 auto}
+.wordmark b{font-family:var(--sans); font-weight:700; font-size:22px; letter-spacing:.16em; color:#fff; line-height:1}
+.wordmark small{display:block; font-family:var(--sans); font-size:11.5px; letter-spacing:.05em; color:#899FC4; margin-top:3px}
+.masthead h1{font-family:var(--sans); font-weight:600; font-size:clamp(26px,4.2vw,38px); line-height:1.08; margin:0; color:#fff; letter-spacing:-.015em}
+.masthead .standfirst{font-size:15.5px; color:#A3B2CC; margin:9px 0 0; max-width:60ch}
+.search{flex:1 1 280px; max-width:420px; position:relative}
+.search input{
+  width:100%; font-family:var(--sans); font-size:15px; padding-block:11px; padding-inline:38px 14px;
+  border-radius:10px; border:1px solid #2A3548; background:#0E1522; color:#E0E7F3;
+}
+.search input::placeholder{color:#7A8BA8}
+.search input:focus{outline:2px solid var(--accent-bright); outline-offset:1px}
+.search .ic{position:absolute; inset-inline-start:13px; top:50%; transform:translateY(-50%); color:#7A8BA8; font-family:var(--sans); pointer-events:none}
+
+/* ---------- shell: topic cards on the home screen, one focused article when reading ---------- */
+.shell{max-width:1180px; margin:0 auto; padding:0 20px 64px}
+main{padding-block:28px; min-width:0}
+body.reading .masthead{padding-block:16px 14px}
+body.reading .masthead h1, body.reading .masthead .standfirst{display:none}
+body.reading .wordmark{margin-bottom:0}
+body.reading .masthead-in{align-items:center}
+
+/* ---------- home ---------- */
+.home-h{font-family:var(--sans); font-weight:600; font-size:22px; color:var(--ink); margin:0 0 4px}
+.home-sub{color:var(--muted); margin:0 0 20px}
+.group{margin:0 0 30px}
+.group-h{display:flex; align-items:center; flex-wrap:wrap; gap:4px 10px; margin:0 0 12px}
+.group-h svg{width:20px; height:20px; color:var(--accent); flex:0 0 auto}
+.group-h h2{font-family:var(--sans); font-weight:600; font-size:17px; color:var(--ink); margin:0}
+.group-h span{font-family:var(--sans); font-size:13.5px; color:var(--muted)}
+.tcards{display:grid; grid-template-columns:repeat(auto-fill,minmax(230px,1fr)); gap:12px}
+.tcard{
+  display:flex; flex-direction:column; gap:6px; padding:16px; border-radius:12px; text-decoration:none;
+  background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); color:var(--body);
+  transition:border-color .15s, transform .15s;
+}
+.tcard:hover{border-color:var(--accent); transform:translateY(-1px); color:var(--body)}
+.tcard svg{width:22px; height:22px; color:var(--accent)}
+.tcard b{font-family:var(--sans); font-weight:600; font-size:15.5px; color:var(--ink); line-height:1.3}
+.tcard span{font-family:var(--sans); font-size:13.5px; color:var(--muted); line-height:1.45}
+.tcard em{font-style:normal; font-family:var(--mono); font-size:11.5px; color:var(--accent-ink); margin-top:auto; padding-top:4px}
+.tcard.start{border-color:var(--accent); background:var(--wash)}
+
+/* ---------- reader ---------- */
+.reader{max-width:760px; margin:0 auto}
+.backbtn{
+  display:inline-flex; align-items:center; gap:6px; font-family:var(--sans); font-weight:600; font-size:13.5px;
+  padding:6px 13px; border-radius:999px; border:1px solid var(--line); background:var(--surface); color:var(--ink);
+  text-decoration:none; margin-bottom:14px;
+}
+.backbtn:hover{border-color:var(--accent); color:var(--accent-ink)}
+.backbtn svg{width:15px; height:15px}
+.ui-ic{display:inline-block; width:1.05em; height:1.05em; vertical-align:-.17em; color:var(--accent-ink)}
+.ui-ic svg{width:100%; height:100%; display:block}
+[dir="rtl"] .ui-ic[data-ic="back"] svg{transform:scaleX(-1)}
+[dir="rtl"] .backbtn svg{transform:scaleX(-1)}
+
+/* ---------- article ---------- */
+.crumbs{font-family:var(--sans); font-size:12.5px; color:var(--faint); margin-bottom:10px}
+.crumbs a{color:var(--muted); text-decoration:none}
+.crumbs a:hover{color:var(--accent-ink)}
+article h1{font-family:var(--sans); font-weight:600; font-size:clamp(24px,3vw,31px); line-height:1.15; color:var(--ink); margin:0 0 6px; letter-spacing:-.015em}
+article .meta{font-family:var(--sans); font-size:12.5px; color:var(--faint); margin-bottom:22px}
+article .lede{font-size:17.5px; color:var(--muted); margin:0 0 22px}
+article > *{max-width:70ch}
+article h2{font-family:var(--sans); font-weight:600; font-size:19px; color:var(--ink); margin:30px 0 8px}
+article h3{font-family:var(--sans); font-weight:600; font-size:16px; color:var(--ink); margin:22px 0 6px}
+article p{margin:0 0 14px}
+article ul, article ol{margin:0 0 16px; padding-inline-start:22px}
+article li{margin-bottom:6px}
+article li::marker{color:var(--accent)}
+strong{font-weight:600; color:var(--ink)}
+code{font-family:var(--mono); font-size:.87em; background:var(--sunk); padding:1px 5px; border-radius:4px; color:var(--ink)}
+.steps{list-style:none; padding:0 !important; counter-reset:s}
+.steps > li{counter-increment:s; position:relative; padding-inline-start:36px; margin-bottom:10px}
+.steps > li::before{
+  content:counter(s); position:absolute; inset-inline-start:0; top:.15em; font-family:var(--mono); font-size:11.5px; font-weight:500;
+  width:23px; height:23px; display:grid; place-items:center; border-radius:50%; background:var(--chrome-bg); color:var(--chrome-fg);
+}
+.callout{border-radius:6px; padding:12px 16px; margin:0 0 18px; font-size:15.5px; border-inline-start:3px solid}
+.callout.note{background:var(--note-bg); color:var(--note-fg); border-color:var(--blue)}
+.callout.warn{background:var(--warn-bg); color:var(--warn-fg); border-color:var(--amber)}
+.callout.tip{background:var(--wash); color:var(--body); border-color:var(--accent)}
+.callout b{color:inherit}
+table{border-collapse:collapse; width:100%; font-family:var(--sans); font-size:14px; margin:0 0 18px}
+th,td{text-align:start; padding:8px 10px; border-bottom:1px solid var(--line)}
+th{font-size:12px; letter-spacing:.05em; text-transform:uppercase; color:var(--muted); font-weight:600}
+.pager{display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-top:40px; padding-top:18px; border-top:1px solid var(--line-soft); font-family:var(--sans); font-size:14px}
+.pager a{display:flex; flex-direction:column; gap:2px; padding:10px 14px; border:1px solid var(--line); border-radius:10px; text-decoration:none; color:var(--ink); background:var(--surface)}
+.pager a:hover{border-color:var(--accent)}
+.pager a small{font-size:11.5px; color:var(--muted)}
+.pager a.next{text-align:end; grid-column:2}
+
+/* ---------- search results ---------- */
+.results{list-style:none; padding:0; margin:0}
+.results li{padding:12px 0; border-bottom:1px solid var(--line-soft)}
+.results a{font-family:var(--sans); font-weight:600; font-size:16px; text-decoration:none}
+.results .c{font-family:var(--sans); font-size:12px; color:var(--faint); margin-inline-start:8px}
+.results p{margin:4px 0 0; font-size:14.5px; color:var(--muted)}
+
+/* ---------- gate ---------- */
+.gate{max-width:560px; margin:60px auto; padding:0 20px; text-align:center}
+.gate .card{background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:32px 26px; box-shadow:var(--shadow)}
+.gate .big{font-size:40px; line-height:1}
+.gate h1{font-family:var(--sans); font-weight:600; font-size:22px; color:var(--ink); margin:12px 0 8px}
+.gate p{color:var(--muted); margin:0 0 18px}
+.btn{
+  display:inline-block; font-family:var(--sans); font-weight:600; font-size:14.5px; padding:10px 18px; border-radius:10px;
+  background:var(--accent); color:#080D16; text-decoration:none;
+}
+.btn:hover{background:var(--accent-bright); color:#080D16}
+
+@media (max-width:860px){ .utility .who{margin-inline-start:0} }
+@media (prefers-reduced-motion:reduce){ .tcard{transition:none} }
+@media print{ .utility,.search,.pager,.backbtn{display:none} }
+.lang{display:inline-flex; border:1px solid var(--chrome-fg-soft); border-radius:999px; overflow:hidden; flex:0 0 auto}
+.lang button{border:0; background:transparent; color:var(--chrome-fg); font:600 11.5px var(--sans); padding:3px 9px; cursor:pointer}
+.lang button[aria-pressed="true"]{background:var(--accent-bright); color:#080D16}
+.chips{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 16px}
+.chip{font-family:var(--sans); font-size:12.5px; font-weight:600; border:1px solid var(--line); background:var(--wash); color:var(--accent-ink); border-radius:999px; padding:2px 10px}
+
+/* Extra KB classes used by the Word course (add to kb/index.html on upload) */
+.docmocks{display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:12px; margin:0 0 20px; max-width:none !important}
+.docmock{display:flex; flex-direction:column; gap:6px; min-height:190px; max-width:100%; padding:10px 14px; background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow); border-radius:3px; font-family:var(--sans)}
+.docmock .mk{font-size:9.5px; letter-spacing:.14em; text-align:center; color:var(--muted); font-weight:600}
+.docmock .mk:last-child{margin-top:auto}
+.docmock b{font-size:13.5px; color:var(--ink); line-height:1.3; padding-bottom:6px; border-bottom:2px solid var(--accent)}
+.docmock span{font-size:12px; color:var(--muted); line-height:1.5}
+.kbd-table td:first-child{white-space:nowrap}
+
+.shell,.masthead,.utility{padding-left:max(20px, env(safe-area-inset-left, 0px)); padding-right:max(20px, env(safe-area-inset-right, 0px))}
+.utility-in,.masthead-in{padding-left:0; padding-right:0}
+.draft{font-family:var(--sans); font-size:12.5px; background:var(--warn-bg); color:var(--warn-fg); border:1px solid var(--amber); border-radius:999px; padding:3px 12px; display:inline-block; margin-bottom:14px}
+.toc{display:flex; flex-wrap:wrap; gap:6px; margin:0 0 22px; font-family:var(--sans); font-size:13px}
+.toc button{border:1px solid var(--line); background:var(--surface); color:var(--ink); border-radius:999px; padding:4px 11px; cursor:pointer; font:inherit}
+.toc button[aria-current="true"]{background:var(--chrome-bg); color:var(--chrome-fg); border-color:var(--chrome-bg)}
+.tablewrap{overflow-x:auto; max-width:70ch}
+.ext{border-bottom:1px dotted var(--muted); cursor:help}
+</style>
+<div class="utility"><div class="utility-in"><span>GALIL · Knowledge Base · Training &amp; how-to's</span><span class="who">Preview for review — not yet in the KB</span></div></div>
+<header class="masthead"><div class="masthead-in"><div class="grow"><h1>Word for technical writers</h1><p class="standfirst">A fast, hands-on crash course in Word for Microsoft 365 (desktop) for new technical writers.</p></div></div></header>
+<div class="shell"><main><div class="reader"><span class="draft">Draft for review · 13 lessons</span><nav class="toc" id="toc" aria-label="Lessons"></nav><div id="view"></div></div></main></div>
+<script>
+/* =====================================================================
+   DRAFT — "Word for technical writers" crash course, for review.
+   Same entry shape as Employee Portal/kb/articles.js (id, cat, updated,
+   title / summary / body as { en, he }). English only for now; the KB
+   shows English when an article has no Hebrew.
+   Uses three extra CSS classes the KB does not have yet — .docmocks,
+   .docmock and .kbd-table — see word-course.css.
+   ===================================================================== */
+"use strict";
+var WORD_COURSE = [
+
+/* ======================= Start here ======================= */
+{ id: "word-course", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Word for technical writers — crash course (start here)" },
+  summary: { en: "A fast, hands-on course in Word for Microsoft 365: styles, paragraphs, lists, headings, the table of contents, tables, page layout and the documents we write for the defense industry." },
+  body: { en:
+  `<p class="lede">You already know technology and you already write good English. This course gives you the other half of the job: using Word the way a professional technical writer does — so that a 300-page manual stays consistent, numbers itself, builds its own table of contents and survives three rounds of customer review.</p>
+  <h2>Who it is for</h2>
+  <p>New technical writers at GALIL. No previous Word training is assumed beyond typing and saving a file. Every lesson is short, and every lesson ends with a <strong>Try it</strong> exercise you do in Word — that is where the learning happens.</p>
+  <h2>What you need</h2>
+  <ul>
+  <li><strong>Word for Microsoft 365, the desktop app</strong> (Windows), kept on the Current Channel. The course does not cover Word on the web — it lacks many of the features we rely on (multilevel lists linked to headings, captions and cross-references, styles management, document inspection).</li>
+  <li>An empty folder for your practice files. Use your work computer only — see <a href="#/infosec">Information security</a>.</li>
+  <li>About <strong>3 hours</strong>, which you can split across several days.</li>
+  </ul>
+  <div class="callout note"><b>Which version?</b> To check, open Word and choose <strong>File → Account → About Word</strong>. You should see <em>Microsoft® Word for Microsoft 365</em>. Ribbon names in this course match that version; if a button looks slightly different on your screen, the tab and group names are still the same.</div>
+  <h2>The lessons</h2>
+  <table><thead><tr><th>#</th><th>Lesson</th><th>Time</th></tr></thead><tbody>
+  <tr><td>1</td><td><a href="#/word-1-mindset">Think like a technical writer</a></td><td>15 min</td></tr>
+  <tr><td>2</td><td><a href="#/word-2-setup">Set up Word for technical writing</a></td><td>10 min</td></tr>
+  <tr><td>3</td><td><a href="#/word-3-styles">Styles — the one habit that matters</a></td><td>25 min</td></tr>
+  <tr><td>4</td><td><a href="#/word-4-paragraphs">Paragraphs, spacing and page flow</a></td><td>15 min</td></tr>
+  <tr><td>5</td><td><a href="#/word-5-lists">Bulleted and numbered lists</a></td><td>20 min</td></tr>
+  <tr><td>6</td><td><a href="#/word-6-headings-toc">Headings, numbering and the table of contents</a></td><td>20 min</td></tr>
+  <tr><td>7</td><td><a href="#/word-7-tables-figures">Tables, figures, captions and safety notices</a></td><td>20 min</td></tr>
+  <tr><td>8</td><td><a href="#/word-8-layout">Page layout: sections, headers, footers and markings</a></td><td>15 min</td></tr>
+  <tr><td>9</td><td><a href="#/word-9-documents">What our documents look like</a></td><td>15 min</td></tr>
+  <tr><td>10</td><td><a href="#/word-10-review">Review, track changes and delivery</a></td><td>15 min</td></tr>
+  <tr><td>11</td><td><a href="#/word-11-advanced">A step further: templates, Quick Parts and power tools</a></td><td>15 min</td></tr>
+  <tr><td>12</td><td><a href="#/word-12-final">Final exercise, checklist and shortcut sheet</a></td><td>30 min</td></tr>
+  </tbody></table>
+  <h2>How to take the course</h2>
+  <ol class="steps">
+  <li>Read a lesson, then do its <strong>Try it</strong> in Word straight away.</li>
+  <li>Keep one practice file per lesson (<code>Lesson03-Styles.docx</code> and so on). You will reuse some of them later.</li>
+  <li>Finish with the final exercise in lesson 12 and show the result to your Team Lead.</li>
+  </ol>
+  <div class="callout tip"><b>Tip:</b> Need practice text fast? In an empty paragraph, type <code>=rand(5,4)</code> and press <code>Enter</code>. Word writes five paragraphs of four sentences each. <code>=lorem(3,5)</code> does the same in Latin.</div>` } },
+
+/* ======================= 1 ======================= */
+{ id: "word-1-mindset", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Lesson 1 — Think like a technical writer" },
+  summary: { en: "Who reads our documents, what they need, and the writing rules that follow — with what is special about the defense industry in Israel." },
+  body: { en:
+  `<p class="lede">Before the buttons, the mindset. A technical document is a tool. The reader is in the middle of a job — operating a system, maintaining it, testing it, approving it — and opens the document to get one answer. Your job is to make that answer quick to find and impossible to misread.</p>
+  <h2>Five questions before you write anything</h2>
+  <ol>
+  <li><strong>Who is the reader?</strong> An operator, a maintenance technician, a software engineer, a test engineer, a customer quality inspector? Their training and their language decide your words.</li>
+  <li><strong>What will they do with it?</strong> Learn, perform a task, look something up, approve it?</li>
+  <li><strong>Where will they read it?</strong> At a desk, in a hangar, in a vehicle, on a laptop next to the equipment, on paper.</li>
+  <li><strong>What document type is it?</strong> Each type has a fixed structure — see <a href="#/word-9-documents">lesson 9</a>.</li>
+  <li><strong>Which rules apply?</strong> The contract, the customer's template and style guide, and any standard the contract names. These beat personal taste every time.</li>
+  </ol>
+  <h2>The writing rules</h2>
+  <table><thead><tr><th>Rule</th><th>Instead of…</th><th>Write…</th></tr></thead><tbody>
+  <tr><td>One idea per sentence; short sentences (20 words or fewer for instructions).</td><td>After the system has been powered on and the self-test has completed, which takes about two minutes, the operator should verify the status.</td><td>Switch on the system. Wait for the self-test to finish (about 2 minutes). Make sure that the STATUS indicator is green.</td></tr>
+  <tr><td>Instructions in the imperative.</td><td>The cover should be removed.</td><td>Remove the cover.</td></tr>
+  <tr><td>Active voice.</td><td>The data is sent by the unit.</td><td>The unit sends the data.</td></tr>
+  <tr><td>One term for one thing — always.</td><td>display, screen, monitor, panel (for the same part)</td><td>display (every time)</td></tr>
+  <tr><td>Exact values with units.</td><td>Tighten firmly.</td><td>Tighten to 12 N·m.</td></tr>
+  <tr><td>Name controls exactly as they are labelled.</td><td>Press the power button.</td><td>Push <strong>PWR</strong>.</td></tr>
+  <tr><td>Condition before action.</td><td>Push RESET if the LED is red.</td><td>If the LED is red, push RESET.</td></tr>
+  </tbody></table>
+  <p>Many defense customers ask for <strong>ASD-STE100 Simplified Technical English</strong> (STE): a controlled dictionary of approved words, each with one meaning, plus writing rules like the ones above. If your project uses STE, your Team Lead will give you the dictionary and the project word list.</p>
+  <h2>What is special about the defense industry</h2>
+  <ul>
+  <li><strong>The customer's standard rules.</strong> Contracts name the documents to deliver and the standard each follows — for example MIL-STD-498 for software documents, MIL-STD-40051 or S1000D for technical manuals, or the customer's own template (common with Israeli primes and the Ministry of Defense). Follow the template exactly, including its styles.</li>
+  <li><strong>Safety notices are formal.</strong> <em>WARNING</em> (risk of injury or death), <em>CAUTION</em> (risk of damage to equipment) and <em>NOTE</em> (useful information) have fixed meanings and fixed positions — before the step they apply to. See <a href="#/word-7-tables-figures">lesson 7</a>.</li>
+  <li><strong>Configuration control.</strong> Every document has a document number, a revision, a date and a record of changes. A reader must always know which version they hold and that it matches the system's version.</li>
+  <li><strong>Security classification.</strong> Documents carry a classification marking (for example בלמ"ס — unclassified) at the top and bottom of every page. The project's security officer sets the level and the marking rules. Classified material is written only on the approved computers and networks for it — never on a home computer, a personal phone, an online tool or an AI assistant. See <a href="#/infosec">Information security</a> and <a href="#/confidentiality">Confidentiality</a>.</li>
+  <li><strong>Export control.</strong> Some technical data may not be shared outside the project, even inside GALIL. When in doubt, ask before you send.</li>
+  <li><strong>Hebrew and English.</strong> Most of our deliverables are in English, some in Hebrew, and some in both. Word handles both; a Hebrew paragraph just needs right-to-left direction (lesson 4).</li>
+  </ul>
+  <div class="callout warn"><b>Important:</b> Do not paste customer or project text into Copilot, ChatGPT, online translators or any other AI or cloud tool unless your Team Lead has confirmed in writing that the project allows it.</div>
+  <h2>Try it</h2>
+  <p>Rewrite this paragraph as a numbered procedure using the rules above:</p>
+  <p><em>“The unit can be reset by the operator, which should only be done when the FAULT indicator has been lit for more than ten seconds, by holding down the reset button for about 3 seconds after first making sure that no transmission is in progress.”</em></p>
+  <p>Compare with the answer at the end of <a href="#/word-12-final">lesson 12</a>.</p>` } },
+
+/* ======================= 2 ======================= */
+{ id: "word-2-setup", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Lesson 2 — Set up Word for technical writing" },
+  summary: { en: "Ten minutes of settings that let you see what is really in a document: formatting marks, the Navigation pane, the Styles pane and the style area." },
+  body: { en:
+  `<p class="lede">A technical writer needs to see the structure of a document, not only how it looks. These settings stay on — you change them once.</p>
+  <h2>The ribbon in one minute</h2>
+  <table><thead><tr><th>Tab</th><th>What you will use it for</th></tr></thead><tbody>
+  <tr><td>Home</td><td>Styles, lists, paragraph settings, Find and Replace, Show/Hide ¶.</td></tr>
+  <tr><td>Insert</td><td>Tables, pictures, page breaks, headers and footers, page numbers, Quick Parts, cross-references.</td></tr>
+  <tr><td>Layout</td><td>Margins, orientation, section breaks, paragraph spacing.</td></tr>
+  <tr><td>References</td><td>Table of contents, captions, list of figures, cross-references.</td></tr>
+  <tr><td>Review</td><td>Spelling, comments, Track Changes, Compare, Restrict Editing, accessibility.</td></tr>
+  <tr><td>View</td><td>Navigation pane, Outline and Draft views, ruler, side-by-side.</td></tr>
+  <tr><td>Contextual tabs</td><td><strong>Table Design</strong> and <strong>Layout</strong> appear when the cursor is in a table; <strong>Picture Format</strong> when a picture is selected; <strong>Header &amp; Footer</strong> while you edit a header.</td></tr>
+  </tbody></table>
+  <h2>Turn these on</h2>
+  <ol class="steps">
+  <li><strong>Formatting marks.</strong> <strong>Home → Paragraph → Show/Hide ¶</strong> (<code>Ctrl</code>+<code>Shift</code>+<code>8</code>). Now you see every paragraph mark (¶), tab (→), space (·), line break (↵) and section break. Professional writers work with this on.</li>
+  <li><strong>The Navigation pane.</strong> <strong>View → Show → Navigation Pane</strong> (or <code>Ctrl</code>+<code>F</code>). The <em>Headings</em> tab shows the document's outline — click to jump, drag to move a whole chapter.</li>
+  <li><strong>The Styles pane.</strong> Click the small arrow at the bottom-right of the <strong>Home → Styles</strong> group (or <code>Ctrl</code>+<code>Alt</code>+<code>Shift</code>+<code>S</code>). Dock it on the right. At the bottom, tick <strong>Show Preview</strong>; under <strong>Options…</strong>, choose <em>Select styles to show: In use</em>.</li>
+  <li><strong>The ruler.</strong> <strong>View → Show → Ruler</strong>. You need it for indents and tab stops.</li>
+  <li><strong>The style area.</strong> <strong>File → Options → Advanced → Display → Style area pane width in Draft and Outline views</strong>: set <code>2.5 cm</code>. Now <strong>View → Draft</strong> shows the name of every paragraph's style in the left margin — the fastest way to check a document.</li>
+  </ol>
+  <h2>Stop Word from guessing</h2>
+  <p>Word's automatic formatting creates lists and borders you didn't ask for, outside the styles. Go to <strong>File → Options → Proofing → AutoCorrect Options… → AutoFormat As You Type</strong> and clear:</p>
+  <ul>
+  <li><em>Automatic bulleted lists</em> and <em>Automatic numbered lists</em> — you will use list styles instead.</li>
+  <li><em>Border lines</em> — typing <code>---</code> then <code>Enter</code> otherwise draws a line you cannot select.</li>
+  <li><em>Define styles based on your formatting</em> — it creates random new styles.</li>
+  </ul>
+  <p>Also: <strong>File → Options → Advanced → Cut, copy, and paste → Pasting from other programs: Keep Text Only</strong>. Text pasted from e-mails and web pages then takes your document's styles.</p>
+  <h2>Proofing language</h2>
+  <p>Select all (<code>Ctrl</code>+<code>A</code>), then <strong>Review → Language → Set Proofing Language…</strong> and choose the variant the customer wants — usually <em>English (United States)</em>. Better still: set it in the styles, so every new paragraph has it (lesson 3).</p>
+  <h2>Your Quick Access Toolbar</h2>
+  <p>Right-click any button and choose <strong>Add to Quick Access Toolbar</strong>. Good candidates: <em>Show/Hide ¶</em>, <em>Update Table</em>, <em>Insert Caption</em>, <em>Cross-reference</em>, <em>Track Changes</em>. If the toolbar is hidden, <strong>right-click the ribbon → Show Quick Access Toolbar</strong>.</p>
+  <h2>Try it</h2>
+  <p>Make all the settings above. Create a new blank document, type <code>=rand(3,3)</code> and press <code>Enter</code>, switch to <strong>View → Draft</strong> and check that you see <em>Normal</em> beside each paragraph in the style area.</p>` } },
+
+/* ======================= 3 ======================= */
+{ id: "word-3-styles", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Lesson 3 — Styles: the one habit that matters" },
+  summary: { en: "What styles are, why every paragraph must have one, how to apply and change them, and which style to use for what." },
+  body: { en:
+  `<p class="lede">If you take one thing from this course, take this: <strong>never format text by hand — apply a style.</strong> A style is a named set of formatting (font, size, spacing, indents, numbering, and more). Headings, the table of contents, numbering, cross-references, PDF bookmarks and the customer's template all depend on it.</p>
+  <h2>Why it matters</h2>
+  <ul>
+  <li><strong>Consistency.</strong> Every warning, every step and every heading looks the same in all 300 pages.</li>
+  <li><strong>Speed.</strong> The customer wants headings in dark blue instead of black? Change one style — the whole document follows in a second.</li>
+  <li><strong>Structure.</strong> The Navigation pane, the table of contents and heading numbers are built from heading styles. Bold 14-pt text that only <em>looks</em> like a heading is invisible to all of them.</li>
+  </ul>
+  <h2>The kinds of style</h2>
+  <table><thead><tr><th>Kind</th><th>Symbol in the Styles pane</th><th>Applies to</th><th>Examples</th></tr></thead><tbody>
+  <tr><td>Paragraph</td><td>¶</td><td>The whole paragraph</td><td>Normal, Heading 1, List Number, Caption</td></tr>
+  <tr><td>Character</td><td><em>a</em></td><td>Selected words only</td><td>Strong, Emphasis, a <em>UI Control</em> style for button names</td></tr>
+  <tr><td>Linked</td><td>¶<em>a</em></td><td>A paragraph, or just the selected words</td><td>Heading 1, Title</td></tr>
+  <tr><td>Table</td><td>▦</td><td>A table</td><td>Table Grid, the template's own table style</td></tr>
+  <tr><td>List</td><td>☰</td><td>Numbering of a list (advanced)</td><td>1 / 1.1 / 1.1.1</td></tr>
+  </tbody></table>
+  <h2>Applying a style</h2>
+  <ul>
+  <li>Click anywhere in the paragraph — no need to select it — and click a style in <strong>Home → Styles</strong> or in the Styles pane.</li>
+  <li>Or press <code>Ctrl</code>+<code>Shift</code>+<code>S</code>, type the first letters of the style name and press <code>Enter</code>.</li>
+  <li>Built-in shortcuts: <code>Ctrl</code>+<code>Alt</code>+<code>1</code> / <code>2</code> / <code>3</code> for Heading 1–3, <code>Ctrl</code>+<code>Shift</code>+<code>N</code> for Normal, <code>Ctrl</code>+<code>Shift</code>+<code>L</code> for List Bullet.</li>
+  </ul>
+  <h2>Changing a style</h2>
+  <ol class="steps">
+  <li>In the Styles pane, point at the style, click the arrow beside it and choose <strong>Modify…</strong>.</li>
+  <li>Set the basics in the dialog. For more, use <strong>Format</strong> at the bottom-left: <em>Font</em>, <em>Paragraph</em> (spacing, indents, line and page breaks), <em>Tabs</em>, <em>Border</em>, <em>Language</em>, <em>Numbering</em>.</li>
+  <li>Check <strong>Style for following paragraph</strong>: after a heading you want <em>Body Text</em> or <em>Normal</em>, so pressing <code>Enter</code> puts you straight in the right style.</li>
+  <li>Choose <strong>Only in this document</strong> (the safe default) unless you are editing a template. Leave <strong>Automatically update</strong> cleared — otherwise one accidental change to one paragraph changes the style everywhere.</li>
+  </ol>
+  <p>The quick way: format one paragraph until it looks right, then right-click its style in the gallery and choose <strong>Update <em>Heading 1</em> to Match Selection</strong>.</p>
+  <h2>“Based on” — the family tree</h2>
+  <p>Most styles are <strong>based on</strong> another (usually <em>Normal</em>). They inherit everything you don't set yourself. Change the font of <em>Normal</em> and every style based on it follows. That is powerful — and the reason to change <em>Normal</em> carefully.</p>
+  <h2>Which style for what</h2>
+  <table><thead><tr><th>Content</th><th>Style</th></tr></thead><tbody>
+  <tr><td>Document title on the title page</td><td>Title</td></tr>
+  <tr><td>Chapter / section / subsection headings</td><td>Heading 1 / Heading 2 / Heading 3 (rarely Heading 4)</td></tr>
+  <tr><td>Ordinary text</td><td>Normal or Body Text — whichever the template uses</td></tr>
+  <tr><td>Bullets</td><td>List Bullet, List Bullet 2 for the second level</td></tr>
+  <tr><td>Procedure steps</td><td>List Number, List Number 2 for sub-steps</td></tr>
+  <tr><td>Text that continues a list item (a second paragraph inside a step)</td><td>List Continue</td></tr>
+  <tr><td>Figure and table titles</td><td>Caption (inserted with <em>Insert Caption</em> — lesson 7)</td></tr>
+  <tr><td>Text inside tables</td><td>The template's table text style (often <em>Table Text</em>), not Normal — Normal usually has too much spacing for a cell.</td></tr>
+  <tr><td>WARNING, CAUTION, NOTE</td><td>The template's notice styles (lesson 7)</td></tr>
+  <tr><td>Code, commands, file content</td><td>A code style with a monospaced font (e.g. <em>Code</em>, based on Consolas)</td></tr>
+  <tr><td>Button names, menu names, field names inside a sentence</td><td>A character style (Strong, or the template's <em>UI Control</em> style)</td></tr>
+  </tbody></table>
+  <h2>Finding hand formatting</h2>
+  <ul>
+  <li><code>Shift</code>+<code>F1</code> opens <strong>Reveal Formatting</strong>: it shows the paragraph's style and anything added on top of it.</li>
+  <li>The <strong>Style Inspector</strong> (second button at the bottom of the Styles pane) shows the paragraph style and the character style, and any extra formatting — with a button to clear it.</li>
+  <li>To remove hand formatting: <code>Ctrl</code>+<code>Space</code> clears character formatting, <code>Ctrl</code>+<code>Q</code> clears paragraph formatting. <strong>Home → Clear All Formatting</strong> (the <em>A</em> with an eraser) resets the selection to Normal.</li>
+  </ul>
+  <div class="callout tip"><b>Tip:</b> Right-click a style in the Styles pane and choose <strong>Select All <em>n</em> Instances</strong>. Useful to check that every warning is in the warning style — or to move all of them to another style in one click.</div>
+  <h2>Try it</h2>
+  <ol class="steps">
+  <li>Type <code>=rand(6,3)</code> and <code>Enter</code>. Turn three of the paragraphs into short headings and apply Heading 1, Heading 2 and Heading 2.</li>
+  <li>Modify <em>Heading 1</em>: Arial 16 pt, bold, dark blue, 18 pt space before, 6 pt after, <em>Style for following paragraph: Normal</em>.</li>
+  <li>Make one sentence bold and red by hand. Find it with <code>Shift</code>+<code>F1</code>, then clear it with <code>Ctrl</code>+<code>Space</code>.</li>
+  <li>Open the Navigation pane and check that your three headings appear in it.</li>
+  </ol>` } },
+
+/* ======================= 4 ======================= */
+{ id: "word-4-paragraphs", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Lesson 4 — Paragraphs, spacing and page flow" },
+  summary: { en: "Spacing without empty lines, indents, line and page breaks, keeping things together, special spaces, and Hebrew right-to-left paragraphs." },
+  body: { en:
+  `<p class="lede">In Word a paragraph is everything up to a ¶ mark. Spacing, indents, alignment and page-break behaviour belong to the paragraph — and should come from its style.</p>
+  <h2>Spacing: never press Enter twice</h2>
+  <p>Empty paragraphs to make space are the most common beginner mistake. They break page flow, leave blank lines at the tops of pages and make spacing inconsistent. Use <strong>space before</strong> and <strong>space after</strong> in the style instead: <strong>Modify → Format → Paragraph → Spacing</strong>, or <strong>Layout → Paragraph → Spacing</strong> for a single paragraph.</p>
+  <table><thead><tr><th>You want</th><th>Use</th><th>Not</th></tr></thead><tbody>
+  <tr><td>A gap between paragraphs</td><td>Space after (e.g. 6 pt) in the style</td><td>An empty paragraph</td></tr>
+  <tr><td>A new line in the same paragraph (e.g. an address)</td><td>Line break: <code>Shift</code>+<code>Enter</code></td><td>A new paragraph</td></tr>
+  <tr><td>Start on a new page</td><td>Page break: <code>Ctrl</code>+<code>Enter</code>, or <em>Page break before</em> in the Heading 1 style</td><td>Many empty paragraphs</td></tr>
+  <tr><td>Text that starts further in</td><td>An indent (ruler, or <em>Indentation</em> in the Paragraph dialog)</td><td>Spaces or tabs at the start</td></tr>
+  <tr><td>Values lined up in a column</td><td>A tab stop, or better, a table</td><td>Spaces</td></tr>
+  </tbody></table>
+  <h2>Line and Page Breaks — the hidden powers</h2>
+  <p><strong>Home → Paragraph</strong> dialog launcher → <strong>Line and Page Breaks</strong> tab. Set these in the styles:</p>
+  <ul>
+  <li><strong>Widow/Orphan control</strong> — no single line of a paragraph alone at the top or bottom of a page. Leave it on.</li>
+  <li><strong>Keep with next</strong> — the paragraph stays on the same page as the next one. Always on for headings, captions above tables, and WARNING / CAUTION / NOTE (a warning must never be separated from its step).</li>
+  <li><strong>Keep lines together</strong> — the paragraph is never split across pages. Good for short steps and notices.</li>
+  <li><strong>Page break before</strong> — the paragraph always starts a page. Typical for Heading 1 (each chapter on a new page).</li>
+  </ul>
+  <p>A small black square ▪ beside a paragraph (with Show/Hide ¶ on) means one of these is set.</p>
+  <h2>Indents</h2>
+  <ul>
+  <li><strong>Left / right indent</strong> — the whole paragraph moves in.</li>
+  <li><strong>First line</strong> — only the first line moves in (rare in technical writing).</li>
+  <li><strong>Hanging</strong> — every line except the first moves in. This is how list text lines up after the bullet or number, and how “NOTE:” sits beside its text.</li>
+  </ul>
+  <h2>Special characters that save layouts</h2>
+  <table><thead><tr><th>Character</th><th>Keys</th><th>Use</th></tr></thead><tbody>
+  <tr><td>Non-breaking space</td><td><code>Ctrl</code>+<code>Shift</code>+<code>Space</code></td><td>Between a number and its unit (<em>12 V</em>, <em>5 mm</em>) and in names like <em>Figure 3</em>, so they never split across lines.</td></tr>
+  <tr><td>Non-breaking hyphen</td><td><code>Ctrl</code>+<code>Shift</code>+<code>-</code></td><td>In part numbers and codes (<em>MS-2210-04</em>).</td></tr>
+  <tr><td>Optional hyphen</td><td><code>Ctrl</code>+<code>-</code></td><td>Where a long word may break.</td></tr>
+  <tr><td>Symbols</td><td><strong>Insert → Symbol</strong></td><td>°, ±, µ, Ω, ×, ≤, ≥. Never type <em>x</em> for × or <em>u</em> for µ.</td></tr>
+  </tbody></table>
+  <h2>Hebrew paragraphs</h2>
+  <p>Add Hebrew once in <strong>File → Options → Language</strong>. The <strong>Right-to-Left Text Direction</strong> and <strong>Left-to-Right Text Direction</strong> buttons then appear in <strong>Home → Paragraph</strong> (<code>Ctrl</code>+<code>Right Shift</code> and <code>Ctrl</code>+<code>Left Shift</code>). In a Hebrew document use a style with right-to-left direction, so headings, lists and tables all run the right way. English terms inside Hebrew text stay readable on their own.</p>
+  <h2>Try it</h2>
+  <ol class="steps">
+  <li>In your lesson 3 file, delete every empty paragraph. Set <em>Normal</em> to 6 pt space after, 1.15 line spacing.</li>
+  <li>Set <em>Heading 1</em> to <em>Page break before</em> and <em>Keep with next</em>. Watch each chapter jump to a new page.</li>
+  <li>Type <em>Apply 28 V DC</em> with a non-breaking space between <em>28</em> and <em>V</em>. Narrow the window and check that they never split.</li>
+  </ol>` } },
+
+/* ======================= 5 ======================= */
+{ id: "word-5-lists", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Lesson 5 — Bulleted and numbered lists" },
+  summary: { en: "When to use bullets and when to use numbers, how to write list items, and how to make Word's numbering behave." },
+  body: { en:
+  `<p class="lede">Lists are the backbone of technical writing — every procedure is a numbered list. They are also where Word surprises beginners most. Follow the rules here and lists will behave.</p>
+  <h2>Bullets or numbers?</h2>
+  <table><thead><tr><th>Use</th><th>When</th><th>Example</th></tr></thead><tbody>
+  <tr><td><strong>Numbered list</strong> (ordered, <code>&lt;ol&gt;</code>)</td><td>The order matters: steps of a procedure, a sequence of events, a ranked list — or you will refer to an item by its number.</td><td>1. Remove the four screws. 2. Lift the cover. 3. Disconnect J1.</td></tr>
+  <tr><td><strong>Bulleted list</strong> (unordered, <code>&lt;ul&gt;</code>)</td><td>The order doesn't matter: features, parts in a kit, options, prerequisites.</td><td>• Power supply • Data cable • Mounting kit</td></tr>
+  <tr><td><strong>Table</strong></td><td>Each item has two or more attributes (name, value, unit, range).</td><td>Parameter | Value | Unit</td></tr>
+  <tr><td><strong>Ordinary paragraph</strong></td><td>Fewer than two items, or the items need explaining in full sentences.</td><td>—</td></tr>
+  </tbody></table>
+  <h2>Writing list items</h2>
+  <ul>
+  <li><strong>Introduce the list</strong> with a sentence that ends in a colon: <em>“The kit contains:”</em> or <em>“To install the unit:”</em>.</li>
+  <li><strong>Keep items parallel</strong> — all nouns, or all full sentences, or all starting with a verb. Not a mix.</li>
+  <li><strong>One action per step.</strong> If a step has an <em>and</em> joining two actions, it is probably two steps.</li>
+  <li><strong>Result after the action.</strong> <em>“Push START. The READY indicator comes on.”</em> The result can be a second sentence in the same step.</li>
+  <li><strong>Two levels at most.</strong> A third level means the content needs a table or a sub-procedure.</li>
+  <li><strong>Punctuation:</strong> full sentences end with a full stop; short fragments get no punctuation. Follow the customer's style guide where it says otherwise.</li>
+  </ul>
+  <h2>Making lists in Word — the right way</h2>
+  <p>Use the <strong>list styles</strong>, not the Bullets and Numbering buttons. The styles carry the right indents and spacing from the template, and they stay consistent.</p>
+  <table><thead><tr><th>Style</th><th>For</th></tr></thead><tbody>
+  <tr><td>List Bullet / List Bullet 2</td><td>Bullets, first and second level</td></tr>
+  <tr><td>List Number / List Number 2</td><td>Steps (1, 2, 3) and sub-steps (a, b, c)</td></tr>
+  <tr><td>List Continue / List Continue 2</td><td>An extra paragraph, a picture or a note inside a list item, lined up with its text</td></tr>
+  </tbody></table>
+  <p>If these styles are not in the Styles pane: <strong>Options… → Select styles to show: All styles</strong>, or apply them with <code>Ctrl</code>+<code>Shift</code>+<code>S</code>.</p>
+  <h2>Controlling the numbering</h2>
+  <ul>
+  <li><strong>Start a new procedure at 1:</strong> right-click the first number → <strong>Restart at 1</strong>.</li>
+  <li><strong>Continue after a note or picture:</strong> right-click the number → <strong>Continue Numbering</strong>. If the note is in <em>List Continue</em> style, numbering continues by itself.</li>
+  <li><strong>Start at any number:</strong> right-click → <strong>Set Numbering Value…</strong>.</li>
+  <li><strong>Change the level:</strong> <code>Tab</code> at the start of a list item moves it one level down, <code>Shift</code>+<code>Tab</code> moves it up — or apply <em>List Number 2</em>.</li>
+  <li><strong>Remove a list:</strong> apply <em>Normal</em> (or the body style).</li>
+  </ul>
+  <div class="callout note"><b>Note:</b> Never type numbers or bullet characters by hand (“1.”, “-”, “•”). They don't renumber when you add a step, and cross-references to steps can't find them.</div>
+  <h2>A good procedure, start to finish</h2>
+  <p><em>Heading 3:</em> <strong>Replacing the air filter</strong><br>
+  <em>Normal:</em> To replace the air filter:<br>
+  <em>List Number:</em> 1. Set the MAIN POWER switch to OFF.<br>
+  <em>List Number:</em> 2. Remove the four screws (1) from the filter cover (2).<br>
+  <em>List Continue:</em> NOTE: Keep the screws for the new cover.<br>
+  <em>List Number:</em> 3. Remove the filter and discard it.<br>
+  <em>List Number:</em> 4. Install the new filter with the arrow pointing to the fan.</p>
+  <h2>Try it</h2>
+  <ol class="steps">
+  <li>Write the procedure above with <em>List Number</em> and <em>List Continue</em> styles. Check that the steps are numbered 1 to 4 with the note unnumbered between them.</li>
+  <li>Write a second procedure right after it and make it restart at 1.</li>
+  <li>Add a bulleted list of the tools needed, introduced by a sentence with a colon.</li>
+  </ol>` } },
+
+/* ======================= 6 ======================= */
+{ id: "word-6-headings-toc", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Lesson 6 — Headings, numbering and the table of contents" },
+  summary: { en: "Heading levels, numbered headings (1, 1.1, 1.1.1), moving chapters in the Navigation pane, and a table of contents that builds itself." },
+  body: { en:
+  `<p class="lede">Headings are the skeleton of a document. Set them up correctly once and Word gives you numbering, navigation, a table of contents and PDF bookmarks for free.</p>
+  <h2>Heading levels</h2>
+  <ul>
+  <li><strong>Heading 1</strong> — chapters (1 INTRODUCTION, 2 SYSTEM DESCRIPTION…).</li>
+  <li><strong>Heading 2</strong> — sections inside a chapter (2.1, 2.2).</li>
+  <li><strong>Heading 3</strong> — subsections (2.1.1). Use Heading 4 only when the template requires it.</li>
+  <li>Never skip a level (Heading 1 straight to Heading 3), and avoid a single subsection on its own — if 2.1 has no 2.2, it probably isn't needed.</li>
+  <li>Headings say what the section is about: <em>Replacing the battery</em>, not <em>General</em>.</li>
+  </ul>
+  <h2>Numbered headings: 1 / 1.1 / 1.1.1</h2>
+  <p>Defense documents almost always number their headings. The right way is a <strong>multilevel list linked to the heading styles</strong> — then numbers update themselves when you add, delete or move a section.</p>
+  <ol class="steps">
+  <li>Put the cursor in a Heading 1 paragraph.</li>
+  <li>Choose <strong>Home → Paragraph → Multilevel List</strong>. If the library shows a style like <em>1 Heading 1 / 1.1 Heading 2 / 1.1.1 Heading 3</em>, click it — done.</li>
+  <li>Otherwise choose <strong>Define New Multilevel List…</strong> and click <strong>More &gt;&gt;</strong>.</li>
+  <li>Click level <strong>1</strong>. Set <em>Link level to style: Heading 1</em>, and the number format to <code>1</code>.</li>
+  <li>Click level <strong>2</strong>. <em>Link level to style: Heading 2</em>; number format <code>1.1</code> (Word builds it from <em>Include level number from</em>).</li>
+  <li>Level <strong>3</strong>: <em>Heading 3</em>, <code>1.1.1</code>. Set <em>Aligned at</em> 0 cm and a tab after the number for every level, so headings line up at the margin.</li>
+  <li>Click <strong>OK</strong>. Every heading in the document is now numbered.</li>
+  </ol>
+  <div class="callout tip"><b>Tip:</b> Appendices usually need their own scheme (A, A.1, A.1.1). Use separate styles for them — for example <em>Appendix 1</em>, <em>Appendix 2</em> — with their own linked multilevel list. Customer templates usually already have them.</div>
+  <h2>Reorganising with the Navigation pane</h2>
+  <ul>
+  <li>Drag a heading up or down in the Navigation pane: the whole section moves with it, sub-sections included, and the numbers update.</li>
+  <li>Right-click a heading for <strong>Promote</strong>, <strong>Demote</strong>, <strong>New Heading Before / After</strong>, <strong>Delete</strong>.</li>
+  <li><strong>View → Outline</strong> does the same in the page, and <strong>Show Level</strong> folds the document down to its headings — the best way to review a structure.</li>
+  </ul>
+  <h2>The table of contents</h2>
+  <ol class="steps">
+  <li>Put the cursor where the table of contents goes (usually its own page after the front matter). Type a title such as <em>TABLE OF CONTENTS</em> in a style that is <strong>not</strong> a heading (e.g. <em>TOC Heading</em>), so it doesn't list itself.</li>
+  <li>Choose <strong>References → Table of Contents → Custom Table of Contents…</strong>.</li>
+  <li>Set <strong>Show levels</strong> (usually 3), tick <strong>Right align page numbers</strong>, and choose the dot leader. Click <strong>OK</strong>.</li>
+  <li>After changes, click in the table and press <code>F9</code> (or <strong>References → Update Table</strong>) → <strong>Update entire table</strong>.</li>
+  </ol>
+  <ul>
+  <li>The look of each line comes from the styles <strong>TOC 1</strong>, <strong>TOC 2</strong>, <strong>TOC 3</strong>. Change those styles, never the table's text — hand changes vanish at the next update.</li>
+  <li>Something missing? Its paragraph isn't in a heading style. Something extra? A non-heading paragraph has an outline level — fix its style.</li>
+  <li><code>Ctrl</code>+click a line to jump to the section.</li>
+  </ul>
+  <h2>Try it</h2>
+  <ol class="steps">
+  <li>Build an outline: three Heading 1 chapters, each with two Heading 2 sections, one with two Heading 3 subsections.</li>
+  <li>Number the headings 1 / 1.1 / 1.1.1 with a linked multilevel list.</li>
+  <li>Insert a three-level table of contents at the top.</li>
+  <li>Drag chapter 3 above chapter 2 in the Navigation pane. Update the table of contents and check the new numbers.</li>
+  </ol>` } },
+
+/* ======================= 7 ======================= */
+{ id: "word-7-tables-figures", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Lesson 7 — Tables, figures, captions and safety notices" },
+  summary: { en: "Tables that survive page breaks, pictures that stay put, numbered captions with cross-references, lists of figures and tables, and WARNING / CAUTION / NOTE." },
+  body: { en:
+  `<p class="lede">Tables and figures carry much of a technical document's information. They need numbers, titles and references that update themselves — Word's captions and cross-references do exactly that.</p>
+  <h2>Tables</h2>
+  <ol class="steps">
+  <li><strong>Insert → Table</strong>, drag over the grid for the size.</li>
+  <li>Apply the template's table style (<strong>Table Design → Table Styles</strong>). Format through the style, not cell by cell.</li>
+  <li>Use the table text style for the cells, and a table heading style for the first row.</li>
+  <li>Select the header row and choose <strong>Layout → Data → Repeat Header Rows</strong>. On every new page the table continues with its headings.</li>
+  <li>Select the table, <strong>Layout → Table → Properties → Row</strong>, and clear <strong>Allow row to break across pages</strong> — a row is never split in two.</li>
+  <li><strong>Layout → Cell Size → AutoFit → AutoFit Window</strong> fits the table to the page width.</li>
+  </ol>
+  <ul>
+  <li>Units go in the column heading — <em>Voltage (V DC)</em> — not in every cell.</li>
+  <li>Numbers align right or on the decimal point; text aligns left.</li>
+  <li>Never leave a cell empty — use “—” or “N/A” so the reader knows it isn't missing.</li>
+  <li>Wide table? Put it on a landscape page (lesson 8).</li>
+  </ul>
+  <h2>Figures</h2>
+  <ul>
+  <li><strong>Insert → Pictures → This Device</strong>. Keep the picture <strong>In Line with Text</strong> (<strong>Picture Format → Wrap Text</strong>) and in its own paragraph with a <em>Figure</em> style (centred, Keep with next). Floating pictures wander when the text changes.</li>
+  <li>Size pictures to the text width or a fixed fraction of it, so all figures look alike.</li>
+  <li>Use callout numbers on the picture (1), (2), (3) and explain them in a legend or in the steps — not long text labels inside the picture, which can't be edited or translated.</li>
+  <li>Right-click → <strong>View Alt Text</strong> and describe the picture.</li>
+  <li><strong>Picture Format → Compress Pictures</strong> keeps big manuals at a sensible size.</li>
+  </ul>
+  <h2>Captions</h2>
+  <ol class="steps">
+  <li>Select the table or picture and choose <strong>References → Insert Caption</strong>.</li>
+  <li>Choose the <strong>Label</strong>: <em>Table</em> or <em>Figure</em>. Choose the <strong>Position</strong>: tables above, figures below — unless the template says otherwise.</li>
+  <li>To number by chapter (Figure 3-2, Table 4-1), click <strong>Numbering…</strong>, tick <strong>Include chapter number</strong> and choose <em>Heading 1</em>. (This needs numbered headings — lesson 6.)</li>
+  <li>Type the title after the number — <em>Figure 3-2 Front panel controls</em> — and click <strong>OK</strong>.</li>
+  </ol>
+  <h2>Cross-references</h2>
+  <p>Never type “see Figure 5” by hand — after one new figure it is wrong. Instead: <strong>References → Cross-reference</strong> (or <strong>Insert → Links → Cross-reference</strong>), choose <em>Reference type: Figure</em> (or Table, Heading, Numbered item), <em>Insert reference to: Only label and number</em>, pick the item and click <strong>Insert</strong>. Keep <strong>Insert as hyperlink</strong> ticked.</p>
+  <p>Cross-references are fields. Update all of them with <code>Ctrl</code>+<code>A</code> then <code>F9</code>. To have Word do it before every print and PDF: <strong>File → Options → Display → Update fields before printing</strong>.</p>
+  <h2>Lists of figures and tables</h2>
+  <p><strong>References → Insert Table of Figures</strong>, choose <em>Caption label: Figure</em> — and again with <em>Table</em>. They go right after the table of contents and update like it.</p>
+  <h2>WARNING, CAUTION and NOTE</h2>
+  <table><thead><tr><th>Notice</th><th>Means</th><th>Rules</th></tr></thead><tbody>
+  <tr><td><strong>WARNING</strong></td><td>A procedure or condition that can cause injury or death.</td><td>Before the step it applies to. Says the hazard, the result and how to avoid it.</td></tr>
+  <tr><td><strong>CAUTION</strong></td><td>A procedure or condition that can damage equipment or data.</td><td>Before the step it applies to.</td></tr>
+  <tr><td><strong>NOTE</strong></td><td>Information that helps the reader. No danger.</td><td>Before or after the step. Never contains an instruction that must be done.</td></tr>
+  </tbody></table>
+  <ul>
+  <li>Use the template's notice styles (often a one-cell table or a bordered paragraph with an icon). They have <em>Keep with next</em> so a warning never sits on a different page from its step.</li>
+  <li>A notice is never a step — don't number it.</li>
+  <li>Save your project's standard notices as Quick Parts (lesson 11) so the wording is identical everywhere.</li>
+  </ul>
+  <div class="callout warn"><b>Example:</b> WARNING — HIGH VOLTAGE. The power supply contains 400 V DC for up to 2 minutes after power is removed. Wait 2 minutes before you open the cover.</div>
+  <h2>Try it</h2>
+  <ol class="steps">
+  <li>In your lesson 6 file, add a 4 × 10 table of technical data with a repeating header row and a caption above it.</li>
+  <li>Add two pictures (any screenshots) with captions below them, numbered by chapter.</li>
+  <li>In the text, add “see <em>Figure 1-2</em>” as a cross-reference. Then insert a new figure before it, update the fields and watch it become <em>Figure 1-3</em>.</li>
+  <li>Add a list of figures and a list of tables after the table of contents.</li>
+  </ol>` } },
+
+/* ======================= 8 ======================= */
+{ id: "word-8-layout", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Lesson 8 — Page layout: sections, headers, footers and markings" },
+  summary: { en: "Section breaks, a landscape page in a portrait document, headers and footers with the document number, revision, page X of Y and the classification marking." },
+  body: { en:
+  `<p class="lede">A defense document's pages carry a lot of information around the text: the classification marking, the document number and revision, the page number. Word manages all of it with <strong>sections</strong> and <strong>headers and footers</strong>.</p>
+  <h2>Sections</h2>
+  <p>A section is a part of the document with its own page setup: orientation, margins, headers and footers, page numbering. Insert one with <strong>Layout → Breaks → Section Breaks → Next Page</strong>. Typical sections in a manual:</p>
+  <ol>
+  <li>Title page — no page number.</li>
+  <li>Front matter (record of changes, table of contents, lists of figures and tables) — numbered i, ii, iii.</li>
+  <li>The body — numbered 1, 2, 3 (or 1-1, 1-2 by chapter).</li>
+  <li>A landscape section for a wide table or diagram, then portrait again.</li>
+  </ol>
+  <h2>A landscape page in a portrait document</h2>
+  <ol class="steps">
+  <li>Put a <strong>Next Page</strong> section break before the wide table and another after it.</li>
+  <li>Click inside the table's section and choose <strong>Layout → Orientation → Landscape</strong>. Only that section turns.</li>
+  </ol>
+  <h2>Headers and footers</h2>
+  <ol class="steps">
+  <li>Double-click the top or bottom margin (or <strong>Insert → Header → Edit Header</strong>). The <strong>Header &amp; Footer</strong> tab opens.</li>
+  <li><strong>Different First Page</strong> gives the title page its own (or no) header.</li>
+  <li><strong>Link to Previous</strong> is on by default: the section repeats the previous section's header. Switch it off in a section before you change that section's header — otherwise you change them all.</li>
+  <li><strong>Page Number → Format Page Numbers…</strong> sets the number format (i, ii, iii or 1, 2, 3) and <strong>Start at</strong> 1 for each section.</li>
+  <li><strong>Close Header and Footer</strong> (or press <code>Esc</code>) to go back to the text.</li>
+  </ol>
+  <h2>What a typical page carries</h2>
+  <table><thead><tr><th>Where</th><th>Typical content</th></tr></thead><tbody>
+  <tr><td>Top centre and bottom centre</td><td>The classification marking — the same on every page, including the title page and blank pages.</td></tr>
+  <tr><td>Header</td><td>Document title or document number, company and customer logo if the template has them.</td></tr>
+  <tr><td>Footer</td><td>Document number, revision, date, <em>Page X of Y</em>.</td></tr>
+  </tbody></table>
+  <h2>Page X of Y</h2>
+  <p><strong>Insert → Page Number → Current Position → Page X of Y</strong> — or type <em>Page</em>, then <strong>Insert → Quick Parts → Field… → Page</strong>, <em>of</em>, and the field <strong>NumPages</strong> (or <strong>SectionPages</strong> to count only the body section).</p>
+  <h2>Document number and revision that fill themselves in</h2>
+  <ol class="steps">
+  <li>Type the values once in <strong>File → Info → Properties → Advanced Properties</strong> (<em>Title</em>, <em>Subject</em>, or custom properties such as <em>DocNumber</em> and <em>Revision</em> on the <strong>Custom</strong> tab).</li>
+  <li>In the header, footer or title page, insert them with <strong>Insert → Quick Parts → Document Property</strong> (for <em>Title</em>, <em>Subject</em> and the other standard ones) or <strong>Insert → Quick Parts → Field… → DocProperty</strong> (for custom ones).</li>
+  <li>Change the revision in one place, press <code>Ctrl</code>+<code>A</code> and <code>F9</code>, and every page shows it.</li>
+  </ol>
+  <div class="callout warn"><b>Important:</b> The classification marking must match the highest classification of any content in the document, and is set by the project security officer — never by guess. If you are not sure what to mark, stop and ask.</div>
+  <h2>Try it</h2>
+  <ol class="steps">
+  <li>In your practice document, add a title page and a front-matter section before chapter 1.</li>
+  <li>No number on the title page; i, ii, iii in the front matter; 1, 2, 3 from chapter 1.</li>
+  <li>Add <em>UNCLASSIFIED</em> centred at the top and bottom of every page, and <em>Doc. No. GAL-TM-0001 Rev. A — Page X of Y</em> in the footer, with the number and revision as document properties.</li>
+  <li>Put your wide table from lesson 7 on a landscape page.</li>
+  </ol>` } },
+
+/* ======================= 9 ======================= */
+{ id: "word-9-documents", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Lesson 9 — What our documents look like" },
+  summary: { en: "The documents GALIL writes for defense customers — manuals, software documents, test procedures, interface documents and training material — and the structure of each." },
+  body: { en:
+  `<p class="lede">Every document type has a job and a shape that fits it. Once you know the shapes, a new project is mostly filling in a familiar structure. The contract and the customer's template always win — what follows is the typical shape.</p>
+  <h2>At a glance</h2>
+  <div class="docmocks">
+  <div class="docmock"><div class="mk">UNCLASSIFIED</div><b>Operator's / Maintenance Manual</b><span>Title page · Warnings summary · TOC · Introduction · Description · Operation · Maintenance · Troubleshooting · Appendices</span><div class="mk">UNCLASSIFIED</div></div>
+  <div class="docmock"><div class="mk">UNCLASSIFIED</div><b>Software User Manual (SUM)</b><span>Scope · Software summary · Access · Using the software (task by task) · Messages and errors · Notes</span><div class="mk">UNCLASSIFIED</div></div>
+  <div class="docmock"><div class="mk">UNCLASSIFIED</div><b>Requirements Specification (SRS / SSS)</b><span>Scope · Applicable documents · Requirements (“shall”, each with an ID) · Qualification provisions · Traceability</span><div class="mk">UNCLASSIFIED</div></div>
+  <div class="docmock"><div class="mk">UNCLASSIFIED</div><b>Acceptance Test Procedure (ATP)</b><span>Scope · Test equipment · Setup · Test steps table: Step | Action | Expected result | Pass/Fail · Sign-off</span><div class="mk">UNCLASSIFIED</div></div>
+  <div class="docmock"><div class="mk">UNCLASSIFIED</div><b>Interface Control Document (ICD)</b><span>Scope · Interfaces overview · Physical / electrical · Messages and fields tables · Timing · Error handling</span><div class="mk">UNCLASSIFIED</div></div>
+  <div class="docmock"><div class="mk">UNCLASSIFIED</div><b>Training material</b><span>Course plan · Lesson objectives · Content · Exercises · Assessment · Trainer notes</span><div class="mk">UNCLASSIFIED</div></div>
+  </div>
+  <h2>Front matter — the same in almost every document</h2>
+  <ul>
+  <li><strong>Title page:</strong> document title, document number, revision, date, customer and contract number, classification marking, prepared / reviewed / approved by (names, signatures, dates).</li>
+  <li><strong>Record of changes</strong> (revision history): Revision | Date | Description of change | Pages affected | Approved by.</li>
+  <li><strong>List of effective pages</strong> in some manuals: the revision of every page.</li>
+  <li><strong>Table of contents</strong>, <strong>list of figures</strong>, <strong>list of tables</strong>.</li>
+  <li><strong>Acronyms and abbreviations</strong>, often as an appendix.</li>
+  <li><strong>Applicable and reference documents</strong>: number, title and revision of every document you rely on.</li>
+  </ul>
+  <h2>The main types</h2>
+  <h3>Technical manuals (operator, maintenance, installation)</h3>
+  <p>Task-based. The reader is doing something with the equipment. Short numbered steps, many figures with callout numbers, formal WARNING / CAUTION / NOTE, tables of parts, tools and consumables, troubleshooting tables (<em>Symptom | Probable cause | Corrective action</em>). Often written to MIL-STD-40051 or S1000D, or a customer template derived from them.</p>
+  <h3>Software documents (MIL-STD-498 style)</h3>
+  <p>Many customers still use the MIL-STD-498 document set or a template based on it: <strong>SSS</strong>/<strong>SRS</strong> (requirements), <strong>SDD</strong> (design), <strong>IRS</strong>/<strong>IDD</strong> (interfaces), <strong>STP</strong>/<strong>STD</strong>/<strong>STR</strong> (test plan, descriptions, report), <strong>SUM</strong> (user manual), <strong>VDD</strong> (version description). Their chapters follow fixed numbered paragraphs — keep the numbering even when a paragraph says only “Not applicable.”</p>
+  <p>Requirements are written as <em>“The system shall…”</em> — one requirement per sentence, each with a unique ID (for example <code>SRS-NAV-0012</code>), testable, and never with <em>and/or</em>, <em>etc.</em> or <em>as appropriate</em>.</p>
+  <h3>Test procedures (ATP, STD)</h3>
+  <p>Built around a test table that a tester fills in with a pen or on a laptop. One action and one measurable expected result per row, a Pass/Fail column and space for the tester's initials. Repeating header rows and rows that don't break across pages (lesson 7) are a must.</p>
+  <h3>Interface Control Documents (ICD)</h3>
+  <p>Reference documents read by engineers on both sides of an interface. Mostly tables: message lists, field layouts (<em>Field | Bits | Type | Range | Units | Description</em>), connector pin-outs. Precision matters more than prose.</p>
+  <h3>Training material</h3>
+  <p>Lesson plans, trainee guides and exercises, often delivered with the manuals. Learning objectives first, then content in small units, then practice and assessment — like this course.</p>
+  <div class="callout tip"><b>Tip:</b> Before you start any new document, ask your Team Lead for an approved example of the same type for the same customer. Copying its structure is not cheating — it is how consistency works.</div>
+  <h2>Try it</h2>
+  <p>Take your practice document and turn it into the skeleton of an Operator's Manual: title page, record of changes table, table of contents, list of figures and tables, and the chapters <em>Introduction</em>, <em>System Description</em>, <em>Operation</em>, <em>Maintenance</em>, <em>Troubleshooting</em>, and <em>Appendix A — Acronyms</em>. Add a three-row troubleshooting table.</p>` } },
+
+/* ======================= 10 ======================= */
+{ id: "word-10-review", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Lesson 10 — Review, track changes and delivery" },
+  summary: { en: "Comments and Track Changes, comparing versions, the final checks, removing hidden data and exporting a PDF with bookmarks." },
+  body: { en:
+  `<p class="lede">Documents go through rounds of review: your Team Lead, the engineers, the customer's quality team. Word records every change and every comment so nothing gets lost — and you must remove all of it before delivery.</p>
+  <h2>Comments</h2>
+  <ul>
+  <li>Select text and choose <strong>Review → New Comment</strong> (<code>Ctrl</code>+<code>Alt</code>+<code>M</code>). Use <code>@name</code> to address a colleague.</li>
+  <li>Answer in the comment's thread with <strong>Reply</strong>, and close it with <strong>Resolve</strong> when it is handled.</li>
+  <li><strong>Review → Delete → Delete All Comments in Document</strong> before delivery.</li>
+  </ul>
+  <h2>Track Changes</h2>
+  <ul>
+  <li><strong>Review → Track Changes</strong> (<code>Ctrl</code>+<code>Shift</code>+<code>E</code>) records every insertion, deletion and formatting change.</li>
+  <li>Choose what you see under <strong>Review → Tracking</strong>: <em>Simple Markup</em> (clean view, red bars in the margin), <em>All Markup</em> (every change shown), <em>No Markup</em>, <em>Original</em>.</li>
+  <li>Go through changes with <strong>Next</strong> / <strong>Previous</strong> and <strong>Accept</strong> or <strong>Reject</strong> each one. <strong>Accept All Changes</strong> when the review is finished.</li>
+  <li><strong>Review → Tracking → Lock Tracking</strong> stops reviewers from switching it off.</li>
+  </ul>
+  <h2>Compare two versions</h2>
+  <p>A reviewer edited without Track Changes? <strong>Review → Compare → Compare…</strong>, choose the original and the revised document, and Word builds a third document with every difference as a tracked change. Also the way to prepare a change list for a new revision.</p>
+  <h2>Before you deliver — the final checks</h2>
+  <ol class="steps">
+  <li><strong>Update all fields:</strong> <code>Ctrl</code>+<code>A</code>, <code>F9</code>. Then update the table of contents and the lists of figures and tables.</li>
+  <li><strong>Look for broken references:</strong> <code>Ctrl</code>+<code>F</code>, search for <em>Error!</em> — that is how a broken cross-reference shows.</li>
+  <li><strong>Spelling and grammar:</strong> <strong>Review → Spelling &amp; Grammar</strong> (<code>F7</code>).</li>
+  <li><strong>Styles check:</strong> <strong>View → Draft</strong> with the style area on — every paragraph in the right style?</li>
+  <li><strong>Accept all changes, delete all comments.</strong></li>
+  <li><strong>Inspect the document:</strong> <strong>File → Info → Check for Issues → Inspect Document</strong>. Remove comments, revisions, document properties you don't want to send (author names, internal paths), hidden text and personal information.</li>
+  <li><strong>Accessibility:</strong> <strong>Review → Check Accessibility</strong> — missing alt text, tables without header rows, headings out of order.</li>
+  <li><strong>Page through the whole document</strong> in <strong>View → Print Layout</strong> or <strong>Read Mode</strong>: markings on every page, no blank pages, no orphan headings.</li>
+  </ol>
+  <div class="callout warn"><b>Important:</b> Hidden data is a real security risk. A tracked deletion, an old comment or an internal file path in the properties is still in the file — and the customer can read it. Inspect every document before it leaves GALIL.</div>
+  <h2>Export to PDF</h2>
+  <ol class="steps">
+  <li><strong>File → Export → Create PDF/XPS Document → Create PDF/XPS</strong>.</li>
+  <li>Click <strong>Options…</strong> and tick <strong>Create bookmarks using: Headings</strong> (the PDF gets a clickable outline), and <strong>Document structure tags for accessibility</strong>. Clear <strong>Document properties</strong> if you removed them for a reason.</li>
+  <li>Choose <strong>Optimize for: Standard</strong> for print quality.</li>
+  <li>Open the PDF and check: bookmarks, links, page count, markings.</li>
+  </ol>
+  <h2>Try it</h2>
+  <ol class="steps">
+  <li>Switch on Track Changes in your practice manual, change three sentences and add two comments. Switch between Simple Markup and All Markup.</li>
+  <li>Accept the changes, resolve and delete the comments.</li>
+  <li>Run Inspect Document and the accessibility check, fix what they find, then export a PDF with heading bookmarks.</li>
+  </ol>` } },
+
+/* ======================= 11 ======================= */
+{ id: "word-11-advanced", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Lesson 11 — A step further: templates, Quick Parts and power tools" },
+  summary: { en: "Templates, reusable text with Quick Parts, copying styles between documents, finding and replacing by style, fields, content controls and protecting a template's styles." },
+  body: { en:
+  `<p class="lede">You can do the job with lessons 1–10. These features make you fast and make your documents hard to break.</p>
+  <h2>Templates (.dotx)</h2>
+  <ul>
+  <li>A template holds the styles, the page layout, the headers and footers and the boilerplate of a document type. Each new document starts from it — double-click a <code>.dotx</code> file, or <strong>File → New → Personal</strong> once your templates folder is set in <strong>File → Options → Save → Default personal templates location</strong>.</li>
+  <li>To make one: build a perfect sample, delete the project-specific content, then <strong>File → Save As → Word Template (*.dotx)</strong>.</li>
+  <li>Change a template only with your Team Lead's agreement — every document built from it depends on it.</li>
+  </ul>
+  <h2>Copy styles between documents</h2>
+  <p>Styles pane → <strong>Manage Styles</strong> (third button at the bottom) → <strong>Import/Export…</strong>. The <em>Organizer</em> shows two documents side by side; select styles on one side and click <strong>Copy</strong>. The clean way to bring a document into line with the customer's template.</p>
+  <p>Or, to attach a template to an existing document: <strong>Developer → Document Template → Attach…</strong>, tick <strong>Automatically update document styles</strong>, click <strong>OK</strong> — then clear the tick again so it doesn't happen every time the file opens. (Show the Developer tab with <strong>File → Options → Customize Ribbon → Developer</strong>.)</p>
+  <h2>Quick Parts — write it once</h2>
+  <ol class="steps">
+  <li>Select the text you reuse — a standard WARNING, a disclaimer, the record-of-changes table.</li>
+  <li><strong>Insert → Quick Parts → Save Selection to Quick Part Gallery…</strong>. Give it a short name (e.g. <code>wHV</code> for a high-voltage warning).</li>
+  <li>To insert it: type the name and press <code>F3</code>, or pick it from <strong>Insert → Quick Parts</strong>.</li>
+  </ol>
+  <p>Quick Parts are saved in <em>Building Blocks.dotx</em> on your computer. To share them with the team, save them in the project template instead (the <em>Save in</em> box).</p>
+  <h2>Find and Replace — the power version</h2>
+  <p><code>Ctrl</code>+<code>H</code> → <strong>More &gt;&gt;</strong>:</p>
+  <ul>
+  <li><strong>Format → Style…</strong> finds every paragraph in a style — and can replace it with another. For example, every <em>Body Text 2</em> becomes <em>Normal</em> in one click.</li>
+  <li><strong>Special</strong> finds paragraph marks (<code>^p</code>), tabs (<code>^t</code>), manual line breaks (<code>^l</code>) and more. Replace <code>^p^p</code> with <code>^p</code> to remove empty paragraphs.</li>
+  <li><strong>Use wildcards</strong> for patterns: <code>[0-9]{1,}V</code> finds “12V”, “230V” — to add the missing space.</li>
+  </ul>
+  <h2>Fields</h2>
+  <p>Page numbers, cross-references, captions, the table of contents and document properties are all <strong>fields</strong>: live codes Word calculates. <code>Alt</code>+<code>F9</code> shows the codes (<code>{ PAGE }</code>, <code>{ REF _Ref123 \\h }</code>) and back. <code>F9</code> updates the selected fields. <code>Ctrl</code>+<code>Shift</code>+<code>F9</code> turns a field into plain text — rarely what you want.</p>
+  <h2>Content controls — forms in a document</h2>
+  <p><strong>Developer → Controls</strong>: text boxes, drop-down lists, date pickers and check boxes inside the document. Useful for title-page fields, and for test procedures the tester fills in on a laptop (a Pass / Fail drop-down in each row).</p>
+  <h2>Protecting the styles</h2>
+  <p><strong>Review → Protect → Restrict Editing → Limit formatting to a selection of styles → Settings…</strong>. Reviewers and other writers can then use only the template's styles — no hand formatting, no stray fonts. Click <strong>Yes, Start Enforcing Protection</strong>; a password is optional.</p>
+  <h2>Outline view and splitting large documents</h2>
+  <p>For very large manuals, write each chapter in its own file from the same template and combine them at the end — <strong>Insert → Object → Text from File…</strong> brings the contents in. Avoid Word's old <em>Master Document</em> feature; it is known to damage files.</p>
+  <div class="callout note"><b>Note:</b> Macros (VBA) and add-ins can automate a lot, but many defense networks block them. Use them only if the project's IT rules allow it.</div>
+  <h2>Try it</h2>
+  <ol class="steps">
+  <li>Save your practice manual as a template, <code>GALIL-Manual-Practice.dotx</code>, and create a new document from it.</li>
+  <li>Save a standard WARNING as a Quick Part and insert it in three places with <code>F3</code>.</li>
+  <li>Apply <em>Body Text</em> to a few paragraphs, then use Find and Replace by style to turn them all back into <em>Normal</em>.</li>
+  </ol>` } },
+
+/* ======================= 12 ======================= */
+{ id: "word-12-final", cat: "training", updated: "20 Oct 2026",
+  title: { en: "Lesson 12 — Final exercise, checklist and shortcut sheet" },
+  summary: { en: "Put it all together in a short operator's manual, check it against the delivery checklist, and keep the shortcut sheet by your keyboard." },
+  body: { en:
+  `<p class="lede">Time to put everything together. Build a short manual from an empty document, check it against the checklist, and show it to your Team Lead. When it passes, you are ready for real project work.</p>
+  <h2>The final exercise — a mini Operator's Manual</h2>
+  <p>Write a 6–10 page <em>Operator's Manual for the XR-200 Field Radio</em> (an imaginary product — invent the details, and keep everything unclassified). It must have:</p>
+  <ol>
+  <li>A title page with document number, revision and date taken from document properties, and an approval table.</li>
+  <li>A record of changes table.</li>
+  <li>An automatic table of contents, list of figures and list of tables.</li>
+  <li>Numbered headings, three levels: <em>1 Introduction</em>, <em>2 Description</em>, <em>3 Operation</em>, <em>4 Maintenance</em>, <em>5 Troubleshooting</em>, and <em>Appendix A — Acronyms</em>.</li>
+  <li>At least two procedures (numbered steps), with one WARNING, one CAUTION and one NOTE in the right places.</li>
+  <li>At least two figures and two tables with chapter-numbered captions, and a cross-reference to each in the text.</li>
+  <li>A technical-data table on a landscape page.</li>
+  <li>UNCLASSIFIED at the top and bottom of every page; <em>Page X of Y</em>; front matter in roman numerals.</li>
+  <li>No hand formatting and no empty paragraphs.</li>
+  <li>A PDF with heading bookmarks.</li>
+  </ol>
+  <h2>The delivery checklist</h2>
+  <table><thead><tr><th>✓</th><th>Check</th></tr></thead><tbody>
+  <tr><td>☐</td><td>Every paragraph is in a template style (Draft view, style area).</td></tr>
+  <tr><td>☐</td><td>No empty paragraphs used for spacing; no spaces or tabs used for indenting.</td></tr>
+  <tr><td>☐</td><td>Headings are numbered automatically, no levels skipped.</td></tr>
+  <tr><td>☐</td><td>Table of contents and lists of figures and tables updated.</td></tr>
+  <tr><td>☐</td><td>All fields updated; no <em>Error! Reference source not found.</em></td></tr>
+  <tr><td>☐</td><td>Every table and figure has a caption and is referred to in the text.</td></tr>
+  <tr><td>☐</td><td>Table header rows repeat; rows don't break across pages.</td></tr>
+  <tr><td>☐</td><td>Warnings and cautions are before their steps and on the same page.</td></tr>
+  <tr><td>☐</td><td>Document number, revision and date are the same on the title page, in the headers and footers, and in the record of changes.</td></tr>
+  <tr><td>☐</td><td>Classification marking correct on every page.</td></tr>
+  <tr><td>☐</td><td>Terms are consistent; spelling checked in the right English variant.</td></tr>
+  <tr><td>☐</td><td>All tracked changes accepted, all comments deleted, document inspected.</td></tr>
+  <tr><td>☐</td><td>PDF checked: bookmarks, links, page count.</td></tr>
+  </tbody></table>
+  <h2>Shortcut sheet</h2>
+  <table class="kbd-table"><thead><tr><th>Keys</th><th>Does</th></tr></thead><tbody>
+  <tr><td><code>Ctrl</code>+<code>Shift</code>+<code>8</code></td><td>Show / hide formatting marks</td></tr>
+  <tr><td><code>Ctrl</code>+<code>Shift</code>+<code>S</code></td><td>Apply a style by name</td></tr>
+  <tr><td><code>Ctrl</code>+<code>Alt</code>+<code>Shift</code>+<code>S</code></td><td>Open the Styles pane</td></tr>
+  <tr><td><code>Ctrl</code>+<code>Alt</code>+<code>1</code> / <code>2</code> / <code>3</code></td><td>Heading 1 / 2 / 3</td></tr>
+  <tr><td><code>Ctrl</code>+<code>Shift</code>+<code>N</code></td><td>Normal style</td></tr>
+  <tr><td><code>Ctrl</code>+<code>Shift</code>+<code>L</code></td><td>List Bullet style</td></tr>
+  <tr><td><code>Ctrl</code>+<code>Space</code> · <code>Ctrl</code>+<code>Q</code></td><td>Clear character / paragraph hand formatting</td></tr>
+  <tr><td><code>Shift</code>+<code>F1</code></td><td>Reveal Formatting</td></tr>
+  <tr><td><code>Tab</code> · <code>Shift</code>+<code>Tab</code></td><td>List item one level down / up</td></tr>
+  <tr><td><code>Shift</code>+<code>Enter</code></td><td>Line break inside a paragraph</td></tr>
+  <tr><td><code>Ctrl</code>+<code>Enter</code></td><td>Page break</td></tr>
+  <tr><td><code>Ctrl</code>+<code>Shift</code>+<code>Space</code></td><td>Non-breaking space</td></tr>
+  <tr><td><code>Ctrl</code>+<code>Shift</code>+<code>-</code></td><td>Non-breaking hyphen</td></tr>
+  <tr><td><code>Ctrl</code>+<code>F</code> · <code>Ctrl</code>+<code>H</code></td><td>Navigation pane / search · Find and Replace</td></tr>
+  <tr><td><code>F9</code> · <code>Ctrl</code>+<code>A</code>, <code>F9</code></td><td>Update selected fields · update all fields</td></tr>
+  <tr><td><code>Alt</code>+<code>F9</code></td><td>Show / hide field codes</td></tr>
+  <tr><td><code>F3</code></td><td>Insert a Quick Part by its name</td></tr>
+  <tr><td><code>F4</code></td><td>Repeat the last action</td></tr>
+  <tr><td><code>Shift</code>+<code>F3</code></td><td>Change case (UPPER / lower / Title)</td></tr>
+  <tr><td><code>Ctrl</code>+<code>Shift</code>+<code>C</code> / <code>V</code></td><td>Copy / paste formatting</td></tr>
+  <tr><td><code>Ctrl</code>+<code>Shift</code>+<code>E</code></td><td>Track Changes on / off</td></tr>
+  <tr><td><code>Ctrl</code>+<code>Alt</code>+<code>M</code></td><td>New comment</td></tr>
+  <tr><td><code>F7</code></td><td>Spelling and grammar</td></tr>
+  </tbody></table>
+  <h2>Answer to the lesson 1 exercise</h2>
+  <p><strong>Resetting the unit</strong><br>
+  Reset the unit only if the FAULT indicator stays on for more than 10 seconds.</p>
+  <ol>
+  <li>Make sure that no transmission is in progress.</li>
+  <li>Push and hold <strong>RESET</strong> for 3 seconds.</li>
+  <li>Release <strong>RESET</strong>. The FAULT indicator goes off.</li>
+  </ol>
+  <p>The condition comes first, there is one action per step, the button is named as labelled, the vague <em>about</em> is gone, and the last step tells the reader what to expect.</p>
+  <h2>What next</h2>
+  <ul>
+  <li>Ask your Team Lead for the templates and style guide of your first project, and an approved document of the same type.</li>
+  <li>Keep this course bookmarked — the lessons double as a reference.</li>
+  <li>Back to the <a href="#/word-course">course overview</a>.</li>
+  </ul>` } }
+];
+
+var KB = { infosec: "Information security", confidentiality: "Confidentiality" };
+var cur = 0;
+function render(i) {
+  cur = i; var a = WORD_COURSE[i], p = WORD_COURSE[i - 1], n = WORD_COURSE[i + 1];
+  document.getElementById("view").innerHTML =
+    '<article><div class="crumbs">Knowledge Base › Training &amp; how-to\'s</div><h1>' + a.title.en + '</h1><div class="meta">Updated ' + a.updated + '</div>' +
+    a.body.en.replace(/<table/g, '<div class="tablewrap"><table').replace(/<\/table>/g, '</table></div>') + '</article>' +
+    '<div class="pager">' + (p ? '<a href="#/' + p.id + '"><small>Previous</small>' + p.title.en + '</a>' : '') +
+    (n ? '<a class="next" href="#/' + n.id + '"><small>Next</small>' + n.title.en + '</a>' : '') + '</div>';
+  document.querySelectorAll("#view a[href^='#/']").forEach(function (l) {
+    var id = l.getAttribute("href").slice(2);
+    if (KB[id]) { var s = document.createElement("span"); s.className = "ext"; s.title = "Existing KB article"; s.textContent = l.textContent; l.replaceWith(s); }
+  });
+  document.querySelectorAll("#toc button").forEach(function (b, k) { b.setAttribute("aria-current", k === i ? "true" : "false"); });
+  window.scrollTo(0, 0);
+}
+document.getElementById("toc").innerHTML = WORD_COURSE.map(function (a, i) { return '<button type="button">' + (i ? i : "Start") + '</button>'; }).join("");
+document.querySelectorAll("#toc button").forEach(function (b, i) { b.title = WORD_COURSE[i].title.en; b.onclick = function () { render(i); }; });
+document.addEventListener("click", function (e) {
+  var l = e.target.closest("a[href^='#/']"); if (!l) return;
+  e.preventDefault(); var id = l.getAttribute("href").slice(2);
+  for (var i = 0; i < WORD_COURSE.length; i++) if (WORD_COURSE[i].id === id) return render(i);
+});
+render(0);
+</script>
