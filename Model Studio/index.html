@@ -4,9 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>GALIL Model Studio</title>
-<meta name="description" content="Open CAD and 3D models, explore their parts, set them up and export images.">
+<meta name="description" content="Open CAD and 3D models, write assembly and disassembly procedures, animate them, build illustrated parts catalogues and publish them as interactive manuals.">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/studio.css?v=1">
+<link rel="stylesheet" href="css/studio.css?v=2">
 <script type="importmap">
 { "imports": {
     "three": "./vendor/three/three.module.min.js",
@@ -22,19 +22,32 @@
   </a>
   <div class="filename" id="filename"></div>
   <div class="tools">
+    <button class="tb icon" id="btn-undo" data-t-title="Undo (Ctrl+Z)" disabled><svg viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 0 1 0 10h-3"/></svg></button>
+    <button class="tb icon" id="btn-redo" data-t-title="Redo (Ctrl+Y)" disabled><svg viewBox="0 0 24 24"><path d="M15 14l5-5-5-5"/><path d="M20 9H9a5 5 0 0 0 0 10h3"/></svg></button>
+    <span class="sep"></span>
     <button class="tb" id="btn-open" data-t-title="Open a model (Ctrl+O)"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span data-t>Open</span></button>
     <button class="tb" id="btn-sample" data-t-title="Open the sample assembly"><span data-t>Sample</span></button>
+    <div class="menu">
+      <button class="tb" id="btn-project" aria-haspopup="true" data-t-title="Save or open the project: views, procedures, figures and part data"><svg viewBox="0 0 24 24"><path d="M5 3h11l3 3v15H5z"/><path d="M8 3v6h8V3M8 21v-7h8v7"/></svg><span data-t>Project</span></button>
+      <div class="menu-list" id="menu-project" hidden>
+        <button id="btn-project-save" data-t>Save project file…</button>
+        <button id="btn-project-open" data-t>Open project file…</button>
+        <button id="btn-project-clear" data-t>Start an empty project for this model</button>
+      </div>
+    </div>
+    <button class="tb" id="btn-publish" data-t-title="Publish an interactive manual (IETM) with the procedures, the illustrated parts catalogue and the 3D model, in one HTML file"><svg viewBox="0 0 24 24"><path d="M4 4h10l6 6v10H4z"/><path d="M14 4v6h6M8 14h8M8 17h5"/></svg><span data-t>Publish</span></button>
     <button class="tb primary" id="btn-shot" data-t-title="Save an image of the view (Ctrl+Shift+S)"><svg viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.5"/></svg><span data-t>Save image</span></button>
     <span class="sep"></span>
     <button class="langbtn" id="btn-lang" title="עברית / English">עב</button>
   </div>
   <input type="file" id="file-input" multiple hidden>
+  <input type="file" id="project-input" accept=".json,application/json" hidden>
 </header>
 
 <nav class="toolbar" id="toolbar" aria-label="View tools">
   <div class="grp">
     <button class="tb" id="btn-fit" data-t-title="Fit everything in view (F)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span data-t>Fit</span></button>
-    <button class="tb" id="btn-fit-sel" data-t-title="Fit the selection in view (Shift+F)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg><span data-t>Fit selection</span></button>
+    <button class="tb icon" id="btn-fit-sel" data-t-title="Fit the selection in view (Shift+F)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg></button>
   </div>
   <div class="grp views" role="group" aria-label="Standard views">
     <button class="tb sm" data-view="front" data-t-title="Front (1)" data-t>Front</button>
@@ -92,37 +105,166 @@
       <div class="tree" id="tree" role="tree"></div>
     </div>
     <div class="tabpage" id="tab-bom" hidden>
-      <table class="bom">
-        <thead><tr><th data-t>Item</th><th data-t>Part</th><th data-t>Qty</th></tr></thead>
-        <tbody id="bom-body"></tbody>
-      </table>
+      <div class="bomwrap">
+        <table class="bom">
+          <thead><tr><th data-t>Item</th><th data-t>Part</th><th data-t>Qty</th></tr></thead>
+          <tbody id="bom-body"></tbody>
+        </table>
+      </div>
       <div class="treebar btns">
-        <button class="mini" id="btn-bom-csv" data-t>Download parts list (CSV)</button>
+        <button class="mini" id="btn-bom-csv" data-t>Download (CSV)</button>
+        <button class="mini" id="btn-bom-import" data-t-title="Read part numbers and descriptions from a CSV file with Name, Part number and Description columns" data-t>Import part data…</button>
+        <input type="file" id="bom-input" accept=".csv,text/csv" hidden>
       </div>
     </div>
   </aside>
 
-  <section class="viewport" id="viewport">
-    <canvas id="canvas"></canvas>
-    <svg class="overlay" id="overlay"></svg>
-    <div class="frame" id="frame" hidden><span id="frame-size"></span></div>
-    <div class="start" id="start">
-      <div class="drop">
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg>
-        <h1 data-t>Open a CAD or 3D model</h1>
-        <p data-t>Drop files here, or choose Open.</p>
-        <p class="formats"><b data-t>CAD:</b> STEP (.step, .stp), IGES (.iges, .igs), BREP<br>
-          <b data-t>3D:</b> glTF / GLB, OBJ (+MTL), STL, 3MF, PLY, FBX, Collada (.dae), VRML (.wrl), 3DS, AMF</p>
-        <p class="hint" data-t>SolidWorks, Inventor, Creo, CATIA or NX parts and assemblies: save them as STEP (AP214 or AP242) first — File → Save As → STEP. Names, colours and the assembly structure come across.</p>
-        <div class="startbtns">
-          <button class="tb primary" id="btn-open-2" data-t>Open a model…</button>
-          <button class="tb" id="btn-sample-2" data-t>Try the sample assembly</button>
+  <section class="center">
+    <section class="viewport" id="viewport">
+      <canvas id="canvas"></canvas>
+      <svg class="overlay" id="overlay"></svg>
+      <div class="frame" id="frame" hidden><span id="frame-size"></span></div>
+      <div class="caption" id="caption" hidden><b id="caption-title"></b><span id="caption-text"></span></div>
+      <div class="rec" id="rec" hidden><span class="dot"></span><span id="rec-text"></span><button class="mini" id="btn-rec-stop" data-t>Stop</button></div>
+      <div class="start" id="start">
+        <div class="drop">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg>
+          <h1 data-t>Open a CAD or 3D model</h1>
+          <p data-t>Drop files here, or choose Open.</p>
+          <p class="formats"><b data-t>CAD:</b> STEP (.step, .stp), IGES (.iges, .igs), BREP<br>
+            <b data-t>3D:</b> glTF / GLB, OBJ (+MTL), STL, 3MF, PLY, FBX, Collada (.dae), VRML (.wrl), 3DS, AMF</p>
+          <p class="hint" data-t>SolidWorks, Inventor, Creo, CATIA or NX parts and assemblies: save them as STEP (AP214 or AP242) first — File → Save As → STEP. Names, colours and the assembly structure come across.</p>
+          <div class="startbtns">
+            <button class="tb primary" id="btn-open-2" data-t>Open a model…</button>
+            <button class="tb" id="btn-sample-2" data-t>Try the sample assembly</button>
+          </div>
         </div>
       </div>
-    </div>
-    <div class="busy" id="busy" hidden><div class="spin"></div><span id="busy-text"></span></div>
-    <div class="toast" id="toast" role="status" hidden></div>
-    <div class="dropmask" id="dropmask" hidden><span data-t>Drop to open</span></div>
+      <div class="busy" id="busy" hidden><div class="spin"></div><span id="busy-text"></span></div>
+      <div class="toast" id="toast" role="status" hidden></div>
+      <div class="dropmask" id="dropmask" hidden><span data-t>Drop to open</span></div>
+    </section>
+
+    <section class="story" id="story">
+      <div class="story-tabs" role="tablist">
+        <button role="tab" class="stab on" data-stab="proc" data-t>Procedures</button>
+        <button role="tab" class="stab" data-stab="fig" data-t>Illustrated parts catalogue</button>
+        <button role="tab" class="stab" data-stab="views" data-t>Views</button>
+        <span class="grow"></span>
+        <button class="mini ghost" id="btn-story-toggle" data-t-title="Show or hide this panel" data-t>Hide panel</button>
+      </div>
+      <div class="story-body" id="story-body">
+        <!-- procedures -->
+        <div class="spage" id="sp-proc">
+          <div class="shead">
+            <select id="proc-select" data-t-title="Procedure"></select>
+            <button class="mini" id="proc-new" data-t>New procedure</button>
+            <button class="mini" id="proc-rename" data-t>Rename</button>
+            <button class="mini" id="proc-delete" data-t>Delete</button>
+            <select id="proc-kind" data-t-title="Kind of procedure">
+              <option value="disassembly" data-t>Disassembly</option>
+              <option value="assembly" data-t>Assembly</option>
+              <option value="maintenance" data-t>Maintenance</option>
+              <option value="other" data-t>Other</option>
+            </select>
+            <span class="sep"></span>
+            <button class="mini strong" id="proc-play" data-t-title="Play the procedure from the selected step (Space)"><span data-t>Play</span></button>
+            <button class="mini" id="proc-stop" data-t disabled>Stop</button>
+            <button class="mini" id="proc-video" data-t-title="Record the procedure as a video file, with the image size above" data-t>Record video</button>
+            <label class="chk mini-chk"><input type="checkbox" id="proc-captions" checked> <span data-t>Step text in the video</span></label>
+            <span class="sep"></span>
+            <button class="mini" id="proc-auto" data-t-title="Make a disassembly procedure from the model: one step per part, outermost first" data-t>Make disassembly steps</button>
+            <button class="mini" id="proc-reverse" data-t-title="Make a new procedure with these steps in reverse order (disassembly ↔ assembly)" data-t>Reverse into a new procedure</button>
+          </div>
+          <div class="sgrid">
+            <ol class="strip" id="proc-strip"></ol>
+            <div class="editor" id="step-editor">
+              <div class="empty" id="step-empty" data-t>Set up the model for the first step — the parts, where they are, the camera — and choose Add step. Each step is a picture of the model; playing the procedure animates from one step to the next.</div>
+              <div id="step-form" hidden>
+                <div class="row">
+                  <label class="fld grow"><span id="step-no"></span><input type="text" id="step-title" data-t-placeholder="Step title"></label>
+                </div>
+                <label class="fld"><span data-t>Instructions</span><textarea id="step-text" rows="3"></textarea></label>
+                <div class="row">
+                  <label class="fld"><span data-t>Notice</span>
+                    <select id="step-note-kind">
+                      <option value="" data-t>None</option>
+                      <option value="note" data-t>Note</option>
+                      <option value="caution" data-t>Caution</option>
+                      <option value="warning" data-t>Warning</option>
+                    </select></label>
+                  <label class="fld grow"><span>&nbsp;</span><input type="text" id="step-note"></label>
+                </div>
+                <div class="row">
+                  <label class="fld grow"><span data-t>Tools and materials</span><input type="text" id="step-tools"></label>
+                  <label class="fld num"><span data-t>Motion (s)</span><input type="number" id="step-dur" min="0" max="60" step="0.5"></label>
+                  <label class="fld num"><span data-t>Pause (s)</span><input type="number" id="step-hold" min="0" max="60" step="0.5"></label>
+                </div>
+                <div class="row wrap">
+                  <button class="mini strong" id="step-update" data-t-title="Replace this step's picture with the model as it is on the screen now" data-t>Update from the screen</button>
+                  <button class="mini" id="step-play" data-t-title="Play the motion into this step" data-t>Play this step</button>
+                  <button class="mini" id="step-dup" data-t>Duplicate</button>
+                  <button class="mini" id="step-left" data-t-title="Move earlier">◀</button>
+                  <button class="mini" id="step-right" data-t-title="Move later">▶</button>
+                  <button class="mini danger" id="step-delete" data-t>Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- illustrated parts catalogue -->
+        <div class="spage" id="sp-fig" hidden>
+          <div class="shead">
+            <button class="mini strong" id="fig-add" data-t-title="Add a figure from the model as it is on the screen" data-t>Add figure</button>
+            <button class="mini" id="fig-balloon" data-t-title="Put a numbered callout on every part that can be seen, laid out around the model" data-t>Balloon the visible parts</button>
+            <button class="mini" id="fig-clear" data-t-title="Remove every callout from the screen" data-t>Remove callouts</button>
+            <button class="mini" id="fig-auto" data-t-title="One figure for the whole model and one for each sub-assembly, each ballooned" data-t>Make figures for each assembly</button>
+          </div>
+          <div class="sgrid">
+            <ol class="strip" id="fig-strip"></ol>
+            <div class="editor" id="fig-editor">
+              <div class="empty" id="fig-empty" data-t>A figure is a picture of the model with numbered callouts, and the list of the parts it shows. Show the parts for the figure, balloon them, and choose Add figure.</div>
+              <div id="fig-form" hidden>
+                <div class="row">
+                  <label class="fld num"><span data-t>Figure</span><input type="text" id="fig-number"></label>
+                  <label class="fld grow"><span data-t>Title</span><input type="text" id="fig-title"></label>
+                </div>
+                <div class="cap" id="fig-items"></div>
+                <div class="row wrap">
+                  <button class="mini strong" id="fig-update" data-t-title="Replace this figure's picture with the model as it is on the screen now" data-t>Update from the screen</button>
+                  <button class="mini" id="fig-left" data-t-title="Move earlier">◀</button>
+                  <button class="mini" id="fig-right" data-t-title="Move later">▶</button>
+                  <button class="mini danger" id="fig-delete" data-t>Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- views -->
+        <div class="spage" id="sp-views" hidden>
+          <div class="shead">
+            <button class="mini strong" id="btn-view-add" data-t>Save this view</button>
+            <button class="mini" id="btn-views-zip" data-t-title="Export an image of every saved view, in one ZIP file" data-t>Images of all views</button>
+            <span class="cap" data-t>A view keeps the camera, which parts are shown, where they are, their colours, the explode, the style, the cut and the callouts.</span>
+          </div>
+          <div class="sgrid">
+            <ol class="strip" id="views-list"></ol>
+            <div class="editor">
+              <div class="empty" id="view-empty" data-t>Choose a view to go back to it.</div>
+              <div id="view-form" hidden>
+                <label class="fld"><span data-t>Name</span><input type="text" id="view-name"></label>
+                <div class="row wrap">
+                  <button class="mini strong" id="view-update" data-t-title="Replace this view with what is on the screen now" data-t>Update from the screen</button>
+                  <button class="mini" id="view-to-step" data-t-title="Add this view as a step of the selected procedure" data-t>Add as a step</button>
+                  <button class="mini" id="view-to-fig" data-t-title="Add this view as a figure of the parts catalogue" data-t>Add as a figure</button>
+                  <button class="mini danger" id="view-delete" data-t>Delete</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </section>
 
   <aside class="panel right" id="panel-right">
@@ -134,6 +276,14 @@
           <div class="selname" id="sel-name"></div>
           <div class="cap" id="sel-path"></div>
           <dl class="kv" id="sel-info"></dl>
+          <div id="sel-data">
+            <div class="row">
+              <label class="fld grow"><span data-t>Part number</span><input type="text" id="meta-pn"></label>
+              <label class="fld num"><span data-t>Unit</span><input type="text" id="meta-uom" placeholder="EA"></label>
+            </div>
+            <label class="fld"><span data-t>Description</span><input type="text" id="meta-desc"></label>
+            <label class="fld"><span data-t>Notes</span><input type="text" id="meta-notes"></label>
+          </div>
           <div class="row">
             <label class="fld"><span data-t>Colour</span><input type="color" id="sel-color"></label>
             <label class="fld grow"><span data-t>Opacity</span><input type="range" id="sel-opacity" min="5" max="100" value="100"></label>
@@ -143,6 +293,18 @@
             <button class="mini" id="sel-parent" data-t-title="Select the assembly this part belongs to" data-t>Select parent</button>
             <button class="mini" id="sel-callout" data-t-title="Add a numbered balloon pointing at this part" data-t>Add callout</button>
             <button class="mini" id="sel-reset" data-t-title="Put back its position, colour and opacity" data-t>Reset part</button>
+          </div>
+          <div class="sub" data-t>Move exactly</div>
+          <div class="row xyz">
+            <label class="fld"><span>X</span><input type="number" id="mv-x" value="0" step="any"></label>
+            <label class="fld"><span>Y</span><input type="number" id="mv-y" value="0" step="any"></label>
+            <label class="fld"><span>Z</span><input type="number" id="mv-z" value="0" step="any"></label>
+            <button class="mini" id="mv-apply" data-t-title="Move the selection by this much, along the model's axes" data-t>Move</button>
+          </div>
+          <div class="row xyz">
+            <label class="fld"><span data-t>Axis</span><select id="rt-axis"><option value="x">X</option><option value="y" selected>Y</option><option value="z">Z</option></select></label>
+            <label class="fld"><span data-t>Degrees</span><input type="number" id="rt-deg" value="90" step="any"></label>
+            <button class="mini" id="rt-apply" data-t-title="Turn each selected part about its own middle" data-t>Rotate</button>
           </div>
         </div>
       </div>
@@ -184,28 +346,14 @@
       </div>
     </details>
 
-    <details open id="sec-views">
-      <summary data-t>Saved views</summary>
-      <div class="body">
-        <div class="cap" data-t>A view keeps the camera, which parts are shown, where they are, their colours, the explode, the style, the cut and the callouts.</div>
-        <div class="row wrap">
-          <button class="mini" id="btn-view-add" data-t>Save this view</button>
-          <button class="mini" id="btn-views-zip" data-t-title="Export an image of every saved view, in one ZIP file" data-t>Images of all views</button>
-          <button class="mini" id="btn-views-export" data-t-title="Download the views to open with this model later" data-t>Download views</button>
-          <button class="mini" id="btn-views-import" data-t>Load views…</button>
-          <input type="file" id="views-input" accept=".json,application/json" hidden>
-        </div>
-        <ol class="views-list" id="views-list"></ol>
-      </div>
-    </details>
-
     <details open id="sec-shot">
-      <summary data-t>Image</summary>
+      <summary data-t>Image and video size</summary>
       <div class="body">
         <label class="fld"><span data-t>Size</span>
           <select id="sel-shot-preset">
             <option value="view" data-t>Same as the screen</option>
-            <option value="1920x1080">&#x2066;1920 × 1080 (HD)&#x2069;</option>
+            <option value="1280x720">&#x2066;1280 × 720 (HD 720p)&#x2069;</option>
+            <option value="1920x1080">&#x2066;1920 × 1080 (Full HD)&#x2069;</option>
             <option value="3840x2160">&#x2066;3840 × 2160 (4K)&#x2069;</option>
             <option value="2480x3508">&#x2066;2480 × 3508 (A4 portrait, 300 dpi)&#x2069;</option>
             <option value="3508x2480">&#x2066;3508 × 2480 (A4 landscape, 300 dpi)&#x2069;</option>
@@ -238,6 +386,26 @@
   <span class="keys" data-t>Left drag: turn · Right drag: pan · Wheel: zoom · Double-click: fit part</span>
 </footer>
 
-<script type="module" src="js/studio.js?v=1"></script>
+<dialog class="dlg" id="dlg-publish">
+  <form method="dialog">
+    <h2 data-t>Publish an interactive manual</h2>
+    <p class="cap" data-t>One HTML file that opens in any browser, also offline: the 3D model, every procedure with its animations, the illustrated parts catalogue and the parts list, and a print layout for PDF.</p>
+    <label class="fld"><span data-t>Title</span><input type="text" id="pub-title" required></label>
+    <div class="row">
+      <label class="fld grow"><span data-t>Document number</span><input type="text" id="pub-doc"></label>
+      <label class="fld num"><span data-t>Revision</span><input type="text" id="pub-rev" value="A"></label>
+    </div>
+    <label class="fld"><span data-t>Publisher</span><input type="text" id="pub-org" value="GALIL"></label>
+    <label class="chk"><input type="checkbox" id="pub-proc" checked> <span data-t>Procedures</span></label>
+    <label class="chk"><input type="checkbox" id="pub-ipc" checked> <span data-t>Illustrated parts catalogue</span></label>
+    <label class="chk"><input type="checkbox" id="pub-model" checked> <span data-t>Interactive 3D model</span></label>
+    <div class="row end">
+      <button class="tb" value="cancel" formnovalidate data-t>Cancel</button>
+      <button class="tb primary" value="ok" id="pub-go" data-t>Publish</button>
+    </div>
+  </form>
+</dialog>
+
+<script type="module" src="js/main.js?v=2"></script>
 </body>
 </html>

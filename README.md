@@ -80,11 +80,12 @@ password `GalilWorkdesk1` (for example `danny.gelman@galiltc.co.il`).
 
 ## Model Studio
 
-A browser application for opening CAD and 3D models and making images of them
-in the right positions — parts tree and parts list, show/hide/isolate, move and
-rotate parts, explode, section cut, standard views, technical-illustration and
-line styles, numbered callouts, saved views, and PNG/JPEG export at any size
-(transparent background optional). It reads STEP, IGES and BREP through
+A browser application for technical documentation from CAD and 3D models:
+parts tree and parts list with part numbers, show/hide/isolate, move and rotate
+parts, explode, section cut, technical-illustration and line styles, callouts,
+images at any size; assembly and disassembly procedures that play as
+animations and record as video; an illustrated parts catalogue; and Publish,
+which makes an offline interactive manual (IETM) with a print layout for PDF. It reads STEP, IGES and BREP through
 OpenCascade (WebAssembly) and glTF, OBJ, STL, 3MF, PLY, FBX, Collada, VRML, 3DS
 and AMF; SolidWorks and other native CAD files are saved as STEP first. See
 [`Model Studio/README.md`](Model%20Studio/README.md).
