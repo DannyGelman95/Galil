@@ -273,7 +273,8 @@ test("a procedure is recorded as a video", async ({ page }) => {
     if (!isFinite(v.duration)) { v.currentTime = 1e9; await new Promise(r => { v.ontimeupdate = r; }); }
     return v.duration;
   }, bytes.toString("base64"));
-  expect(duration).toBeGreaterThan(1.5);
+  // the procedure lasts 2.7 s (first step 1 s, motion 0.5 s, pause 0.2 s + 1 s at the end)
+  expect(duration).toBeGreaterThan(2.5);
 });
 
 test("figures: balloon the visible parts, then add a figure with its items", async ({ page }) => {
