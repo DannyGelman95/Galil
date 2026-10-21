@@ -1841,6 +1841,8 @@ window.studio = {
   state: state, open: openFiles, openSample: openSample, capture: capture, snapshot: snapshot, restore: applyState, app: app,
   select: function (names) { select(state.nodes.filter(function (n) { return names.indexOf(displayName(n)) >= 0; })); },
   camera: function () { return camera; },
+  // true when no camera flight or procedure playback is running
+  idle: function () { return !tween && !(app.isPlaying && app.isPlaying()); },
   // Where a part's middle is on the screen (page coordinates).
   screenPoint: function (name) {
     var n = state.nodes.find(function (o) { return displayName(o) === name; });

@@ -810,6 +810,7 @@ $("btn-views-zip").addEventListener("click", async function () {
 });
 
 renderAll();
+app.isPlaying = function () { return !!player; };
 
 export var story = {
   project: function () { return project; }, figItems: figItems, visibleIn: visibleIn, captionText: captionText, NOTE: NOTE,
