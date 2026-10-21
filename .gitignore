@@ -5,3 +5,6 @@ tests/taskana/node_modules/
 tests/workdesk/test-results/
 tests/workdesk/playwright-report/
 tests/workdesk/node_modules
+tests/model-studio/test-results/
+tests/model-studio/playwright-report/
+tests/model-studio/node_modules/

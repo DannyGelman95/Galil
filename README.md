@@ -7,7 +7,9 @@ Website/            The public website — React + Material UI, English and Hebr
 Welcome/            A standalone page inviting employees to the Employee Portal.
 Employee Portal/    The Employee Portal — WorkDesk, Taskana, the Handbook and the
                     Knowledge Base behind one sign-in, English and Hebrew.
-tests/              Browser tests for the Employee Portal (Playwright).
+Model Studio/       Opens CAD and 3D models (STEP, IGES, glTF, OBJ, STL …), shows
+                    their parts, sets them up and exports images.
+tests/              Browser tests for the Employee Portal and Model Studio (Playwright).
 docs/               Brand material; deprecated documents and films of the old apps.
 ```
 
@@ -76,17 +78,35 @@ To try it without GitHub or Microsoft, choose **Connection settings… → This
 browser only** on the sign-in screen; the demonstration accounts use the
 password `GalilWorkdesk1` (for example `danny.gelman@galiltc.co.il`).
 
+## Model Studio
+
+A browser application for opening CAD and 3D models and making images of them
+in the right positions — parts tree and parts list, show/hide/isolate, move and
+rotate parts, explode, section cut, standard views, technical-illustration and
+line styles, numbered callouts, saved views, and PNG/JPEG export at any size
+(transparent background optional). It reads STEP, IGES and BREP through
+OpenCascade (WebAssembly) and glTF, OBJ, STL, 3MF, PLY, FBX, Collada, VRML, 3DS
+and AMF; SolidWorks and other native CAD files are saved as STEP first. See
+[`Model Studio/README.md`](Model%20Studio/README.md).
+
+```bash
+python3 -m http.server 8000
+# http://localhost:8000/Model%20Studio/
+```
+
 ## Tests
 
 ```bash
 cd tests/workdesk && npm ci && npx playwright install chromium && npm test   # portal home, access, Hebrew, WorkDesk
 cd tests/taskana  && npm ci && npx playwright install chromium && npm test   # Taskana in the portal
+cd tests/model-studio && npm ci && npx playwright install chromium && npm test  # Model Studio
 ```
 
 ## Deployment
 
 `.github/workflows/deploy-pages.yml` publishes to GitHub Pages on every push
 to `main`: the website at the root and the Employee Portal at
-`/employee-portal/`, and the welcome page (`Welcome/`) at `/welcome/` — the link to
-send employees. `employee-portal-tests.yml` runs both test suites, and
+`/employee-portal/`, the welcome page (`Welcome/`) at `/welcome/` — the link to
+send employees — and Model Studio at `/model-studio/`. `employee-portal-tests.yml`
+runs the portal's test suites, `model-studio-tests.yml` Model Studio's, and
 `website.yml` lints and builds the website on pull requests.

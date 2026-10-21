@@ -1,0 +1,243 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>GALIL Model Studio</title>
+<meta name="description" content="Open CAD and 3D models, explore their parts, set them up and export images.">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="css/studio.css?v=1">
+<script type="importmap">
+{ "imports": {
+    "three": "./vendor/three/three.module.min.js",
+    "three/addons/": "./vendor/three/addons/"
+} }
+</script>
+</head>
+<body>
+<header class="topbar">
+  <a class="wordmark" href="./" aria-label="GALIL Model Studio">
+    <svg viewBox="0 0 32 25" aria-hidden="true"><path d="M2 18c5-7 10-7 14 0s9 7 14 0" fill="none" stroke="#F08A24" stroke-width="3" stroke-linecap="round"/><path d="M16 2l10 5.5v10L16 23 6 17.5v-10z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M6 7.5l10 5.5 10-5.5M16 13v10" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg>
+    <span><b>GALIL</b><small data-t>Model Studio</small></span>
+  </a>
+  <div class="filename" id="filename"></div>
+  <div class="tools">
+    <button class="tb" id="btn-open" data-t-title="Open a model (Ctrl+O)"><svg viewBox="0 0 24 24"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg><span data-t>Open</span></button>
+    <button class="tb" id="btn-sample" data-t-title="Open the sample assembly"><span data-t>Sample</span></button>
+    <button class="tb primary" id="btn-shot" data-t-title="Save an image of the view (Ctrl+Shift+S)"><svg viewBox="0 0 24 24"><path d="M4 8a2 2 0 0 1 2-2h2l1.5-2h5L16 6h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z"/><circle cx="12" cy="12.5" r="3.5"/></svg><span data-t>Save image</span></button>
+    <span class="sep"></span>
+    <button class="langbtn" id="btn-lang" title="עברית / English">עב</button>
+  </div>
+  <input type="file" id="file-input" multiple hidden>
+</header>
+
+<nav class="toolbar" id="toolbar" aria-label="View tools">
+  <div class="grp">
+    <button class="tb" id="btn-fit" data-t-title="Fit everything in view (F)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg><span data-t>Fit</span></button>
+    <button class="tb" id="btn-fit-sel" data-t-title="Fit the selection in view (Shift+F)"><svg viewBox="0 0 24 24"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/><rect x="9" y="9" width="6" height="6" rx="1"/></svg><span data-t>Fit selection</span></button>
+  </div>
+  <div class="grp views" role="group" aria-label="Standard views">
+    <button class="tb sm" data-view="front" data-t-title="Front (1)" data-t>Front</button>
+    <button class="tb sm" data-view="back" data-t-title="Back (2)" data-t>Back</button>
+    <button class="tb sm" data-view="left" data-t-title="Left (3)" data-t>Left</button>
+    <button class="tb sm" data-view="right" data-t-title="Right (4)" data-t>Right</button>
+    <button class="tb sm" data-view="top" data-t-title="Top (5)" data-t>Top</button>
+    <button class="tb sm" data-view="bottom" data-t-title="Bottom (6)" data-t>Bottom</button>
+    <button class="tb sm" data-view="iso" data-t-title="Isometric (7)" data-t>Iso</button>
+    <button class="tb sm icon" id="btn-roll-l" data-t-title="Roll the view 90° left"><svg viewBox="0 0 24 24"><path d="M9 4H4v5"/><path d="M4.5 8.5A8 8 0 1 1 6 18"/></svg></button>
+    <button class="tb sm icon" id="btn-roll-r" data-t-title="Roll the view 90° right"><svg viewBox="0 0 24 24"><path d="M15 4h5v5"/><path d="M19.5 8.5A8 8 0 1 0 18 18"/></svg></button>
+  </div>
+  <div class="grp">
+    <label class="fld"><span data-t>Projection</span>
+      <select id="sel-projection">
+        <option value="persp" data-t>Perspective</option>
+        <option value="ortho" data-t>Orthographic</option>
+      </select></label>
+    <label class="fld"><span data-t>Style</span>
+      <select id="sel-style">
+        <option value="shaded" data-t>Shaded</option>
+        <option value="edges" data-t>Shaded with edges</option>
+        <option value="technical" data-t>Technical illustration</option>
+        <option value="lines" data-t>Line drawing</option>
+        <option value="xray" data-t>X-ray</option>
+        <option value="wire" data-t>Wireframe</option>
+      </select></label>
+  </div>
+  <div class="grp">
+    <label class="fld explode"><span data-t>Explode</span>
+      <input type="range" id="rng-explode" min="0" max="100" value="0"></label>
+  </div>
+  <div class="grp">
+    <button class="tb toggle" id="btn-move" data-t-title="Move the selected part (T)"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg><span data-t>Move</span></button>
+    <button class="tb toggle" id="btn-rotate" data-t-title="Rotate the selected part (R)"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v4h-4"/></svg><span data-t>Rotate</span></button>
+  </div>
+</nav>
+
+<main class="work">
+  <aside class="panel left" id="panel-left">
+    <div class="tabs" role="tablist">
+      <button role="tab" class="tab on" data-tab="tree" data-t>Parts</button>
+      <button role="tab" class="tab" data-tab="bom" data-t>Parts list</button>
+    </div>
+    <div class="tabpage" id="tab-tree">
+      <div class="treebar">
+        <input type="search" id="tree-search" data-t-placeholder="Find a part…">
+      </div>
+      <div class="treebar btns">
+        <button class="mini" id="btn-show-all" data-t-title="Show every part (Shift+H)" data-t>Show all</button>
+        <button class="mini" id="btn-hide" data-t-title="Hide the selection (H)" data-t>Hide</button>
+        <button class="mini" id="btn-isolate" data-t-title="Show only the selection (I)" data-t>Isolate</button>
+        <button class="mini" id="btn-expand" data-t-title="Expand or collapse every assembly" data-t>Expand</button>
+      </div>
+      <div class="tree" id="tree" role="tree"></div>
+    </div>
+    <div class="tabpage" id="tab-bom" hidden>
+      <table class="bom">
+        <thead><tr><th data-t>Item</th><th data-t>Part</th><th data-t>Qty</th></tr></thead>
+        <tbody id="bom-body"></tbody>
+      </table>
+      <div class="treebar btns">
+        <button class="mini" id="btn-bom-csv" data-t>Download parts list (CSV)</button>
+      </div>
+    </div>
+  </aside>
+
+  <section class="viewport" id="viewport">
+    <canvas id="canvas"></canvas>
+    <svg class="overlay" id="overlay"></svg>
+    <div class="frame" id="frame" hidden><span id="frame-size"></span></div>
+    <div class="start" id="start">
+      <div class="drop">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg>
+        <h1 data-t>Open a CAD or 3D model</h1>
+        <p data-t>Drop files here, or choose Open.</p>
+        <p class="formats"><b data-t>CAD:</b> STEP (.step, .stp), IGES (.iges, .igs), BREP<br>
+          <b data-t>3D:</b> glTF / GLB, OBJ (+MTL), STL, 3MF, PLY, FBX, Collada (.dae), VRML (.wrl), 3DS, AMF</p>
+        <p class="hint" data-t>SolidWorks, Inventor, Creo, CATIA or NX parts and assemblies: save them as STEP (AP214 or AP242) first — File → Save As → STEP. Names, colours and the assembly structure come across.</p>
+        <div class="startbtns">
+          <button class="tb primary" id="btn-open-2" data-t>Open a model…</button>
+          <button class="tb" id="btn-sample-2" data-t>Try the sample assembly</button>
+        </div>
+      </div>
+    </div>
+    <div class="busy" id="busy" hidden><div class="spin"></div><span id="busy-text"></span></div>
+    <div class="toast" id="toast" role="status" hidden></div>
+    <div class="dropmask" id="dropmask" hidden><span data-t>Drop to open</span></div>
+  </section>
+
+  <aside class="panel right" id="panel-right">
+    <details open id="sec-selection">
+      <summary data-t>Selected part</summary>
+      <div class="body">
+        <div class="empty" id="sel-empty" data-t>Click a part, or choose one in the parts tree. Ctrl+click selects several.</div>
+        <div id="sel-props" hidden>
+          <div class="selname" id="sel-name"></div>
+          <div class="cap" id="sel-path"></div>
+          <dl class="kv" id="sel-info"></dl>
+          <div class="row">
+            <label class="fld"><span data-t>Colour</span><input type="color" id="sel-color"></label>
+            <label class="fld grow"><span data-t>Opacity</span><input type="range" id="sel-opacity" min="5" max="100" value="100"></label>
+          </div>
+          <div class="row wrap">
+            <button class="mini" id="sel-focus" data-t>Fit in view</button>
+            <button class="mini" id="sel-parent" data-t-title="Select the assembly this part belongs to" data-t>Select parent</button>
+            <button class="mini" id="sel-callout" data-t-title="Add a numbered balloon pointing at this part" data-t>Add callout</button>
+            <button class="mini" id="sel-reset" data-t-title="Put back its position, colour and opacity" data-t>Reset part</button>
+          </div>
+        </div>
+      </div>
+    </details>
+
+    <details open id="sec-display">
+      <summary data-t>Display</summary>
+      <div class="body">
+        <label class="fld"><span data-t>Background</span>
+          <select id="sel-bg">
+            <option value="white" data-t>White</option>
+            <option value="light" data-t>Light grey</option>
+            <option value="gradient" data-t>Gradient</option>
+            <option value="dark" data-t>Dark</option>
+            <option value="custom" data-t>Custom colour</option>
+          </select></label>
+        <input type="color" id="bg-color" value="#ffffff" hidden>
+        <label class="fld"><span data-t>Light</span><input type="range" id="rng-light" min="20" max="250" value="100"></label>
+        <label class="fld"><span data-t>Edge angle</span><input type="range" id="rng-edge" min="1" max="89" value="30"></label>
+        <label class="chk"><input type="checkbox" id="chk-ground"> <span data-t>Floor shadow</span></label>
+        <label class="chk"><input type="checkbox" id="chk-axes" checked> <span data-t>Axes in the corner</span></label>
+        <label class="chk"><input type="checkbox" id="chk-zup"> <span data-t>Z is up (most CATIA, NX and STL files)</span></label>
+        <button class="mini" id="btn-reset-all" data-t-title="Put every part back where it came from, with its own colour" data-t>Reset all parts</button>
+      </div>
+    </details>
+
+    <details id="sec-section">
+      <summary data-t>Section cut</summary>
+      <div class="body">
+        <label class="chk"><input type="checkbox" id="chk-section"> <span data-t>Cut through the model</span></label>
+        <div class="row">
+          <label class="fld"><span data-t>Plane</span>
+            <select id="sel-section-axis">
+              <option value="x">X</option><option value="y">Y</option><option value="z" selected>Z</option>
+            </select></label>
+          <label class="chk"><input type="checkbox" id="chk-section-flip"> <span data-t>Flip</span></label>
+        </div>
+        <label class="fld"><span data-t>Position</span><input type="range" id="rng-section" min="0" max="1000" value="500"></label>
+      </div>
+    </details>
+
+    <details open id="sec-views">
+      <summary data-t>Saved views</summary>
+      <div class="body">
+        <div class="cap" data-t>A view keeps the camera, which parts are shown, where they are, their colours, the explode, the style, the cut and the callouts.</div>
+        <div class="row wrap">
+          <button class="mini" id="btn-view-add" data-t>Save this view</button>
+          <button class="mini" id="btn-views-zip" data-t-title="Export an image of every saved view, in one ZIP file" data-t>Images of all views</button>
+          <button class="mini" id="btn-views-export" data-t-title="Download the views to open with this model later" data-t>Download views</button>
+          <button class="mini" id="btn-views-import" data-t>Load views…</button>
+          <input type="file" id="views-input" accept=".json,application/json" hidden>
+        </div>
+        <ol class="views-list" id="views-list"></ol>
+      </div>
+    </details>
+
+    <details open id="sec-shot">
+      <summary data-t>Image</summary>
+      <div class="body">
+        <label class="fld"><span data-t>Size</span>
+          <select id="sel-shot-preset">
+            <option value="view" data-t>Same as the screen</option>
+            <option value="1920x1080">&#x2066;1920 × 1080 (HD)&#x2069;</option>
+            <option value="3840x2160">&#x2066;3840 × 2160 (4K)&#x2069;</option>
+            <option value="2480x3508">&#x2066;2480 × 3508 (A4 portrait, 300 dpi)&#x2069;</option>
+            <option value="3508x2480">&#x2066;3508 × 2480 (A4 landscape, 300 dpi)&#x2069;</option>
+            <option value="1200x1200">&#x2066;1200 × 1200&#x2069;</option>
+            <option value="custom" data-t>Custom…</option>
+          </select></label>
+        <div class="row">
+          <label class="fld"><span data-t>Width</span><input type="number" id="shot-w" min="16" max="8192" value="1920"></label>
+          <label class="fld"><span data-t>Height</span><input type="number" id="shot-h" min="16" max="8192" value="1080"></label>
+        </div>
+        <div class="row">
+          <label class="fld"><span data-t>Format</span>
+            <select id="sel-shot-format"><option value="png">PNG</option><option value="jpeg">JPEG</option></select></label>
+          <label class="fld"><span data-t>Smoothing</span>
+            <select id="sel-shot-ss"><option value="1">1×</option><option value="2" selected>2×</option><option value="3">3×</option></select></label>
+        </div>
+        <label class="chk"><input type="checkbox" id="chk-transparent"> <span data-t>Transparent background (PNG)</span></label>
+        <label class="chk"><input type="checkbox" id="chk-frame" checked> <span data-t>Show the image frame on screen</span></label>
+        <label class="fld"><span data-t>File name</span><input type="text" id="shot-name" value=""></label>
+        <button class="tb primary wide" id="btn-shot-2" data-t>Save image</button>
+      </div>
+    </details>
+  </aside>
+</main>
+
+<footer class="status" id="status">
+  <span id="st-model" data-t>No model open</span>
+  <span id="st-sel"></span>
+  <span class="grow"></span>
+  <span class="keys" data-t>Left drag: turn · Right drag: pan · Wheel: zoom · Double-click: fit part</span>
+</footer>
+
+<script type="module" src="js/studio.js?v=1"></script>
+</body>
+</html>
