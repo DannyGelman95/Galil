@@ -1,7 +1,8 @@
-// A small static server for the tests: Model Studio loads ES modules and
+// A small static server for the tests: the Employee Portal, with Model Studio
+// under /studio/. Model Studio loads ES modules and
 // WebAssembly, which browsers do not allow from file:// pages.
 const http = require("http"), fs = require("fs"), path = require("path");
-const root = path.resolve(__dirname, "../../Model Studio");
+const root = path.resolve(__dirname, "../../Employee Portal");
 const port = +process.env.PORT || 4178;
 const types = { ".html": "text/html", ".js": "text/javascript", ".css": "text/css", ".svg": "image/svg+xml",
   ".wasm": "application/wasm", ".json": "application/json", ".png": "image/png", ".step": "application/octet-stream" };
@@ -15,4 +16,4 @@ http.createServer((req, res) => {
     res.writeHead(200, { "Content-Type": types[path.extname(file).toLowerCase()] || "application/octet-stream" });
     res.end(data);
   });
-}).listen(port, () => console.log("Model Studio on http://localhost:" + port + "/"));
+}).listen(port, () => console.log("Model Studio on http://localhost:" + port + "/studio/"));

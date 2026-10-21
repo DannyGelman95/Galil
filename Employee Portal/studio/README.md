@@ -120,15 +120,22 @@ selection, `Ctrl+O` open, `Ctrl+Shift+S` save image, `Ctrl+A` select all.
 
 ## Running it
 
+Model Studio is part of the GALIL Employee Portal: it has a tile on the portal
+home page, and people need to be signed in to the portal with Model Studio in
+their portal access (on by default for every role except view-only; changed in
+WorkDesk → Management → People → Portal access). Without that, a screen sends
+them to the portal.
+
 It must be served over HTTP (browsers do not load ES modules or WebAssembly
 from `file://`):
 
 ```bash
-python3 -m http.server 8000
-# http://localhost:8000/Model%20Studio/
+python3 -m http.server 8000      # from the repository root
+# http://localhost:8000/Employee%20Portal/  → sign in → Model Studio
 ```
 
-GitHub Pages publishes it at `/model-studio/`.
+GitHub Pages publishes it at `/employee-portal/studio/`; the first address,
+`/model-studio/`, sends people there.
 
 ## Files
 

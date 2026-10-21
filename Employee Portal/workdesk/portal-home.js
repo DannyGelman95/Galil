@@ -3,7 +3,7 @@
    GALIL Employee Portal — the home page.
 
    After signing in, everyone lands here: one tile per product — WorkDesk,
-   Taskana, the Handbook and the Knowledge Base — opened according to the
+   Taskana, the Handbook, the Knowledge Base and Model Studio — opened according to the
    person's portal access (shared/portal.js). This file also holds the
    language switch, the portal-access editor used under Management →
    People, and the portal's own styles (including the right-to-left
@@ -125,6 +125,7 @@ var APP_GLYPHS = {
   taskana: [["rect", { x: 3.5, y: 4, width: 5, height: 15, rx: 1.5 }], ["rect", { x: 10, y: 4, width: 5, height: 10, rx: 1.5 }], ["rect", { x: 16.5, y: 4, width: 4, height: 7, rx: 1.5 }], ["path", { d: "M11.2 17.5l1.6 1.6 3.2-3.4" }]],
   handbook: [["path", { d: "M4 4.5h6a3 3 0 0 1 3 3V20a2.5 2.5 0 0 0-2.5-2.5H4z" }], ["path", { d: "M20 4.5h-4.5A2.5 2.5 0 0 0 13 7v13a2.5 2.5 0 0 1 2.5-2.5H20z" }], ["path", { d: "M6.5 8.5h3.5M6.5 11.5h3.5" }]],
   kb: [["path", { d: "M9 18h6M10 21h4" }], ["path", { d: "M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1.1 2V16h5v-.2c.1-.8.5-1.5 1.1-2A6 6 0 0 0 12 3z" }], ["path", { d: "M12 7v3.5M10.4 9h3.2" }]],
+  studio: [["path", { d: "M12 2.8l8 4.5v9.4l-8 4.5-8-4.5V7.3z" }], ["path", { d: "M4 7.3l8 4.5 8-4.5M12 11.8v9.4" }]],
   install: [["rect", { x: 7, y: 2.5, width: 10, height: 19, rx: 2.5 }], ["path", { d: "M12 7v7M9.3 11.5L12 14.2l2.7-2.7M10.5 18.5h3" }]]
 };
 function AppGlyph(p) {
@@ -196,6 +197,12 @@ function PortalHome(p) {
       desc: "Onboarding, company rules and policies, security and training how-to's for every GALIL employee.",
       stats: [h(Chip, { key: "c", k: "mut" }, "Onboarding · Rules · Training")],
       open: go("kb/index.html")
+    },
+    {
+      k: "studio", name: "Model Studio", on: acc.studio, color: "#C2410C", bg: "rgba(194,65,12,.12)",
+      desc: "Open CAD and 3D models, write assembly and disassembly procedures, animate them, build illustrated parts catalogues and publish interactive manuals.",
+      stats: [h(Chip, { key: "c", k: "mut" }, "STEP · IGES · glTF · OBJ · STL"), h(Chip, { key: "p", k: "amber" }, "Procedures · IPC · IETM")],
+      open: go("studio/index.html")
     }
   ];
 
@@ -249,7 +256,7 @@ function PortalHome(p) {
         h("a", { href: "install/index.html" }, h(AppGlyph, { kind: "install", style: { width: 16, height: 16 } }), "Install on your phone")),
 
       h("div", { className: "hubfoot" },
-        h("span", null, "GALIL Employee Portal · WorkDesk · Taskana · Handbook · Knowledge Base"),
+        h("span", null, "GALIL Employee Portal · WorkDesk · Taskana · Handbook · Knowledge Base · Model Studio"),
         h("span", null, WDCloud.remote ? (WDCloud.storage === "github" ? "Data: GitHub" : "Data: OneDrive") : "Data: this browser (demo)"))));
 }
 
@@ -261,7 +268,8 @@ function AccessChips(p) {
     a.taskana !== "none" ? h(Chip, { k: "blue", title: "Taskana" }, "Taskana · ", tr(a.taskana)) : null,
     a.handbook ? h(Chip, { k: "mut", title: "Handbook" }, "Handbook") : null,
     a.kb ? h(Chip, { k: "teal", title: "Knowledge Base" }, "KB") : null,
-    !a.workdesk && a.taskana === "none" && !a.handbook && !a.kb ? h("span", { className: "cap" }, "No access") : null);
+    a.studio ? h(Chip, { k: "amber", title: "Model Studio" }, "Studio") : null,
+    !a.workdesk && a.taskana === "none" && !a.handbook && !a.kb && !a.studio ? h("span", { className: "cap" }, "No access") : null);
 }
 function AccessModal(p) {
   var person = p.person, cur = GalilPortal.access(Object.assign({}, person, { isActive: true, pendingActivation: false }));
@@ -274,11 +282,11 @@ function AccessModal(p) {
       h("div", { className: "grow col", style: { gap: 2 } }, h("b", null, label), h("span", { className: "cap" }, hint)));
   };
   function save() {
-    var same = f.workdesk === def.workdesk && f.taskana === def.taskana && f.handbook === def.handbook && f.kb === def.kb;
+    var same = f.workdesk === def.workdesk && f.taskana === def.taskana && f.handbook === def.handbook && f.kb === def.kb && f.studio === def.studio;
     p.mutate(function (d) {
       var t = byId(d.users, person.id); if (!t) return;
       var before = t.access || null;
-      if (same) delete t.access; else t.access = { workdesk: f.workdesk, taskana: f.taskana, handbook: f.handbook, kb: f.kb };
+      if (same) delete t.access; else t.access = { workdesk: f.workdesk, taskana: f.taskana, handbook: f.handbook, kb: f.kb, studio: f.studio };
       audit(d, p.user.id, "Portal access changed for " + t.fullName, "users", t.id, before, t.access || null);
     });
     toast("Portal access saved.", "ok");
@@ -304,7 +312,8 @@ function AccessModal(p) {
         h("div", { className: "cap" }, "Admin: everything · Manager: any task, project settings · Member: tasks · External: only their own tasks · Viewer: read and comment.")),
       check("handbook", "Handbook", "The user guide to the portal, WorkDesk and Taskana."),
       check("kb", "Knowledge Base", "Onboarding, company rules and training material."),
-      h("div", { className: "cap" }, tr("Role defaults for {role}: WorkDesk {wd} · Taskana {tk} · Handbook {hb} · Knowledge Base {kb}.", {
-        role: tr(roleName(person.role)), wd: tr(def.workdesk ? "yes" : "no"), tk: tr(def.taskana), hb: tr(def.handbook ? "yes" : "no"), kb: tr(def.kb ? "yes" : "no")
+      check("studio", "Model Studio", "CAD and 3D models: procedures, animations, illustrated parts catalogues and interactive manuals."),
+      h("div", { className: "cap" }, tr("Role defaults for {role}: WorkDesk {wd} · Taskana {tk} · Handbook {hb} · Knowledge Base {kb} · Model Studio {ms}.", {
+        role: tr(roleName(person.role)), wd: tr(def.workdesk ? "yes" : "no"), tk: tr(def.taskana), hb: tr(def.handbook ? "yes" : "no"), kb: tr(def.kb ? "yes" : "no"), ms: tr(def.studio ? "yes" : "no")
       }))));
 }

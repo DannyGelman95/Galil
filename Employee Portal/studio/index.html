@@ -6,7 +6,10 @@
 <title>GALIL Model Studio</title>
 <meta name="description" content="Open CAD and 3D models, write assembly and disassembly procedures, animate them, build illustrated parts catalogues and publish them as interactive manuals.">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/studio.css?v=2">
+<link rel="stylesheet" href="css/studio.css?v=3">
+<!-- one sign-in with the Employee Portal: without access, a screen sends people back to it -->
+<script src="../shared/portal.js"></script>
+<script>window.portalUser = GalilPortal.gate("studio");</script>
 <script type="importmap">
 { "imports": {
     "three": "./vendor/three/three.module.min.js",
@@ -16,7 +19,7 @@
 </head>
 <body>
 <header class="topbar">
-  <a class="wordmark" href="./" aria-label="GALIL Model Studio">
+  <a class="wordmark" href="../index.html" id="to-portal" aria-label="GALIL Employee Portal" data-t-title="Back to the Employee Portal">
     <svg viewBox="0 0 32 25" aria-hidden="true"><path d="M2 18c5-7 10-7 14 0s9 7 14 0" fill="none" stroke="#F08A24" stroke-width="3" stroke-linecap="round"/><path d="M16 2l10 5.5v10L16 23 6 17.5v-10z" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/><path d="M6 7.5l10 5.5 10-5.5M16 13v10" fill="none" stroke="#fff" stroke-width="1.8" stroke-linejoin="round"/></svg>
     <span><b>GALIL</b><small data-t>Model Studio</small></span>
   </a>
@@ -406,6 +409,6 @@
   </form>
 </dialog>
 
-<script type="module" src="js/main.js?v=2"></script>
+<script type="module" src="js/main.js?v=3"></script>
 </body>
 </html>

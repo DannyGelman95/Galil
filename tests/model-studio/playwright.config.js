@@ -8,9 +8,9 @@ module.exports = defineConfig({
   workers: 2,
   fullyParallel: true,
   reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "list",
-  webServer: { command: "node serve.js", url: "http://localhost:4178/", reuseExistingServer: !process.env.CI },
+  webServer: { command: "node serve.js", url: "http://localhost:4178/studio/", reuseExistingServer: !process.env.CI },
   use: {
-    baseURL: "http://localhost:4178/",
+    baseURL: "http://localhost:4178/studio/",
     viewport: { width: 1400, height: 900 },
     acceptDownloads: true,
     screenshot: "only-on-failure",

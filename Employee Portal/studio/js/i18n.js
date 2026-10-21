@@ -88,6 +88,7 @@ var HE = {
     "אי אפשר לפתוח ישירות קובצי {kind}. בתוכנה שבה נוצרו, שמרו את המודל כ־STEP (‏AP214 או AP242) ופתחו כאן את קובץ ה־STEP.",
   "{name} could not be opened: {msg}": "לא ניתן לפתוח את {name}: {msg}",
   "1 part": "חלק אחד",
+  "Back to the Employee Portal": "חזרה לפורטל העובדים",
   "(copy)": "(עותק)",
   "(reversed)": "(בסדר הפוך)",
   "+ Add figure from the screen": "+ הוספת איור מהמסך",

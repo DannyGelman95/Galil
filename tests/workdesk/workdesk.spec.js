@@ -214,7 +214,8 @@ test.describe("Employee Portal", () => {
     const errors = await local(page);
     await signIn(page, "eitan.f@galiltc.co.il");
     await expect(page.locator("#portal-home")).toBeVisible();
-    for (const k of ["workdesk", "taskana", "handbook", "kb"]) await expect(page.locator("#tile-" + k)).toBeVisible();
+    for (const k of ["workdesk", "taskana", "handbook", "kb", "studio"]) await expect(page.locator("#tile-" + k)).toBeVisible();
+    await expect(page.locator("#tile-studio")).toContainText("Model Studio");
     await page.click("#tile-workdesk");
     await expect(page).toHaveURL(/#\/workdesk/);
     const tabs = await page.locator('[role="tab"]').allTextContents();
@@ -225,13 +226,20 @@ test.describe("Employee Portal", () => {
     expect(errors).toEqual([]);
   });
 
+  test("the Model Studio tile opens Model Studio", async ({ page }) => {
+    await local(page);
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await page.click("#tile-studio");
+    await expect(page).toHaveURL(/\/studio\/index\.html$/);
+  });
+
   test("access follows the role: a contractor has no Knowledge Base and is External in Taskana", async ({ page }) => {
     await local(page);
     await signIn(page, "gil.hadar@galiltc.co.il");
     await expect(page.locator("#tile-kb")).toHaveAttribute("aria-disabled", "true");
     await expect(page.locator("#tile-taskana")).toContainText("External");
     const acc = await page.evaluate(() => GalilPortal.access(GalilPortal.sessionUser()));
-    expect(acc).toEqual({ workdesk: true, taskana: "External", handbook: true, kb: false });
+    expect(acc).toEqual({ workdesk: true, taskana: "External", handbook: true, kb: false, studio: true });
   });
 
   test("an administrator changes one person's portal access in Management → People", async ({ page }) => {
@@ -243,7 +251,7 @@ test.describe("Employee Portal", () => {
     await page.selectOption("#acc-taskana", "none");
     await page.getByRole("button", { name: "Save", exact: true }).click();
     const d = await data(page);
-    expect(d.users.find(u => u.id === "u-eitan").access).toEqual({ workdesk: true, taskana: "none", handbook: true, kb: true });
+    expect(d.users.find(u => u.id === "u-eitan").access).toEqual({ workdesk: true, taskana: "none", handbook: true, kb: true, studio: true });
     expect(d.audit.some(a => /Portal access changed for Eitan Fisch/.test(a.action))).toBe(true);
   });
 
