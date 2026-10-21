@@ -16,6 +16,12 @@ async function openSample(page) {
   await expect(page.locator("#st-model")).toContainText("12 parts");
 }
 
+// waits until the camera and any playback have come to rest
+async function settle(page) {
+  await page.waitForFunction(() => window.studio.idle());
+  await page.waitForTimeout(50);
+}
+
 function rows(page, name) {
   return page.locator(".tree .row .nm", { hasText: new RegExp("^" + name + "$") });
 }
@@ -61,7 +67,7 @@ test("selects, hides, isolates and shows parts", async ({ page }) => {
 test("clicking the model selects the part under the pointer", async ({ page }) => {
   await openSample(page);
   await page.click("[data-view=front]");
-  await page.waitForTimeout(600);
+  await settle(page);
   const p = await page.evaluate(() => window.studio.screenPoint("Hand wheel"));
   await page.mouse.click(p.x, p.y);
   await expect(page.locator("#sel-name")).toHaveText("Hand wheel");
@@ -120,7 +126,7 @@ test("a saved view brings back the camera, hidden parts, explode and style", asy
   await openSample(page);
   await page.click('.stab[data-stab="views"]');
   await page.click("[data-view=top]");
-  await page.waitForTimeout(500);
+  await settle(page);
   await page.click("#btn-view-add");
   await expect(page.locator("#views-list .card:not(.add)")).toHaveCount(1);
   await expect(page.locator("#view-name")).toHaveValue("View 1");
@@ -131,10 +137,11 @@ test("a saved view brings back the camera, hidden parts, explode and style", asy
   await page.locator("#rng-explode").fill("60");
   await page.selectOption("#sel-style", "xray");
   await page.click("[data-view=front]");
-  await page.waitForTimeout(500);
+  await settle(page);
 
   await page.locator("#views-list .card:not(.add)").first().click();
-  await page.waitForTimeout(1000);
+  await page.waitForTimeout(100);
+  await settle(page);
   await expect(page.locator("#st-model")).not.toContainText("shown");
   await expect(page.locator("#rng-explode")).toHaveValue("0");
   await expect(page.locator("#sel-style")).toHaveValue("shaded");
@@ -266,7 +273,8 @@ test("a procedure is recorded as a video", async ({ page }) => {
     if (!isFinite(v.duration)) { v.currentTime = 1e9; await new Promise(r => { v.ontimeupdate = r; }); }
     return v.duration;
   }, bytes.toString("base64"));
-  expect(duration).toBeGreaterThan(1.5);
+  // the procedure lasts 2.7 s (first step 1 s, motion 0.5 s, pause 0.2 s + 1 s at the end)
+  expect(duration).toBeGreaterThan(2.5);
 });
 
 test("figures: balloon the visible parts, then add a figure with its items", async ({ page }) => {

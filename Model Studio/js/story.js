@@ -499,8 +499,25 @@ async function recordVideo() {
   recorder = { stopNow: false };
   player = { segs: segs, i: 0, quiet: true };
   $("rec").hidden = false; $("busy").hidden = false; $("busy-text").textContent = t("Recording the video…");
-  var t0 = performance.now();
+  // The encoder takes a moment to start on slow machines: hold the first
+  // picture until it is running, and the last one for a moment at the end,
+  // so neither end of the procedure is cut off.
+  // the recorder starts once it has a frame, so keep drawing while waiting
+  var isStarted = false;
+  mr.onstart = function () { isStarted = true; };
+  var hold = function (ms) {
+    return new Promise(function (res) {
+      var until = performance.now() + ms;
+      (function f(now) {
+        app.renderOutput(o, captions ? function (ctx) { drawCaption(ctx, o, player.segs[Math.min(player.i, player.segs.length - 1)].step); } : null);
+        if (!recorder.stopNow && (now < until || !isStarted) && now < until + 10000) requestAnimationFrame(f); else res();
+      })(performance.now());
+    });
+  };
+  app.beginBlend(segs[0].from, segs[0].to); app.blend(1);
   mr.start(500);
+  await hold(600);
+  var t0 = performance.now();
   await new Promise(function (res) {
     (function frame(now) {
       var going = !recorder.stopNow && advance(now);
@@ -511,6 +528,7 @@ async function recordVideo() {
     })(performance.now());
   });
   var cancelled = recorder.stopNow;
+  if (!cancelled) { player = { segs: segs, i: segs.length - 1, quiet: true }; await hold(500); }
   mr.stop();
   await stopped;
   player = null; recorder = null;
@@ -810,6 +828,7 @@ $("btn-views-zip").addEventListener("click", async function () {
 });
 
 renderAll();
+app.isPlaying = function () { return !!player; };
 
 export var story = {
   project: function () { return project; }, figItems: figItems, visibleIn: visibleIn, captionText: captionText, NOTE: NOTE,
