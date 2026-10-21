@@ -92,7 +92,8 @@ and AMF; SolidWorks and other native CAD files are saved as STEP first. See
 
 It is part of the Employee Portal (a tile on the home page, and a Model Studio
 choice in each person's portal access, on by default for every role but
-view-only). Sign in to the portal first, then open it from its tile, or at
+view-only). It is for computers: phones and tablets get no tile, and the
+page asks for a computer. Sign in to the portal first, then open it from its tile, or at
 `Employee Portal/studio/` on the same server:
 
 ```bash

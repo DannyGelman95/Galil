@@ -199,7 +199,7 @@ function PortalHome(p) {
       open: go("kb/index.html")
     },
     {
-      k: "studio", name: "Model Studio", on: acc.studio, color: "#C2410C", bg: "rgba(194,65,12,.12)",
+      k: "studio", name: "Model Studio", on: acc.studio, desktopOnly: true, color: "#C2410C", bg: "rgba(194,65,12,.12)",
       desc: "Open CAD and 3D models, write assembly and disassembly procedures, animate them, build illustrated parts catalogues and publish interactive manuals.",
       stats: [h(Chip, { key: "c", k: "mut" }, "STEP · IGES · glTF · OBJ · STL"), h(Chip, { key: "p", k: "amber" }, "Procedures · IPC · IETM")],
       open: go("studio/index.html")
@@ -233,7 +233,8 @@ function PortalHome(p) {
       /* birthday reminders: colleagues' birthdays this week (people may keep theirs private) */
       h(BirthdayBanner, { db: db, days: 7, id: "home-birthdays", title: "Birthdays this week", mb: 0 }),
 
-      h("div", { className: "tiles", role: "list" }, tiles.map(function (t) {
+      /* Model Studio is for computers: no tile on phones and tablets */
+      h("div", { className: "tiles", role: "list" }, tiles.filter(function (t) { return !(t.desktopOnly && GalilPortal.isMobileDevice()); }).map(function (t) {
         return h("button", {
           key: t.k, type: "button", role: "listitem", id: "tile-" + t.k, className: "tile" + (t.on ? "" : " off"),
           style: { "--tc": t.color, "--tbg": t.bg }, "aria-disabled": t.on ? null : "true",

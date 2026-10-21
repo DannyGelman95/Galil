@@ -7,9 +7,10 @@
 <meta name="description" content="Open CAD and 3D models, write assembly and disassembly procedures, animate them, build illustrated parts catalogues and publish them as interactive manuals.">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="css/studio.css?v=3">
-<!-- one sign-in with the Employee Portal: without access, a screen sends people back to it -->
+<!-- one sign-in with the Employee Portal: without access, or on a phone or tablet,
+     a screen sends people back to it -->
 <script src="../shared/portal.js"></script>
-<script>window.portalUser = GalilPortal.gate("studio");</script>
+<script>window.portalUser = GalilPortal.gate("studio", { desktopOnly: true });</script>
 <script type="importmap">
 { "imports": {
     "three": "./vendor/three/three.module.min.js",

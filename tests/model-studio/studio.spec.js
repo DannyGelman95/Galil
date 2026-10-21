@@ -49,6 +49,16 @@ test.beforeEach(async ({ page }, info) => {
   if (!/sign-in/.test(info.title)) await page.addInitScript(signedIn(), "EMP");
 });
 
+test.describe("on a phone or tablet", () => {
+  test.use({ viewport: { width: 820, height: 1180 }, hasTouch: true, isMobile: true,
+    userAgent: "Mozilla/5.0 (iPad; CPU OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" });
+  test("is not available; the page asks for a computer", async ({ page }) => {
+    await page.goto("./");
+    await expect(page.locator("#portal-gate")).toContainText("Model Studio is for computers");
+    await expect(page.locator("#portal-gate-go")).toHaveAttribute("href", "../index.html");
+  });
+});
+
 test("needs the Employee Portal sign-in, and access to Model Studio", async ({ page, context }) => {
   await page.addInitScript(signedIn(), null);
   await page.goto("./");

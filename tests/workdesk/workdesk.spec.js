@@ -510,6 +510,23 @@ test.describe("Management details", () => {
 test.describe("phone layout", () => {
   test.use({ viewport: { width: 390, height: 844 } });
 
+  test.describe("on an iPhone", () => {
+    test.use({ hasTouch: true, isMobile: true, userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" });
+
+    test("Model Studio is not offered on a phone: no tile, and its page asks for a computer", async ({ page }) => {
+      const errors = await serve(page);
+      await page.addInitScript(() => localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" })));
+      await page.goto(ORIGIN + "/index.html"); await signIn(page, "danny.gelman@galiltc.co.il");
+      await expect(page.locator("#tile-workdesk")).toBeVisible();
+      await expect(page.locator("#tile-studio")).toHaveCount(0);
+      expect(await page.evaluate(() => GalilPortal.isMobileDevice())).toBe(true);
+      await page.goto(ORIGIN + "/studio/index.html");
+      await expect(page.locator("#portal-gate")).toContainText("Model Studio is for computers");
+      await expect(page.locator("#portal-gate")).toContainText("not available on phones and tablets");
+      expect(errors).toEqual([]);
+    });
+  });
+
   test.describe("on a touch screen", () => {
     test.use({ hasTouch: true, isMobile: true });
 
