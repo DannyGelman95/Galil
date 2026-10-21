@@ -36,7 +36,8 @@ jobs:
         working-directory: Model Studio
         run: |
           node --check js/occt-worker.js
-          for f in js/studio.js js/loaders.js js/i18n.js js/zip.js; do node --input-type=module --check < "$f"; done
+          node --check ietm/viewer.js
+          for f in js/*.js; do [ "$f" = js/occt-worker.js ] || node --input-type=module --check < "$f"; done
 
       - run: npm ci
       - run: npx playwright install --with-deps chromium

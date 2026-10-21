@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="GALIL Model Studio">
+<title>__TITLE__</title>
+<style>
+:root{--navy:#1C2D4A; --accent:#F08A24; --line:#DCE2EC; --fg:#1B2433; --soft:#5C6B82; --bg:#F4F6FA; --sel:#E7F0FF;
+  --sans:"Segoe UI",system-ui,-apple-system,"Noto Sans","Noto Sans Hebrew",Arial,sans-serif}
+*{box-sizing:border-box}
+html,body{margin:0; height:100%}
+body{font:14px/1.5 var(--sans); color:var(--fg); background:var(--bg)}
+button{font:inherit; color:inherit}
+#app{display:grid; grid-template-rows:auto 1fr; height:100%}
+header{display:flex; align-items:center; gap:14px; padding:8px 16px; background:var(--navy); color:#fff; border-bottom:3px solid var(--accent)}
+header h1{font-size:16px; margin:0; flex:1; min-width:0; overflow:hidden; text-overflow:ellipsis; white-space:nowrap}
+header .doc{font-size:12px; color:#C5D3EA; white-space:nowrap}
+header button{background:transparent; border:1px solid rgba(255,255,255,.35); color:#fff; border-radius:7px; padding:4px 12px; cursor:pointer}
+header button:hover{background:rgba(255,255,255,.1)}
+.wrap{display:grid; grid-template-columns:280px 1fr 380px; min-height:0}
+nav{background:#fff; border-inline-end:1px solid var(--line); overflow:auto; padding:8px 0 20px}
+nav h3{font-size:11.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--soft); margin:14px 16px 6px}
+nav button{display:block; width:100%; text-align:start; border:0; background:none; padding:6px 16px; cursor:pointer; border-radius:0}
+nav button:hover{background:#F1F4F9}
+nav button.on{background:var(--sel); box-shadow:inset 3px 0 0 #3B7DD8}
+[dir=rtl] nav button.on{box-shadow:inset -3px 0 0 #3B7DD8}
+nav .proc > button{font-weight:600}
+nav .steps button{padding-inline-start:30px; font-size:13px; color:#33415A}
+nav .steps button b{color:var(--accent); margin-inline-end:6px}
+#stage{position:relative; min-width:0; min-height:0; background:#fff; overflow:hidden}
+#stage canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
+#stage svg{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
+#stage img{position:absolute; inset:0; width:100%; height:100%; object-fit:contain; background:#fff}
+#tip{position:absolute; z-index:3; background:var(--navy); color:#fff; font-size:12.5px; padding:6px 10px; border-radius:8px; pointer-events:none; max-width:320px}
+#stagebar{position:absolute; bottom:10px; inset-inline-start:10px; display:flex; gap:6px; z-index:2}
+#stagebar button{background:#fff; border:1px solid var(--line); border-radius:7px; padding:4px 10px; cursor:pointer; font-size:12.5px}
+#content{background:#fff; border-inline-start:1px solid var(--line); overflow:auto; padding:16px 18px 24px}
+#content h2{font-size:18px; margin:0 0 4px; color:var(--navy)}
+#content .kicker{color:var(--soft); font-size:12px; text-transform:uppercase; letter-spacing:.05em}
+.notice{border-radius:8px; padding:8px 12px; margin:10px 0; border:1px solid; font-size:13.5px}
+.notice b{display:block; letter-spacing:.06em}
+.notice.note{background:#EEF4FF; border-color:#BFD3F5}
+.notice.caution{background:#FFF6E5; border-color:#F3C77A}
+.notice.warning{background:#FDECEA; border-color:#EBA59E; color:#7C1D15}
+.text{white-space:pre-line; margin:10px 0}
+.tools{font-size:13px; color:var(--soft)}
+.controls{display:flex; gap:6px; margin:14px 0 4px; flex-wrap:wrap}
+.controls button{border:1px solid var(--line); background:#fff; border-radius:7px; padding:5px 12px; cursor:pointer}
+.controls button.primary{background:var(--accent); border-color:var(--accent); color:#1F1405; font-weight:600}
+.controls button:disabled{opacity:.45; cursor:default}
+table{width:100%; border-collapse:collapse; font-size:13px; margin-top:10px}
+th{text-align:start; background:#F7F9FC; color:var(--soft); font-weight:600; padding:6px 8px; border-bottom:1px solid var(--line)}
+td{padding:6px 8px; border-bottom:1px solid #EEF1F6; vertical-align:top}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:#F7F9FC}
+tbody tr.on td{background:var(--sel)}
+td.n{text-align:center; width:44px} td.q{text-align:center; width:50px}
+td .pn{font-family:ui-monospace,Consolas,monospace; font-size:12px}
+.small{font-size:12px; color:var(--soft)}
+#print{display:none}
+.no3d #stagebar{display:none}
+@media (max-width:1000px){
+  .wrap{grid-template-columns:1fr; grid-template-rows:auto 50vh auto}
+  nav{max-height:30vh}
+  #content{border-inline-start:0}
+}
+@media print{
+  @page{margin:16mm}
+  body{background:#fff}
+  #app{display:none}
+  #print{display:block; font-size:11pt}
+  #print .page{break-after:page}
+  #print h1{font-size:22pt; color:var(--navy); margin:40mm 0 8mm}
+  #print h2{font-size:15pt; color:var(--navy); border-bottom:2px solid var(--accent); padding-bottom:2mm; margin:0 0 5mm}
+  #print h3{font-size:12pt; margin:6mm 0 2mm}
+  #print .step,#print .figure{break-inside:avoid; margin-bottom:6mm}
+  #print img{display:block; width:100%; max-height:88mm; object-fit:contain; border:1px solid #ddd; margin:2mm 0}
+  #print .figure img{max-height:140mm}
+  #print .step .text{margin:2mm 0}
+  #print table{font-size:9.5pt}
+  #print tbody tr{cursor:auto}
+  #print .meta td{border:0; padding:1mm 4mm 1mm 0}
+}
+</style>
+</head>
+<body>
+<div id="app">
+  <header>
+    <h1 id="h-title"></h1>
+    <span class="doc" id="h-doc"></span>
+    <button id="btn-print"></button>
+  </header>
+  <div class="wrap">
+    <nav id="nav"></nav>
+    <section id="stage">
+      <canvas id="c"></canvas>
+      <svg id="ov"></svg>
+      <img id="still" alt="" hidden>
+      <div id="tip" hidden></div>
+      <div id="stagebar"><button id="btn-reset"></button><button id="btn-explode"></button></div>
+    </section>
+    <section id="content"></section>
+  </div>
+</div>
+<div id="print"></div>
+<script type="application/json" id="pub-data">__DATA__</script>
+<script type="application/json" id="src-three">__THREE__</script>
+<script type="application/json" id="src-orbit">__ORBIT__</script>
+<script>
+// three.js and its orbit controls travel inside this file; they are turned into
+// module URLs here, so the manual also works opened straight from the disk.
+(function () {
+  function src(id) { var el = document.getElementById(id); return el ? JSON.parse(el.textContent) : ""; }
+  function url(code) { return URL.createObjectURL(new Blob([code], { type: "text/javascript" })); }
+  try {
+    var three = src("src-three");
+    if (three) {
+      window.__three = url(three);
+      window.__orbit = url(src("src-orbit").replace(/from\s*["']three["']/g, function () { return 'from "' + window.__three + '"'; }));
+    }
+  } catch (e) { window.__three = null; }
+})();
+</script>
+<script>
+__VIEWER__
+</script>
+</body>
+</html>

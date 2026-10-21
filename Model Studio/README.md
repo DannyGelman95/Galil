@@ -1,9 +1,10 @@
 # GALIL Model Studio
 
-A browser application for opening CAD and 3D models, exploring their parts and
-setting them up for images — the job Cortona3D RapidManual / RapidCatalog and
-SOLIDWORKS Composer are used for when what is needed is pictures of the model
-in the right positions.
+A browser application for technical documentation from CAD and 3D models — the
+work Cortona3D RapidManual / RapidCatalog and SOLIDWORKS Composer are used for:
+explore the model, set it up, write assembly, disassembly and maintenance
+procedures, animate them and record them as video, build an illustrated parts
+catalogue (IPC), and publish it all as an interactive manual (IETM).
 
 Static files only: no build step, no server code, nothing uploaded — files are
 read in the browser.
@@ -53,7 +54,65 @@ with its `.bin`): choose them together or drop them together.
   up to the graphics card's limit, with 1–3× smoothing and an optional
   transparent background. A frame on the screen shows exactly what the image
   will contain; lines and callouts keep their weight at any size.
+- **Undo and redo** (Ctrl+Z, Ctrl+Y) for every change to the scene.
+- **Move exactly**: move the selection by X/Y/Z in model units, or turn it by
+  a number of degrees about an axis — for precise disassembly positions.
+- **Part data**: part number, description, unit and notes for each part
+  (Selected part panel), shown in the parts list; read them from a CSV file
+  (columns Name, Part number, Description, Unit, Notes — English or Hebrew
+  headers) and download them with the list.
 - English and Hebrew (shares the language setting with the Employee Portal).
+
+## Procedures, animation and video
+
+The storyboard under the view has three tabs.
+
+**Procedures.** A procedure is a list of steps; each step is a picture of the
+model (camera, which parts are shown, where they are, colours, explode, style,
+cut, callouts) with a title, instructions, a note / caution / warning, the
+tools and materials, and how long its motion and pause last. Set the model up
+and choose *+ Add step from the screen*; *Update from the screen* replaces a
+step's picture. Playing a procedure animates from step to step: parts slide
+and turn to their new places, parts that are hidden or shown fade out or in,
+the camera flies, and the step text is shown as a caption.
+
+- **Make disassembly steps** writes a first draft from the model: one step per
+  part (all copies together), the outermost first, each part sliding out along
+  its explode direction as it fades; the largest part stays.
+- **Reverse into a new procedure** turns a disassembly into the assembly (and
+  the other way): the steps in reverse order, "Remove" becoming "Install".
+- **Record video** plays the procedure into an MP4 (or WebM) file at the
+  image size, with the step text as captions if wanted.
+
+**Illustrated parts catalogue.** A figure is a picture with numbered callouts
+and the list of the parts it shows. *Balloon the visible parts* puts a callout
+on every visible item, laid out around the model so leaders do not cross;
+*Make figures for each assembly* makes a ballooned figure for the whole model
+and for each sub-assembly.
+
+**Views** are saved set-ups to come back to, export as images (all in one ZIP),
+or turn into a step or a figure.
+
+The project — procedures, figures, views and part data — is kept in the
+browser for each model file, and **Project → Save project file** writes it to
+a file to share or to keep with the model.
+
+## Publishing the interactive manual (IETM)
+
+**Publish** makes one HTML file that opens in any browser, also offline and
+straight from the disk:
+
+- contents: every procedure and its steps, every IPC figure, the parts list;
+- the 3D model, with each step animated from the one before, *Play from here*,
+  explode, and parts that can be clicked to see their item, description and
+  part number (the row in the parts table lights up, and the other way round);
+- the IPC figures with their callouts and parts tables (item, part number,
+  description, quantity and unit);
+- a print layout — cover, contents, every step with its picture and text, the
+  figures and the parts list — so *Print or save as PDF* gives the paper
+  manual.
+
+Textures of mesh models are not carried into the manual; colours are.
 
 Keyboard: `F` fit all, `Shift+F` fit selection, `1`–`7` standard views, `H`
 hide, `Shift+H` show all, `I` isolate, `T` move, `R` rotate, `Esc` clear the
@@ -76,7 +135,11 @@ GitHub Pages publishes it at `/model-studio/`.
 ```
 index.html            the page
 css/studio.css        its styles
-js/studio.js          scene, camera, selection, tree, views, images
+js/main.js            loads the three parts below
+js/studio.js          scene, camera, selection, tree, parts list, states, undo, images
+js/story.js           procedures, playing and recording, figures, views, the project
+js/publish.js         the interactive manual (IETM) as one HTML file
+ietm/                 the manual's page and viewer, filled in by Publish
 js/loaders.js         reading files into a three.js hierarchy
 js/occt-worker.js     OpenCascade in a web worker (STEP, IGES, BREP)
 js/i18n.js            English and Hebrew
