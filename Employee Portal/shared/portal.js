@@ -83,23 +83,43 @@ var GalilPortal = (function () {
     return o && Array.isArray(o.tasks) ? o : null;
   }
 
+  /* ---------- phones and tablets ---------- */
+  /* True on a phone or tablet (not on a computer with a narrow window): the
+     browser says it is mobile, or it is an iPad (which reports itself as a
+     Mac), or it has only a touch screen, and a small one. Model Studio is not
+     offered there. */
+  function isMobileDevice() {
+    try {
+      var ua = navigator.userAgent || "";
+      if (navigator.userAgentData && navigator.userAgentData.mobile) return true;
+      if (/Android|iPhone|iPad|iPod|Mobile|Windows Phone|BlackBerry|Opera Mini/i.test(ua)) return true;
+      if (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1) return true;
+      return !window.matchMedia("(any-pointer: fine)").matches && Math.min(screen.width, screen.height) < 900;
+    } catch (e) { return false; }
+  }
+
   /* ---------- pages other than the portal home ---------- */
   function hubUrl(base) { return (base || "../") + "index.html"; }
   function signOut(base) { location.href = hubUrl(base) + "#signout"; }
 
   /* A blocking screen for pages that need a signed-in person with access.
-     Returns the person when they may continue; otherwise draws the screen and returns null. */
+     Returns the person when they may continue; otherwise draws the screen and returns null.
+     opts.desktopOnly: also refused on phones and tablets. */
   function gate(app, opts) {
     opts = opts || {};
     applyLang(); setTheme(theme());
     var u = sessionUser(), a = access(u), ok = !!u && (app === "taskana" ? a.taskana !== "none" : !!a[app]);
-    if (ok) return u;
+    var mobile = ok && opts.desktopOnly && isMobileDevice();
+    if (ok && !mobile) return u;
     var en = { workdesk: "WorkDesk", taskana: "Taskana", handbook: "the Handbook", kb: "the Knowledge Base", studio: "Model Studio" }[app];
     var he = { workdesk: "ל-WorkDesk", taskana: "ל-Taskana", handbook: "למדריך למשתמש", kb: "למאגר הידע", studio: "לסטודיו המודלים" }[app];
     var heIn = { workdesk: "ב-WorkDesk", taskana: "ב-Taskana", handbook: "במדריך למשתמש", kb: "במאגר הידע", studio: "בסטודיו המודלים" }[app];
-    var title = !u ? t("Sign in to the Employee Portal first", "יש להתחבר קודם לפורטל העובדים")
+    var title = mobile ? t(en + " is for computers", en === "Model Studio" ? "סטודיו המודלים מיועד למחשבים" : "מיועד למחשבים")
+      : !u ? t("Sign in to the Employee Portal first", "יש להתחבר קודם לפורטל העובדים")
       : t("No access to " + en, "אין לך גישה " + he);
-    var msg = !u ? t("Open the Employee Portal, sign in with your GALIL account, and choose " + en + " from the home page.",
+    var msg = mobile ? t(en + " is not available on phones and tablets. Open it from the Employee Portal on a computer.",
+                         "אי אפשר להשתמש " + heIn + " בטלפון או בטאבלט. פתחו אותו מפורטל העובדים במחשב.")
+      : !u ? t("Open the Employee Portal, sign in with your GALIL account, and choose " + en + " from the home page.",
                      "פתחו את פורטל העובדים, התחברו עם חשבון גליל ובחרו " + heIn + " בדף הבית.")
       : t("Your account (" + u.email + ") doesn't include " + en + ". Ask an Operations Manager or the CEO if you need it.",
           "החשבון שלך (" + u.email + ") לא כולל גישה " + he + ". אם צריך גישה, פנו למנהל/ת התפעול או למנכ\"ל.");
@@ -127,6 +147,7 @@ var GalilPortal = (function () {
     lang: lang, setLang: setLang, applyLang: applyLang, t: t,
     theme: theme, setTheme: setTheme,
     workdesk: workdesk, sessionUser: sessionUser, access: access, defaultAccess: defaultAccess, taskana: taskana,
+    isMobileDevice: isMobileDevice,
     hubUrl: hubUrl, signOut: signOut, gate: gate
   };
 })();

@@ -126,6 +126,11 @@ their portal access (on by default for every role except view-only; changed in
 WorkDesk → Management → People → Portal access). Without that, a screen sends
 them to the portal.
 
+Model Studio is for computers. On phones and tablets (`GalilPortal.isMobileDevice()`:
+the browser says it is mobile, an iPad, or a small touch-only screen) the portal
+shows no tile and the page asks for a computer instead. A narrow window on a
+computer still opens it.
+
 It must be served over HTTP (browsers do not load ES modules or WebAssembly
 from `file://`):
 
