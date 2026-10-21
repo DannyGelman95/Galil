@@ -30,8 +30,34 @@ function pngInfo(buf) {
   return { width: buf.readUInt32BE(16), height: buf.readUInt32BE(20), colorType: buf[25] };
 }
 
-test.beforeEach(async ({ page }) => {
-  await page.addInitScript(() => { if (!sessionStorage.getItem("init")) { localStorage.clear(); sessionStorage.setItem("init", "1"); } });
+// Model Studio is part of the Employee Portal: the tests sign in as an employee
+// the way the portal leaves it in the browser (its data and the session).
+function signedIn(role) {
+  return (role) => {
+    if (!sessionStorage.getItem("init")) {
+      localStorage.clear();
+      sessionStorage.setItem("init", "1");
+      if (role) {
+        localStorage.setItem("galil-workdesk-v1", JSON.stringify({ data: { users: [
+          { id: "u-test", email: "test@galiltc.co.il", fullName: "Test Writer", role: role, isActive: true }] } }));
+        localStorage.setItem("galil-workdesk-session", "u-test");
+      }
+    }
+  };
+}
+test.beforeEach(async ({ page }, info) => {
+  if (!/sign-in/.test(info.title)) await page.addInitScript(signedIn(), "EMP");
+});
+
+test("needs the Employee Portal sign-in, and access to Model Studio", async ({ page, context }) => {
+  await page.addInitScript(signedIn(), null);
+  await page.goto("./");
+  await expect(page.locator("#portal-gate")).toContainText("Sign in to the Employee Portal first");
+  await expect(page.locator("#portal-gate-go")).toHaveAttribute("href", "../index.html");
+  const viewer = await context.newPage();
+  await viewer.addInitScript(signedIn(), "VIEW");
+  await viewer.goto("./");
+  await expect(viewer.locator("#portal-gate")).toContainText("No access to Model Studio");
 });
 
 test("opens the sample STEP assembly with its structure, names and parts list", async ({ page }) => {

@@ -5,10 +5,9 @@ The GALIL website and the GALIL Employee Portal.
 ```
 Website/            The public website — React + Material UI, English and Hebrew.
 Welcome/            A standalone page inviting employees to the Employee Portal.
-Employee Portal/    The Employee Portal — WorkDesk, Taskana, the Handbook and the
-                    Knowledge Base behind one sign-in, English and Hebrew.
-Model Studio/       Opens CAD and 3D models (STEP, IGES, glTF, OBJ, STL …), shows
-                    their parts, sets them up and exports images.
+Employee Portal/    The Employee Portal — WorkDesk, Taskana, the Handbook, the
+                    Knowledge Base and Model Studio behind one sign-in, English
+                    and Hebrew.
 tests/              Browser tests for the Employee Portal and Model Studio (Playwright).
 docs/               Brand material; deprecated documents and films of the old apps.
 ```
@@ -37,6 +36,7 @@ home page, and see a tile for each product their access includes:
 | **Taskana** | Tasks only — boards, lists, reviews, comments. People, clients, projects and work orders come from WorkDesk; budget and hours-bank indicators show WorkDesk's figures | `taskana/` |
 | **Handbook** | The user guide to the portal, WorkDesk and Taskana, role by role | `handbook/` (`index.html` English, `he.html` Hebrew) |
 | **Knowledge Base** | Onboarding, company rules, security and training articles | `kb/` |
+| **Model Studio** | CAD and 3D models: parts, images, assembly and disassembly procedures with animation and video, illustrated parts catalogues, interactive manuals (IETM) | `studio/` |
 
 Also: `install/` — how to put the portal on a phone or computer, and how an
 administrator sets it up.
@@ -88,11 +88,16 @@ animations and record as video; an illustrated parts catalogue; and Publish,
 which makes an offline interactive manual (IETM) with a print layout for PDF. It reads STEP, IGES and BREP through
 OpenCascade (WebAssembly) and glTF, OBJ, STL, 3MF, PLY, FBX, Collada, VRML, 3DS
 and AMF; SolidWorks and other native CAD files are saved as STEP first. See
-[`Model Studio/README.md`](Model%20Studio/README.md).
+[`Employee Portal/studio/README.md`](Employee%20Portal/studio/README.md).
+
+It is part of the Employee Portal (a tile on the home page, and a Model Studio
+choice in each person's portal access, on by default for every role but
+view-only). Sign in to the portal first, then open it from its tile, or at
+`Employee Portal/studio/` on the same server:
 
 ```bash
 python3 -m http.server 8000
-# http://localhost:8000/Model%20Studio/
+# http://localhost:8000/Employee%20Portal/  → sign in → Model Studio
 ```
 
 ## Tests
@@ -108,6 +113,7 @@ cd tests/model-studio && npm ci && npx playwright install chromium && npm test  
 `.github/workflows/deploy-pages.yml` publishes to GitHub Pages on every push
 to `main`: the website at the root and the Employee Portal at
 `/employee-portal/`, the welcome page (`Welcome/`) at `/welcome/` — the link to
-send employees — and Model Studio at `/model-studio/`. `employee-portal-tests.yml`
+send employees. Model Studio is at `/employee-portal/studio/`; its first address,
+`/model-studio/`, sends people there. `employee-portal-tests.yml`
 runs the portal's test suites, `model-studio-tests.yml` Model Studio's, and
 `website.yml` lints and builds the website on pull requests.

@@ -59,19 +59,20 @@ var GalilPortal = (function () {
   var TASKANA_ROLES = ["Admin", "Manager", "Member", "External", "Viewer"];
   var DEFAULT_TASKANA = { CEO: "Admin", OPS: "Admin", PM: "Manager", TL: "Manager", SEN: "Member", EMP: "Member", EXT: "External", FIN: "Viewer", VIEW: "Viewer" };
   function defaultAccess(role) {
-    return { workdesk: true, taskana: DEFAULT_TASKANA[role] || "Viewer", handbook: true, kb: role !== "EXT" && role !== "VIEW" };
+    return { workdesk: true, taskana: DEFAULT_TASKANA[role] || "Viewer", handbook: true, kb: role !== "EXT" && role !== "VIEW", studio: role !== "VIEW" };
   }
-  /* { workdesk: bool, taskana: "Admin"…"Viewer" | "none", handbook: bool, kb: bool } */
+  /* { workdesk: bool, taskana: "Admin"…"Viewer" | "none", handbook: bool, kb: bool, studio: bool (Model Studio) } */
   function access(u) {
-    if (!u) return { workdesk: false, taskana: "none", handbook: false, kb: false };
+    if (!u) return { workdesk: false, taskana: "none", handbook: false, kb: false, studio: false };
     var d = defaultAccess(u.role), a = u.access || {};
     var out = {
       workdesk: a.workdesk == null ? d.workdesk : !!a.workdesk,
       taskana: a.taskana == null ? d.taskana : (TASKANA_ROLES.indexOf(a.taskana) >= 0 ? a.taskana : "none"),
       handbook: a.handbook == null ? d.handbook : !!a.handbook,
-      kb: a.kb == null ? d.kb : !!a.kb
+      kb: a.kb == null ? d.kb : !!a.kb,
+      studio: a.studio == null ? d.studio : !!a.studio
     };
-    if (!u.isActive || u.pendingActivation) { out.workdesk = false; out.taskana = "none"; out.kb = false; out.handbook = false; }
+    if (!u.isActive || u.pendingActivation) { out.workdesk = false; out.taskana = "none"; out.kb = false; out.handbook = false; out.studio = false; }
     return out;
   }
 
@@ -93,9 +94,9 @@ var GalilPortal = (function () {
     applyLang(); setTheme(theme());
     var u = sessionUser(), a = access(u), ok = !!u && (app === "taskana" ? a.taskana !== "none" : !!a[app]);
     if (ok) return u;
-    var en = { workdesk: "WorkDesk", taskana: "Taskana", handbook: "the Handbook", kb: "the Knowledge Base" }[app];
-    var he = { workdesk: "ל-WorkDesk", taskana: "ל-Taskana", handbook: "למדריך למשתמש", kb: "למאגר הידע" }[app];
-    var heIn = { workdesk: "ב-WorkDesk", taskana: "ב-Taskana", handbook: "במדריך למשתמש", kb: "במאגר הידע" }[app];
+    var en = { workdesk: "WorkDesk", taskana: "Taskana", handbook: "the Handbook", kb: "the Knowledge Base", studio: "Model Studio" }[app];
+    var he = { workdesk: "ל-WorkDesk", taskana: "ל-Taskana", handbook: "למדריך למשתמש", kb: "למאגר הידע", studio: "לסטודיו המודלים" }[app];
+    var heIn = { workdesk: "ב-WorkDesk", taskana: "ב-Taskana", handbook: "במדריך למשתמש", kb: "במאגר הידע", studio: "בסטודיו המודלים" }[app];
     var title = !u ? t("Sign in to the Employee Portal first", "יש להתחבר קודם לפורטל העובדים")
       : t("No access to " + en, "אין לך גישה " + he);
     var msg = !u ? t("Open the Employee Portal, sign in with your GALIL account, and choose " + en + " from the home page.",

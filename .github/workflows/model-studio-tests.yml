@@ -3,13 +3,13 @@ name: Model Studio tests
 on:
   pull_request:
     paths:
-      - "Model Studio/**"
+      - "Employee Portal/studio/**"
       - "tests/model-studio/**"
       - ".github/workflows/model-studio-tests.yml"
   push:
     branches: [main]
     paths:
-      - "Model Studio/**"
+      - "Employee Portal/studio/**"
       - "tests/model-studio/**"
       - ".github/workflows/model-studio-tests.yml"
   workflow_dispatch:
@@ -33,7 +33,7 @@ jobs:
           cache-dependency-path: tests/model-studio/package-lock.json
 
       - name: Syntax-check the scripts
-        working-directory: Model Studio
+        working-directory: Employee Portal/studio
         run: |
           node --check js/occt-worker.js
           node --check ietm/viewer.js
