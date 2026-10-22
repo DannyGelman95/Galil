@@ -118,7 +118,7 @@ async function publish(opts) {
     });
     var data = {
       meta: {
-        title: opts.title, doc: opts.doc, rev: opts.rev, org: opts.org, model: state.file,
+        title: opts.title, doc: opts.doc, rev: opts.rev, org: opts.org, model: state.file, units: state.units ? t(state.units) : "",
         date: new Date().toISOString().slice(0, 10), lang: app.lang(), dir: app.lang() === "he" ? "rtl" : "ltr"
       },
       labels: labels(), bom: bom, procedures: procedures, figures: figures, home: home.state,

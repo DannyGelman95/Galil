@@ -229,3 +229,11 @@ details[open] > summary::before{transform:rotate(45deg)}
   .panel.left{max-height:40vh}
   .status .keys{display:none}
 }
+
+/* measurements and the shortcuts list */
+.overlay .measure{pointer-events:auto; cursor:context-menu}
+.keystable{border-collapse:collapse; font-size:13px; width:100%}
+.keystable td{padding:5px 6px; border-bottom:1px solid #EEF1F6; vertical-align:top}
+.keystable td:first-child{white-space:nowrap; width:1%}
+kbd{display:inline-block; min-width:20px; padding:1px 6px; border:1px solid #C5D0E0; border-bottom-width:2px; border-radius:5px; background:#F7F9FC; font:600 11.5px var(--mono); text-align:center}
+.status .mini.ghost{height:22px; padding:0 6px; font-size:11.5px}

@@ -6,7 +6,7 @@
 <title>GALIL Model Studio</title>
 <meta name="description" content="Open CAD and 3D models, write assembly and disassembly procedures, animate them, build illustrated parts catalogues and publish them as interactive manuals.">
 <link rel="icon" href="icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="css/studio.css?v=3">
+<link rel="stylesheet" href="css/studio.css?v=4">
 <!-- one sign-in with the Employee Portal: without access, or on a phone or tablet,
      a screen sends people back to it -->
 <script src="../shared/portal.js"></script>
@@ -87,6 +87,7 @@
   <div class="grp">
     <button class="tb toggle" id="btn-move" data-t-title="Move the selected part (T)"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18M12 3l-3 3M12 3l3 3M12 21l-3-3M12 21l3-3M3 12l3-3M3 12l3 3M21 12l-3-3M21 12l-3 3"/></svg><span data-t>Move</span></button>
     <button class="tb toggle" id="btn-rotate" data-t-title="Rotate the selected part (R)"><svg viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v4h-4"/></svg><span data-t>Rotate</span></button>
+    <button class="tb toggle" id="btn-measure" data-t-title="Measure between two points on the model (M)"><svg viewBox="0 0 24 24"><path d="M3 17L17 3l4 4L7 21z"/><path d="M7 13l2 2M10 10l2 2M13 7l2 2"/></svg><span data-t>Measure</span></button>
   </div>
 </nav>
 
@@ -330,6 +331,8 @@
         <label class="fld"><span data-t>Edge angle</span><input type="range" id="rng-edge" min="1" max="89" value="30"></label>
         <label class="chk"><input type="checkbox" id="chk-ground"> <span data-t>Floor shadow</span></label>
         <label class="chk"><input type="checkbox" id="chk-axes" checked> <span data-t>Axes in the corner</span></label>
+        <label class="chk" data-t-title="Dashed lines from where moved parts sit in the assembly to where they are now"><input type="checkbox" id="chk-trails"> <span data-t>Motion lines</span></label>
+        <button class="mini" id="btn-clear-measures" data-t-title="Remove every measurement from the screen" data-t>Remove measurements</button>
         <label class="chk"><input type="checkbox" id="chk-zup"> <span data-t>Z is up (most CATIA, NX and STL files)</span></label>
         <button class="mini" id="btn-reset-all" data-t-title="Put every part back where it came from, with its own colour" data-t>Reset all parts</button>
       </div>
@@ -388,7 +391,30 @@
   <span id="st-sel"></span>
   <span class="grow"></span>
   <span class="keys" data-t>Left drag: turn · Right drag: pan · Wheel: zoom · Double-click: fit part</span>
+  <button class="mini ghost" id="btn-keys" data-t-title="Keyboard shortcuts (?)" data-t>Shortcuts</button>
 </footer>
+
+<dialog class="dlg" id="dlg-keys">
+  <form method="dialog">
+    <h2 data-t>Keyboard shortcuts</h2>
+    <table class="keystable">
+      <tr><td><kbd>Ctrl</kbd>+<kbd>O</kbd></td><td data-t>Open a model</td></tr>
+      <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd> · <kbd>Ctrl</kbd>+<kbd>Y</kbd></td><td data-t>Undo · redo</td></tr>
+      <tr><td><kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>S</kbd></td><td data-t>Save an image</td></tr>
+      <tr><td><kbd>F</kbd> · <kbd>Shift</kbd>+<kbd>F</kbd></td><td data-t>Fit everything · fit the selection</td></tr>
+      <tr><td><kbd>1</kbd>–<kbd>7</kbd></td><td data-t>Front, back, left, right, top, bottom, isometric</td></tr>
+      <tr><td><kbd>H</kbd> · <kbd>Shift</kbd>+<kbd>H</kbd> · <kbd>I</kbd></td><td data-t>Hide the selection · show all · isolate</td></tr>
+      <tr><td><kbd>T</kbd> · <kbd>R</kbd></td><td data-t>Move · rotate the selected part</td></tr>
+      <tr><td><kbd>M</kbd></td><td data-t>Measure between two points</td></tr>
+      <tr><td><kbd>Ctrl</kbd>+<kbd>A</kbd></td><td data-t>Select every visible part</td></tr>
+      <tr><td><kbd>Space</kbd></td><td data-t>Play or stop the procedure</td></tr>
+      <tr><td><kbd>Esc</kbd></td><td data-t>Clear the selection, stop playing or measuring</td></tr>
+      <tr><td><kbd>?</kbd></td><td data-t>This list</td></tr>
+    </table>
+    <p class="cap" data-t>Mouse: left drag turns, right drag pans, the wheel zooms to the pointer, a double-click fits a part. Ctrl+click selects several parts, Alt+click selects the assembly.</p>
+    <div class="row end"><button class="tb primary" value="ok" data-t>Close</button></div>
+  </form>
+</dialog>
 
 <dialog class="dlg" id="dlg-publish">
   <form method="dialog">
@@ -410,6 +436,6 @@
   </form>
 </dialog>
 
-<script type="module" src="js/main.js?v=3"></script>
+<script type="module" src="js/main.js?v=4"></script>
 </body>
 </html>

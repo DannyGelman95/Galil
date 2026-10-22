@@ -409,8 +409,35 @@
       drawCallouts();
     }
 
+    function shownNode(node) { for (var o = node; o && o !== root; o = o.parent) if (!o.visible) return false; return true; }
+    function scr(p, s) { var v = p.clone().project(camera); return { x: (v.x + 1) / 2 * s.w, y: (1 - v.y) / 2 * s.h, z: v.z }; }
     function drawCallouts() {
       var s = size(), html = "";
+      // motion lines: from where each moved part sits as designed to where it is
+      if (cur && cur.trails) nodes.forEach(function (o) {
+        if (o.parent === root || !shownNode(o)) return;
+        o.parent.updateWorldMatrix(true, false);
+        var d = o.parent.localToWorld(o.userData.home.p.clone()).sub(o.parent.localToWorld(o.position.clone()));
+        if (d.length() < R * 0.02) return;
+        var box = new THREE.Box3().setFromObject(o);
+        if (box.isEmpty()) return;
+        var c1 = box.getCenter(new THREE.Vector3()), a = scr(c1.clone().add(d), s), b = scr(c1, s);
+        if (a.z > 1 || b.z > 1) return;
+        html += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#5C6B82" stroke-width="1.3" stroke-dasharray="6 4"/>' +
+          '<circle cx="' + a.x + '" cy="' + a.y + '" r="3" fill="#fff" stroke="#5C6B82" stroke-width="1.3"/>';
+      });
+      if (cur && !anim) (cur.measures || []).forEach(function (m) {
+        var na = byKey[m.a.key], nb = byKey[m.b.key];
+        if (!na || !nb || !shownNode(na) || !shownNode(nb)) return;
+        var A = na.localToWorld(new THREE.Vector3().fromArray(m.a.local)), B = nb.localToWorld(new THREE.Vector3().fromArray(m.b.local));
+        var a = scr(A, s), b = scr(B, s);
+        if (a.z > 1 || b.z > 1) return;
+        var dd = A.distanceTo(B), text = dd.toFixed(dd < 10 ? 2 : 1) + (M.units ? " " + M.units : ""), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2, wd = 10 + text.length * 6.6;
+        html += '<line x1="' + a.x + '" y1="' + a.y + '" x2="' + b.x + '" y2="' + b.y + '" stroke="#B42318" stroke-width="1.6"/>' +
+          '<circle cx="' + a.x + '" cy="' + a.y + '" r="3.2" fill="#B42318"/><circle cx="' + b.x + '" cy="' + b.y + '" r="3.2" fill="#B42318"/>' +
+          '<rect x="' + (mx - wd / 2) + '" y="' + (my - 11) + '" width="' + wd + '" height="22" rx="5" fill="#fff" stroke="#B42318" stroke-width="1.4"/>' +
+          '<text x="' + mx + '" y="' + (my + 4.3) + '" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="#B42318">' + esc(text) + "<\/text>";
+      });
       if (cur && !anim) (cur.callouts || []).forEach(function (c) {
         var node = byKey[c.key]; if (!node) return;
         for (var o = node; o && o !== root; o = o.parent) if (!o.visible) return;
