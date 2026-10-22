@@ -44,8 +44,8 @@ jobs:
           npm run build
 
       # The published site: the website (Website/dist) at the root, and the
-      # Employee Portal — WorkDesk, Taskana, the Handbook, the Knowledge Base
-      # and the install guide — unchanged under /employee-portal/, and the
+      # Employee Portal — WorkDesk, Taskana, the Handbook, the Knowledge Base,
+      # HR and the install guide — unchanged under /employee-portal/, and the
       # standalone welcome page that invites employees to it under /welcome/.
       # Model Studio lives in the portal (/employee-portal/studio/); its first
       # address, /model-studio/, sends people there.

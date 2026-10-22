@@ -6,9 +6,9 @@ The GALIL website and the GALIL Employee Portal.
 Website/            The public website — React + Material UI, English and Hebrew.
 Welcome/            A standalone page inviting employees to the Employee Portal.
 Employee Portal/    The Employee Portal — WorkDesk, Taskana, the Handbook, the
-                    Knowledge Base and Model Studio behind one sign-in, English
-                    and Hebrew.
-tests/              Browser tests for the Employee Portal and Model Studio (Playwright).
+                    Knowledge Base, Model Studio and HR behind one sign-in,
+                    English and Hebrew.
+tests/              Browser tests for the Employee Portal, HR and Model Studio (Playwright).
 docs/               Brand material; deprecated documents and films of the old apps.
 ```
 
@@ -37,6 +37,7 @@ home page, and see a tile for each product their access includes:
 | **Handbook** | The user guide to the portal, WorkDesk and Taskana, role by role | `handbook/` (`index.html` English, `he.html` Hebrew) |
 | **Knowledge Base** | Onboarding, company rules, security and training articles | `kb/` |
 | **Model Studio** | CAD and 3D models: parts, images, assembly and disassembly procedures with animation and video, illustrated parts catalogues, interactive manuals (IETM) | `studio/` |
+| **HR** | Company news (likes, comments, pinned and scheduled posts); events with RSVPs, a calendar and calendar files; surveys (anonymous or named, five kinds of question, results and CSV); performance reviews (cycles, self-assessment, manager review, acknowledgement); the people directory with birthdays and work anniversaries; recognition (kudos) | `hr/` |
 
 Also: `install/` — how to put the portal on a phone or computer, and how an
 administrator sets it up.
@@ -45,12 +46,14 @@ administrator sets it up.
 
 - **One sign-in.** `index.html` is the portal: sign-in (Microsoft Entra ID, or
   email and password), the home page, and WorkDesk at `#/workdesk/<tab>`.
-  Taskana, the Handbook and the Knowledge Base read the same session through
+  Taskana, the Handbook, the Knowledge Base, Model Studio and HR read the same session through
   `shared/portal.js` and send people back to the portal when they are not
   signed in.
 - **Per-person access.** Each person's portal access — WorkDesk yes/no, a
   Taskana role (Admin, Manager, Member, External, Viewer or none), Handbook
-  yes/no, Knowledge Base yes/no — starts from their WorkDesk role and can be
+  yes/no, Knowledge Base yes/no, Model Studio yes/no, an HR role (Admin, Member
+  or none — the CEO, Operations Managers and the office are HR admins,
+  contractors have no HR) — starts from their WorkDesk role and can be
   changed in WorkDesk → Management → People → Portal access.
 - **One set of records.** People, clients, projects, work orders, budgets and
   assignments are kept in WorkDesk; Taskana reads them and keeps only the
@@ -59,6 +62,11 @@ administrator sets it up.
   out right to left in Hebrew. WorkDesk's Hebrew is in `workdesk/he.js`,
   Taskana's in `taskana/js/he.js`, the Knowledge Base's articles carry both
   languages, and the Handbook has a page per language.
+- **HR's data.** HR keeps its own data file (`hr-data.json`) where `config.js`
+  says — the `hr-data` branch on GitHub, the OneDrive HR folder, or this
+  browser — and reads people, managers and birthdays from WorkDesk. Saves
+  merge record by record when two people save at once. An anonymous survey
+  stores who answered apart from the answers, which carry no name or time.
 - **Settings.** `config.js` holds everything a deployment needs: where the data
   lives (`github`, `onedrive` or `local`), the GitHub repository and branches,
   and the Microsoft Entra application. See the install guide's administrator
@@ -106,6 +114,7 @@ python3 -m http.server 8000
 ```bash
 cd tests/workdesk && npm ci && npx playwright install chromium && npm test   # portal home, access, Hebrew, WorkDesk
 cd tests/taskana  && npm ci && npx playwright install chromium && npm test   # Taskana in the portal
+cd tests/hr       && npm ci && npx playwright install chromium && npm test   # HR
 cd tests/model-studio && npm ci && npx playwright install chromium && npm test  # Model Studio
 ```
 
@@ -116,5 +125,5 @@ to `main`: the website at the root and the Employee Portal at
 `/employee-portal/`, the welcome page (`Welcome/`) at `/welcome/` — the link to
 send employees. Model Studio is at `/employee-portal/studio/`; its first address,
 `/model-studio/`, sends people there. `employee-portal-tests.yml`
-runs the portal's test suites, `model-studio-tests.yml` Model Studio's, and
+runs the portal's test suites (WorkDesk, Taskana and HR), `model-studio-tests.yml` Model Studio's, and
 `website.yml` lints and builds the website on pull requests.

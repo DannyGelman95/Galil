@@ -50,6 +50,8 @@ function wdTeamUsers() {
     u.startDate = "2024-01-01";
     /* portal access beyond the role defaults: Danny runs Taskana for the company */
     if (r[0] === "u-danny") u.access = { taskana: "Admin" };
+    /* and the office runs HR: news, events, surveys and review cycles */
+    if (r[0] === "u-office") u.access = { hr: "Admin" };
     return u;
   });
 }
