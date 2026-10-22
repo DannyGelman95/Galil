@@ -38,6 +38,9 @@ var PORTAL_CSS = [
 ".tile .ticon svg{width:30px;height:30px}",
 /* the Handbook's deep purple, lifted in the dark theme so it reads on the dark tile */
 ":root[data-theme=\"dark\"] #tile-handbook{--tc:#B48CE6!important;--tbg:rgba(180,140,230,.16)!important}",
+/* Model Studio's yellow: a bright band, and a darker gold for the text so it reads on white */
+"#tile-studio::before{background:#F5C400}",
+":root[data-theme=\"dark\"] #tile-studio{--tc:#F5C84C!important;--tbg:rgba(245,200,76,.16)!important}",
 ".tile .tname{font:700 19px/1.2 var(--font)}",
 ".tile .tdesc{font-size:13.5px;color:var(--muted);line-height:1.5}",
 ".tile .tstats{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}",
@@ -204,7 +207,7 @@ function PortalHome(p) {
       open: go("kb/index.html")
     },
     {
-      k: "studio", name: "Model Studio", on: acc.studio, desktopOnly: true, color: "#C2410C", bg: "rgba(194,65,12,.12)",
+      k: "studio", name: "Model Studio", on: acc.studio, desktopOnly: true, color: "#946C00", bg: "rgba(245,196,0,.24)",
       desc: "Open CAD and 3D models, write assembly and disassembly procedures, animate them, build illustrated parts catalogues and publish interactive manuals.",
       stats: [h(Chip, { key: "c", k: "mut" }, "STEP · IGES · glTF · OBJ · STL"), h(Chip, { key: "p", k: "amber" }, "Procedures · IPC · IETM")],
       open: go("studio/index.html")

@@ -229,6 +229,8 @@ test.describe("Employee Portal", () => {
   test("the Model Studio tile opens Model Studio", async ({ page }) => {
     await local(page);
     await signIn(page, "eitan.f@galiltc.co.il");
+    // Model Studio's tile is yellow
+    expect(await page.evaluate(() => getComputedStyle(document.getElementById("tile-studio"), "::before").backgroundColor)).toBe("rgb(245, 196, 0)");
     await page.click("#tile-studio");
     await expect(page).toHaveURL(/\/studio\/index\.html$/);
   });

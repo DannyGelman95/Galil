@@ -42,6 +42,11 @@ with its `.bin`): choose them together or drop them together.
   (hidden lines removed), X-ray, wireframe. Edges include silhouettes of curved
   parts.
 - **Section cut** along X, Y or Z, with a position slider.
+- **Measure** (M): two clicks on the model give the distance between them,
+  snapping to a nearby corner. Each end is fixed to its part, so the figure
+  follows parts as they move; right-click a measurement to delete it.
+- **Motion lines**: dashed lines from where each moved or exploded part sits
+  in the assembly to where it is now — the trails of an exploded view.
 - **Callouts**: numbered balloons that point at parts (the parts-list item
   number, or any text); drag to place, double-click to edit, right-click to delete.
 - **Display**: white, grey, gradient, dark or any background colour; light
@@ -114,7 +119,7 @@ straight from the disk:
 
 Textures of mesh models are not carried into the manual; colours are.
 
-Keyboard: `F` fit all, `Shift+F` fit selection, `1`–`7` standard views, `H`
+Keyboard (the full list opens with `?`): `M` measure, `F` fit all, `Shift+F` fit selection, `1`–`7` standard views, `H`
 hide, `Shift+H` show all, `I` isolate, `T` move, `R` rotate, `Esc` clear the
 selection, `Ctrl+O` open, `Ctrl+Shift+S` save image, `Ctrl+A` select all.
 
