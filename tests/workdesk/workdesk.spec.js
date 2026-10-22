@@ -214,7 +214,7 @@ test.describe("Employee Portal", () => {
     const errors = await local(page);
     await signIn(page, "eitan.f@galiltc.co.il");
     await expect(page.locator("#portal-home")).toBeVisible();
-    for (const k of ["workdesk", "taskana", "handbook", "kb", "studio"]) await expect(page.locator("#tile-" + k)).toBeVisible();
+    for (const k of ["workdesk", "taskana", "handbook", "kb", "studio", "hr"]) await expect(page.locator("#tile-" + k)).toBeVisible();
     await expect(page.locator("#tile-studio")).toContainText("Model Studio");
     await page.click("#tile-workdesk");
     await expect(page).toHaveURL(/#\/workdesk/);
@@ -241,7 +241,7 @@ test.describe("Employee Portal", () => {
     await expect(page.locator("#tile-kb")).toHaveAttribute("aria-disabled", "true");
     await expect(page.locator("#tile-taskana")).toContainText("External");
     const acc = await page.evaluate(() => GalilPortal.access(GalilPortal.sessionUser()));
-    expect(acc).toEqual({ workdesk: true, taskana: "External", handbook: true, kb: false, studio: true });
+    expect(acc).toEqual({ workdesk: true, taskana: "External", handbook: true, kb: false, studio: true, hr: "none" });
   });
 
   test("an administrator changes one person's portal access in Management → People", async ({ page }) => {
@@ -253,7 +253,7 @@ test.describe("Employee Portal", () => {
     await page.selectOption("#acc-taskana", "none");
     await page.getByRole("button", { name: "Save", exact: true }).click();
     const d = await data(page);
-    expect(d.users.find(u => u.id === "u-eitan").access).toEqual({ workdesk: true, taskana: "none", handbook: true, kb: true, studio: true });
+    expect(d.users.find(u => u.id === "u-eitan").access).toEqual({ workdesk: true, taskana: "none", handbook: true, kb: true, studio: true, hr: "Member" });
     expect(d.audit.some(a => /Portal access changed for Eitan Fisch/.test(a.action))).toBe(true);
   });
 
