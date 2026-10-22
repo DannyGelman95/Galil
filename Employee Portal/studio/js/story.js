@@ -435,7 +435,8 @@ $("proc-play").addEventListener("click", play);
 $("proc-stop").addEventListener("click", stop);
 window.addEventListener("keydown", function (e) {
   var tag = (e.target.tagName || "").toLowerCase();
-  if (e.key !== " " || tag === "input" || tag === "textarea" || tag === "select" || tag === "button" || !state.model) return;
+  // Space still presses a focused button or ticks a focused checkbox
+  if (e.key !== " " || app.typing(e.target) || tag === "button" || e.target.type === "checkbox" || !state.model) return;
   e.preventDefault();
   if (player) stop(); else play();
 });

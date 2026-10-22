@@ -364,3 +364,52 @@ test("publish an interactive manual that works opened from the disk", async ({ p
   await expect(m.locator("#print .figure")).toHaveCount(1);
   expect(errors).toEqual([]);
 });
+
+test("measure between two points; the distance follows the parts and goes into images", async ({ page }) => {
+  await openSample(page);
+  await page.click("[data-view=front]");
+  await settle(page);
+  await page.keyboard.press("m");
+  await expect(page.locator("#btn-measure")).toHaveClass(/on/);
+  const a = await page.evaluate(() => window.studio.screenPoint("Hand wheel"));
+  const b = await page.evaluate(() => window.studio.screenPoint("Base plate"));
+  await page.mouse.click(a.x, a.y);
+  await page.mouse.click(b.x, b.y);
+  const label = page.locator("#overlay .measure text");
+  await expect(label).toHaveCount(1);
+  await expect(label).toContainText("mm");
+  const before = parseFloat((await label.textContent()).replace(/,/g, ""));
+  expect(before).toBeGreaterThan(10);
+  // moving the wheel 50 mm along X changes the distance
+  await page.keyboard.press("Escape");
+  await rows(page, "Hand wheel").click();
+  await page.fill("#mv-x", "50");
+  await page.click("#mv-apply");
+  await expect.poll(async () => Math.abs(parseFloat((await label.textContent()).replace(/,/g, "")) - before)).toBeGreaterThan(5);
+  // kept in a saved view's state, and undone with Ctrl+Z
+  expect(await page.evaluate(() => window.studio.snapshot().measures.length)).toBe(1);
+  await page.click("#btn-clear-measures");
+  await expect(label).toHaveCount(0);
+  await page.keyboard.press("Control+z");
+  await expect(label).toHaveCount(1);
+});
+
+test("motion lines show where exploded parts came from", async ({ page }) => {
+  await openSample(page);
+  await expect(page.locator("#overlay .trail")).toHaveCount(0);
+  await page.locator("#rng-explode").fill("60");
+  await page.check("#chk-trails");
+  await expect.poll(() => page.locator("#overlay .trail").count()).toBeGreaterThan(5);
+  expect(await page.evaluate(() => window.studio.snapshot().trails)).toBe(true);
+  await page.locator("#rng-explode").fill("0");
+  await expect(page.locator("#overlay .trail")).toHaveCount(0);
+});
+
+test("the keyboard shortcuts list opens with ?", async ({ page }) => {
+  await openSample(page);
+  await page.keyboard.press("?");
+  await expect(page.locator("#dlg-keys")).toBeVisible();
+  await expect(page.locator("#dlg-keys")).toContainText("Measure between two points");
+  await page.locator("#dlg-keys button").click();
+  await expect(page.locator("#dlg-keys")).toBeHidden();
+});

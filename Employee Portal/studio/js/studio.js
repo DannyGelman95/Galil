@@ -132,7 +132,8 @@ var state = {
   style: "shaded", explode: 0, edgeAngle: 30, light: 1,
   section: { on: false, axis: "z", flip: false, pos: 500 },
   bg: "white", bgColor: "#ffffff", ground: false, axes: true,
-  callouts: [], tmode: null, meta: {}, recording: false
+  callouts: [], tmode: null, meta: {}, recording: false,
+  trails: false, measures: [], measuring: false, mA: null
 };
 
 // Other modules listen for: "model" (a model was opened), "change" (the scene
@@ -440,7 +441,7 @@ function setModel(res) {
   Object.assign(state, {
     model: root, file: res.file, ext: res.ext, units: res.units,
     nodes: [], meshes: [], parts: [], byKey: new Map(), selection: new Set(), lit: new Set(),
-    lastHit: null, callouts: [], explode: 0, meta: {}
+    lastHit: null, callouts: [], explode: 0, meta: {}, measures: [], mA: null
   });
   history.undo = []; history.redo = []; undoButtons();
   $("rng-explode").value = 0;
@@ -678,6 +679,7 @@ function attachGizmo() {
 
 function setTMode(m) {
   state.tmode = state.tmode === m ? null : m;
+  if (state.tmode && state.measuring) setMeasuring(false);
   if (state.tmode && state.selection.size !== 1) toast(t("Select one part (or one assembly) to move it."));
   attachGizmo();
 }
@@ -706,6 +708,7 @@ canvas.addEventListener("pointerup", function (ev) {
   down = null;
   if (moved || onGizmo) return;
   var h = hit(ev), add = ev.ctrlKey || ev.metaKey || ev.shiftKey;
+  if (state.measuring) { measureClick(h); return; }
   if (!h) { if (!add) select([]); return; }
   var node = partOf(h.object);
   if (ev.altKey && node.parent && node !== state.model && node.parent !== modelRoot) node = node.parent;
@@ -1186,6 +1189,10 @@ $("chk-ground").addEventListener("change", function () {
   state.ground = this.checked; floor.visible = state.ground; sun.castShadow = state.ground; applyLight();
 });
 $("chk-axes").addEventListener("change", function () { state.axes = this.checked; requestRender(); });
+$("chk-trails").addEventListener("change", function () { checkpoint(); state.trails = this.checked; changed(); requestRender(); });
+$("btn-measure").addEventListener("click", function () { if (state.model) setMeasuring(); });
+$("btn-clear-measures").addEventListener("click", clearMeasures);
+$("btn-keys").addEventListener("click", function () { $("dlg-keys").showModal(); });
 $("chk-zup").addEventListener("change", function () { if (state.model) setZUp(this.checked); });
 $("sel-style").addEventListener("change", function () { checkpoint(); state.style = this.value; applyStyle(); changed(); });
 $("sel-projection").addEventListener("change", function () { setProjection(this.value); });
@@ -1256,6 +1263,92 @@ function clearCallouts() {
 }
 $("sel-callout").addEventListener("click", addCallout);
 
+// ---------- measuring ----------
+// Two clicks on the model make a measurement; each end is fixed to its part,
+// so the distance follows the parts when they move. Ends snap to a corner of
+// the face that was hit when one is within a few pixels.
+function setMeasuring(on) {
+  state.measuring = on == null ? !state.measuring : !!on;
+  state.mA = null;
+  if (state.measuring && state.tmode) { state.tmode = null; attachGizmo(); }
+  $("btn-measure").classList.toggle("on", state.measuring);
+  canvas.style.cursor = state.measuring ? "crosshair" : "";
+  if (state.measuring) toast(t("Click two points on the model to measure between them. Esc ends."));
+  requestRender();
+}
+function screenOf(p) {
+  var v = p.clone().project(camera), s = size();
+  return { x: (v.x + 1) / 2 * s.w, y: (1 - v.y) / 2 * s.h };
+}
+function snapPoint(h) {
+  var p = h.point.clone();
+  if (!h.face) return p;
+  var pos = h.object.geometry.attributes.position, best = null, bd = 12, sp = screenOf(p);
+  [h.face.a, h.face.b, h.face.c].forEach(function (i) {
+    var v = new THREE.Vector3().fromBufferAttribute(pos, i).applyMatrix4(h.object.matrixWorld), q = screenOf(v);
+    var d = Math.hypot(q.x - sp.x, q.y - sp.y);
+    if (d < bd) { bd = d; best = v; }
+  });
+  return best || p;
+}
+function measureClick(h) {
+  if (!h) return;
+  var node = partOf(h.object), p = snapPoint(h);
+  var end = { key: node.userData.key, local: node.worldToLocal(p.clone()).toArray() };
+  if (!state.mA) { state.mA = end; requestRender(); return; }
+  checkpoint();
+  state.measures.push({ id: Date.now() + Math.random(), a: state.mA, b: end });
+  state.mA = null;
+  changed(); requestRender();
+}
+function endPoint(e) {
+  var n = state.byKey.get(e.key);
+  if (!n || !shown(n)) return null;
+  return n.localToWorld(new THREE.Vector3().fromArray(e.local));
+}
+function unitText(d) { return fmt(d, d < 10 ? 2 : 1) + (state.units ? " " + t(state.units) : ""); }
+// measurements in screen space for a camera framing w×h px
+function measuresFor(cam, w, h) {
+  var out = [], proj = function (p) { var v = p.clone().project(cam); return { x: (v.x + 1) / 2 * w, y: (1 - v.y) / 2 * h, z: v.z }; };
+  state.measures.forEach(function (m) {
+    var a = endPoint(m.a), b = endPoint(m.b);
+    if (!a || !b) return;
+    var pa = proj(a), pb = proj(b);
+    if (pa.z > 1 || pb.z > 1) return;
+    out.push({ m: m, ax: pa.x, ay: pa.y, bx: pb.x, by: pb.y, text: unitText(a.distanceTo(b)) });
+  });
+  return out;
+}
+function clearMeasures() {
+  if (!state.measures.length) return;
+  checkpoint();
+  state.measures = [];
+  changed(); requestRender();
+}
+
+// ---------- motion lines ----------
+// A dashed line from where each moved part (or assembly) sits as designed to
+// where it is now: the trails of an exploded or taken-apart illustration.
+function trailsFor(cam, w, h) {
+  if (!state.trails || !state.model) return [];
+  var out = [], min = state.radius * 0.02;
+  var proj = function (p) { var v = p.clone().project(cam); return { x: (v.x + 1) / 2 * w, y: (1 - v.y) / 2 * h, z: v.z }; };
+  state.nodes.forEach(function (o) {
+    if (o === state.model || !shown(o)) return;
+    o.parent.updateWorldMatrix(true, false);
+    var now = o.parent.localToWorld(o.position.clone()), home = o.parent.localToWorld(o.userData.home.p.clone());
+    var d = home.sub(now);
+    if (d.length() < min) return;
+    var box = worldBox([o]);
+    if (box.isEmpty()) return;
+    var c1 = box.getCenter(new THREE.Vector3()), c0 = c1.clone().add(d);
+    var p0 = proj(c0), p1 = proj(c1);
+    if (p0.z > 1 || p1.z > 1) return;
+    out.push({ x0: p0.x, y0: p0.y, x1: p1.x, y1: p1.y });
+  });
+  return out;
+}
+
 function calloutText(c, node) {
   if (c.text) return c.text;
   var it = node.userData.isPart ? bomItem(node) : null;
@@ -1280,6 +1373,22 @@ function calloutsFor(cam, w, h, k) {
 
 function drawOverlay() {
   var s = size(), html = "";
+  trailsFor(camera, s.w, s.h).forEach(function (l) {
+    html += '<g class="trail"><line x1="' + l.x0 + '" y1="' + l.y0 + '" x2="' + l.x1 + '" y2="' + l.y1 + '" stroke="#5C6B82" stroke-width="1.3" stroke-dasharray="6 4"/>' +
+      '<circle cx="' + l.x0 + '" cy="' + l.y0 + '" r="3" fill="#fff" stroke="#5C6B82" stroke-width="1.3"/></g>';
+  });
+  measuresFor(camera, s.w, s.h).forEach(function (o) {
+    var mx = (o.ax + o.bx) / 2, my = (o.ay + o.by) / 2, wd = 10 + o.text.length * 6.6;
+    html += '<g class="measure" data-id="' + o.m.id + '"><title>' + esc(t("Right-click to delete")) + "</title>" +
+      '<line x1="' + o.ax + '" y1="' + o.ay + '" x2="' + o.bx + '" y2="' + o.by + '" stroke="#B42318" stroke-width="1.6"/>' +
+      '<circle cx="' + o.ax + '" cy="' + o.ay + '" r="3.2" fill="#B42318"/><circle cx="' + o.bx + '" cy="' + o.by + '" r="3.2" fill="#B42318"/>' +
+      '<rect x="' + (mx - wd / 2) + '" y="' + (my - 11) + '" width="' + wd + '" height="22" rx="5" fill="#fff" stroke="#B42318" stroke-width="1.4"/>' +
+      '<text x="' + mx + '" y="' + (my + 4.3) + '" text-anchor="middle" font-family="Segoe UI,Arial,sans-serif" font-size="12" font-weight="700" fill="#B42318">' + esc(o.text) + "</text></g>";
+  });
+  if (state.measuring && state.mA) {
+    var a = endPoint(state.mA);
+    if (a) { var q = screenOf(a); html += '<circle cx="' + q.x + '" cy="' + q.y + '" r="5" fill="none" stroke="#B42318" stroke-width="2"/>'; }
+  }
   calloutsFor(camera, s.w, s.h, 1).forEach(function (o) {
     var r = o.text.length > 2 ? 6 + o.text.length * 3.6 : 12;
     html += '<g class="callout" data-id="' + o.c.id + '"><title>' + esc(t("Drag to move · double-click to change the text · right-click to delete")) + "</title>" +
@@ -1322,6 +1431,15 @@ overlay.addEventListener("dblclick", function (e) {
   requestRender();
 });
 overlay.addEventListener("contextmenu", function (e) {
+  var mg = e.target.closest(".measure");
+  if (mg) {
+    e.preventDefault();
+    var id = +mg.dataset.id;
+    checkpoint();
+    state.measures = state.measures.filter(function (m) { return m.id !== id; });
+    changed(); requestRender();
+    return;
+  }
   var g = e.target.closest(".callout"); if (!g) return;
   e.preventDefault();
   var c = calloutById(g);
@@ -1348,6 +1466,32 @@ function drawCallouts(ctx, list, k) {
     ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
     ctx.fillText(o.text, o.bx, o.by + 4.2 * k);
   });
+}
+
+function drawTrails(ctx, list, k) {
+  ctx.save();
+  ctx.strokeStyle = "#5C6B82"; ctx.lineWidth = 1.3 * k; ctx.setLineDash([6 * k, 4 * k]);
+  list.forEach(function (l) {
+    ctx.beginPath(); ctx.moveTo(l.x0, l.y0); ctx.lineTo(l.x1, l.y1); ctx.stroke();
+  });
+  ctx.setLineDash([]); ctx.fillStyle = "#fff";
+  list.forEach(function (l) { ctx.beginPath(); ctx.arc(l.x0, l.y0, 3 * k, 0, Math.PI * 2); ctx.fill(); ctx.stroke(); });
+  ctx.restore();
+}
+function drawMeasures(ctx, list, k) {
+  ctx.save();
+  list.forEach(function (o) {
+    ctx.strokeStyle = ctx.fillStyle = "#B42318"; ctx.lineWidth = 1.6 * k;
+    ctx.beginPath(); ctx.moveTo(o.ax, o.ay); ctx.lineTo(o.bx, o.by); ctx.stroke();
+    [[o.ax, o.ay], [o.bx, o.by]].forEach(function (p) { ctx.beginPath(); ctx.arc(p[0], p[1], 3.2 * k, 0, Math.PI * 2); ctx.fill(); });
+    ctx.font = "700 " + 12 * k + "px Segoe UI, Arial, sans-serif";
+    var mx = (o.ax + o.bx) / 2, my = (o.ay + o.by) / 2, wd = ctx.measureText(o.text).width + 12 * k;
+    ctx.fillStyle = "#fff"; ctx.lineWidth = 1.4 * k;
+    ctx.beginPath(); ctx.roundRect(mx - wd / 2, my - 11 * k, wd, 22 * k, 5 * k); ctx.fill(); ctx.stroke();
+    ctx.fillStyle = "#B42318"; ctx.textAlign = "center"; ctx.textBaseline = "alphabetic";
+    ctx.fillText(o.text, mx, my + 4.3 * k);
+  });
+  ctx.restore();
 }
 
 // ---------- images ----------
@@ -1392,6 +1536,8 @@ function renderOutput(o, extra) {
   ctx.imageSmoothingEnabled = true; ctx.imageSmoothingQuality = "high";
   ctx.drawImage(renderer.domElement, 0, 0, o.W, o.H, 0, 0, o.w, o.h);
   var k = o.w / o.fr.w;
+  drawTrails(ctx, trailsFor(camera, o.w, o.h), k);
+  drawMeasures(ctx, measuresFor(camera, o.w, o.h), k);
   if (o.opt.callouts !== false) drawCallouts(ctx, calloutsFor(camera, o.w, o.h, k), k);
   if (extra) extra(ctx, o, k);
 }
@@ -1495,13 +1641,15 @@ function snapshot() {
     camera: { proj: camera.isPerspectiveCamera ? "persp" : "ortho", target: p.target.toArray(), dir: p.dir.toArray(), dist: p.dist, up: p.up.toArray(), zoom: p.zoom },
     parts: parts, explode: state.explode, style: state.style, zUp: state.zUp, ground: state.ground, light: state.light,
     section: Object.assign({}, state.section), bg: state.bg, bgColor: state.bgColor,
-    callouts: JSON.parse(JSON.stringify(state.callouts))
+    callouts: JSON.parse(JSON.stringify(state.callouts)), trails: state.trails,
+    measures: JSON.parse(JSON.stringify(state.measures))
   };
 }
 
 // The settings that are not animated: style, background, floor, light, cut, standing.
 function applySettings(s) {
   if (!!s.zUp !== state.zUp) setZUp(s.zUp, true);
+  state.trails = !!s.trails; $("chk-trails").checked = state.trails;
   state.style = s.style || "shaded"; $("sel-style").value = state.style;
   state.section = Object.assign({ on: false, axis: "z", flip: false, pos: 500 }, s.section);
   $("chk-section").checked = state.section.on; $("sel-section-axis").value = state.section.axis;
@@ -1540,6 +1688,7 @@ function applyState(s, opts) {
   state.explode = s.explode || 0; $("rng-explode").value = Math.round(state.explode * 100);
   applyExplode();
   state.callouts = JSON.parse(JSON.stringify(s.callouts || []));
+  state.measures = JSON.parse(JSON.stringify(s.measures || []));
   applyStyle();
   if (opts.camera !== false && s.camera) {
     if ((s.camera.proj === "ortho") !== camera.isOrthographicCamera) setProjection(s.camera.proj);
@@ -1577,7 +1726,7 @@ function beginBlend(A, B) {
     cam: B.camera ? poseTween(A.camera ? camPose(A.camera) : pose(), camPose(B.camera)) : null
   };
   if (B.camera && (B.camera.proj === "ortho") !== camera.isOrthographicCamera) setProjection(B.camera.proj);
-  state.callouts = [];
+  state.callouts = []; state.measures = [];
   blend(0);
 }
 var tmpColor = new THREE.Color(), tmpColor2 = new THREE.Color();
@@ -1616,7 +1765,10 @@ function blend(e) {
     state.section.pos = A.section.pos + (B.section.pos - A.section.pos) * e;
     updateSection();
   }
-  if (e >= 1) state.callouts = JSON.parse(JSON.stringify(B.callouts || []));
+  if (e >= 1) {
+    state.callouts = JSON.parse(JSON.stringify(B.callouts || []));
+    state.measures = JSON.parse(JSON.stringify(B.measures || []));
+  }
   requestRender();
 }
 
@@ -1660,7 +1812,10 @@ async function openFiles(list) {
   var files = Array.from(list || []);
   if (!files.length) return;
   var main = pickMain(files);
-  busy(t("Opening {name}…", { name: main.name }));
+  var t0 = Date.now(), msg = t("Opening {name}…", { name: main.name });
+  busy(msg);
+  // big CAD files take a while: show that it is still working
+  var tick = setInterval(function () { if (!$("busy").hidden) $("busy-text").textContent = msg + " " + t("{n} s", { n: Math.round((Date.now() - t0) / 1000) }); }, 1000);
   try {
     setModel(await loadModel(files));
     toast(main.name + ": " + (state.parts.length === 1 ? t("1 part") : t("{n} parts", { n: state.parts.length })));
@@ -1669,7 +1824,7 @@ async function openFiles(list) {
     if (err.native) toast(t("{kind} files cannot be opened directly. In the program they come from, save the model as STEP (AP214 or AP242) and open the STEP file here.", { kind: t(err.native) }), true, 12000);
     else if (err.unsupported) toast(t("Model Studio cannot open {name}.", { name: main.name }), true);
     else toast(t("{name} could not be opened: {msg}", { name: main.name, msg: err.message }), true, 9000);
-  } finally { busy(false); }
+  } finally { clearInterval(tick); busy(false); }
 }
 async function openSample() {
   busy(t("Opening {name}…", { name: "shaft-support.step" }));
@@ -1715,16 +1870,23 @@ document.querySelectorAll(".tab").forEach(function (b) {
   });
 });
 
+// Typing goes to text fields; a focused slider, checkbox or colour does not stop the shortcuts.
+function typing(el) {
+  var tag = (el.tagName || "").toLowerCase();
+  if (tag === "textarea" || tag === "select" || el.isContentEditable) return true;
+  return tag === "input" && ["range", "checkbox", "radio", "color", "button", "submit"].indexOf(el.type) < 0;
+}
 window.addEventListener("keydown", function (e) {
-  var tag = (e.target.tagName || "").toLowerCase();
-  if (tag === "input" || tag === "select" || tag === "textarea") return;
+  if (typing(e.target)) return;
+  if (e.target.type === "range" && /^Arrow|^Page|^Home$|^End$/.test(e.key)) return;
   var k = e.key, ctrl = e.ctrlKey || e.metaKey;
   if (ctrl && !e.shiftKey && k.toLowerCase() === "z") { e.preventDefault(); undo(); return; }
   if (ctrl && (k.toLowerCase() === "y" || (e.shiftKey && k.toLowerCase() === "z"))) { e.preventDefault(); redo(); return; }
   if (ctrl && k.toLowerCase() === "o") { e.preventDefault(); $("file-input").click(); return; }
   if (ctrl && e.shiftKey && k.toLowerCase() === "s") { e.preventDefault(); saveImage(); return; }
   if (ctrl && k.toLowerCase() === "a" && state.model) { e.preventDefault(); select(state.parts.filter(shown)); return; }
-  if (k === "Escape") emit("escape");
+  if (k === "Escape") { emit("escape"); if (state.measuring) setMeasuring(false); }
+  if (k === "?" && !ctrl) { e.preventDefault(); $("dlg-keys").showModal(); return; }
   if (ctrl || e.altKey || !state.model) return;
   if (k === "f") fit();
   else if (k === "F") fit(state.selection.size ? Array.from(state.selection) : null);
@@ -1733,7 +1895,8 @@ window.addEventListener("keydown", function (e) {
   else if (k === "i" || k === "I") isolate();
   else if (k === "t" || k === "T") setTMode("translate");
   else if (k === "r" || k === "R") setTMode("rotate");
-  else if (k === "Escape") { state.tmode = null; select([]); emit("escape"); }
+  else if (k === "Escape") { state.tmode = null; select([]); }
+  else if (k === "m" || k === "M") setMeasuring();
   else if (k >= "1" && k <= "7") standardView(["front", "back", "left", "right", "top", "bottom", "iso"][+k - 1]);
   else return;
   e.preventDefault();
@@ -1828,7 +1991,7 @@ export var app = {
   snapshot: snapshot, applyState: applyState, beginBlend: beginBlend, blend: blend, ease: ease,
   capture: capture, beginOutput: beginOutput, renderOutput: renderOutput, endOutput: endOutput,
   sectionPlane: sectionPlane, checkpoint: checkpoint, autoBalloon: autoBalloon, clearCallouts: clearCallouts,
-  shotOptions: shotOptions, toBlob: toBlob, download: download, toast: toast, busy: busy, stem: stem,
+  typing: typing, shotOptions: shotOptions, toBlob: toBlob, download: download, toast: toast, busy: busy, stem: stem,
   activeFrame: activeFrame, fit: fit, standardView: standardView, setVisible: setVisible, showAll: showAll,
   displayName: displayName, bomItem: bomItem, meta: meta, renderBom: renderBom, updateSelPanel: updateSelPanel,
   treeKids: treeKids, worldBox: worldBox, shown: shown, innerKey: innerKey, mats: mats,
