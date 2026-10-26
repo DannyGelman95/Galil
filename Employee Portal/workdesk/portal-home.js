@@ -68,6 +68,19 @@ var PORTAL_CSS = [
 ".acc{display:inline-flex;flex-wrap:wrap;gap:4px;align-items:center}",
 ".acc .chip{font-size:11px;padding:1px 7px}",
 ".hubwrap{padding-left:max(22px,env(safe-area-inset-left));padding-right:max(22px,env(safe-area-inset-right));padding-bottom:calc(40px + env(safe-area-inset-bottom))}",
+"/* Defense News: two tiles wide, with the latest headlines */",
+".tile.wide{grid-column:span 2;cursor:default}",
+".tile.wide .thead{display:flex;align-items:center;gap:12px;cursor:pointer}",
+".heads{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}",
+".heads li a{display:flex;gap:10px;align-items:baseline;padding:5px 8px;margin:0 -8px;border-radius:10px;text-decoration:none;color:var(--ink)}",
+".heads li a:hover{background:var(--wash)}",
+".heads li a:focus-visible{outline:2px solid var(--tc);outline-offset:0}",
+".heads .hd{width:8px;height:8px;border-radius:50%;flex:0 0 auto;transform:translateY(-1px)}",
+".heads .ht{flex:1 1 auto;min-width:0;font-weight:600;font-size:13.5px;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:1;-webkit-box-orient:vertical;}",
+".heads .hm{flex:0 0 auto;font-size:11.5px;color:var(--muted);white-space:nowrap}",
+".tile.wide .tgo{text-decoration:none;align-self:flex-start}",
+".tile.wide .tgo:hover{text-decoration:underline}",
+"@media(max-width:600px){.tile.wide{grid-column:auto}.heads .hm{display:none}}",
 "@media(max-width:680px){.hubwrap{padding:18px max(16px,env(safe-area-inset-right)) calc(70px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}.hubtop{padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left))}.tile{min-height:0}.hubtop .brand small{display:none}}"
 ].join("\n");
 
@@ -169,6 +182,36 @@ function taskanaSummary(user) {
   return { open: open, overdue: overdue, review: review };
 }
 
+/* ---------- Defense News on the home page: the latest headlines ---------- */
+function newsAgo(iso) {
+  var m = Math.max(0, Math.round((Date.now() - Date.parse(iso)) / 60000));
+  return m < 60 ? tr("{n} min ago", { n: Math.max(1, m) }) : m < 48 * 60 ? tr("{n} h ago", { n: Math.round(m / 60) }) : tr("{n} days ago", { n: Math.round(m / 1440) });
+}
+function NewsHeadlines(p) {
+  var s = useState(null), feed = s[0], setFeed = s[1];
+  useEffect(function () {
+    var live = true;
+    fetch("news/feed.json", { cache: "no-cache" })
+      .then(function (r) { if (!r.ok) throw new Error("HTTP " + r.status); return r.json(); })
+      .then(function (f) { if (live) setFeed(f && Array.isArray(f.items) && f.items.length ? f : false); })
+      .catch(function () { if (live) setFeed(false); });
+    return function () { live = false; };
+  }, []);
+  if (feed === null) return h("div", { className: "cap", role: "status" }, "Loading the latest headlines…");
+  if (!feed) return h("div", { className: "tstats" },
+    h(Chip, { k: "mut" }, "IAI · Elbit · Rafael · Aeronautics · Controp"),
+    h("span", { className: "cap" }, "Headlines appear here once the news feed is published."));
+  var color = {};
+  (feed.companies || []).forEach(function (c) { color[c.id] = c.color; });
+  return h("ul", { className: "heads", id: "home-news" }, feed.items.slice(0, p.n || 5).map(function (n) {
+    return h("li", { key: n.id || n.url },
+      h("a", { href: n.url, target: "_blank", rel: "noopener noreferrer", onClick: function (e) { e.stopPropagation(); } },
+        h("span", { className: "hd", style: { background: color[n.companies && n.companies[0]] || "var(--tc)" }, "aria-hidden": "true" }),
+        h("span", { className: "ht", dir: "auto", lang: n.lang }, n.title),
+        h("span", { className: "hm" }, (n.source ? n.source + " · " : "") + newsAgo(n.date))));
+  }));
+}
+
 /* ---------- the home page ---------- */
 function PortalHome(p) {
   var db = p.db, user = p.user, acc = GalilPortal.access(user);
@@ -222,9 +265,8 @@ function PortalHome(p) {
       open: go("hr/index.html")
     },
     {
-      k: "news", name: "Defense News", on: acc.news, color: "#556B2F", bg: "rgba(85,107,47,.13)",
-      desc: "What the press says about IAI, Elbit Systems, Rafael, Aeronautics, Controp and the rest of Israel's defense industry — in English and Hebrew, refreshed every two hours.",
-      stats: [h(Chip, { key: "c", k: "mut" }, "IAI · Elbit · Rafael · Aeronautics · Controp")],
+      k: "news", name: "Defense News", on: acc.news, wide: true, color: "#556B2F", bg: "rgba(85,107,47,.13)", href: "news/index.html",
+      desc: "Latest on IAI, Elbit Systems, Rafael, Aeronautics, Controp and Israel's defense industry",
       open: go("news/index.html")
     }
   ];
@@ -258,6 +300,13 @@ function PortalHome(p) {
 
       /* Model Studio is for computers: no tile on phones and tablets */
       h("div", { className: "tiles", role: "list" }, tiles.filter(function (t) { return !(t.desktopOnly && GalilPortal.isMobileDevice()); }).map(function (t) {
+        /* a wide tile holds links of its own, so it is not one button: the heading and "Open" lead to the app */
+        if (t.wide && t.on) return h("div", { key: t.k, role: "listitem", id: "tile-" + t.k, className: "tile wide", style: { "--tc": t.color, "--tbg": t.bg } },
+          h("div", { className: "thead", onClick: t.open },
+            h("span", { className: "ticon" }, h(AppGlyph, { kind: t.k })),
+            h("div", null, h("div", { className: "tname" }, t.name), h("div", { className: "cap" }, t.desc))),
+          h(NewsHeadlines, { n: 5 }),
+          h("a", { className: "tgo", href: t.href, id: "tile-" + t.k + "-open" }, tr("Open {app}", { app: tr(t.name) }), h("span", { "aria-hidden": "true" }, WDI18N.he ? "←" : "→")));
         return h("button", {
           key: t.k, type: "button", role: "listitem", id: "tile-" + t.k, className: "tile" + (t.on ? "" : " off"),
           style: { "--tc": t.color, "--tbg": t.bg }, "aria-disabled": t.on ? null : "true",

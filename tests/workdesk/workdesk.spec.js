@@ -63,7 +63,7 @@ async function serve(page) {
   page.on("pageerror", e => errors.push(e.message));
   await page.route(ORIGIN + "/**", r => {
     const p = new URL(r.request().url()).pathname.replace(/^\//, "") || "index.html";
-    r.fulfill({ path: path.join(SITE, p) });
+    (f => require("fs").existsSync(f) ? r.fulfill({ path: f }) : r.fulfill({ status: 404, body: "" }))(path.join(SITE, p));
   });
   return errors;
 }
@@ -254,12 +254,18 @@ test.describe("Employee Portal", () => {
     await page.route(origin + "/**", r => {
       const p = decodeURIComponent(new URL(r.request().url()).pathname).replace(/^\//, "") || "index.html";
       if (p === "news/feed.json") return json(r, 200, feed);
-      return r.fulfill({ path: path.join(SITE, p) });
+      return (f => require("fs").existsSync(f) ? r.fulfill({ path: f }) : r.fulfill({ status: 404, body: "" }))(path.join(SITE, p));
     });
     await page.goto(origin + "/index.html");
     await signIn(page, "eitan.f@galiltc.co.il");
     await expect(page.locator("#tile-news")).toContainText("Defense News");
-    await page.click("#tile-news");
+    // two tiles wide, with the latest headlines on the tile itself
+    const w = await page.evaluate(() => [document.getElementById("tile-news").offsetWidth, document.getElementById("tile-hr").offsetWidth]);
+    expect(w[0]).toBeGreaterThan(w[1] * 2);
+    await expect(page.locator("#home-news li")).toHaveCount(3);
+    await expect(page.locator("#home-news li a").first()).toHaveAttribute("href", "https://example.com/1");
+    await expect(page.locator("#home-news li a").first()).toHaveAttribute("target", "_blank");
+    await page.click("#tile-news-open");
     await expect(page).toHaveURL(/\/news\/index\.html/);
     await expect(page.locator(".item")).toHaveCount(3);
     await expect(page.locator("#meta")).toContainText("3 stories");
@@ -287,7 +293,7 @@ test.describe("Employee Portal", () => {
     await page.route(origin + "/**", r => {
       const p = decodeURIComponent(new URL(r.request().url()).pathname).replace(/^\//, "") || "index.html";
       if (p === "news/feed.json") return r.fulfill({ status: 404, body: "" });
-      return r.fulfill({ path: path.join(SITE, p) });
+      return (f => require("fs").existsSync(f) ? r.fulfill({ path: f }) : r.fulfill({ status: 404, body: "" }))(path.join(SITE, p));
     });
     await page.reload();
     await expect(page.locator("#news-missing")).toBeVisible();
