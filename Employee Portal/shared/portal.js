@@ -3,7 +3,7 @@
 
    The portal is one application: the Employee Portal home (index.html,
    which also runs WorkDesk), Taskana, the Handbook, the Knowledge Base,
-   Model Studio and HR.
+   Model Studio, HR and Defense News.
    People sign in once, on the portal home. This file lets the other pages
    read that sign-in, the person's access to each app, the interface
    language (English / Hebrew) and the light / dark theme.
@@ -65,9 +65,10 @@ var GalilPortal = (function () {
   function defaultAccess(role) {
     return { workdesk: true, taskana: DEFAULT_TASKANA[role] || "Viewer", handbook: true, kb: role !== "EXT" && role !== "VIEW", studio: role !== "VIEW", hr: DEFAULT_HR[role] || "Member" };
   }
-  /* { workdesk: bool, taskana: "Admin"…"Viewer" | "none", handbook: bool, kb: bool, studio: bool (Model Studio), hr: "Admin" | "Member" | "none" } */
+  /* { workdesk: bool, taskana: "Admin"…"Viewer" | "none", handbook: bool, kb: bool, studio: bool (Model Studio), hr: "Admin" | "Member" | "none",
+       news: bool (Defense News — everyone who is signed in and active) } */
   function access(u) {
-    if (!u) return { workdesk: false, taskana: "none", handbook: false, kb: false, studio: false, hr: "none" };
+    if (!u) return { workdesk: false, taskana: "none", handbook: false, kb: false, studio: false, hr: "none", news: false };
     var d = defaultAccess(u.role), a = u.access || {};
     var out = {
       workdesk: a.workdesk == null ? d.workdesk : !!a.workdesk,
@@ -75,9 +76,10 @@ var GalilPortal = (function () {
       handbook: a.handbook == null ? d.handbook : !!a.handbook,
       kb: a.kb == null ? d.kb : !!a.kb,
       studio: a.studio == null ? d.studio : !!a.studio,
-      hr: a.hr == null ? d.hr : (HR_ROLES.indexOf(a.hr) >= 0 ? a.hr : "none")
+      hr: a.hr == null ? d.hr : (HR_ROLES.indexOf(a.hr) >= 0 ? a.hr : "none"),
+      news: true
     };
-    if (!u.isActive || u.pendingActivation) { out.workdesk = false; out.taskana = "none"; out.kb = false; out.handbook = false; out.studio = false; out.hr = "none"; }
+    if (!u.isActive || u.pendingActivation) { out.workdesk = false; out.taskana = "none"; out.kb = false; out.handbook = false; out.studio = false; out.hr = "none"; out.news = false; }
     return out;
   }
 
@@ -116,9 +118,9 @@ var GalilPortal = (function () {
     var u = sessionUser(), a = access(u), ok = !!u && (app === "taskana" || app === "hr" ? a[app] !== "none" : !!a[app]);
     var mobile = ok && opts.desktopOnly && isMobileDevice();
     if (ok && !mobile) return u;
-    var en = { workdesk: "WorkDesk", taskana: "Taskana", handbook: "the Handbook", kb: "the Knowledge Base", studio: "Model Studio", hr: "HR" }[app];
-    var he = { workdesk: "ל-WorkDesk", taskana: "ל-Taskana", handbook: "למדריך למשתמש", kb: "למאגר הידע", studio: "לסטודיו המודלים", hr: "למשאבי אנוש" }[app];
-    var heIn = { workdesk: "ב-WorkDesk", taskana: "ב-Taskana", handbook: "במדריך למשתמש", kb: "במאגר הידע", studio: "בסטודיו המודלים", hr: "במשאבי אנוש" }[app];
+    var en = { workdesk: "WorkDesk", taskana: "Taskana", handbook: "the Handbook", kb: "the Knowledge Base", studio: "Model Studio", hr: "HR", news: "Defense News" }[app];
+    var he = { workdesk: "ל-WorkDesk", taskana: "ל-Taskana", handbook: "למדריך למשתמש", kb: "למאגר הידע", studio: "לסטודיו המודלים", hr: "למשאבי אנוש", news: "לחדשות הביטחוניות" }[app];
+    var heIn = { workdesk: "ב-WorkDesk", taskana: "ב-Taskana", handbook: "במדריך למשתמש", kb: "במאגר הידע", studio: "בסטודיו המודלים", hr: "במשאבי אנוש", news: "בחדשות הביטחוניות" }[app];
     var title = mobile ? t(en + " is for computers", en === "Model Studio" ? "סטודיו המודלים מיועד למחשבים" : "מיועד למחשבים")
       : !u ? t("Sign in to the Employee Portal first", "יש להתחבר קודם לפורטל העובדים")
       : t("No access to " + en, "אין לך גישה " + he);

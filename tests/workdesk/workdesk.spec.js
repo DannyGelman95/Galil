@@ -214,7 +214,7 @@ test.describe("Employee Portal", () => {
     const errors = await local(page);
     await signIn(page, "eitan.f@galiltc.co.il");
     await expect(page.locator("#portal-home")).toBeVisible();
-    for (const k of ["workdesk", "taskana", "handbook", "kb", "studio", "hr"]) await expect(page.locator("#tile-" + k)).toBeVisible();
+    for (const k of ["workdesk", "taskana", "handbook", "kb", "studio", "hr", "news"]) await expect(page.locator("#tile-" + k)).toBeVisible();
     await expect(page.locator("#tile-studio")).toContainText("Model Studio");
     await page.click("#tile-workdesk");
     await expect(page).toHaveURL(/#\/workdesk/);
@@ -235,13 +235,72 @@ test.describe("Employee Portal", () => {
     await expect(page).toHaveURL(/\/studio\/index\.html$/);
   });
 
+  test("Defense News: the tile opens the news page; companies, language and search filter it", async ({ page }) => {
+    const errors = [];
+    page.on("pageerror", e => errors.push(e.message));
+    const origin = "https://news.test", hour = 36e5, now = Date.now();
+    const feed = {
+      updated: new Date(now - 2 * hour).toISOString(), days: 30, source: "Google News",
+      companies: [
+        { id: "iai", name: "IAI", full: "Israel Aerospace Industries", he: "התעשייה האווירית", color: "#1D4ED8" },
+        { id: "elbit", name: "Elbit Systems", full: "Elbit Systems", he: "אלביט מערכות", color: "#0F766E" },
+        { id: "controp", name: "Controp", full: "Controp Precision Technologies", he: "קונטרופ", color: "#C2410C" }],
+      items: [
+        { id: "n0", title: "Test headline one about Elbit", url: "https://example.com/1", source: "Example Wire", date: new Date(now - hour).toISOString(), lang: "en", companies: ["elbit"] },
+        { id: "n1", title: "כותרת בדיקה על התעשייה האווירית", url: "https://example.com/2", source: "אתר לדוגמה", date: new Date(now - 3 * hour).toISOString(), lang: "he", companies: ["iai"] },
+        { id: "n2", title: "Test headline two: IAI and Controp", url: "https://example.com/3", source: "Example Daily", date: new Date(now - 50 * hour).toISOString(), lang: "en", companies: ["iai", "controp"] }]
+    };
+    await page.addInitScript(() => { try { localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" })); } catch (e) {} });
+    await page.route(origin + "/**", r => {
+      const p = decodeURIComponent(new URL(r.request().url()).pathname).replace(/^\//, "") || "index.html";
+      if (p === "news/feed.json") return json(r, 200, feed);
+      return r.fulfill({ path: path.join(SITE, p) });
+    });
+    await page.goto(origin + "/index.html");
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await expect(page.locator("#tile-news")).toContainText("Defense News");
+    await page.click("#tile-news");
+    await expect(page).toHaveURL(/\/news\/index\.html/);
+    await expect(page.locator(".item")).toHaveCount(3);
+    await expect(page.locator("#meta")).toContainText("3 stories");
+    await expect(page.locator("#co-iai .n")).toHaveText("2");
+    await page.click("#co-iai");
+    await expect(page.locator(".item")).toHaveCount(2);
+    await expect(page).toHaveURL(/#c=iai$/);
+    await page.click("#lang-en");
+    await expect(page.locator(".item")).toHaveCount(1);
+    await expect(page.locator(".item a.t")).toHaveAttribute("href", "https://example.com/3");
+    await expect(page.locator(".item a.t")).toHaveAttribute("target", "_blank");
+    await page.click("#co-all"); await page.click("#lang-all");
+    await page.fill("#q", "example wire");
+    await expect(page.locator(".item")).toHaveCount(1);
+    await page.fill("#q", "nothing like this");
+    await expect(page.locator("#news-empty")).toBeVisible();
+    // Hebrew
+    await page.evaluate(() => GalilPortal.setLang("he", true));
+    await page.goto(origin + "/news/index.html");
+    await expect(page.locator("html")).toHaveAttribute("dir", "rtl");
+    await expect(page.locator(".head h1")).toHaveText("חדשות התעשייה הביטחונית");
+    await expect(page.locator("#co-iai")).toContainText("התעשייה האווירית");
+    // without a feed (not yet published), the page says so
+    await page.unroute(origin + "/**");
+    await page.route(origin + "/**", r => {
+      const p = decodeURIComponent(new URL(r.request().url()).pathname).replace(/^\//, "") || "index.html";
+      if (p === "news/feed.json") return r.fulfill({ status: 404, body: "" });
+      return r.fulfill({ path: path.join(SITE, p) });
+    });
+    await page.reload();
+    await expect(page.locator("#news-missing")).toBeVisible();
+    expect(errors).toEqual([]);
+  });
+
   test("access follows the role: a contractor has no Knowledge Base and is External in Taskana", async ({ page }) => {
     await local(page);
     await signIn(page, "gil.hadar@galiltc.co.il");
     await expect(page.locator("#tile-kb")).toHaveAttribute("aria-disabled", "true");
     await expect(page.locator("#tile-taskana")).toContainText("External");
     const acc = await page.evaluate(() => GalilPortal.access(GalilPortal.sessionUser()));
-    expect(acc).toEqual({ workdesk: true, taskana: "External", handbook: true, kb: false, studio: true, hr: "none" });
+    expect(acc).toEqual({ workdesk: true, taskana: "External", handbook: true, kb: false, studio: true, hr: "none", news: true });
   });
 
   test("an administrator changes one person's portal access in Management → People", async ({ page }) => {

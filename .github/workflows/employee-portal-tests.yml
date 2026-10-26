@@ -42,7 +42,7 @@ jobs:
 
       - name: Syntax-check the portal's scripts
         working-directory: Employee Portal
-        run: for f in config.js shared/*.js workdesk/*.js taskana/js/*.js hr/js/*.js kb/*.js handbook/*.js; do node --check "$f"; done
+        run: for f in config.js shared/*.js workdesk/*.js taskana/js/*.js hr/js/*.js news/*.js kb/*.js handbook/*.js; do node --check "$f"; done
 
       - run: npm ci
       - run: npx playwright install --with-deps chromium

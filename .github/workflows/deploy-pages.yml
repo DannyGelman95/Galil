@@ -8,8 +8,12 @@ on:
       - "Employee Portal/**"
       - "Welcome/**"
       - "tools/model-studio-redirect.html"
+      - "tools/defense-news.js"
       - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
+  # Defense News: rebuild the news feed and republish every two hours
+  schedule:
+    - cron: "17 */2 * * *"
 
 permissions:
   contents: read
@@ -58,6 +62,14 @@ jobs:
           cp -r Welcome pages-dist/welcome
           mkdir -p pages-dist/model-studio
           cp tools/model-studio-redirect.html pages-dist/model-studio/index.html
+
+      # Defense News: headlines about Israel's defense industry, from Google
+      # News, into the portal's news page (/employee-portal/news/feed.json).
+      # A failed fetch never stops the deployment; the page then says the
+      # feed isn't there yet.
+      - name: Build the Defense News feed
+        continue-on-error: true
+        run: node tools/defense-news.js "pages-dist/employee-portal/news/feed.json"
 
       - name: Upload pages artifact
         uses: actions/upload-pages-artifact@v3
