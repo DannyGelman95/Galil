@@ -16,7 +16,7 @@ const open = async (page, route = "home", userId = "u-danny") => {
   page.on("pageerror", e => errors.push(e.message));
   await page.route(ORIGIN + "/**", r => {
     const p = decodeURIComponent(new URL(r.request().url()).pathname).replace(/^\//, "") || "index.html";
-    r.fulfill({ path: pathM.join(PORTAL_DIR, p) });
+    (f => require("fs").existsSync(f) ? r.fulfill({ path: f }) : r.fulfill({ status: 404, body: "" }))(pathM.join(PORTAL_DIR, p));
   });
   await page.addInitScript(id => {
     localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" }));
@@ -399,7 +399,7 @@ async function servePortal(page, taskanaConfig, before) {
   page.on("pageerror", e => errors.push(e.message));
   await page.route(ORIGIN + "/**", r => {
     const p = decodeURIComponent(new URL(r.request().url()).pathname).replace(/^\//, "") || "index.html";
-    r.fulfill({ path: pathM.join(PORTAL_DIR, p) });
+    (f => require("fs").existsSync(f) ? r.fulfill({ path: f }) : r.fulfill({ status: 404, body: "" }))(pathM.join(PORTAL_DIR, p));
   });
   await page.addInitScript(cfg => {
     localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" }));

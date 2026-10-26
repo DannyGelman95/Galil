@@ -14,7 +14,7 @@ const serve = async (page, cfg) => {
   page.on("pageerror", e => errors.push(e.message));
   await page.route(ORIGIN + "/**", r => {
     const p = decodeURIComponent(new URL(r.request().url()).pathname).replace(/^\//, "") || "index.html";
-    r.fulfill({ path: path.join(PORTAL_DIR, p) });
+    (f => require("fs").existsSync(f) ? r.fulfill({ path: f }) : r.fulfill({ status: 404, body: "" }))(path.join(PORTAL_DIR, p));
   });
   await page.addInitScript(c => {
     localStorage.setItem("galil-workdesk-config", JSON.stringify({ storage: "local" }));
