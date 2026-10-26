@@ -38,6 +38,7 @@ home page, and see a tile for each product their access includes:
 | **Knowledge Base** | Onboarding, company rules, security and training articles | `kb/` |
 | **Model Studio** | CAD and 3D models: parts, images, assembly and disassembly procedures with animation and video, illustrated parts catalogues, interactive manuals (IETM) | `studio/` |
 | **HR** | Company news (likes, comments, pinned and scheduled posts); events with RSVPs, a calendar and calendar files; surveys (anonymous or named, five kinds of question, results and CSV); performance reviews (cycles, self-assessment, manager review, acknowledgement); the people directory with birthdays and work anniversaries; recognition (kudos) | `hr/` |
+| **Defense News** | Headlines about IAI, Elbit Systems, Rafael, Aeronautics, Controp, Tomer, UVision, the Israel MOD and the wider Israeli defense industry, from Google News in English and Hebrew; filter by company, language and search. Open to everyone signed in. `tools/defense-news.js` builds `news/feed.json` on every Pages deployment and every two hours | `news/` |
 
 Also: `install/` — how to put the portal on a phone or computer, and how an
 administrator sets it up.

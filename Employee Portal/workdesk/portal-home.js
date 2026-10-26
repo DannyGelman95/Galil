@@ -3,7 +3,7 @@
    GALIL Employee Portal — the home page.
 
    After signing in, everyone lands here: one tile per product — WorkDesk,
-   Taskana, the Handbook, the Knowledge Base, Model Studio and HR — opened according to the
+   Taskana, the Handbook, the Knowledge Base, Model Studio, HR and Defense News — opened according to the
    person's portal access (shared/portal.js). This file also holds the
    language switch, the portal-access editor used under Management →
    People, and the portal's own styles (including the right-to-left
@@ -41,6 +41,8 @@ var PORTAL_CSS = [
 /* Model Studio's yellow: a bright band, and a darker gold for the text so it reads on white */
 "#tile-studio::before{background:#F5C400}",
 ":root[data-theme=\"dark\"] #tile-studio{--tc:#F5C84C!important;--tbg:rgba(245,200,76,.16)!important}",
+/* Defense News' olive, lifted in the dark theme */
+":root[data-theme=\"dark\"] #tile-news{--tc:#A9C16E!important;--tbg:rgba(169,193,110,.16)!important}",
 ".tile .tname{font:700 19px/1.2 var(--font)}",
 ".tile .tdesc{font-size:13.5px;color:var(--muted);line-height:1.5}",
 ".tile .tstats{display:flex;flex-wrap:wrap;gap:6px;margin-top:auto}",
@@ -134,6 +136,7 @@ var APP_GLYPHS = {
   kb: [["path", { d: "M9 18h6M10 21h4" }], ["path", { d: "M12 3a6 6 0 0 0-3.6 10.8c.6.5 1 1.2 1.1 2V16h5v-.2c.1-.8.5-1.5 1.1-2A6 6 0 0 0 12 3z" }], ["path", { d: "M12 7v3.5M10.4 9h3.2" }]],
   studio: [["path", { d: "M12 2.8l8 4.5v9.4l-8 4.5-8-4.5V7.3z" }], ["path", { d: "M4 7.3l8 4.5 8-4.5M12 11.8v9.4" }]],
   hr: [["circle", { cx: 9, cy: 8, r: 3.2 }], ["path", { d: "M3.5 19.5c.6-3.3 2.8-5 5.5-5s4.9 1.7 5.5 5" }], ["path", { d: "M17.5 12.8l-.9-.8c-1.3-1.2-2.1-1.9-2.1-2.9 0-.8.6-1.4 1.4-1.4.5 0 .9.2 1.2.6.3-.4.7-.6 1.2-.6.8 0 1.4.6 1.4 1.4 0 1-.8 1.7-2.1 2.9z" }]],
+  news: [["path", { d: "M4 5h12v14H6a2 2 0 0 1-2-2z" }], ["path", { d: "M16 9h4v8a2 2 0 0 1-4 0" }], ["path", { d: "M7.5 9h5M7.5 12.5h5M7.5 16h3" }]],
   install: [["rect", { x: 7, y: 2.5, width: 10, height: 19, rx: 2.5 }], ["path", { d: "M12 7v7M9.3 11.5L12 14.2l2.7-2.7M10.5 18.5h3" }]]
 };
 function AppGlyph(p) {
@@ -217,6 +220,12 @@ function PortalHome(p) {
       desc: "Company news, events and RSVPs, surveys, performance reviews, the people directory and recognition — everything people-related in one place.",
       stats: acc.hr === "none" ? [] : [h(Chip, { key: "r", k: "pink" }, tr(acc.hr === "Admin" ? "HR admin" : "Member")), h(Chip, { key: "c", k: "mut" }, "News · Events · Surveys · Reviews")],
       open: go("hr/index.html")
+    },
+    {
+      k: "news", name: "Defense News", on: acc.news, color: "#556B2F", bg: "rgba(85,107,47,.13)",
+      desc: "What the press says about IAI, Elbit Systems, Rafael, Aeronautics, Controp and the rest of Israel's defense industry — in English and Hebrew, refreshed every two hours.",
+      stats: [h(Chip, { key: "c", k: "mut" }, "IAI · Elbit · Rafael · Aeronautics · Controp")],
+      open: go("news/index.html")
     }
   ];
 
@@ -271,7 +280,7 @@ function PortalHome(p) {
         h("a", { href: "install/index.html" }, h(AppGlyph, { kind: "install", style: { width: 16, height: 16 } }), "Install on your phone")),
 
       h("div", { className: "hubfoot" },
-        h("span", null, "GALIL Employee Portal · WorkDesk · Taskana · Handbook · Knowledge Base · Model Studio · HR"),
+        h("span", null, "GALIL Employee Portal · WorkDesk · Taskana · Handbook · Knowledge Base · Model Studio · HR · Defense News"),
         h("span", null, WDCloud.remote ? (WDCloud.storage === "github" ? "Data: GitHub" : "Data: OneDrive") : "Data: this browser (demo)"))));
 }
 
