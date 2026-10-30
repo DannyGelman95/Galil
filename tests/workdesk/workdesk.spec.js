@@ -777,3 +777,91 @@ test.describe("phone layout", () => {
     expect(off).toBe(0);
   });
 });
+
+/* ---------- the shift QR code: scan to start and end the day ---------- */
+test.describe("the shift QR code", () => {
+  const timer = page => page.evaluate(() => JSON.parse(localStorage.getItem("galil-workdesk-timer") || "null"));
+  const scan = page => page.goto(ORIGIN + "/index.html#/workdesk/time?scan=shift");
+
+  test("on a computer, the first scan starts the shift and the second ends it into the report form", async ({ page }) => {
+    const errors = await served(page);
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await expect(page.locator("#portal-home")).toBeVisible();
+    await scan(page);
+    await expect(page.locator("#timer-strip.on")).toBeVisible();
+    await expect(page.getByText(/Shift started at \d\d:\d\d/)).toBeVisible();
+    expect(await page.evaluate(() => location.hash)).toBe("#/workdesk/time");
+    const t = await timer(page);
+    expect(t.date).toMatch(/^\d{4}-\d\d-\d\d$/);
+    await scan(page);
+    await expect(page.locator("#timer-strip.on")).toHaveCount(0);
+    expect(await timer(page)).toBeNull();
+    await expect(page.getByText(/Shift ended at \d\d:\d\d — fill in what you worked on/)).toBeVisible();
+    /* the form holds the shift's start; client, project and work order are left to choose */
+    const v = await page.locator(".tlform select").evaluateAll(s => s.map(x => x.value));
+    expect(v.slice(1, 3).join(":")).toBe(t.start);
+    expect(errors).toEqual([]);
+  });
+
+  test("anything but the shift code is refused", async ({ page }) => {
+    const errors = await served(page);
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await page.goto(ORIGIN + "/index.html#/workdesk/time?scan=wo.x");
+    await expect(page.getByText("That is not the WorkDesk shift QR code.")).toBeVisible();
+    expect(await timer(page)).toBeNull();
+    expect(errors).toEqual([]);
+  });
+
+  test("the in-app scanner reads the shift code from the camera", async ({ page }) => {
+    await page.addInitScript(() => {
+      window.__scan = null;
+      window.BarcodeDetector = class { detect() { return Promise.resolve(window.__scan ? [{ rawValue: window.__scan }] : []); } };
+      if (navigator.mediaDevices) navigator.mediaDevices.getUserMedia = () => {
+        const c = document.createElement("canvas"); c.width = c.height = 64; c.getContext("2d").fillRect(0, 0, 64, 64);
+        return Promise.resolve(c.captureStream(5));
+      };
+    });
+    const errors = await served(page);
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await page.click("#timer-scan");
+    await expect(page.locator(".qrcam video")).toBeVisible();
+    await page.evaluate(u => { window.__scan = u; }, ORIGIN + "/index.html#/workdesk/time?scan=shift");
+    await expect(page.locator(".qrcam")).toHaveCount(0);
+    expect(await timer(page)).not.toBeNull();
+    expect(errors).toEqual([]);
+  });
+
+  test("Management shows the one shift QR code, a link to the Time Log, to print or download", async ({ page }) => {
+    const errors = await local(page);
+    await signIn(page, "tamir@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await page.getByRole("tab", { name: /Management/ }).click();
+    await page.click("#shift-qr-btn");
+    const card = page.locator("#shift-qr");
+    await expect(card.locator("svg")).toBeVisible();
+    expect(await card.getAttribute("data-url")).toMatch(/index\.html#\/workdesk\/time\?scan=shift$/);
+    await expect(page.getByRole("button", { name: "Print" })).toBeEnabled();
+    const dl = page.waitForEvent("download");
+    await page.getByRole("button", { name: "Download image" }).click();
+    expect((await dl).suggestedFilename()).toBe("GALIL-WorkDesk-shift-QR.png");
+    expect(errors).toEqual([]);
+  });
+
+  test.describe("on a phone", () => {
+    test.use({ viewport: { width: 390, height: 844 } });
+    test("the first scan starts the phone timer; the second opens Report time to fill in the work", async ({ page }) => {
+      const errors = await served(page);
+      await signIn(page, "eitan.f@galiltc.co.il");
+      await expect(page.locator("#portal-home")).toBeVisible();
+      await scan(page);
+      await expect(page.locator(".timer .clock")).toHaveText(/^\d\d:\d\d:\d\d$/);
+      await scan(page);
+      const sheet = page.getByRole("dialog", { name: "Report time" });
+      await expect(sheet).toBeVisible();
+      await expect(sheet.getByText("Client")).toBeVisible();
+      expect(await timer(page)).toBeNull();
+      expect(errors).toEqual([]);
+    });
+  });
+});

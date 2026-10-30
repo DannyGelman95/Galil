@@ -1479,5 +1479,30 @@ WDI18N.add({
 "of": "מתוך",
 "h used": "שע׳ נוצלו",
 "h in approval": "שע׳ באישור",
-"∞ unlimited within the project budget": "∞ ללא הגבלה בתוך תקציב הפרויקט"
+"∞ unlimited within the project budget": "∞ ללא הגבלה בתוך תקציב הפרויקט",
+
+/* ---------------- the shift QR code ---------------- */
+"Scan a QR code": "סריקת קוד QR",
+"That is not the WorkDesk shift QR code.": "זה אינו קוד ה-QR של המשמרת ב-WorkDesk.",
+"Shift started at {time}.": "המשמרת התחילה ב-{time}.",
+"Shift ended at {time} — fill in what you worked on.": "המשמרת הסתיימה ב-{time} — מלאו על מה עבדתם.",
+"This browser cannot read QR codes.": "הדפדפן הזה אינו יכול לקרוא קודי QR.",
+"Camera access was refused. Allow the camera for this site in the browser's settings, then try again.": "הגישה למצלמה נדחתה. אפשרו את המצלמה לאתר הזה בהגדרות הדפדפן ונסו שוב.",
+"The camera could not be opened.": "לא ניתן היה לפתוח את המצלמה.",
+"This browser cannot read QR codes itself. Scan the code with your phone's camera app instead — it opens WorkDesk and starts or ends your shift.": "הדפדפן הזה אינו קורא קודי QR בעצמו. סרקו את הקוד באפליקציית המצלמה של הטלפון — היא פותחת את WorkDesk ומתחילה או מסיימת את המשמרת.",
+"Camera": "מצלמה",
+"Point the camera at the shift QR code. The first scan starts your shift; the next one ends it.": "כוונו את המצלמה לקוד ה-QR של המשמרת. הסריקה הראשונה מתחילה את המשמרת; הבאה מסיימת אותה.",
+"since {time}": "מאז {time}",
+"Discard": "ביטול",
+"Shift QR code": "קוד QR למשמרת",
+"WorkDesk — start and end your shift": "WorkDesk — תחילת המשמרת וסיומה",
+"Scan when you arrive to start your shift. Scan again when you leave to end it and fill in what you worked on.": "סרקו כשאתם מגיעים כדי להתחיל את המשמרת. סרקו שוב כשאתם יוצאים כדי לסיים אותה ולמלא על מה עבדתם.",
+"Scan to start or end your shift": "סרקו כדי להתחיל או לסיים את המשמרת",
+"This code points to a file on this computer — print it from the portal's web address so phones can open it.": "הקוד הזה מפנה לקובץ במחשב הזה — הדפיסו אותו מכתובת האינטרנט של הפורטל כדי שטלפונים יוכלו לפתוח אותו.",
+"Download image": "הורדת תמונה",
+"Print": "הדפסה",
+"One code for everyone with WorkDesk. Print it and put it on a desk: each employee scans it with their own phone — the camera app, or Scan a QR code in WorkDesk — when they arrive, and the timer starts. The next scan ends the shift and asks what they worked on: client, project, work order, task and description.": "קוד אחד לכל מי שיש לו WorkDesk. הדפיסו אותו והניחו אותו על שולחן: כל עובד סורק אותו בטלפון שלו — באפליקציית המצלמה או בסריקת קוד QR ב-WorkDesk — כשהוא מגיע, והטיימר מתחיל. הסריקה הבאה מסיימת את המשמרת ושואלת על מה עבד: לקוח, פרויקט, הזמנת עבודה, משימה ותיאור.",
+"Preparing the QR code…": "מכינים את קוד ה-QR…",
+"QR code downloaded.": "קוד ה-QR הורד.",
+"The QR code library did not load.": "ספריית קודי ה-QR לא נטענה."
 });
