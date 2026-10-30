@@ -697,7 +697,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <ul>
       <li><strong><i class="ui-ic" data-ic="edit"></i></strong> loads an entry back into the report form. Saving a pending entry re-runs the engine; saving a registered entry as an approver leaves it registered.</li>
       <li><strong><i class="ui-ic" data-ic="trash"></i></strong> deletes it and cancels any pending approval attached. The toast offers <strong>Undo</strong>.</li>
-      <li>The <strong>Project status</strong> column shows the project's current status as set under <a href="#ch-budgets">Management → Projects</a>. It is read-only here; the project status filter uses the same value.</li>
+      <li>The <strong>Project status</strong> column shows the project's current status as set under <a href="#h-project-status">Management → Projects</a>. It is read-only here; the project status filter uses the same value.</li>
       <li>You may always edit your own entries. Editing someone else's needs <code>editOthersTime</code> — Team Lead within their team, Project Manager within their projects, Operations Manager and CEO anywhere.</li>
       <li>Opening <strong>Report time on this task in WorkDesk</strong> from a task in Taskana brings you here with the form already set to that task's client, project, work order and task.</li>
       <li>Click a <strong>Work order</strong> code anywhere in the table to copy it to the clipboard — useful when pasting it into an email or another system. A small confirmation toast names what was copied.</li>
@@ -1008,6 +1008,22 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
     <h3>Clients, Projects and Expense types</h3>
     <p>Each is a table with an add band above it. Rename with <strong><i class="ui-ic" data-ic="edit"></i></strong>, remove with <strong><i class="ui-ic" data-ic="trash"></i></strong>.</p>
+    <p id="h-project-status">A project's <strong>Status</strong> is set when it is added and changed in its editor. It shows as a coloured chip on the Projects table and in the Time Log's <strong>Project status</strong> column, where it can also be filtered on:</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:190px">Status</th><th>Meaning</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Active</strong></td><td>Running; work can start.</td></tr>
+        <tr><td><strong>WIP</strong></td><td>Work in progress.</td></tr>
+        <tr><td><strong>Draft A</strong> · <strong>Draft B</strong></td><td>The first and second drafts are out.</td></tr>
+        <tr><td><strong>Final Draft</strong></td><td>The final draft is out, ahead of sign-off.</td></tr>
+        <tr><td><strong>Pending Information</strong></td><td>Waiting for information from the client.</td></tr>
+        <tr><td><strong>Pending Review</strong></td><td>Waiting for the client's or a reviewer's comments.</td></tr>
+        <tr><td><strong>Blocked</strong></td><td>Stuck — the work can't go on until something outside the team is resolved.</td></tr>
+        <tr><td><strong>On hold</strong></td><td>Paused on purpose.</td></tr>
+        <tr><td><strong>Done</strong></td><td>Delivered and closed.</td></tr>
+      </tbody>
+    </table></div>
+    <p>The status describes the project; it never stops time being reported on it.</p>
     <div class="note stop">
       <span class="tag">Nothing in use can be deleted</span>
       <p>The <strong>Used by</strong> column counts the saved records that reference an item. If it is above zero, removal is refused. Deactivate or close it instead.</p>
@@ -2065,7 +2081,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <thead><tr><th style="width:160px">Set</th><th>Values</th></tr></thead>
       <tbody>
         <tr><td><strong>Entry status</strong></td><td>Registered · Pending · Cancelled · Locked</td></tr>
-        <tr><td><strong>Project status</strong></td><td>Active · WIP · Draft A · Draft B · Pending Information · Pending Review · On hold · Done</td></tr>
+        <tr><td><strong>Project status</strong></td><td>Active · WIP · Draft A · Draft B · Final Draft · Pending Information · Pending Review · Blocked · On hold · Done</td></tr>
         <tr><td><strong>Taskana task status</strong></td><td>Backlog · To Do · Writing · Peer Review · SME Review · Done</td></tr>
         <tr><td><strong>Taskana priority</strong></td><td>Critical · High · Medium · Low</td></tr>
         <tr><td><strong>Taskana role</strong></td><td>Admin · Manager · Member · External · Viewer</td></tr>
