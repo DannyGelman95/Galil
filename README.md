@@ -32,7 +32,7 @@ home page, and see a tile for each product their access includes:
 
 | Product | What it is for | Folder |
 |---|---|---|
-| **WorkDesk** | Time (work, sick, vacation) and expense reporting; budgets against recorded hours; people, clients, projects, work orders, assignments and approvals | `index.html`, `workdesk/` |
+| **WorkDesk** | Time (work, sick, vacation) and expense reporting, with a timer that a work order's or project's QR code starts and stops (Management → Work Orders / Projects prints the codes); budgets against recorded hours; people, clients, projects, work orders, assignments and approvals | `index.html`, `workdesk/` |
 | **Taskana** | Tasks only — boards, lists, reviews, comments. People, clients, projects and work orders come from WorkDesk; budget and hours-bank indicators show WorkDesk's figures | `taskana/` |
 | **Handbook** | The user guide to the portal, WorkDesk and Taskana, role by role | `handbook/` (`index.html` English, `he.html` Hebrew) |
 | **Knowledge Base** | Onboarding, company rules, security and training articles | `kb/` |
