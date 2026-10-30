@@ -18775,12 +18775,12 @@ var CSS = [
 ".qrcam{position:relative;border-radius:14px;overflow:hidden;background:#000;aspect-ratio:1/1;max-height:60vh;margin:0 auto;width:100%}",
 ".qrcam video{width:100%;height:100%;object-fit:cover;display:block}",
 ".qrframe{position:absolute;inset:18%;border:3px solid rgba(255,255,255,.9);border-radius:16px;box-shadow:0 0 0 999px rgba(0,0,0,.35)}",
+".qrcard{max-width:320px;margin:0 auto}",
 ".tstrip{display:flex;flex-direction:column;gap:8px;padding:9px 10px;margin-bottom:10px;border:1px dashed var(--line);border-radius:12px;background:var(--surface2)}",
 ".tstrip.on{border-style:solid;border-color:var(--green);background:var(--amberbg)}",
 ".tstrip .tclock{font:700 20px/1 var(--mono);font-variant-numeric:tabular-nums}",
-".qrgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:12px}",
 ".qrcard{border:1px solid var(--line);border-radius:12px;padding:12px;display:flex;flex-direction:column;align-items:center;gap:4px;text-align:center;background:#fff;color:#1C2D4A}",
-".qrcard .qrimg{width:150px;height:150px}.qrcard .qrimg svg{width:100%;height:100%;display:block}",
+".qrcard .qrimg{width:240px;height:240px}.qrcard .qrimg svg{width:100%;height:100%;display:block}",
 ".qrcard b{font-family:var(--mono)}.qrcard .cap{color:#575E6B}",
 /* bottom sheet */
 ".sheet{position:fixed;inset:0;z-index:120;display:flex;flex-direction:column;justify-content:flex-end;background:var(--ovl)}",
@@ -20494,7 +20494,6 @@ function TimerStrip(p) {
             h(Icon, { n: "timer", size: 18 }),
             h("span", { className: "tclock" }, hhmmss(now - timer.at)),
             h("span", { className: "cap grow", style: { whiteSpace: "nowrap" } }, tr("since {time}", { time: timer.start }), timer.date !== todayStr() ? " · " + il(timer.date) : "")),
-          timer.label ? h("b", { id: "timer-on", style: { fontSize: 13 } }, timer.label) : null,
           h("div", { className: "row", style: { gap: 6 } },
             h(Btn, { sm: true, kind: "d", onClick: function () { var f = timerForm(p.user, timer); setTimer(null); p.onReport(f); } }, IconLabel("square", "Stop and report")),
             scanBtn,
@@ -21665,7 +21664,7 @@ function ManagementTab(p) {
       h("div", { className: "grow" }),
       can(user, "excelExport") && (tab === "budgets" || tab === "wos") ? h(Btn, { sm: true, onClick: doExport }, IconLabel("download", "Export")) : null,
       editable && tab === "budgets" ? h(Btn, { kind: "p", sm: true, onClick: function () { setEditing({ id: null, clientId: "", projectId: "", workOrderId: "", basis: "Hours", currency: "₪", amount: "", rate: "", hours: "", units: "", unitName: "", produced: 0, notes: "", history: [] }); } }, "+ New budget") : null,
-      tab === "wos" ? h(QRButton, { id: "wo-qr-all", label: "QR codes", items: function () { return wos.filter(function (w) { return w.status !== "Closed"; }).map(function (w) { return qrWO(db, w); }); } }) : null,
+      h(ShiftQRButton, null),
       can(user, "createWorkOrders") && tab === "wos" ? h(Btn, { kind: "p", sm: true, onClick: function () { setWoEdit({ id: null, projectId: "", code: "", title: "", status: "Active", contractRef: "", startDate: todayStr(), endDate: "", notes: "", budgetHours: "" }); } }, "+ New work order") : null),
 
     tab === "budgets" ? h(BudgetList, { db: db, budgets: budgets, editable: editable, flt: bf, setFlt: setBf, blank: BF0, onEdit: function (b) { setEditing(Object.assign({}, b)); }, onHistory: setHistory }) : null,
@@ -21700,7 +21699,6 @@ function ManagementTab(p) {
             h("td", { "data-sort": w.createdAt || "", className: "tnum", title: w.createdBy ? tr("by {name}", { name: userName(db, w.createdBy) }) : null }, createdDay(w)),
             h("td", { style: { whiteSpace: "nowrap" } },
               h(Btn, { title: "Work order document (PDF)", "aria-label": "Work order document (PDF)", sm: true, kind: "t", className: "tap", onClick: function () { setDocWO(Object.assign({ budgetHours: b ? b.hours : "" }, w)); } }, h(Icon, { n: "file", size: 16 })),
-              h(QRButton, { items: function () { return [qrWO(db, w)]; } }),
               can(user, "createWorkOrders") ? h(Btn, { title: "Edit", "aria-label": "Edit", sm: true, kind: "t", className: "tap", onClick: function () { setWoEdit(Object.assign({ budgetHours: b ? b.hours : "" }, w)); } }, h(Icon, { n: "edit", size: 16 })) : null));
         })))) : null,
 
@@ -22350,9 +22348,7 @@ function saveBlob(blob, name) {
   setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
 }
 
-/* ---------- QR codes for the timer: one per work order or project ----------
-   Each code is a link to the Time Log (see scanLink); printed and put up where
-   the work is done, a scan starts the timer on that work and the next scan stops it. */
+/* ---------- the shift QR code, to print and put on a desk (see shiftLink) ---------- */
 var _qrWait = null;
 function loadQR() {
   if (window.qrcode) return Promise.resolve(window.qrcode);
@@ -22364,27 +22360,16 @@ function loadQR() {
 }
 function qrMake(text) { var q = window.qrcode(0, "M"); q.addData(text); q.make(); return q; }
 function htmlEsc(t) { return String(t == null ? "" : t).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
-/* the items for work orders and projects: { kind, id, code, title, sub, url } */
-function qrWO(db, w) {
-  var pr = byId(db.projects, w.projectId) || {};
-  return { kind: "wo", id: w.id, code: w.code, title: w.title || "", sub: [nameOf(db.clients, pr.clientId), pr.name].filter(Boolean).join(" · "), url: scanLink("wo", w.id) };
-}
-function qrProject(db, x) {
-  return { kind: "pr", id: x.id, code: x.code || x.name, title: x.code ? x.name : "", sub: nameOf(db.clients, x.clientId), url: scanLink("pr", x.id) };
-}
-/* one sheet of labels, printed through a frame of its own */
-function printQR(items) {
-  var cards = items.map(function (it) {
-    return '<div class="c"><div class="q">' + qrMake(it.url).createSvgTag({ cellSize: 4, margin: 0, scalable: true }) + '</div><b>' + htmlEsc(it.code) + '</b>' +
-      (it.title ? '<div>' + htmlEsc(it.title) + '</div>' : '') + (it.sub ? '<small>' + htmlEsc(it.sub) + '</small>' : '') +
-      '<i>' + htmlEsc(tr("Scan to start or stop the timer")) + '</i></div>';
-  }).join("");
-  var html = '<!doctype html><html lang="' + WDI18N.lang + '" dir="' + WDI18N.dir + '"><head><meta charset="utf-8"><title>GALIL WorkDesk — QR codes</title><style>' +
-    '@page{margin:12mm}body{font-family:Heebo,Arial,sans-serif;color:#1C2D4A;margin:0}' +
-    '.g{display:grid;grid-template-columns:repeat(3,1fr);gap:8mm}' +
-    '.c{border:1px dashed #9AA8C2;border-radius:4mm;padding:5mm;text-align:center;break-inside:avoid;display:flex;flex-direction:column;align-items:center;gap:1mm}' +
-    '.q{width:42mm;height:42mm}.q svg{width:100%;height:100%}b{font:700 13pt monospace;margin-top:2mm}div{font-size:10pt}small{font-size:8.5pt;color:#575E6B}i{font-size:8pt;color:#B5600E;font-style:normal;margin-top:1mm}' +
-    '</style></head><body><div class="g">' + cards + '</div></body></html>';
+/* a desk sign, printed through a frame of its own */
+function printShiftQR() {
+  var html = '<!doctype html><html lang="' + WDI18N.lang + '" dir="' + WDI18N.dir + '"><head><meta charset="utf-8"><title>GALIL WorkDesk — ' + htmlEsc(tr("Shift QR code")) + '</title><style>' +
+    '@page{margin:15mm}body{font-family:Heebo,Arial,sans-serif;color:#1C2D4A;margin:0;text-align:center}' +
+    '.s{border:2px solid #1C2D4A;border-radius:8mm;padding:12mm 10mm;max-width:150mm;margin:0 auto}' +
+    'h1{font-size:26pt;margin:0;letter-spacing:.12em}h2{font-size:15pt;margin:2mm 0 8mm;font-weight:600;color:#B5600E}' +
+    '.q{width:110mm;height:110mm;margin:0 auto}.q svg{width:100%;height:100%}p{font-size:12pt;margin:8mm 0 0;line-height:1.5}' +
+    '</style></head><body><div class="s"><h1>GALIL</h1><h2>' + htmlEsc(tr("WorkDesk — start and end your shift")) + '</h2>' +
+    '<div class="q">' + qrMake(shiftLink()).createSvgTag({ cellSize: 4, margin: 0, scalable: true }) + '</div>' +
+    '<p>' + htmlEsc(tr("Scan when you arrive to start your shift. Scan again when you leave to end it and fill in what you worked on.")) + '</p></div></body></html>';
   var fr = document.createElement("iframe");
   fr.setAttribute("aria-hidden", "true");
   fr.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0";
@@ -22396,45 +22381,40 @@ function printQR(items) {
     setTimeout(done, 60000);
   }, 60);
 }
-/* one code as a PNG, with its code written under it — for a sticker or a document */
-function downloadQRPng(it) {
-  var q = qrMake(it.url), n = q.getModuleCount(), cell = 10, m = 40, size = n * cell + m * 2;
-  var cv = document.createElement("canvas"); cv.width = size; cv.height = size + 60;
+/* the code as a PNG — for a sticker or a document */
+function downloadShiftQR() {
+  var q = qrMake(shiftLink()), n = q.getModuleCount(), cell = 12, m = 48, size = n * cell + m * 2;
+  var cv = document.createElement("canvas"); cv.width = size; cv.height = size + 64;
   var g = cv.getContext("2d");
   g.fillStyle = "#fff"; g.fillRect(0, 0, cv.width, cv.height);
   g.fillStyle = "#000";
   for (var r = 0; r < n; r++) for (var c = 0; c < n; c++) if (q.isDark(r, c)) g.fillRect(m + c * cell, m + r * cell, cell, cell);
-  g.font = "bold 30px monospace"; g.textAlign = "center"; g.fillText(it.code, size / 2, size + 22);
-  cv.toBlob(function (b) { saveBlob(b, "GALIL-QR-" + String(it.code).replace(/[^\w.-]+/g, "_") + ".png"); toast("QR code downloaded.", "ok"); }, "image/png");
+  g.font = "bold 30px sans-serif"; g.textAlign = "center"; g.fillText("GALIL WorkDesk", size / 2, size + 24);
+  cv.toBlob(function (b) { saveBlob(b, "GALIL-WorkDesk-shift-QR.png"); toast("QR code downloaded.", "ok"); }, "image/png");
 }
-function QRCodesModal(p) {
+function ShiftQRModal(p) {
   var ls = useState(!!window.qrcode), ready = ls[0], setReady = ls[1];
   var es = useState(""), err = es[0], setErr = es[1];
   useEffect(function () { if (!ready) loadQR().then(function () { setReady(true); }, function (e) { setErr(e.message || String(e)); }); }, []);
-  var items = p.items, one = items.length === 1;
   return h(Modal, {
-    title: one ? tr("QR code — {code}", { code: items[0].code }) : tr("QR codes — {n}", { n: items.length }), size: one ? "md" : "lg", onClose: p.onClose,
+    title: "Shift QR code", size: "md", onClose: p.onClose,
     footer: [
-      h("div", { key: "g", className: "grow cap" }, location.protocol === "file:" ? "These codes point to a file on this computer — print them from the portal's web address so phones can open them." : "Scan to start or stop the timer"),
-      one ? h(Btn, { key: "d", disabled: !ready, onClick: function () { downloadQRPng(items[0]); } }, IconLabel("download", "Download image")) : null,
-      h(Btn, { key: "p", kind: "p", disabled: !ready, onClick: function () { printQR(items); } }, IconLabel("file", "Print"))]
+      h("div", { key: "g", className: "grow cap" }, location.protocol === "file:" ? "This code points to a file on this computer — print it from the portal's web address so phones can open it." : ""),
+      h(Btn, { key: "d", disabled: !ready, onClick: downloadShiftQR }, IconLabel("download", "Download image")),
+      h(Btn, { key: "p", kind: "p", disabled: !ready, onClick: printShiftQR }, IconLabel("file", "Print"))]
   },
-    h("div", { className: "cap", style: { marginBottom: 10 } }, "Put the code up where the work is done. Scanned with a phone — its camera app or WorkDesk's Scan a QR code — it starts the timer on this work; the next scan stops it and opens the report with the times and the work filled in."),
+    h("div", { className: "cap", style: { marginBottom: 12 } }, "One code for everyone with WorkDesk. Print it and put it on a desk: each employee scans it with their own phone — the camera app, or Scan a QR code in WorkDesk — when they arrive, and the timer starts. The next scan ends the shift and asks what they worked on: client, project, work order, task and description."),
     err ? h("div", { className: "banner err" }, err)
-      : !ready ? h("div", { className: "empty" }, "Preparing the QR codes…")
-      : h("div", { className: "qrgrid", id: "qr-codes" }, items.map(function (it) {
-          return h("div", { key: it.kind + it.id, className: "qrcard", "data-url": it.url },
-            h("div", { className: "qrimg", dangerouslySetInnerHTML: { __html: qrMake(it.url).createSvgTag({ cellSize: 4, margin: 2, scalable: true }) } }),
-            h("b", null, it.code), it.title ? h("div", null, it.title) : null, it.sub ? h("div", { className: "cap" }, it.sub) : null);
-        })));
+      : !ready ? h("div", { className: "empty" }, "Preparing the QR code…")
+      : h("div", { className: "qrcard", id: "shift-qr", "data-url": shiftLink() },
+          h("div", { className: "qrimg", dangerouslySetInnerHTML: { __html: qrMake(shiftLink()).createSvgTag({ cellSize: 4, margin: 2, scalable: true }) } }),
+          h("b", null, "GALIL WorkDesk"), h("div", { className: "cap" }, "Scan to start or end your shift")));
 }
-/* a button that opens the QR codes of some work orders or projects */
-function QRButton(p) {
+function ShiftQRButton() {
   var os = useState(false), open = os[0], setOpen = os[1];
   return h(React.Fragment, null,
-    p.label ? h(Btn, { sm: true, id: p.id, disabled: !p.items().length, onClick: function () { setOpen(true); } }, IconLabel("qr", p.label))
-      : h(Btn, { title: "QR code for the timer", "aria-label": "QR code for the timer", sm: true, kind: "t", className: "tap", onClick: function () { setOpen(true); } }, h(Icon, { n: "qr", size: 16 })),
-    open ? h(QRCodesModal, { items: p.items(), onClose: function () { setOpen(false); } }) : null);
+    h(Btn, { sm: true, id: "shift-qr-btn", onClick: function () { setOpen(true); } }, IconLabel("qr", "Shift QR code")),
+    open ? h(ShiftQRModal, { onClose: function () { setOpen(false); } }) : null);
 }
 
 /* preview, download and email the document, in English or Hebrew */
@@ -23317,21 +23297,20 @@ function ListEditor(pp) {
           } }, "+ Add")))) : null,
     h("div", { style: { overflowX: "auto" } },
       h(STable, { id: "mgmt-" + kind, grow: pp.cols[0], center: LIST_CENTER_COLS, className: "tbl mid" },
-        h("thead", null, h("tr", null, pp.cols.map(function (c, i) { return h("th", { key: i }, c); }), h("th", null, "Used by"), pp.canEdit || pp.extra ? h("th", null, "") : null)),
+        h("thead", null, h("tr", null, pp.cols.map(function (c, i) { return h("th", { key: i }, c); }), h("th", null, "Used by"), pp.canEdit ? h("th", null, "") : null)),
         h("tbody", null, (db[kind] || []).map(function (o) {
           return h("tr", { key: o.id },
             pp.row(o).map(listCell),
             h("td", { className: "num" }, h(Chip, { k: "mut" }, usageCount(db, kind, o.id), " records")),
-            pp.canEdit || pp.extra ? h("td", { style: { whiteSpace: "nowrap" } },
-              pp.extra ? pp.extra(o) : null,
-              !pp.canEdit ? null : editFields ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit", "aria-label": "Edit " + (o[pp.nameField || "name"] || ""), onClick: function () { setRec(Object.assign({}, o)); } }, h(Icon, { n: "edit", size: 16 })) :
+            pp.canEdit ? h("td", { style: { whiteSpace: "nowrap" } },
+              editFields ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit", "aria-label": "Edit " + (o[pp.nameField || "name"] || ""), onClick: function () { setRec(Object.assign({}, o)); } }, h(Icon, { n: "edit", size: 16 })) :
               h(Btn, { sm: true, kind: "t", className: "tap", title: "Rename", onClick: function () {
                 var field = pp.nameField || "name", old = o[field];
                 ask({ title: "Rename " + (pp.itemLabel || "item"), input: true, label: "New name", value: old, okLabel: "Rename" }).then(function (v) {
                   if (v && v !== old) { renameItem(o.id, field, v); toast("Renamed to \u201c" + v + "\u201d.", "ok"); }
                 });
               } }, h(Icon, { n: "edit", size: 16 })),
-              pp.canEdit ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove", onClick: function () { removeItem(o.id); } }, h(Icon, { n: "trash", size: 16 })) : null) : null);
+              h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove", onClick: function () { removeItem(o.id); } }, h(Icon, { n: "trash", size: 16 }))) : null);
         })))),
     rec && editFields ? h(RecordEditor, { db: db, value: rec, fields: editFields, onSave: saveRecord, onClose: function () { setRec(null); },
       title: rec.id ? tr("Edit {item}", { item: tr(pp.itemLabel || "item") }) : tr("New {item}", { item: tr(pp.itemLabel || "item") }),
@@ -24004,7 +23983,6 @@ function MgmtPanel(p) {
         x.isWoTracked ? h(Chip, { k: "teal" }, "yes") : h("span", { className: "cap" }, "no"),
         { v: createdDay(x), sort: x.createdAt || "" }];
     },
-    extra: function (x) { return h(QRButton, { items: function () { return [qrProject(db, x)]; } }); },
     editFields: PROJECT_FIELDS,
     fix: function (o) { if (o.endDate && o.startDate && o.endDate < o.startDate) o.endDate = o.startDate; if (!o.endDate) o.endDate = null; },
     fields: [
@@ -24321,18 +24299,14 @@ function useNow(on) {
   }, [on]);
   return now;
 }
-function newTimer(target) {
-  var d = new Date(), t = { at: d.getTime(), date: d2s(d), start: round5(d) };
-  if (target) Object.assign(t, { scan: target.key, clientId: target.clientId, projectId: target.projectId, workOrderId: target.workOrderId, label: target.label, title: target.title });
-  return t;
+function newTimer() {
+  var d = new Date();
+  return { at: d.getTime(), date: d2s(d), start: round5(d) };
 }
-/* the report a stopped timer leaves: its date and times, and the work it was scanned on */
+/* the report a stopped timer leaves: its date and times; the work is filled in by the person */
 function timerForm(user, timer) {
   var end = round5(new Date());
-  var form = Object.assign(blankEntry(user.id), {
-    date: timer.date, start: timer.start, end: end, hourType: "yellow", description: timer.title || "",
-    clientId: timer.clientId || "", projectId: timer.projectId || "", workOrderId: timer.workOrderId || ""
-  });
+  var form = Object.assign(blankEntry(user.id), { date: timer.date, start: timer.start, end: end, hourType: "yellow", description: "" });
   if (derivedHours(timer.start, end) <= 0) {
     toast("Less than half an hour on the clock — set the times by hand.", "");
     form.end = m2t((t2m(timer.start) + 30) % 1440);
@@ -24340,50 +24314,30 @@ function timerForm(user, timer) {
   return form;
 }
 
-/* ---------- QR codes: scan to start and stop the timer ----------
-   A work order's (or a project's) QR code holds a link to the Time Log,
-   #/workdesk/time?scan=wo.<id> (pr.<id> for a project). The phone's own
-   camera opens it as a link; WorkDesk's scanner reads it in place. The first
-   scan starts the timer on that work; a scan of the same code stops it and
-   opens the report with the times and the work filled in; a scan of another
-   code stops the running timer for reporting and starts a new one. */
-function scanLink(kind, id) {
-  return location.href.split("#")[0] + "#/workdesk/time?scan=" + kind + "." + encodeURIComponent(id);
-}
-/* what a scanned text names — { kind: "wo" | "pr", id } — or null */
-function parseScan(text) {
-  var s = String(text || ""), m = /[?&#]scan=(wo|pr)\.([^&#\s]+)/.exec(s) || /^\s*(wo|pr)\.(\S+)\s*$/.exec(s);
-  if (!m) return null;
-  try { return { kind: m[1], id: decodeURIComponent(m[2]) }; } catch (e) { return null; }
-}
-function scanTarget(db, user, text) {
-  var c = parseScan(text);
-  if (!c) return { err: "That is not a WorkDesk QR code." };
-  var wo = c.kind === "wo" ? byId(db.workOrders, c.id) : null;
-  var pr = wo ? byId(db.projects, wo.projectId) : c.kind === "pr" ? byId(db.projects, c.id) : null;
-  if (!pr) return { err: "That work order or project is no longer in WorkDesk." };
-  if (!can(user, "reportOwnTime")) return { err: "Your role does not carry time-reporting rights." };
-  if (wo && wo.status === "Closed") return { err: tr("Work order {code} is closed.", { code: wo.code }) };
-  if (assignedProjectIds(db, user.id, ["OPS", "CEO"].indexOf(user.role) >= 0).indexOf(pr.id) < 0) return { err: tr("You are not assigned to {name}.", { name: pr.name }) };
-  return { key: c.kind + "." + c.id, clientId: pr.clientId, projectId: pr.id, workOrderId: wo ? wo.id : "",
-    label: wo ? wo.code + " · " + pr.name : pr.name, title: wo ? wo.title || "" : "" };
-}
-/* one scan, applied to the running timer; openReport receives the form of a timer that stopped */
+/* ---------- the shift QR code: scan to start and end the working day ----------
+   One code for the whole company, printed and put on a desk. It holds a link to
+   the Time Log, #/workdesk/time?scan=shift, so anyone with WorkDesk scans it with
+   their own phone, signed in as themselves — the phone's camera app opens it as a
+   link, and WorkDesk's Scan a QR code reads it in place. The first scan starts
+   the timer; the next ends the shift and opens the report with the date and
+   times filled in, for the client, project, work order, task and description. */
+function shiftLink() { return location.href.split("#")[0] + "#/workdesk/time?scan=shift"; }
+function isShiftCode(text) { return /(^|[?&#])scan=shift(?![\w.-])/.test(String(text || "")); }
+/* one scan of the shift code: starts the shift, or ends it into the report (openReport) */
 function applyScan(db, user, text, openReport) {
-  var t = scanTarget(db, user, text);
-  if (t.err) { toast(t.err, "error"); return false; }
+  if (!isShiftCode(text)) { toast("That is not the WorkDesk shift QR code.", "error"); return false; }
+  if (!can(user, "reportOwnTime")) { toast("Your role does not carry time-reporting rights.", "error"); return false; }
   var cur = readTimer();
-  if (cur && cur.scan === t.key) {
+  if (cur) {
+    var end = round5(new Date());
     writeTimer(null);
     openReport(timerForm(user, cur));
-    toast(tr("Timer stopped on {name}.", { name: t.label }), "ok");
+    toast(tr("Shift ended at {time} — fill in what you worked on.", { time: end }), "ok");
     return true;
   }
-  var next = newTimer(t);
-  if (cur) openReport(timerForm(user, cur));
-  writeTimer(next);
-  toast(cur ? tr("Switched to {name} — the timer restarted at {time}. Report the time before it.", { name: t.label, time: next.start })
-            : tr("Timer started on {name} at {time}.", { name: t.label, time: next.start }), "ok");
+  var t = newTimer();
+  writeTimer(t);
+  toast(tr("Shift started at {time}.", { time: t.start }), "ok");
   return true;
 }
 /* a scan link (#/workdesk/time?scan=…) is applied once, then taken off the address */
@@ -24437,10 +24391,10 @@ function QRScanner(p) {
     return function () { alive = false; clearTimeout(wait); if (stream) stream.getTracks().forEach(function (t) { t.stop(); }); };
   }, []);
   var body = [
-    !supported ? h("div", { key: "b", className: "banner gr", id: "qr-unsupported" }, "This browser cannot read QR codes itself. Scan the code with your phone's camera app instead — it opens WorkDesk and starts or stops the timer.")
+    !supported ? h("div", { key: "b", className: "banner gr", id: "qr-unsupported" }, "This browser cannot read QR codes itself. Scan the code with your phone's camera app instead — it opens WorkDesk and starts or ends your shift.")
       : err ? h("div", { key: "b", className: "banner err" }, err)
       : h("div", { key: "b", className: "qrcam" }, h("video", { ref: vref, playsInline: true, muted: true, autoPlay: true, "aria-label": "Camera" }), h("div", { className: "qrframe", "aria-hidden": "true" })),
-    h("div", { key: "c", className: "cap", style: { marginTop: 10 } }, "Point the camera at a work order's QR code. The first scan starts the timer; scanning the same code again stops it.")];
+    h("div", { key: "c", className: "cap", style: { marginTop: 10 } }, "Point the camera at the shift QR code. The first scan starts your shift; the next one ends it.")];
   return p.mobile ? h(Sheet, { title: "Scan a QR code", onClose: p.onClose }, body)
     : h(Modal, { title: "Scan a QR code", size: "md", onClose: p.onClose }, body);
 }
@@ -24602,7 +24556,6 @@ function MobileTime(p) {
         ? h(React.Fragment, null,
             h("div", { className: "clock" }, hhmmss(now - timer.at)),
             h("div", { className: "sub" }, "Running since ", timer.start, " on ", il(timer.date)),
-            timer.label ? h("div", { className: "sub", id: "timer-on" }, h("b", null, timer.label)) : null,
             h("button", { className: "bigbtn stop", onClick: stop }, h(Icon, { n: "square", size: 16 }), "Stop and report"),
             h("button", { className: "bigbtn gh", id: "timer-scan", style: { minHeight: 44, fontSize: 14 }, onClick: function () { setScanning(true); } }, h(Icon, { n: "qr", size: 16 }), "Scan a QR code"),
             h("button", { className: "bigbtn gh", style: { minHeight: 44, fontSize: 14 }, onClick: function () { persistTimer(null); toast("Timer discarded.", ""); } }, "Discard the timer"))

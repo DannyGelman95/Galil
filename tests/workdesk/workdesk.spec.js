@@ -778,45 +778,41 @@ test.describe("phone layout", () => {
   });
 });
 
-/* ---------- QR codes: scan to start and stop the timer ---------- */
-test.describe("QR codes and the timer", () => {
-  /* a work order on one of Eitan's projects, and a project he is not on */
-  const pick = page => page.evaluate(() => {
-    const d = JSON.parse(localStorage.getItem("galil-workdesk-v1")).data;
-    const mine = d.assignments.filter(a => a.userId === "u-eitan").map(a => a.projectId);
-    const wo = d.workOrders.find(w => mine.includes(w.projectId) && w.status !== "Closed");
-    const other = d.projects.find(p => !mine.includes(p.id));
-    return { wo: wo.id, code: wo.code, project: wo.projectId, other: other.id, otherName: other.name };
-  });
+/* ---------- the shift QR code: scan to start and end the day ---------- */
+test.describe("the shift QR code", () => {
   const timer = page => page.evaluate(() => JSON.parse(localStorage.getItem("galil-workdesk-timer") || "null"));
-  const scan = (page, what) => page.goto(ORIGIN + "/index.html#/workdesk/time?scan=" + what);
+  const scan = page => page.goto(ORIGIN + "/index.html#/workdesk/time?scan=shift");
 
-  test("on a computer, a scan link starts the timer on the work order and the next one stops it into the form", async ({ page }) => {
+  test("on a computer, the first scan starts the shift and the second ends it into the report form", async ({ page }) => {
     const errors = await served(page);
     await signIn(page, "eitan.f@galiltc.co.il");
     await expect(page.locator("#portal-home")).toBeVisible();
-    const t = await pick(page);
-    await scan(page, "wo." + t.wo);
+    await scan(page);
     await expect(page.locator("#timer-strip.on")).toBeVisible();
-    await expect(page.locator("#timer-on")).toContainText(t.code);
-    await expect(page.getByText("Timer started on " + t.code)).toBeVisible();
+    await expect(page.getByText(/Shift started at \d\d:\d\d/)).toBeVisible();
     expect(await page.evaluate(() => location.hash)).toBe("#/workdesk/time");
-    expect((await timer(page)).workOrderId).toBe(t.wo);
-    await scan(page, "wo." + t.wo);
+    const t = await timer(page);
+    expect(t.date).toMatch(/^\d{4}-\d\d-\d\d$/);
+    await scan(page);
     await expect(page.locator("#timer-strip.on")).toHaveCount(0);
     expect(await timer(page)).toBeNull();
-    await expect(page.getByText("Timer stopped on " + t.code)).toBeVisible();
-    const values = await page.locator(".tlform select").evaluateAll(s => s.map(x => x.value));
-    expect(values).toContain(t.wo);
-    expect(values).toContain(t.project);
-    /* a project the person is not on is refused, and nothing starts */
-    await scan(page, "pr." + t.other);
-    await expect(page.getByText("You are not assigned to " + t.otherName)).toBeVisible();
+    await expect(page.getByText(/Shift ended at \d\d:\d\d — fill in what you worked on/)).toBeVisible();
+    /* the form holds the shift's start; client, project and work order are left to choose */
+    const v = await page.locator(".tlform select").evaluateAll(s => s.map(x => x.value));
+    expect(v.slice(1, 3).join(":")).toBe(t.start);
+    expect(errors).toEqual([]);
+  });
+
+  test("anything but the shift code is refused", async ({ page }) => {
+    const errors = await served(page);
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await page.goto(ORIGIN + "/index.html#/workdesk/time?scan=wo.x");
+    await expect(page.getByText("That is not the WorkDesk shift QR code.")).toBeVisible();
     expect(await timer(page)).toBeNull();
     expect(errors).toEqual([]);
   });
 
-  test("the in-app scanner reads a code from the camera; another code switches the timer", async ({ page }) => {
+  test("the in-app scanner reads the shift code from the camera", async ({ page }) => {
     await page.addInitScript(() => {
       window.__scan = null;
       window.BarcodeDetector = class { detect() { return Promise.resolve(window.__scan ? [{ rawValue: window.__scan }] : []); } };
@@ -828,59 +824,42 @@ test.describe("QR codes and the timer", () => {
     const errors = await served(page);
     await signIn(page, "eitan.f@galiltc.co.il");
     await page.click("#tile-workdesk");
-    const t = await pick(page);
-    const d = await data(page);
-    const proj = d.projects.find(p => p.id === t.project);
     await page.click("#timer-scan");
     await expect(page.locator(".qrcam video")).toBeVisible();
-    await page.evaluate(u => { window.__scan = u; }, ORIGIN + "/index.html#/workdesk/time?scan=wo." + t.wo);
+    await page.evaluate(u => { window.__scan = u; }, ORIGIN + "/index.html#/workdesk/time?scan=shift");
     await expect(page.locator(".qrcam")).toHaveCount(0);
-    expect((await timer(page)).workOrderId).toBe(t.wo);
-    /* the project's own code: the running work-order timer stops into the form and a new one starts */
-    await page.evaluate(() => { window.__scan = null; });
-    await page.click("#timer-scan");
-    await page.evaluate(u => { window.__scan = u; }, "pr." + t.project);
-    await expect(page.locator(".qrcam")).toHaveCount(0);
-    await expect(page.locator("#timer-on")).toContainText(proj.name);
-    expect((await timer(page)).scan).toBe("pr." + t.project);
-    expect(await page.locator(".tlform select").evaluateAll(s => s.map(x => x.value))).toContain(t.wo);
+    expect(await timer(page)).not.toBeNull();
     expect(errors).toEqual([]);
   });
 
-  test("Management prints a QR code per work order and per project, each a scan link", async ({ page }) => {
+  test("Management shows the one shift QR code, a link to the Time Log, to print or download", async ({ page }) => {
     const errors = await local(page);
     await signIn(page, "tamir@galiltc.co.il");
     await page.click("#tile-workdesk");
     await page.getByRole("tab", { name: /Management/ }).click();
-    await page.getByRole("button", { name: "Work Orders", exact: true }).click();
-    await page.getByRole("button", { name: "QR code for the timer" }).first().click();
-    const card = page.locator("#qr-codes .qrcard");
-    await expect(card).toHaveCount(1);
+    await page.click("#shift-qr-btn");
+    const card = page.locator("#shift-qr");
     await expect(card.locator("svg")).toBeVisible();
-    expect(await card.getAttribute("data-url")).toMatch(/#\/workdesk\/time\?scan=wo\./);
-    await page.getByRole("button", { name: "Close" }).click();
-    await page.click("#wo-qr-all");
-    expect(await page.locator("#qr-codes .qrcard").count()).toBeGreaterThan(1);
-    await page.getByRole("button", { name: "Close" }).click();
-    await page.getByRole("button", { name: "Projects", exact: true }).click();
-    await page.getByRole("button", { name: "QR code for the timer" }).first().click();
-    expect(await page.locator("#qr-codes .qrcard").getAttribute("data-url")).toMatch(/scan=pr\./);
+    expect(await card.getAttribute("data-url")).toMatch(/index\.html#\/workdesk\/time\?scan=shift$/);
+    await expect(page.getByRole("button", { name: "Print" })).toBeEnabled();
+    const dl = page.waitForEvent("download");
+    await page.getByRole("button", { name: "Download image" }).click();
+    expect((await dl).suggestedFilename()).toBe("GALIL-WorkDesk-shift-QR.png");
     expect(errors).toEqual([]);
   });
 
   test.describe("on a phone", () => {
     test.use({ viewport: { width: 390, height: 844 } });
-    test("a scan link starts the phone timer on the work order; the next opens the report filled in", async ({ page }) => {
+    test("the first scan starts the phone timer; the second opens Report time to fill in the work", async ({ page }) => {
       const errors = await served(page);
       await signIn(page, "eitan.f@galiltc.co.il");
       await expect(page.locator("#portal-home")).toBeVisible();
-      const t = await pick(page);
-      await scan(page, "wo." + t.wo);
-      await expect(page.locator(".timer #timer-on")).toContainText(t.code);
-      await scan(page, "wo." + t.wo);
+      await scan(page);
+      await expect(page.locator(".timer .clock")).toHaveText(/^\d\d:\d\d:\d\d$/);
+      await scan(page);
       const sheet = page.getByRole("dialog", { name: "Report time" });
       await expect(sheet).toBeVisible();
-      expect(await sheet.locator("select").evaluateAll(s => s.map(x => x.value))).toContain(t.wo);
+      await expect(sheet.getByText("Client")).toBeVisible();
       expect(await timer(page)).toBeNull();
       expect(errors).toEqual([]);
     });
