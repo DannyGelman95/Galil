@@ -625,6 +625,17 @@ test.describe("phone layout", () => {
     });
   });
 
+  test("a new planned block runs 09:00–18:00", async ({ page }) => {
+    const errors = await served(page);
+    await signIn(page, "danny.gelman@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await page.locator(".mnav button").filter({ hasText: "Plan" }).click();
+    await page.getByRole("button", { name: "+ plan this day" }).first().click();
+    const times = await page.locator('[role=dialog] input[type="time"], .ovl input[type="time"], .sheet input[type="time"]').evaluateAll(s => s.map(x => x.value));
+    expect(times.slice(0, 2)).toEqual(["09:00", "18:00"]);
+    expect(errors).toEqual([]);
+  });
+
   test("Plan shows a month, and copies this week's plan to next week once", async ({ page }) => {
     const errors = await served(page);
     await signIn(page, "danny.gelman@galiltc.co.il");

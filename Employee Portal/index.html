@@ -20783,7 +20783,7 @@ function PlannerTab(p) {
 
   function addPlan(date, seed) {
     setModal(Object.assign({
-      id: null, userId: who, date: date, start: "09:00", end: "17:00",
+      id: null, userId: who, date: date, start: "09:00", end: "18:00",
       clientId: "", projectId: "", workOrderId: "", taskId: "", description: ""
     }, seed || {}));
   }
@@ -24744,7 +24744,7 @@ function MobilePlanner(p) {
   var planned = sum(plans), actual = sum(actuals);
   var cap = Number(user.weeklyHours || db.settings.weeklyHours || 42);
 
-  function newPlan(ds) { setModal({ id: null, userId: user.id, date: ds, start: "09:00", end: "17:00", hourType: "yellow", clientId: "", projectId: "", workOrderId: "", taskId: "", description: "" }); }
+  function newPlan(ds) { setModal({ id: null, userId: user.id, date: ds, start: "09:00", end: "18:00", hourType: "yellow", clientId: "", projectId: "", workOrderId: "", taskId: "", description: "" }); }
   /* copy one planned block to other dates; a date that already holds the same block is skipped */
   function copyPlan(x, dates) {
     var made = [];
