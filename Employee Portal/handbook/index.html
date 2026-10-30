@@ -16,7 +16,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cpath d='M78 34H42a10 10 0 00-10 10v152a10 10 0 0010 10h36' fill='none' stroke='%231F3A66' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M162 34h36a10 10 0 0110 10v152a10 10 0 01-10 10h-36' fill='none' stroke='%231F3A66' stroke-width='18' stroke-linecap='round'/%3E%3Cpath d='M148 92A44 44 0 10152 148V122H122' fill='none' stroke='%23F08A24' stroke-width='20' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="../shared/fonts/fonts.css">
 <link rel="stylesheet" href="../shared/chrome.css?v=2">
-<link rel="stylesheet" href="handbook.css?v=23">
+<link rel="stylesheet" href="handbook.css?v=24">
 </head>
 <body>
 
@@ -60,20 +60,23 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <section class="ch" id="ch-portal" data-part="Employee Portal" data-title="The Employee Portal">
     <p class="part">Part A · The Employee Portal</p>
     <div class="ch-head"><span class="ch-num">01</span><h2>The Employee Portal</h2></div>
-    <p class="lede">One address, one sign-in, four products. The Employee Portal is where every GALIL employee starts the day: the home page offers WorkDesk, Taskana, this Handbook and the Knowledge Base, each as its own tile, and opens the ones your access includes.</p>
+    <p class="lede">One address, one sign-in, seven products. The Employee Portal is where every GALIL employee starts the day: the home page offers WorkDesk, Taskana, this Handbook, the Knowledge Base, Model Studio, HR and Defense News, each as its own tile, and opens the ones your access includes.</p>
     <div class="films" data-films="portal-home-desktop portal-home-phone"></div>
 
     <figure>
-      <img src="img/p01-portal-home.png" alt="The Employee Portal home page: a greeting, four tiles for WorkDesk, Taskana, the Handbook and the Knowledge Base, and shortcuts below.">
+      <img src="img/p01-portal-home.png" alt="The Employee Portal home page: a greeting, this week's birthdays, and tiles for WorkDesk, Taskana, the Handbook, the Knowledge Base, Model Studio, HR and Defense News, the last two tiles wide with the latest headlines.">
       <figcaption><span class="fno">Fig 1.1</span><span>The home page after signing in. Each tile shows a live figure — your hours this week, your open tasks — and opens its product. A tile you have no access to says so instead of opening.</span></figcaption>
     </figure>
 
-    <h3>The four products</h3>
+    <h3>The products</h3>
     <div class="tiles">
       <div class="tile"><b>WorkDesk</b>Report work, sick and vacation time and expenses. Managers follow budgets against recorded hours and run people, clients, projects and work orders. <a href="#workdesk">Part B</a>.</div>
       <div class="tile"><b>Taskana</b>Tasks, boards and reviews for every client project. People, clients, projects and work orders come straight from WorkDesk, with budget and hours-bank indicators. <a href="#taskana">Part C</a>.</div>
       <div class="tile"><b>Handbook</b>This guide: every function of the portal, WorkDesk and Taskana, and which roles may use it. It opens on a search box and a card for every chapter; a chapter opens on its own page with <strong>All topics</strong>, <strong>Previous</strong> and <strong>Next</strong>.</div>
       <div class="tile"><b>Knowledge Base</b>Onboarding, company rules and policies, security and training how-to's, laid out the same way: search, topic cards, one article at a time. Opens from its own tile and from <a href="../kb/index.html">kb/</a>.</div>
+      <div class="tile"><b>Model Studio</b>CAD and 3D models: explore and set up the model, write assembly and disassembly procedures, animate them and record video, build illustrated parts catalogues, and publish interactive manuals. On a computer only. <a href="#ch-studio">Part D</a>.</div>
+      <div class="tile"><b>HR</b>Company news, events with RSVPs, surveys, performance reviews, the people directory with birthdays and work anniversaries, and recognition. <a href="#ch-hr">Part E</a>.</div>
+      <div class="tile"><b>Defense News</b>Headlines about IAI, Elbit Systems, Rafael and the wider Israeli defense industry, in English and Hebrew, with the latest on the home page tile. <a href="#ch-news">Part F</a>.</div>
     </div>
 
     <h3>Who keeps what</h3>
@@ -87,6 +90,9 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
         <tr><td><strong>Time, leave, expenses, approvals</strong></td><td>WorkDesk</td><td>Taskana (hours reported on each task)</td></tr>
         <tr><td><strong>Tasks, comments, sub-tasks, checklists, saved views</strong></td><td>Taskana</td><td>WorkDesk (the Time Log's <em>Taskana task</em> list and the Week Planner's suggestions)</td></tr>
         <tr><td><strong>Articles</strong></td><td>Knowledge Base</td><td>—</td></tr>
+        <tr><td><strong>News posts, events, surveys, reviews, kudos</strong></td><td>HR (its own data file)</td><td>People, managers and birthdays come from WorkDesk</td></tr>
+        <tr><td><strong>Model Studio projects</strong></td><td>This browser, and project files you save</td><td>—</td></tr>
+        <tr><td><strong>Headlines</strong></td><td>Defense News (built on publishing)</td><td>The portal home page</td></tr>
       </tbody>
     </table></div>
     <p>So a new client, project, work order or person is set up once, in WorkDesk, and appears in Taskana straight away; and time is reported once, in WorkDesk, and counts on the Taskana task it names.</p>
@@ -111,7 +117,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <li>While the shift runs, the button turns red and reads <strong>Scan to end your shift</strong>, with the time it started and how long it has been running. The same running shift shows on WorkDesk's Time tab.</li>
       <li>When you leave, tap <strong>Scan to end your shift</strong> and scan the code again. WorkDesk opens on its Time tab with <strong>Report time</strong> filled in with the date and the start and end times. Choose <strong>Worked from</strong>, the client, project, work order and task, describe the work, and save — the entry then goes through the same rules as any other (see <a href="#ch-time">Time Log</a>).</li>
     </ol>
-    <figure class="fig-narrow">
+    <figure class="fig-phone">
       <img src="img/p05-qr-time.png" alt="The portal home page on a phone, during a shift: a red Scan to end your shift button, with the shift's start time and running clock beneath it, above the birthday reminders and the WorkDesk tile.">
       <figcaption><span class="fno">Fig 1.2</span><span>QR time reporting on a phone, during a shift. Before the shift starts, the button is orange and reads <b>QR time reporting</b>.</span></figcaption>
     </figure>
@@ -121,14 +127,14 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </div>
 
     <h3 id="h-hr-admin">HR, for HR admins</h3>
-    <p>HR admins — the CEO, Operations Managers and the office by default; anyone else once their portal access sets HR to <strong>Admin</strong> (see <a href="#ch-access">Portal access</a>) — see an <strong>HR admin — create</strong> panel on HR's home page: <strong>New survey</strong>, <strong>New review cycle</strong>, <strong>New post</strong> and <strong>New event</strong>. Each review cycle carries its own form: the competencies to rate, and the written questions of the self-assessment and of the manager review, one per line. Answers already given stay with their questions when the list changes, and the cycle's CSV includes them. The Knowledge Base article <a href="../kb/index.html#/hr-admin">HR for HR admins</a> walks through it.</p>
+    <p>HR is covered in full in <a href="#ch-hr">Part E</a>. HR admins — the CEO and Operations Managers by default; anyone else once their portal access sets HR to <strong>Admin</strong> (see <a href="#ch-access">Portal access</a>) — see an <strong>HR admin — create</strong> panel on HR's home page: <strong>New survey</strong>, <strong>New review cycle</strong>, <strong>New post</strong> and <strong>New event</strong>. Each review cycle carries its own form: the competencies to rate, and the written questions of the self-assessment and of the manager review, one per line. Answers already given stay with their questions when the list changes, and the cycle's CSV includes them. The Knowledge Base article <a href="../kb/index.html#/hr-admin">HR for HR admins</a> walks through it.</p>
     <figure>
       <img src="img/h01-hr-create.png" alt="HR's home page, the HR admin — create panel: New survey, New review cycle, New post and New event buttons, and a line explaining that a review cycle carries its own form.">
       <figcaption><span class="fno">Fig 1.3</span><span>The HR admin panel on HR's home page.</span></figcaption>
     </figure>
 
     <h3>Where the data is kept</h3>
-    <p>The portal has no server. It is a set of web pages, and its data lives in two files — one for WorkDesk, one for Taskana — wherever <code>config.js</code> says:</p>
+    <p>The portal has no server. It is a set of web pages, and its data lives in three files — one for WorkDesk, one for Taskana, one for HR — wherever <code>config.js</code> says:</p>
     <dl class="kv">
       <dt>GitHub</dt><dd>The files are kept on a branch of the company's repository. Each person connects once with a GitHub access token (the portal asks for it after sign-in).</dd>
       <dt>OneDrive</dt><dd>The files are kept in a OneDrive folder, using the same Microsoft sign-in as the portal.</dd>
@@ -194,21 +200,21 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
   <section class="ch" id="ch-access" data-part="Employee Portal" data-title="Portal access" data-caps="openWorkdesk">
     <div class="ch-head"><span class="ch-num">03</span><h2>Portal access</h2></div>
-    <p class="lede">Each person has their own access across the portal: whether they may open WorkDesk, which role they have in Taskana, and whether they may read the Handbook and the Knowledge Base. It starts from their WorkDesk role and can be changed person by person.</p>
+    <p class="lede">Each person has their own access across the portal: whether they may open WorkDesk, which role they have in Taskana, whether they may read the Handbook and the Knowledge Base, whether they may open Model Studio, and their role in HR. It starts from their WorkDesk role and can be changed person by person. Defense News is open to everyone signed in.</p>
     <div class="films" data-films="workdesk-management-people-desktop"></div>
     <div class="locked-note"></div>
 
     <h3>The defaults</h3>
     <p>Until someone changes it, a person's access follows their WorkDesk role:</p>
     <div class="tw"><table>
-      <thead><tr><th style="width:190px">WorkDesk role</th><th>WorkDesk</th><th>Taskana role</th><th>Handbook</th><th>Knowledge Base</th></tr></thead>
+      <thead><tr><th style="width:150px">WorkDesk role</th><th>WorkDesk</th><th>Taskana role</th><th>Handbook</th><th>Knowledge Base</th><th>Model Studio</th><th>HR role</th></tr></thead>
       <tbody>
-        <tr><td><code>CEO</code> <code>OPS</code></td><td>Yes</td><td><strong>Admin</strong></td><td>Yes</td><td>Yes</td></tr>
-        <tr><td><code>PM</code> <code>TL</code></td><td>Yes</td><td><strong>Manager</strong></td><td>Yes</td><td>Yes</td></tr>
-        <tr><td><code>SEN</code> <code>EMP</code></td><td>Yes</td><td><strong>Member</strong></td><td>Yes</td><td>Yes</td></tr>
-        <tr><td><code>FIN</code></td><td>Yes</td><td><strong>Viewer</strong></td><td>Yes</td><td>Yes</td></tr>
-        <tr><td><code>EXT</code></td><td>Yes</td><td><strong>External</strong></td><td>Yes</td><td>No</td></tr>
-        <tr><td><code>VIEW</code></td><td>Yes</td><td><strong>Viewer</strong></td><td>Yes</td><td>No</td></tr>
+        <tr><td><code>CEO</code> <code>OPS</code></td><td>Yes</td><td><strong>Admin</strong></td><td>Yes</td><td>Yes</td><td>Yes</td><td><strong>Admin</strong></td></tr>
+        <tr><td><code>PM</code> <code>TL</code></td><td>Yes</td><td><strong>Manager</strong></td><td>Yes</td><td>Yes</td><td>Yes</td><td><strong>Member</strong></td></tr>
+        <tr><td><code>SEN</code> <code>EMP</code></td><td>Yes</td><td><strong>Member</strong></td><td>Yes</td><td>Yes</td><td>Yes</td><td><strong>Member</strong></td></tr>
+        <tr><td><code>FIN</code></td><td>Yes</td><td><strong>Viewer</strong></td><td>Yes</td><td>Yes</td><td>Yes</td><td><strong>Member</strong></td></tr>
+        <tr><td><code>EXT</code></td><td>Yes</td><td><strong>External</strong></td><td>Yes</td><td>No</td><td>Yes</td><td>None</td></tr>
+        <tr><td><code>VIEW</code></td><td>Yes</td><td><strong>Viewer</strong></td><td>Yes</td><td>No</td><td>No</td><td><strong>Member</strong></td></tr>
       </tbody>
     </table></div>
     <p>What a person can do <em>inside</em> WorkDesk is still their WorkDesk role (<a href="#ch-roles">Roles and permissions</a>); what they can do inside Taskana is their Taskana role (<a href="#ch-tk-roles">Taskana roles, insights and data</a>). The full set of portal and Taskana defaults, by role:</p>
@@ -219,18 +225,18 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <ol class="steps">
       <li>Open <strong>WorkDesk → Management → People</strong>. The <strong>Portal access</strong> column shows each person's access as chips.</li>
       <li>Click <strong><i class="ui-ic" data-ic="edit"></i></strong> beside the chips.</li>
-      <li>Tick or clear <strong>WorkDesk</strong>, <strong>Handbook</strong> and <strong>Knowledge Base</strong>, and choose the <strong>Taskana role</strong> — or <em>No access</em>.</li>
+      <li>Tick or clear <strong>WorkDesk</strong>, <strong>Handbook</strong>, <strong>Knowledge Base</strong> and <strong>Model Studio</strong>, and choose the <strong>Taskana role</strong> and the <strong>HR role</strong> (<em>Admin</em>, <em>Member</em>) — or <em>No access</em>.</li>
       <li><strong>Save</strong>. <strong>Use the role defaults</strong> returns the person to the table above.</li>
     </ol>
     <figure class="fig-narrow">
-      <img src="img/p04-access.png" alt="The Portal access dialog with checkboxes for WorkDesk, the Handbook and the Knowledge Base and a Taskana role selector.">
+      <img src="img/p04-access.png" alt="The Portal access dialog: WorkDesk, the Taskana role, the Handbook, the Knowledge Base, Model Studio and the HR role.">
       <figcaption><span class="fno">Fig 3.1</span><span>Portal access for one person. The change applies the next time they open the home page, and is written to the audit log.</span></figcaption>
     </figure>
     <div class="note">
       <span class="tag">Changing a role changes the defaults</span>
       <p>A person whose access was never changed follows their role: promoting an Employee to Team Lead makes them a Taskana Manager too. A person whose access was changed by hand keeps it until <strong>Use the role defaults</strong> is chosen.</p>
     </div>
-    <p>Deactivating a person in WorkDesk closes the whole portal to them — Taskana, the Handbook and the Knowledge Base included.</p>
+    <p>Deactivating a person in WorkDesk closes the whole portal to them — Taskana, the Handbook, the Knowledge Base, Model Studio, HR and Defense News included.</p>
   </section>
 
   <!-- ============ 1 ============ -->
@@ -569,7 +575,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       </tbody>
     </table></div>
     <p>Pull the page down from the top to refresh it — see <a href="#h-refresh">Refreshing the portal</a>.</p>
-    <div class="fig-pair">
+    <div class="fig-pair phones">
       <figure>
         <img src="img/98-mobile-timelog.png" alt="WorkDesk's mobile Time tab: a large timer card with Start the timer, followed by a scrollable list of this month's entries as cards.">
         <figcaption><span class="fno">Fig 7.4</span><span>The Time tab on a phone — the timer is the primary way to report a day's work.</span></figcaption>
@@ -611,14 +617,14 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <li>Click <strong>Add entry</strong>.</li>
     </ol>
 
-    <figure>
+    <figure class="fig-phone">
       <img src="img/11-emp-timelog-form.png" alt="The Report time form column: date with Today, type, start and end with the derived hours, the Red/Yellow/Blue toggle, client, project, work order, Taskana task, a large description box, notes and the Add entry button.">
       <figcaption><span class="fno">Fig 8.2</span><span>The report form — one field per row: a new entry starts at 09:00–18:00, and <b>Worked from</b> sits under the hour type. The Blue option is only offered to roles that manage clients' projects. The dropdowns list only what you are assigned to — if a project is missing, you are not assigned to it yet.</span></figcaption>
     </figure>
 
     <h4>The timer</h4>
     <p>At the top of the form, <strong><i class="ui-ic" data-ic="play"></i> Start the timer</strong> starts a clock. While it runs, the strip shows the running time and when it started; <strong><i class="ui-ic" data-ic="square"></i> Stop and report</strong> stops it and fills the form with the date, the start time and now, both rounded to the nearest five minutes — add the rest and save. <strong>Discard</strong> throws the timer away. It is the same timer as the phone's Time tab and as <a href="#h-qr-time">QR time reporting</a>, so a shift started on the phone shows here on the same browser — but each device keeps its own.</p>
-    <figure class="fig-narrow">
+    <figure class="fig-phone">
       <img src="img/13-emp-timer-strip.png" alt="The top of the Report time form with the timer running: a clock reading 02:17:01, since 20:05, a Stop and report button and Discard.">
       <figcaption><span class="fno">Fig 8.3</span><span>The timer, running. Stopped, it reads <b>Start the timer</b> again.</span></figcaption>
     </figure>
@@ -1787,6 +1793,269 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   </section>
 
   <!-- ============ 18 ============ -->
+  <!-- ============ Model Studio ============ -->
+  <section class="ch" id="ch-studio" data-part="Model Studio" data-title="What Model Studio is" data-caps="openStudio">
+    <p class="part">Part D · Model Studio</p>
+    <div class="ch-head"><span class="ch-num">26</span><h2>What Model Studio is</h2></div>
+    <p class="lede">Technical documentation from CAD and 3D models, in the browser: explore a model and set it up, write assembly, disassembly and maintenance procedures, animate them and record them as video, build an illustrated parts catalogue, and publish everything as an interactive manual. Nothing is uploaded — files are read on your computer.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="openStudio"></div>
+
+    <figure>
+      <img src="img/s01-studio.png" alt="Model Studio with the sample shaft support open: the toolbar across the top, the parts tree on the left, the 3D view in the middle, the storyboard with Procedures, Illustrated parts catalogue and Views under it, and the Selected part, Display, Section cut and Image panels on the right.">
+      <figcaption><span class="fno">Fig 26.1</span><span>Model Studio with the sample model. The parts tree (left), the view, the storyboard under it, and the panels on the right; the status bar sums up the model.</span></figcaption>
+    </figure>
+
+    <h3>Opening it</h3>
+    <ul>
+      <li>From its tile on the portal home page, or at <code>studio/</code> beside the portal. It asks for the portal sign-in, and for Model Studio in your <a href="#ch-access">portal access</a> (every role but Viewer by default).</li>
+      <li>It is for computers: phones and tablets get no tile, and the page asks for a computer.</li>
+      <li><strong>Open</strong> (<code>Ctrl</code>+<code>O</code>) a model, or drop files on the window. <strong>Sample</strong> opens a small assembly to try things on.</li>
+    </ul>
+
+    <h3>What it opens</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:230px">Kind</th><th>Formats</th></tr></thead>
+      <tbody>
+        <tr><td><strong>CAD</strong> — exact geometry</td><td>STEP (<code>.step</code>, <code>.stp</code>), IGES (<code>.iges</code>, <code>.igs</code>), BREP</td></tr>
+        <tr><td><strong>3D meshes</strong></td><td>glTF / GLB, OBJ (with its <code>.mtl</code> and textures), STL, 3MF, PLY, FBX, Collada (<code>.dae</code>), VRML (<code>.wrl</code>), 3DS, AMF</td></tr>
+      </tbody>
+    </table></div>
+    <p>Several files can be opened together — an OBJ with its MTL and textures, a glTF with its <code>.bin</code>. Native SolidWorks, Inventor, Creo, CATIA, NX, Parasolid, Composer and Cortona3D files are closed formats no browser reads: save them as <strong>STEP AP214 or AP242</strong> first (SolidWorks: <em>File → Save As → STEP</em>); names, colours and the assembly structure come across. Model Studio says so if you open one.</p>
+
+    <h3>Parts and the parts list</h3>
+    <ul>
+      <li><strong>Parts</strong> shows the assembly tree with each part's colour, an <i class="ui-ic" data-ic="eye"></i> to show or hide it, a search box, and <strong>Show all</strong>, <strong>Hide</strong>, <strong>Isolate</strong> and <strong>Expand</strong>.</li>
+      <li><strong>Parts list</strong> gives item numbers and quantities; <strong>Download (CSV)</strong> saves it.</li>
+      <li><strong>Part data</strong> — part number, description, unit and notes — is typed in the <strong>Selected part</strong> panel, or read from a CSV with the columns <em>Name, Part number, Description, Unit, Notes</em> (English or Hebrew headings).</li>
+    </ul>
+
+    <h3>Selecting, moving and the camera</h3>
+    <ul>
+      <li>Click a part in the view or the tree; <code>Ctrl</code>+click adds more, <code>Alt</code>+click takes the assembly it belongs to. The <strong>Selected part</strong> panel shows its size, triangles and item number, and changes its <strong>colour</strong> and <strong>opacity</strong>.</li>
+      <li><strong>Move</strong> (<code>T</code>) and <strong>Rotate</strong> (<code>R</code>) give handles on the selection; <strong>Move exactly</strong> moves it by X/Y/Z in model units or turns it by a number of degrees. <strong>Reset</strong> puts a part, or everything, back.</li>
+      <li><strong>Explode</strong> pulls the assembly apart with a slider; <strong>Motion lines</strong> draw dashed trails from where parts belong.</li>
+      <li>The camera: drag to turn, right-drag to pan, the wheel zooms to the pointer; <strong>Front · Back · Left · Right · Top · Bottom · Iso</strong> (keys <code>1</code>–<code>7</code>), roll by 90°, <strong>Perspective</strong> or <strong>Orthographic</strong>, <strong>Fit</strong> (<code>F</code>) everything or the selection (<code>Shift</code>+<code>F</code>).</li>
+    </ul>
+
+    <h3>Styles, section, measuring and callouts</h3>
+    <ul>
+      <li><strong>Style</strong>: shaded, shaded with edges, technical illustration, line drawing (hidden lines removed), X-ray, wireframe.</li>
+      <li><strong>Section cut</strong> along X, Y or Z, with a position slider.</li>
+      <li><strong>Measure</strong> (<code>M</code>): two clicks give the distance, snapping to a nearby corner; the figure follows parts as they move. Right-click a measurement to delete it.</li>
+      <li><strong>Callouts</strong>: numbered balloons pointing at parts — drag to place, double-click to edit, right-click to delete.</li>
+      <li><strong>Display</strong>: background, light, edge angle, floor shadow, axes, and <strong>Z is up</strong> for models from CATIA, NX and most STL files.</li>
+      <li>Every change can be undone and redone — <code>Ctrl</code>+<code>Z</code>, <code>Ctrl</code>+<code>Y</code>.</li>
+    </ul>
+
+    <h3>Views and images</h3>
+    <p>A <strong>view</strong> keeps the camera, the parts shown, their positions and colours, the explode, the style, the section, the background and the callouts. Views are kept in the browser for each model file, can be downloaded as JSON and loaded again, and <strong>Images of all views</strong> exports every one in a ZIP. <strong>Save image</strong> (<code>Ctrl</code>+<code>Shift</code>+<code>S</code>) writes a PNG or JPEG at the screen size, HD, 4K, A4 at 300 dpi or any size, with smoothing and an optional transparent background; a frame on the screen shows exactly what the image will hold.</p>
+
+    <h3>Keyboard shortcuts</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:230px">Keys</th><th>Does</th></tr></thead>
+      <tbody>
+        <tr><td><code>Ctrl</code>+<code>O</code></td><td>Open a model</td></tr>
+        <tr><td><code>Ctrl</code>+<code>Z</code> · <code>Ctrl</code>+<code>Y</code></td><td>Undo · redo</td></tr>
+        <tr><td><code>Ctrl</code>+<code>Shift</code>+<code>S</code></td><td>Save an image</td></tr>
+        <tr><td><code>F</code> · <code>Shift</code>+<code>F</code></td><td>Fit everything · fit the selection</td></tr>
+        <tr><td><code>1</code>–<code>7</code></td><td>Front, back, left, right, top, bottom, isometric</td></tr>
+        <tr><td><code>H</code> · <code>Shift</code>+<code>H</code> · <code>I</code></td><td>Hide the selection · show all · isolate</td></tr>
+        <tr><td><code>T</code> · <code>R</code></td><td>Move · rotate the selected part</td></tr>
+        <tr><td><code>M</code></td><td>Measure between two points</td></tr>
+        <tr><td><code>Ctrl</code>+<code>A</code></td><td>Select every visible part</td></tr>
+        <tr><td><code>Space</code></td><td>Play or stop the procedure</td></tr>
+        <tr><td><code>Esc</code></td><td>Clear the selection, stop playing or measuring</td></tr>
+        <tr><td><code>?</code></td><td>The list of shortcuts</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <section class="ch" id="ch-studio-docs" data-title="Procedures, catalogues and manuals" data-caps="openStudio">
+    <div class="ch-head"><span class="ch-num">27</span><h2>Procedures, catalogues and manuals</h2></div>
+    <p class="lede">The storyboard under the view turns a model into documentation: procedures that animate step by step, an illustrated parts catalogue, saved views — and a single-file interactive manual that holds them all.</p>
+    <div class="locked-note"></div>
+
+    <h3>Procedures</h3>
+    <p>A procedure is a list of steps. Each step is a picture of the model — camera, the parts shown, where they are, colours, explode, style, section and callouts — with a title, instructions, a note, caution or warning, the tools and materials, and how long its motion and pause last.</p>
+    <ol class="steps">
+      <li>Set the model up for the step, then click <strong>+ Add step from the screen</strong>. <strong>Update from the screen</strong> replaces a step's picture.</li>
+      <li>Write the step's <strong>title</strong>, <strong>instructions</strong> and any <strong>notice</strong>.</li>
+      <li><strong>Play</strong> (<code>Space</code>) animates from step to step: parts slide and turn, hidden parts fade, the camera flies, and the step text shows as a caption.</li>
+    </ol>
+    <ul>
+      <li><strong>Make disassembly steps</strong> writes a first draft: one step per part (all copies together), outermost first, each sliding out along its explode direction as it fades; the largest part stays.</li>
+      <li><strong>Reverse into a new procedure</strong> turns a disassembly into the assembly, or the other way: the steps in reverse order, <em>Remove</em> becoming <em>Install</em>.</li>
+      <li><strong>Record video</strong> plays the procedure into an MP4 (or WebM) at the image size, with the step text as captions when <strong>Step text in the video</strong> is ticked.</li>
+    </ul>
+    <figure>
+      <img src="img/s02-studio-procedure.png" alt="Model Studio's Procedures tab: a disassembly procedure of seven steps as cards, step 3 Remove the Bolt M8 selected, and its title, instructions and notice on the right; in the view, the bolts are hidden.">
+      <figcaption><span class="fno">Fig 27.1</span><span>A disassembly procedure drafted with <b>Make disassembly steps</b>: step 3 removes the four bolts.</span></figcaption>
+    </figure>
+
+    <h3>Illustrated parts catalogue</h3>
+    <p>A figure is a picture with numbered callouts and the list of the parts it shows.</p>
+    <ul>
+      <li><strong>Balloon the visible parts</strong> puts a callout on every visible item, laid out around the model so leaders don't cross.</li>
+      <li><strong>Add figure</strong> keeps the screen as a figure; <strong>Update from the screen</strong> replaces it.</li>
+      <li><strong>Make figures for each assembly</strong> makes a ballooned figure for the whole model and for each sub-assembly.</li>
+    </ul>
+    <figure>
+      <img src="img/s03-studio-ipc.png" alt="The Illustrated parts catalogue tab: the model with seven numbered callouts, and figure 1 Shaft support assembly with its seven items.">
+      <figcaption><span class="fno">Fig 27.2</span><span>An IPC figure: every visible part ballooned, and the figure's items listed beside it.</span></figcaption>
+    </figure>
+
+    <h3>Views and the project</h3>
+    <p><strong>Views</strong> are saved set-ups to come back to, export as images, or turn into a step or a figure. The project — procedures, figures, views and part data — is kept in the browser for each model file; <strong>Project → Save project file</strong> writes it to a file to share or keep with the model, and <strong>Open project file</strong> brings it back.</p>
+
+    <h3>Publishing the interactive manual (IETM)</h3>
+    <p><strong>Publish</strong> makes one HTML file that opens in any browser, offline and straight from the disk. Give it a title, document number, revision and publisher, and choose what goes in:</p>
+    <ul>
+      <li>every procedure and its steps, each animated from the one before, with <em>Play from here</em>;</li>
+      <li>every IPC figure with its callouts and parts table (item, part number, description, quantity, unit);</li>
+      <li>the interactive 3D model — click a part to see its item, description and part number;</li>
+      <li>a print layout — cover, contents, every step with its picture and text, the figures and the parts list — so <em>Print or save as PDF</em> gives the paper manual.</li>
+    </ul>
+    <figure class="fig-narrow">
+      <img src="img/s04-studio-publish.png" alt="The Publish an interactive manual window: title, document number, revision and publisher, and checkboxes for Procedures, Illustrated parts catalogue and Interactive 3D model.">
+      <figcaption><span class="fno">Fig 27.3</span><span>Publishing the manual. Textures of mesh models are not carried into it; colours are.</span></figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ HR ============ -->
+  <section class="ch" id="ch-hr" data-part="HR" data-title="HR" data-caps="openHr,hrAdmin">
+    <p class="part">Part E · HR</p>
+    <div class="ch-head"><span class="ch-num">28</span><h2>HR</h2></div>
+    <p class="lede">Everything people-related at GALIL, in one place: company news, events and who is coming, surveys, performance reviews, the people directory with birthdays and work anniversaries, and recognition between colleagues.</p>
+    <div class="locked-note"></div>
+    <div class="perm" data-perm="openHr,hrAdmin"></div>
+
+    <figure>
+      <img src="img/h03-hr-home.png" alt="HR's home page: tabs for Home, News, Events, Surveys, Reviews, People and Recognition; a greeting, four figures (surveys waiting, reviews to complete, upcoming events, celebrations), the Waiting for you list, the latest news and what is coming up.">
+      <figcaption><span class="fno">Fig 28.1</span><span>HR's home page. The counts on the Surveys and Reviews tabs are what is waiting for you.</span></figcaption>
+    </figure>
+
+    <h3>Who can do what</h3>
+    <ul>
+      <li><strong>Members</strong> read the news, like and comment, answer events and surveys, write their own reviews (and their team's, as a manager), browse the directory and give kudos.</li>
+      <li><strong>Admins</strong> also publish news and events, build surveys and see their results, and run review cycles. By default the CEO and Operations Managers are admins; External Contractors have no HR. Set it per person in <a href="#ch-access">Portal access</a>.</li>
+      <li>HR keeps its own data file — on GitHub, OneDrive or in this browser, as <code>config.js</code> says — and reads people, managers and birthdays from WorkDesk. The badge in the top bar says where the data is and whether it is saved; on a phone it is a small icon.</li>
+    </ul>
+
+    <h3>Home</h3>
+    <p>Four figures — surveys waiting for you, reviews to complete, upcoming events, celebrations in the next 30 days — then <strong>Waiting for you</strong> (each survey and review step that is yours), the latest news, what is coming up, celebrations and recent recognition. Admins also see <strong>HR admin — create</strong>: <strong>New survey</strong>, <strong>New review cycle</strong>, <strong>New post</strong> and <strong>New event</strong>.</p>
+    <figure>
+      <img src="img/h01-hr-create.png" alt="The HR admin — create panel: New survey, New review cycle, New post and New event.">
+      <figcaption><span class="fno">Fig 28.2</span><span>The admin panel on HR's home page.</span></figcaption>
+    </figure>
+
+    <h3>News</h3>
+    <ul>
+      <li>Posts by category — <em>Company, HR &amp; benefits, People, Achievements, Events</em> — with a filter for each. Pinned posts stay at the top.</li>
+      <li><strong>Like</strong> a post and <strong>comment</strong> on it; you can delete your own comments.</li>
+      <li>Admins write with <strong>New post</strong>: title, category, text (a blank line between paragraphs), <strong>Pin to the top</strong>, and <strong>Publish on</strong> — a later date keeps the post hidden until then.</li>
+    </ul>
+    <figure>
+      <img src="img/h04-hr-news.png" alt="HR's News page: category filters and a list of posts, the pinned one first, each with its category, author, date, likes and comments.">
+      <figcaption><span class="fno">Fig 28.3</span><span>Company news, the pinned post first.</span></figcaption>
+    </figure>
+
+    <h3>Events</h3>
+    <ul>
+      <li><strong>List</strong> or <strong>Calendar</strong>; categories <em>Company, Social, Training, Wellbeing, Holiday</em>.</li>
+      <li>Open an event and answer <strong>Will you come?</strong> — <em>Going</em>, <em>Maybe</em> or <em>Can't go</em>. An event can be limited to a number of places; when it is full, it says so.</li>
+      <li><strong>Add to my calendar</strong> downloads a calendar file; an online event carries its join link.</li>
+      <li>Admins create events (date or several days, times or all day, place, online link, places, organizer), see who is going, maybe and can't, and download the list as CSV.</li>
+    </ul>
+    <figure>
+      <img src="img/h05-hr-events.png" alt="HR's Events in calendar view: a month grid with events on their days and today highlighted.">
+      <figcaption><span class="fno">Fig 28.4</span><span>Events as a calendar.</span></figcaption>
+    </figure>
+
+    <h3>Surveys</h3>
+    <ul>
+      <li>An open survey waiting for you shows on the home page and as a count on the tab. Answer the questions marked * and <strong>Send my answers</strong>; you answer once.</li>
+      <li>An <strong>anonymous</strong> survey saves the answers without your name — who answered is kept apart from what was answered. A named survey shows HR who gave each answer; the survey says which it is.</li>
+      <li>When HR allows it, you see the results after answering, or once the survey closes.</li>
+      <li>Admins build a survey with <strong>New survey</strong>: title, introduction, anonymous or not, whether people see the results, <strong>Open until</strong>, and questions of five kinds — <em>Rating 1–5</em>, <em>0–10 scale</em>, <em>One choice</em>, <em>Several choices</em>, <em>Written answer</em> — each optional or required. <strong>Save and open</strong> opens it. Once people have answered, the questions and anonymity can't change. Results show participation and a chart per question; <strong>Download the answers (CSV)</strong>; <strong>Close now</strong> and <strong>Reopen</strong>.</li>
+    </ul>
+    <figure>
+      <img src="img/h06-hr-survey.png" alt="An open anonymous survey: its title and introduction, then a 1–5 rating, a 0–10 scale, a one-choice question and a several-choices question.">
+      <figcaption><span class="fno">Fig 28.5</span><span>Answering an anonymous survey.</span></figcaption>
+    </figure>
+
+    <h3>People</h3>
+    <p>The directory of everyone at GALIL, from WorkDesk: search by name, role or department, or pick a department; each card has the role, department, manager, email, mobile, and how long they have been at GALIL. <strong>Celebrations</strong> lists birthdays and work anniversaries in the next 30 days — people can keep their birthday private in WorkDesk's My profile.</p>
+    <figure>
+      <img src="img/h08-hr-people.png" alt="HR's People page: a search box, a department filter and a grid of people cards with their role, department, manager and contact details.">
+      <figcaption><span class="fno">Fig 28.6</span><span>The people directory.</span></figcaption>
+    </figure>
+
+    <h3>Recognition</h3>
+    <p><strong>Give kudos</strong> thanks a colleague for their help, under one of the company's values — <em>Teamwork, Ownership, Quality, Customer focus, Helping hand, Innovation</em> — and everyone sees it. Filter by <strong>Everyone</strong>, <strong>For me</strong> or <strong>From me</strong>; the page counts the kudos given this month. You can remove kudos you gave; admins can remove any.</p>
+    <figure>
+      <img src="img/h09-hr-kudos.png" alt="HR's Recognition page: Give kudos, the filters Everyone, For me and From me, and kudos cards with who thanked whom, for which value, and the message.">
+      <figcaption><span class="fno">Fig 28.7</span><span>Recognition between colleagues.</span></figcaption>
+    </figure>
+  </section>
+
+  <section class="ch" id="ch-hr-reviews" data-title="Performance reviews" data-caps="openHr,hrAdmin">
+    <div class="ch-head"><span class="ch-num">29</span><h2>Performance reviews</h2></div>
+    <p class="lede">A look back at the period and goals for the next one, written by you and your manager. An HR admin opens a review cycle; each person in it gets a review, with the person they report to in WorkDesk as the reviewer.</p>
+    <div class="locked-note"></div>
+
+    <h3>The four steps</h3>
+    <div class="tw"><table>
+      <thead><tr><th style="width:230px">Step</th><th>What happens</th></tr></thead>
+      <tbody>
+        <tr><td><strong>1 · Self-assessment</strong></td><td>You rate each competency (1–5, with an example if you like) and answer the cycle's written questions. Only you see it until you <strong>Send to my manager</strong>; <strong>Save draft</strong> keeps it meanwhile.</td></tr>
+        <tr><td><strong>2 · Manager review</strong></td><td>Your manager reads it, rates each competency, answers the manager questions, gives an <strong>Overall rating</strong>, and <strong>Shares</strong> it with you.</td></tr>
+        <tr><td><strong>3 · Waiting for acknowledgement</strong></td><td>You read the review and acknowledge it with <strong>Acknowledge the review</strong>, with a comment if you wish — acknowledging says you have read it and talked it over, not that you agree with every word.</td></tr>
+        <tr><td><strong>4 · Completed</strong></td><td>The review is closed for changes.</td></tr>
+      </tbody>
+    </table></div>
+    <figure>
+      <img src="img/h07-hr-review.png" alt="A review at the self-assessment step: the employee and reviewer, the four steps with the first one current, and each competency with a 1–5 scale and a comment box.">
+      <figcaption><span class="fno">Fig 29.1</span><span>Writing the self-assessment.</span></figcaption>
+    </figure>
+    <p>Reviews waiting for you — your own, and your team's as a manager — are on HR's home page and counted on the <strong>Reviews</strong> tab. HR admins see every review and can <strong>Return to the previous step</strong>.</p>
+
+    <h3>Running a review cycle (HR admins)</h3>
+    <ol class="steps">
+      <li><strong>New review cycle</strong> — on HR's home page or under Reviews. Name it and set the period and the due dates for self-assessments and manager reviews.</li>
+      <li>Set its form: <strong>Competencies — one per line</strong>, <strong>Self-assessment questions — one per line</strong> and <strong>Manager review questions — one per line</strong>. A new cycle starts with GALIL's standard ones.</li>
+      <li>Choose the people: everyone with a manager in WorkDesk is ticked, contractors aside.</li>
+      <li><strong>Start the cycle</strong>. Its page shows each person's step, lets you change a reviewer, <strong>Add people</strong>, <strong>Close the cycle</strong> or reopen it, and <strong>Download (CSV)</strong> every rating and written answer.</li>
+    </ol>
+    <figure class="fig-narrow">
+      <img src="img/h02-hr-cycle-form.png" alt="The New review cycle window: due dates, competencies, self-assessment questions and manager review questions, one per line, and the people in the cycle.">
+      <figcaption><span class="fno">Fig 29.2</span><span>A cycle's own form. Editing it later keeps the answers already given with their questions.</span></figcaption>
+    </figure>
+  </section>
+
+  <!-- ============ Defense News ============ -->
+  <section class="ch" id="ch-news" data-part="Defense News" data-title="Defense News" data-caps="openNews">
+    <p class="part">Part F · Defense News</p>
+    <div class="ch-head"><span class="ch-num">30</span><h2>Defense News</h2></div>
+    <p class="lede">The press on Israel's defense industry, in one list: headlines about IAI, Elbit Systems, Rafael, Aeronautics, Controp, Tomer, UVision, the Israel Ministry of Defense and the wider industry, from Google News in English and Hebrew. Open to everyone signed in.</p>
+
+    <figure>
+      <img src="img/n01-news.png" alt="Defense News: the search box in the top bar, the company chips with their counts, the All / English / Hebrew switch, and headlines grouped by day, each with its source, time and companies.">
+      <figcaption><span class="fno">Fig 30.1</span><span>Defense News. The headlines here are samples; the published page lists the real ones.</span></figcaption>
+    </figure>
+
+    <h3>Reading it</h3>
+    <ul>
+      <li>Headlines are grouped by day — <em>Today</em>, <em>Yesterday</em>, then the date — newest first, for the last 30 days. Each shows its source, time and the companies it is about; clicking it opens the publisher's article in a new tab.</li>
+      <li>The <strong>company</strong> chips filter the list (with how many stories each has), <strong>All · English · Hebrew</strong> filters by the article's language, and the search box searches headlines and sources.</li>
+      <li>The filters are kept in the page's address, so a filtered view can be shared as a link.</li>
+      <li>The portal home page shows the five latest headlines on the Defense News tile; <strong>Open Defense News</strong> opens the page.</li>
+    </ul>
+
+    <h3>Where the headlines come from</h3>
+    <p>The feed is built when the portal is published to GitHub Pages, and again every two hours. A copy of the portal opened from files has no feed and says so. GALIL does not check or endorse the reporting — each link opens the publisher's own article.</p>
+  </section>
+
   <section class="ch" id="ch-ref" data-part="Reference" data-title="Reference">
     <div class="ch-head"><span class="ch-num">18</span><h2>Reference</h2></div>
     <p class="lede">The fixed vocabularies, defaults and limits, in one place.</p>
@@ -1855,11 +2124,11 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <div class="fig-pair">
       <figure>
         <img src="img/71-fin-budgets.png" alt="The Management tab's Budgets section as Finance: the same table, no edit buttons.">
-        <figcaption><span class="fno">Fig 26.1</span><span>Finance sees every budget on the Management tab, with an Export button and no edit rights.</span></figcaption>
+        <figcaption><span class="fno">Fig 31.1</span><span>Finance sees every budget on the Management tab, with an Export button and no edit rights.</span></figcaption>
       </figure>
       <figure>
         <img src="img/95-view-landing.png" alt="The Time Log as a Viewer: read-only, with a message that the role carries no time-reporting rights.">
-        <figcaption><span class="fno">Fig 26.2</span><span>A Viewer's Time Log — read-only, no reporting rights.</span></figcaption>
+        <figcaption><span class="fno">Fig 31.2</span><span>A Viewer's Time Log — read-only, no reporting rights.</span></figcaption>
       </figure>
     </div>
   </section>
@@ -1870,15 +2139,15 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
 <footer class="foot">
   <h3>Keeping this handbook current</h3>
-  <p>This handbook describes the <strong>GALIL Employee Portal</strong>: the portal home page and sign-in, WorkDesk and Taskana. The permission matrices are generated from two tables in <code>handbook.js</code>, so a permission change there is a one-line edit that updates the matrices, the chips and the role filter together — in both languages.</p>
+  <p>This handbook describes the <strong>GALIL Employee Portal</strong>: the portal home page and sign-in, WorkDesk, Taskana, Model Studio, HR and Defense News. The permission matrices are generated from two tables in <code>handbook.js</code>, so a permission change there is a one-line edit that updates the matrices, the chips and the role filter together — in both languages.</p>
   <p>Questions this handbook doesn't answer: <a href="mailto:info@galiltc.co.il">info@galiltc.co.il</a>.</p>
-  <p class="stampline"><span>Application <b>GALIL Employee Portal</b></span> · <span>Covers <b>Portal · WorkDesk · Taskana</b></span> · <span>Handbook revised <b>30/10/2026</b></span> · <span>Language <b>English · עברית</b></span></p>
+  <p class="stampline"><span>Application <b>GALIL Employee Portal</b></span> · <span>Covers <b>Portal · WorkDesk · Taskana · Model Studio · HR · Defense News</b></span> · <span>Handbook revised <b>30/10/2026</b></span> · <span>Language <b>English · עברית</b></span></p>
 </footer>
 
 <script src="../config.js"></script>
 <script src="../shared/portal.js"></script>
 <script src="../shared/films.js?v=1"></script>
 <script src="../shared/toc.js?v=1"></script>
-<script src="handbook.js?v=24"></script>
+<script src="handbook.js?v=25"></script>
 </body>
 </html>

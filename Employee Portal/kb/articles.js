@@ -687,7 +687,7 @@ var ARTICLES = [
   '<li>Write what you worked on in <strong>Description</strong> (the bigger box), add any <strong>Notes</strong>, and click <strong>Add entry</strong> — the large button stays in view at the foot of the form. The entry is registered — or sent for approval if it goes past your hours bank or the budget.</li>' +
   '</ol>' +
   '<p>The pill under the form shows whether your data is saved to GitHub; click it for details.</p>' +
-  '<figure><img src="../handbook/img/11-emp-timelog-form.png" alt="The Report time form: the 09:00–18:00 default, the hour type and the required Worked from buttons."><figcaption>The Report time form: the 09:00–18:00 default, the hour type and the required Worked from buttons.</figcaption></figure>' +
+  '<figure class="phone"><img src="../handbook/img/11-emp-timelog-form.png" alt="The Report time form: the 09:00–18:00 default, the hour type and the required Worked from buttons."><figcaption>The Report time form: the 09:00–18:00 default, the hour type and the required Worked from buttons.</figcaption></figure>' +
   '<h2>The timer</h2>' +
   '<p>At the top of the form, <strong><i class="ui-ic" data-ic="play"></i> Start the timer</strong> starts a clock; <strong><i class="ui-ic" data-ic="square"></i> Stop and report</strong> fills the form with the date and the start and end times, rounded to five minutes. On a phone, start your day with <a href="#/qr-time">QR time reporting</a> on the portal home — it runs on the same timer.</p>' +
   '<h2>When an entry needs approval</h2>' +
@@ -713,7 +713,7 @@ var ARTICLES = [
   '<li>כתבו במה עבדתם ב<strong>תיאור</strong> (התיבה הגדולה), הוסיפו <strong>הערות</strong> אם צריך, ולחצו <strong>הוספת רישום</strong> — הכפתור הגדול נשאר גלוי בתחתית הטופס. הרישום נרשם — או נשלח לאישור אם הוא חורג מבנק השעות שלכם או מהתקציב.</li>' +
   '</ol>' +
   '<p>הכפתור שמתחת לטופס מראה אם הנתונים שלכם נשמרו ב-GitHub; לחיצה עליו מציגה פרטים.</p>' +
-  '<figure><img src="../handbook/img/he/11-emp-timelog-form.png" alt="טופס דיווח השעות: ברירת המחדל 09:00–18:00, סוג השעות וכפתורי מקום העבודה שחובה לבחור."><figcaption>טופס דיווח השעות: ברירת המחדל 09:00–18:00, סוג השעות וכפתורי מקום העבודה שחובה לבחור.</figcaption></figure>' +
+  '<figure class="phone"><img src="../handbook/img/he/11-emp-timelog-form.png" alt="טופס דיווח השעות: ברירת המחדל 09:00–18:00, סוג השעות וכפתורי מקום העבודה שחובה לבחור."><figcaption>טופס דיווח השעות: ברירת המחדל 09:00–18:00, סוג השעות וכפתורי מקום העבודה שחובה לבחור.</figcaption></figure>' +
   '<h2>הטיימר</h2>' +
   '<p>בראש הטופס, <strong><i class="ui-ic" data-ic="play"></i> הפעלת הטיימר</strong> מפעיל שעון; <strong><i class="ui-ic" data-ic="square"></i> עצירה ודיווח</strong> ממלא את הטופס בתאריך ובשעות ההתחלה והסיום, מעוגלות לחמש דקות. בטלפון, התחילו את היום ב<a href="#/qr-time">דיווח שעות ב-QR</a> בדף הבית של הפורטל — הוא רץ על אותו טיימר.</p>' +
   '<h2>כשרישום צריך אישור</h2>' +

@@ -54,7 +54,11 @@ var PORTAL_PERM = {
   tkOwnBank:        ["Y","Y","Y","Y","Y","-","Y","Y","-"],
   tkLibraryRead:    ["Y","Y","Y","Y","Y","Y","Y","-","Y"],
   tkLibraryWrite:   ["Y","Y","Y","Y","Y","-","Y","-","-"],
-  tkData:           ["-","-","-","-","Y","-","Y","-","-"]
+  tkData:           ["-","-","-","-","Y","-","Y","-","-"],
+  openStudio:       ["Y","Y","Y","Y","Y","Y","Y","Y","-"],
+  openHr:           ["Y","Y","Y","Y","Y","Y","Y","-","Y"],
+  hrAdmin:          ["-","-","-","-","Y","-","Y","-","-"],
+  openNews:         ["Y","Y","Y","Y","Y","Y","Y","Y","Y"]
 };
 var LABEL = HE ? {
   reportOwnTime:"דיווח שעות עצמי", reportBlueTime:"דיווח שעות כחולות · ניהול", viewOthersTime:"צפייה בשעות של אחרים", editOthersTime:"עריכת שעות של אחרים",
@@ -69,7 +73,8 @@ var LABEL = HE ? {
   setPortalAccess:"הגדרת הרשאות פורטל לאנשים",
   tkSeeAll:"Taskana — צפייה בכל המשימות", tkWorkTasks:"Taskana — יצירה ועריכה של משימות", tkDeleteTasks:"Taskana — מחיקת משימות",
   tkComment:"Taskana — תגובות ושאלות", tkProjectSettings:"Taskana — הגדרות פרויקט (מפתח, סוג מסמך)",
-  tkBudgets:"Taskana — מחווני תקציב ובנק שעות של אחרים", tkOwnBank:"Taskana — בנק השעות שלי", tkLibraryRead:"Taskana — קריאה בספרייה", tkLibraryWrite:"Taskana — כתיבה ועריכה בספרייה", tkData:"Taskana — נתונים, גיבוי ושחזור"
+  tkBudgets:"Taskana — מחווני תקציב ובנק שעות של אחרים", tkOwnBank:"Taskana — בנק השעות שלי", tkLibraryRead:"Taskana — קריאה בספרייה", tkLibraryWrite:"Taskana — כתיבה ועריכה בספרייה", tkData:"Taskana — נתונים, גיבוי ושחזור",
+  openStudio:"פתיחת סטודיו המודלים (במחשב)", openHr:"פתיחת משאבי אנוש", hrAdmin:"משאבי אנוש — מנהל/ת (פרסום, סקרים, סבבי הערכה)", openNews:"פתיחת החדשות הביטחוניות"
 } : {
   reportOwnTime:"Report own time", reportBlueTime:"Report Blue · management hours", viewOthersTime:"View others' time", editOthersTime:"Edit others' time",
   approveTime:"Approve time requests", planOwnWeek:"Plan own week", planOthersWeek:"Plan others' week",
@@ -83,7 +88,8 @@ var LABEL = HE ? {
   setPortalAccess:"Set people's portal access",
   tkSeeAll:"Taskana — see every task", tkWorkTasks:"Taskana — create and edit tasks", tkDeleteTasks:"Taskana — delete tasks",
   tkComment:"Taskana — comments and questions", tkProjectSettings:"Taskana — project settings (key, document type)",
-  tkBudgets:"Taskana — budget and others' hours-bank indicators", tkOwnBank:"Taskana — my hours bank", tkLibraryRead:"Taskana — read the Library", tkLibraryWrite:"Taskana — write and edit in the Library", tkData:"Taskana — data, backup and restore"
+  tkBudgets:"Taskana — budget and others' hours-bank indicators", tkOwnBank:"Taskana — my hours bank", tkLibraryRead:"Taskana — read the Library", tkLibraryWrite:"Taskana — write and edit in the Library", tkData:"Taskana — data, backup and restore",
+  openStudio:"Open Model Studio (on a computer)", openHr:"Open HR", hrAdmin:"HR — admin (publish, surveys, review cycles)", openNews:"Open Defense News"
 };
 var SCOPE_WORD = HE ? {Y:"", O:"עצמי", T:"צוות", P:"פרויקטים"} : {Y:"", O:"own", T:"team", P:"projects"};
 var SCOPE_LETTER = {O:"O", T:"T", P:"P"};
@@ -124,6 +130,11 @@ var CH_ICON = {
   "ch-tk-library": '<path d="M16 6l4 14M12 6v14M8 8v12M4 4v16"/>',
   "ch-tk-lib-write": '<path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/>',
   "ch-tk-lib-tools": '<path d="M16 18l6-6-6-6M8 6l-6 6 6 6"/>',
+  "ch-studio": '<path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.3 7L12 12l8.7-5M12 22V12"/>',
+  "ch-studio-docs": '<path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7z"/><path d="M14 2v4a2 2 0 0 0 2 2h4"/><path d="M10 12l5 3-5 3z"/>',
+  "ch-hr": '<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 7.5c-1-1.6-3.5-1-3.5 1 0 1.6 3.5 3.5 3.5 3.5s3.5-1.9 3.5-3.5c0-2-2.5-2.6-3.5-1z"/>',
+  "ch-hr-reviews": '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/>',
+  "ch-news": '<path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/>',
   "ch-ref": '<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>'
 };
 var svgOf = function (body) { return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' + (body || CH_ICON["ch-ref"]) + "</svg>"; };
@@ -260,6 +271,7 @@ hbRoute();
     widths: '<path d="M8 7l-5 5 5 5M16 7l5 5-5 5M3 12h18"/>',
     order: '<path d="M16 3h5v5M4 20L21 3M21 16v5h-5M15 15l6 6M4 4l5 5"/>',
     reset: '<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
+    eye: '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
     refresh: '<path d="M21 12a9 9 0 1 1-2.64-6.36L21 8"/><path d="M21 3v5h-5"/>',
     qr: '<rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3h-3zM21 14v.01M14 21h.01M17 17h4v4h-4z"/>',
     close: '<path d="M18 6L6 18M6 6l12 12"/>',
