@@ -2,16 +2,21 @@
 // Run from tests/workdesk (for Playwright):  node ../../tools/handbook-shots.js [en|he]
 // Taskana's board, task and budget screenshots (t01–t03), the expense-attachment close-up (16b) and the
 // Library's (t10–t16) are taken here too.
+// So are HR's admin screenshots (h01–h02), which the Knowledge Base uses too. Shots run from files, so a QR code in them
+// points to a file; the Shift QR code window's note about that is left out.
 const { chromium } = require(require.resolve("playwright", { paths: [process.cwd()] }));
 const path = require("path"), { execFileSync } = require("child_process");
 const ROOT = path.resolve(__dirname, "../Employee Portal");
 const URL = "file://" + ROOT.replace(/ /g, "%20") + "/index.html";
 const TK_URL = "file://" + ROOT.replace(/ /g, "%20") + "/taskana/index.html";
+const HR_URL = "file://" + ROOT.replace(/ /g, "%20") + "/hr/index.html";
+const IPHONE = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1";
 const LANGS = process.argv[2] ? [process.argv[2]] : ["en", "he"];
 const W = { width: 1366, height: 860 }, PHONE = { width: 390, height: 844 };
 
 async function open(b, lang, opts = {}) {
-  const ctx = await b.newContext({ viewport: opts.viewport || W, deviceScaleFactor: 1, acceptDownloads: true });
+  const ctx = await b.newContext(Object.assign({ viewport: opts.viewport || W, deviceScaleFactor: 1, acceptDownloads: true },
+    opts.phone ? { isMobile: true, hasTouch: true, userAgent: IPHONE } : {}));
   const page = await ctx.newPage();
   page.on("pageerror", e => { if (!/ResizeObserver/.test(e.message)) console.log("  page error:", e.message); });
   await page.addInitScript(([lang, user]) => {
@@ -25,6 +30,8 @@ async function open(b, lang, opts = {}) {
   }, [lang, opts.user || null]);
   await page.goto(URL + (opts.hash || ""));
   if (opts.taskana) { await page.waitForTimeout(500); await page.goto(TK_URL + opts.taskana); }
+  if (opts.hr) { await page.waitForTimeout(500); await page.goto(HR_URL + opts.hr); await page.waitForTimeout(500); }
+  if (opts.timer) await page.evaluate(() => { const d = new Date(Date.now() - (2 * 3600 + 17 * 60) * 1000); localStorage.setItem("galil-workdesk-timer", JSON.stringify({ at: d.getTime(), date: d2s(d), start: round5(d) })); window.dispatchEvent(new Event("wd-timer")); });
   if (opts.roles) {
     await page.evaluate(roles => {
       const raw = JSON.parse(localStorage.getItem("galil-workdesk-v1"));
@@ -150,6 +157,22 @@ const SCENES = [
     await page.frameLocator(".ed-frame").locator("h1").nth(1).click(); await page.keyboard.press("End");
     await page.locator('button[aria-label="' + await T("Insert") + '"]').click(); await page.waitForTimeout(200);
     await page.locator(".ed-menu button", { hasText: await T("Link to a document, heading or task…") }).click(); await page.waitForTimeout(500); await shot(page, f); }],
+  /* QR time reporting, the shift QR code, the timer strip, Worked from, and HR's admin tools */
+  ["p05-qr-time", { user: "u-eitan", viewport: PHONE, phone: true, timer: true }, async ({ page }, f) => { await page.waitForTimeout(1200); await shot(page, f, { x: 0, y: 0, width: 390, height: 620 }); }],
+  ["64-shift-qr", { user: "u-tamir", hash: wd("management") }, async ({ page, T }, f) => { await page.click("#shift-qr-btn"); await page.waitForSelector("#shift-qr svg");
+    await page.locator(".modal footer .grow.cap").evaluate(e => { e.textContent = ""; }); /* the shots run from files; the note about that isn't for the reader */
+    await modal(page, f); }],
+  ["13-emp-timer-strip", { user: "u-eitan", hash: wd("time"), timer: true }, async ({ page }, f) => { await page.waitForTimeout(1200); await page.locator("#timer-strip").evaluate(e => e.closest(".panel")); const b = await page.locator(".tlform").boundingBox(); await shot(page, f, { x: Math.max(0, b.x - 8), y: b.y - 8, width: b.width + 16, height: 230 }); }],
+  ["14-emp-plan-editor", { user: "u-eitan", hash: wd("planner") }, async ({ page, T }, f) => { await page.getByRole("button", { name: await T("+ plan") }).first().click(); await page.waitForTimeout(300); await page.click("#pwf-office"); await modal(page, f); }],
+  ["97-mobile-report", { user: "u-eitan", viewport: PHONE, hash: wd("time") }, async ({ page, T }, f) => {
+    await page.getByRole("button", { name: await T("Report without the timer") }).click(); await page.waitForTimeout(400);
+    await page.click("#mwf-home"); await page.click("#mwf-client"); await page.waitForTimeout(200);
+    await page.locator(".sheet .sb").evaluate(e => { const l = [...e.querySelectorAll("label")].find(x => /Worked from|מקום העבודה/.test(x.textContent)); e.scrollTop = Math.max(0, l.offsetTop - 260); });
+    await page.waitForTimeout(300); await shot(page, f); }],
+  ["h01-hr-create", { user: "u-tamir", hr: "#/" }, async ({ page }, f) => { const b = await page.locator("#home-create").boundingBox(); await shot(page, f, { x: Math.max(0, b.x - 12), y: Math.max(0, b.y - 12), width: b.width + 24, height: b.height + 24 }); }],
+  ["h02-hr-cycle-form", { user: "u-tamir", hr: "#/" }, async ({ page }, f) => { await page.click("#create-cycle"); await page.waitForTimeout(500);
+    await page.locator(".modal, [role=dialog]").last().evaluate(e => { const sb = e.querySelector("#cy-self-q"); if (sb) sb.scrollIntoView({ block: "center" }); });
+    await page.waitForTimeout(300); await page.locator(".modal, [role=dialog]").last().screenshot({ path: f }); }],
   ["99-mobile-more", { user: "u-eitan", viewport: PHONE, hash: wd("time") }, async ({ page }, f) => { await page.locator(".mnav button").last().click(); await page.waitForTimeout(500); await shot(page, f); }]
 ];
 

@@ -269,7 +269,7 @@ var ARTICLES = [
   '<p><strong>הספרייה</strong> — המסמכים של הצוות מראיונות עם מומחי תוכן, מביקורי אתר ומהדגמות — אינה עוד לשונית ב-WorkDesk. פותחים אותה ב-Taskana מהסרגל הצדדי (<strong>ספרייה</strong>), ליד המשימות שהתחקיר נועד להן. ראו <a href="#/library-start">צעדים ראשונים בספרייה</a>.</p>'
   } },
 
-{ id: "portal-around", cat: "portal", updated: "20 Oct 2026",
+{ id: "portal-around", cat: "portal", updated: "30 Oct 2026",
   title: { en: "Getting around WorkDesk", he: "התמצאות ב-WorkDesk" },
   summary: { en: "The top-bar buttons, the Back button, copying email addresses, and how the Handbook and this Knowledge Base are laid out.", he: "כפתורי הסרגל העליון, כפתור החזרה, העתקת כתובות דוא״ל, ואיך בנויים המדריך ומאגר הידע." },
   body: {
@@ -278,6 +278,7 @@ var ARTICLES = [
   '<table><thead><tr><th>Button</th><th>What it does</th></tr></thead><tbody>' +
   '<tr><td><i class="ui-ic" data-ic="back"></i> Back</td><td>Steps back to the tab or Management section you were on. An open window closes first; with nothing left, it returns to the portal home page. <code>Alt</code>+<code>←</code> and the mouse\'s back button do the same.</td></tr>' +
   '<tr><td><i class="ui-ic" data-ic="home"></i> Home</td><td>The Employee Portal home page — Taskana, the Handbook and this Knowledge Base are there.</td></tr>' +
+  '<tr><td><i class="ui-ic" data-ic="refresh"></i> Refresh</td><td>Loads the latest version of the portal and the latest data, staying on the same tab. On a phone, pulling the page down from the top does the same.</td></tr>' +
   '<tr><td><i class="ui-ic" data-ic="moon"></i> / <i class="ui-ic" data-ic="sun"></i></td><td>Dark or light theme, for the whole portal on this device.</td></tr>' +
   '<tr><td><i class="ui-ic" data-ic="assignments"></i></td><td>My assignments and allowances — your funded work, and <strong>Request hours</strong> when you are running out.</td></tr>' +
   '<tr><td><i class="ui-ic" data-ic="settings"></i></td><td>System administration (roles, company settings, backup, audit log) — for administrators.</td></tr>' +
@@ -294,6 +295,7 @@ var ARTICLES = [
   '<table><thead><tr><th>כפתור</th><th>מה הוא עושה</th></tr></thead><tbody>' +
   '<tr><td><i class="ui-ic" data-ic="back"></i> חזרה</td><td>חוזר ללשונית או לחלק הניהול הקודם. חלון פתוח נסגר קודם; כשאין לאן לחזור, הכפתור מחזיר לדף הבית של הפורטל. <code>Alt</code>+<code>→</code> וכפתור החזרה של העכבר עושים אותו דבר.</td></tr>' +
   '<tr><td><i class="ui-ic" data-ic="home"></i> בית</td><td>דף הבית של פורטל העובדים — שם נמצאים Taskana, המדריך ומאגר הידע הזה.</td></tr>' +
+  '<tr><td><i class="ui-ic" data-ic="refresh"></i> רענון</td><td>טוען את הגרסה העדכנית של הפורטל ואת הנתונים העדכניים, ונשאר באותה לשונית. בטלפון, משיכת הדף למטה מלמעלה עושה אותו דבר.</td></tr>' +
   '<tr><td><i class="ui-ic" data-ic="moon"></i> / <i class="ui-ic" data-ic="sun"></i></td><td>ערכת נושא כהה או בהירה, לכל הפורטל במכשיר הזה.</td></tr>' +
   '<tr><td><i class="ui-ic" data-ic="assignments"></i></td><td>השיבוצים והמכסות שלי — העבודה הממומנת שלכם, ו<strong>בקשת שעות</strong> כשהמכסה עומדת להיגמר.</td></tr>' +
   '<tr><td><i class="ui-ic" data-ic="settings"></i></td><td>ניהול המערכת (תפקידים, הגדרות החברה, גיבוי, יומן ביקורת) — למנהלי המערכת.</td></tr>' +
@@ -317,6 +319,94 @@ var ARTICLES = [
   he:
   '<p class="lede">את פורטל העובדים מתקינים כמו אפליקציה — אייקון אחד ל-WorkDesk, ל-Taskana, למדריך למשתמש ולמאגר הידע.</p>' +
   '<p>השלבים המאוירים לאייפון, לאנדרואיד ולמחשב נמצאים בדף <a href="../install/index.html">התקנה בטלפון</a> (יש אליו קישור גם מדף הבית של הפורטל). בקצרה: פתחו את הפורטל ב-Safari (אייפון) או ב-Chrome (אנדרואיד), ובחרו <strong>הוספה למסך הבית</strong> או <strong>התקנת אפליקציה</strong>.</p>'
+  } },
+
+{ id: "qr-time", cat: "portal", updated: "30 Oct 2026",
+  title: { en: "QR time reporting — start and end your shift", he: "דיווח שעות ב-QR — תחילת המשמרת וסיומה" },
+  summary: { en: "Scan the shift QR code on the desk with your phone to start your day, and again to end it.", he: "סריקת קוד ה-QR של המשמרת שעל השולחן בטלפון כדי להתחיל את היום, ושוב כדי לסיים אותו." },
+  body: {
+  en:
+  '<p class="lede">At the office, your working day starts and ends with one scan. GALIL keeps a shift QR code on the desk — the same code for everyone — and your phone records the shift under your own name.</p>' +
+  '<h2>Start your shift</h2>' +
+  '<ol class="steps"><li>On your phone, open the Employee Portal (install it first — see <a href="#/portal-install">Installing the portal on your phone</a>).</li>' +
+  '<li>Tap <strong><i class="ui-ic" data-ic="qr"></i> QR time reporting</strong> near the top of the home page. The camera opens.</li>' +
+  '<li>Point it at the code on the desk. Your shift starts, rounded to the nearest five minutes. The button turns red and shows when the shift started and how long it has run.</li></ol>' +
+  '<figure class="phone"><img src="../handbook/img/p05-qr-time.png" alt="The portal home on a phone during a shift: Scan to end your shift, with the running time."><figcaption>The portal home on a phone during a shift: Scan to end your shift, with the running time.</figcaption></figure>' +
+  '<h2>End your shift</h2>' +
+  '<ol class="steps"><li>Tap <strong>Scan to end your shift</strong> and scan the code again.</li>' +
+  '<li>WorkDesk opens <strong>Report time</strong> with the date, start and end already filled in.</li>' +
+  '<li>Choose <strong>Worked from</strong>, the client, project, work order and Taskana task, describe the work, and tap <strong>Save entry</strong>.</li></ol>' +
+  '<figure class="phone"><img src="../handbook/img/97-mobile-report.png" alt="Report time on a phone: the hour type, Worked from (Home and Client chosen), client, project and the rest of the entry."><figcaption>Report time on a phone: the hour type, Worked from (Home and Client chosen), client, project and the rest of the entry.</figcaption></figure>' +
+  '<h2>Camera permission</h2>' +
+  '<ul><li><strong>Android</strong> asks once and remembers.</li>' +
+  '<li><strong>iPhone</strong>: to stop being asked each time, in Safari tap <strong>aA → Website Settings → Camera → Allow</strong>, or set <strong>Settings → Apps → Safari → Camera → Allow</strong>.</li>' +
+  '<li>On an iPhone, scan from <strong>QR time reporting</strong> rather than the Camera app — the Camera app opens the code in Safari, which keeps its own separate timer.</li></ul>' +
+  '<div class="callout note"><b>One phone per shift.</b> The shift is kept on the phone that started it, so end it on the same phone. QR time reporting appears on phones only.</div>' +
+  '<h2>For administrators: printing the code</h2>' +
+  '<p>In WorkDesk, <strong>Management → <i class="ui-ic" data-ic="qr"></i> Shift QR code</strong> shows the code. <strong>Print</strong> makes a desk sign; <strong>Download image</strong> saves a PNG. Print it from the portal\'s web address — a code made from a copy opened as a file can\'t be opened by phones.</p>' +
+  '<figure><img src="../handbook/img/64-shift-qr.png" alt="Management → Shift QR code, ready to print."><figcaption>Management → Shift QR code, ready to print.</figcaption></figure>' +
+  '<p>More in the Handbook: <a href="../handbook/index.html#h-qr-time">QR time reporting</a> and <a href="../handbook/index.html#h-shift-qr">Shift QR code</a>.</p>',
+  he:
+  '<p class="lede">במשרד, יום העבודה מתחיל ומסתיים בסריקה אחת. על השולחן בגליל יש קוד QR למשמרת — אותו קוד לכולם — והטלפון שלכם רושם את המשמרת על שמכם.</p>' +
+  '<h2>תחילת המשמרת</h2>' +
+  '<ol class="steps"><li>בטלפון, פתחו את פורטל העובדים (התקינו אותו קודם — ראו <a href="#/portal-install">התקנת הפורטל בטלפון</a>).</li>' +
+  '<li>הקישו <strong><i class="ui-ic" data-ic="qr"></i> דיווח שעות ב-QR</strong> בראש דף הבית. המצלמה נפתחת.</li>' +
+  '<li>כוונו אותה לקוד שעל השולחן. המשמרת מתחילה, מעוגלת לחמש הדקות הקרובות. הכפתור הופך לאדום ומציג מתי המשמרת התחילה וכמה זמן היא נמשכת.</li></ol>' +
+  '<figure class="phone"><img src="../handbook/img/he/p05-qr-time.png" alt="דף הבית של הפורטל בטלפון במהלך משמרת: סריקה לסיום המשמרת, עם הזמן שעבר."><figcaption>דף הבית של הפורטל בטלפון במהלך משמרת: סריקה לסיום המשמרת, עם הזמן שעבר.</figcaption></figure>' +
+  '<h2>סיום המשמרת</h2>' +
+  '<ol class="steps"><li>הקישו <strong>סריקה לסיום המשמרת</strong> וסרקו את הקוד שוב.</li>' +
+  '<li>‏WorkDesk פותח את <strong>דיווח שעות</strong> כשהתאריך, ההתחלה והסיום כבר ממולאים.</li>' +
+  '<li>בחרו <strong>מקום העבודה</strong>, לקוח, פרויקט, הזמנת עבודה ומשימה ב-Taskana, תארו את העבודה והקישו <strong>שמירת רישום</strong>.</li></ol>' +
+  '<figure class="phone"><img src="../handbook/img/he/97-mobile-report.png" alt="דיווח שעות בטלפון: סוג השעות, מקום העבודה (בית ולקוח בחורים), לקוח, פרויקט ושאר הרישום."><figcaption>דיווח שעות בטלפון: סוג השעות, מקום העבודה (בית ולקוח בחורים), לקוח, פרויקט ושאר הרישום.</figcaption></figure>' +
+  '<h2>הרשאת מצלמה</h2>' +
+  '<ul><li><strong>אנדרואיד</strong> שואל פעם אחת וזוכר.</li>' +
+  '<li><strong>אייפון</strong>: כדי שלא יישאל בכל פעם, ב-Safari הקישו <strong>aA ← הגדרות אתר ← מצלמה ← אפשר</strong>, או קבעו <strong>הגדרות ← אפליקציות ← Safari ← מצלמה ← אפשר</strong>.</li>' +
+  '<li>באייפון, סרקו מ<strong>דיווח שעות ב-QR</strong> ולא מאפליקציית המצלמה — היא פותחת את הקוד ב-Safari, שיש לו טיימר נפרד משלו.</li></ul>' +
+  '<div class="callout note"><b>טלפון אחד למשמרת.</b> המשמרת נשמרת בטלפון שהתחיל אותה, ולכן מסיימים אותה באותו טלפון. דיווח שעות ב-QR מופיע בטלפונים בלבד.</div>' +
+  '<h2>למנהלים: הדפסת הקוד</h2>' +
+  '<p>ב-WorkDesk, <strong>ניהול ← <i class="ui-ic" data-ic="qr"></i> קוד QR למשמרת</strong> מציג את הקוד. <strong>הדפסה</strong> מכינה שלט לשולחן; <strong>הורדת תמונה</strong> שומרת PNG. הדפיסו מכתובת האינטרנט של הפורטל — קוד שנוצר מעותק שנפתח כקובץ לא נפתח בטלפונים.</p>' +
+  '<figure><img src="../handbook/img/he/64-shift-qr.png" alt="ניהול ← קוד QR למשמרת, מוכן להדפסה."><figcaption>ניהול ← קוד QR למשמרת, מוכן להדפסה.</figcaption></figure>' +
+  '<p>עוד במדריך: <a href="../handbook/he.html#h-qr-time">דיווח שעות ב-QR</a> ו<a href="../handbook/he.html#h-shift-qr">קוד QR למשמרת</a>.</p>'
+  } },
+
+{ id: "hr-admin", cat: "portal", updated: "30 Oct 2026",
+  title: { en: "HR for HR admins: surveys, review cycles and their forms", he: "משאבי אנוש למנהלי משאבי אנוש: סקרים, סבבי הערכה והטפסים שלהם" },
+  summary: { en: "Create surveys, review cycles, posts and events — and set each review cycle's own form.", he: "יצירת סקרים, סבבי הערכה, פוסטים ואירועים — וקביעת הטופס של כל סבב הערכה." },
+  body: {
+  en:
+  '<p class="lede">HR admins — the CEO, Operations Managers and the office by default, and anyone whose portal access sets HR to <strong>Admin</strong> — create HR\'s content from one panel on HR\'s home page.</p>' +
+  '<figure><img src="../handbook/img/h01-hr-create.png" alt="HR admin — create, on the HR home page."><figcaption>HR admin — create, on the HR home page.</figcaption></figure>' +
+  '<h2>Create</h2>' +
+  '<ul><li><strong>New survey</strong> — anonymous or named, with five kinds of question; results and a CSV of the answers.</li>' +
+  '<li><strong>New review cycle</strong> — a period, due dates, the people in it, and its own review form (below).</li>' +
+  '<li><strong>New post</strong> — company news, which can be pinned or scheduled.</li>' +
+  '<li><strong>New event</strong> — with RSVPs and a calendar file.</li></ul>' +
+  '<h2>A review cycle\'s form</h2>' +
+  '<ol class="steps"><li>Tap <strong>New review cycle</strong>, name it and set the period and due dates.</li>' +
+  '<li><strong>Competencies — one per line</strong>: what both the employee and the manager rate.</li>' +
+  '<li><strong>Self-assessment questions — one per line</strong>: what the employee answers in writing.</li>' +
+  '<li><strong>Manager review questions — one per line</strong>: what the manager answers in writing, before the overall rating.</li>' +
+  '<li>Untick anyone who should not be in the cycle, and click <strong>Start the cycle</strong>.</li></ol>' +
+  '<figure><img src="../handbook/img/h02-hr-cycle-form.png" alt="A new review cycle: competencies, self-assessment questions and manager review questions, one per line."><figcaption>A new review cycle: competencies, self-assessment questions and manager review questions, one per line.</figcaption></figure>' +
+  '<div class="callout tip"><b>Changing the form later.</b> <strong>Edit</strong> on the cycle changes its competencies and questions. Answers already given stay with their questions; a question you remove keeps its answers stored but out of view, and the cycle\'s <strong>Download (CSV)</strong> holds the answers to the current questions.</div>' +
+  '<p>Not seeing the panel? Ask an administrator to set your HR access to <strong>Admin</strong> in WorkDesk → Management → People → Portal access.</p>',
+  he:
+  '<p class="lede">מנהלי משאבי אנוש — כברירת מחדל המנכ"ל, מנהלי התפעול והמשרד, וכל מי שהגישה שלו לפורטל קובעת משאבי אנוש <strong>מנהל/ת</strong> — יוצרים את התוכן של משאבי אנוש מלוח אחד בדף הבית של משאבי אנוש.</p>' +
+  '<figure><img src="../handbook/img/he/h01-hr-create.png" alt="מנהל/ת משאבי אנוש — יצירה, בדף הבית של משאבי אנוש."><figcaption>מנהל/ת משאבי אנוש — יצירה, בדף הבית של משאבי אנוש.</figcaption></figure>' +
+  '<h2>יצירה</h2>' +
+  '<ul><li><strong>סקר חדש</strong> — אנונימי או שמי, עם חמישה סוגי שאלות; תוצאות וקובץ CSV של התשובות.</li>' +
+  '<li><strong>סבב הערכה חדש</strong> — תקופה, תאריכי יעד, המשתתפים, והטופס של הסבב (בהמשך).</li>' +
+  '<li><strong>פוסט חדש</strong> — חדשות החברה, שאפשר להצמיד או לתזמן.</li>' +
+  '<li><strong>אירוע חדש</strong> — עם אישורי הגעה וקובץ ליומן.</li></ul>' +
+  '<h2>הטופס של סבב הערכה</h2>' +
+  '<ol class="steps"><li>הקישו <strong>סבב הערכה חדש</strong>, תנו לו שם וקבעו תקופה ותאריכי יעד.</li>' +
+  '<li><strong>כישורים — אחד בכל שורה</strong>: מה שהעובד/ת והמנהל/ת מדרגים.</li>' +
+  '<li><strong>שאלות ההערכה העצמית — אחת בכל שורה</strong>: מה שהעובד/ת עונה בכתב.</li>' +
+  '<li><strong>שאלות הערכת המנהל/ת — אחת בכל שורה</strong>: מה שהמנהל/ת עונה בכתב, לפני הדירוג הכללי.</li>' +
+  '<li>בטלו את הסימון של מי שלא אמור להיות בסבב, ולחצו <strong>התחלת הסבב</strong>.</li></ol>' +
+  '<figure><img src="../handbook/img/he/h02-hr-cycle-form.png" alt="סבב הערכה חדש: כישורים, שאלות ההערכה העצמית ושאלות הערכת המנהל/ת, אחת בכל שורה."><figcaption>סבב הערכה חדש: כישורים, שאלות ההערכה העצמית ושאלות הערכת המנהל/ת, אחת בכל שורה.</figcaption></figure>' +
+  '<div class="callout tip"><b>שינוי הטופס בהמשך.</b> <strong>עריכה</strong> בסבב משנה את הכישורים והשאלות. תשובות שכבר ניתנו נשארות עם השאלות שלהן; לשאלה שהוסרה התשובות נשמרות אך אינן מוצגות, ו<strong>הורדה (CSV)</strong> של הסבב כוללת את התשובות לשאלות הנוכחיות.</div>' +
+  '<p>לא רואים את הלוח? בקשו ממנהל/ת מערכת לקבוע את הגישה שלכם למשאבי אנוש כ<strong>מנהל/ת</strong> ב-WorkDesk ← ניהול ← אנשים ← גישה לפורטל.</p>'
   } },
 
 /* ======================= Company rules ======================= */
@@ -350,7 +440,7 @@ var ARTICLES = [
   '<p>אם אתם רואים משהו שמפר את הכללים האלה, העלו את זה בפני ראש הצוות, התפעול או המנכ"ל. חשש שהועלה בתום לב לעולם לא ייזקף לחובתכם.</p>'
   } },
 
-{ id: "hours", cat: "rules", updated: "16 Oct 2026",
+{ id: "hours", cat: "rules", updated: "30 Oct 2026",
   title: { en: "Working hours & time reporting", he: "שעות עבודה ודיווח שעות" },
   summary: { en: "Standard hours, when to report time and how approvals work.", he: "שעות העבודה, מתי מדווחים ואיך עובדים האישורים." },
   body: {
@@ -362,6 +452,8 @@ var ARTICLES = [
   '<h2>Reporting rules</h2>' +
   '<ul><li>Log your hours in WorkDesk <strong>every day</strong>, and no later than the end of the working week.</li>' +
   '<li>Report every hour against the correct client, project and work order — and, when it helps your team, the Taskana task.</li>' +
+  '<li>Say where you worked on every entry — <strong>Home</strong>, <strong>Office</strong> or <strong>Client</strong>, or two of them for a split day.</li>' +
+  '<li>Working at the office? Start and end your day by scanning the shift QR code on the desk with <a href="#/qr-time">QR time reporting</a>.</li>' +
   '<li>Hours beyond your hours bank (allowance) on a project need a request that your Team Lead or Project Manager approves. You can see your hours banks in Taskana under <strong>My work</strong>.</li>' +
   '<li>Plan the following week in the Week Planner by Thursday.</li></ul>' +
   '<div class="callout warn"><b>Important:</b> Never log hours you did not work, and never log them against a different work order to stay under budget. Ask your Project Manager instead.</div>' +
@@ -374,6 +466,8 @@ var ARTICLES = [
   '<h2>כללי הדיווח</h2>' +
   '<ul><li>דווחו את השעות ב-WorkDesk <strong>כל יום</strong>, ולא יאוחר מסוף שבוע העבודה.</li>' +
   '<li>דווחו כל שעה על הלקוח, הפרויקט והזמנת העבודה הנכונים — וכשזה עוזר לצוות, גם על המשימה ב-Taskana.</li>' +
+  '<li>ציינו בכל רישום היכן עבדתם — <strong>בית</strong>, <strong>משרד</strong> או <strong>לקוח</strong>, או שניים מהם ליום מפוצל.</li>' +
+  '<li>עובדים מהמשרד? התחילו וסיימו את היום בסריקת קוד ה-QR של המשמרת שעל השולחן, ב<a href="#/qr-time">דיווח שעות ב-QR</a>.</li>' +
   '<li>שעות מעבר לבנק השעות (המכסה) שלכם בפרויקט מחייבות בקשה שראש הצוות או מנהל/ת הפרויקט מאשרים. את בנקי השעות שלכם רואים ב-Taskana, בעמוד <strong>העבודה שלי</strong>.</li>' +
   '<li>תכננו את השבוע הבא במתכנן השבועי עד יום חמישי.</li></ul>' +
   '<div class="callout warn"><b>חשוב:</b> לעולם אל תדווחו שעות שלא עבדתם, ואל תדווחו אותן על הזמנת עבודה אחרת כדי להישאר בתקציב. פנו במקום זה למנהל/ת הפרויקט.</div>' +
@@ -577,7 +671,7 @@ var ARTICLES = [
   '<p>מחליפים טלפון? הודיעו לתפעול <strong>לפני</strong> שאתם מוחקים את הישן, כדי שיעבירו את האימות.</p>'
   } },
 
-{ id: "workdesk-time", cat: "training", updated: "18 Oct 2026",
+{ id: "workdesk-time", cat: "training", updated: "30 Oct 2026",
   title: { en: "Logging your time in WorkDesk", he: "דיווח שעות ב-WorkDesk" },
   summary: { en: "Report hours against the right work order, every day.", he: "דיווח שעות על הזמנת העבודה הנכונה, כל יום." },
   body: {
@@ -586,12 +680,16 @@ var ARTICLES = [
   '<ol class="steps">' +
   '<li>On the portal home page, open <strong>WorkDesk</strong> (or choose <strong>Report time</strong>). WorkDesk opens on the <strong>Time Log</strong>.</li>' +
   '<li>Work down the form, one field under another. If you report for others, choose the person under <strong>Assignee</strong> first.</li>' +
-  '<li>Choose the <strong>Date</strong> (<strong>Today</strong> beside it jumps back to today), the <strong>Type</strong> — <em>Work</em> for hours — and the <strong>Start</strong> and <strong>End</strong> time.</li>' +
+  '<li>Choose the <strong>Date</strong> (<strong>Today</strong> beside it jumps back to today), the <strong>Type</strong> — <em>Work</em> for hours — and the <strong>Start</strong> and <strong>End</strong> time. A new entry starts at 09:00–18:00.</li>' +
   '<li>Choose the <strong>Hour type</strong>: <strong>Red</strong> for company time, <strong>Yellow</strong> for client work, <strong>Blue</strong> for managing a client\'s projects (managers).</li>' +
+  '<li>Choose <strong>Worked from</strong>: <strong>Home</strong>, <strong>Office</strong> or <strong>Client</strong> (the client\'s site). It is required — pick one, or two if the day was split between places.</li>' +
   '<li>Choose the <strong>Client</strong>, <strong>Project</strong> and <strong>Work order</strong>. Optionally, choose the <strong>Taskana task</strong> the time went to.</li>' +
   '<li>Write what you worked on in <strong>Description</strong> (the bigger box), add any <strong>Notes</strong>, and click <strong>Add entry</strong> — the large button stays in view at the foot of the form. The entry is registered — or sent for approval if it goes past your hours bank or the budget.</li>' +
   '</ol>' +
   '<p>The pill under the form shows whether your data is saved to GitHub; click it for details.</p>' +
+  '<figure><img src="../handbook/img/11-emp-timelog-form.png" alt="The Report time form: the 09:00–18:00 default, the hour type and the required Worked from buttons."><figcaption>The Report time form: the 09:00–18:00 default, the hour type and the required Worked from buttons.</figcaption></figure>' +
+  '<h2>The timer</h2>' +
+  '<p>At the top of the form, <strong><i class="ui-ic" data-ic="play"></i> Start the timer</strong> starts a clock; <strong><i class="ui-ic" data-ic="square"></i> Stop and report</strong> fills the form with the date and the start and end times, rounded to five minutes. On a phone, start your day with <a href="#/qr-time">QR time reporting</a> on the portal home — it runs on the same timer.</p>' +
   '<h2>When an entry needs approval</h2>' +
   '<p>It reaches your approver in the <strong>Approvals</strong> tab, where requests are shown as tiles side by side. They can <strong>Approve</strong>, <strong>Decline</strong> with a reason, or <strong>Request info</strong> — the entry then stays <em>Pending</em> and you answer their question in a comment on it.</p>' +
   '<h2>Useful shortcuts</h2>' +
@@ -599,7 +697,8 @@ var ARTICLES = [
   '<li><strong>Duplicate</strong> an entry with the <i class="ui-ic" data-ic="copy"></i> button — to the previous or next day or week, a number of days back or forward (optionally onto every working day in between), or a specific date.</li>' +
   '<li>Click a work order code anywhere in a table to copy it.</li>' +
   '<li>Click a column heading to sort the table, drag a heading to move it, or drag its edge to resize it — the table stays at full width, and the main column takes up the space. Use <strong>＋ Save</strong> above the table to keep that layout as a view.</li>' +
-  '<li>On your phone, use the running timer in the mobile layout. Below it, <strong>‹ ›</strong> change the month and <strong><i class="ui-ic" data-ic="sliders"></i> Filter &amp; sort</strong> narrows and sorts your entries; managers can switch to <strong>Me and my team</strong> to see the time of the people who report to them.</li></ul>' +
+  '<li>The Excel export has a <strong>Worked from</strong> column.</li>' +
+  '<li>On your phone, use the running timer in the mobile layout — the Report time sheet asks <strong>Worked from</strong> too. Pull the page down from the top to refresh it. Below the timer, <strong>‹ ›</strong> change the month and <strong><i class="ui-ic" data-ic="sliders"></i> Filter &amp; sort</strong> narrows and sorts your entries; managers can switch to <strong>Me and my team</strong> to see the time of the people who report to them.</li></ul>' +
   '<div class="callout note"><b>Out of allowance?</b> Use <strong>Request hours</strong> under <i class="ui-ic" data-ic="assignments"></i> My assignments and allowances — your Team Lead or Project Manager approves or declines it.</div>' +
   '<p>Every field and option is described in the Handbook — see <a href="../handbook/index.html#ch-time">The Time Log</a> and <a href="../handbook/index.html#ch-approvals">Approvals</a>.</p>',
   he:
@@ -607,12 +706,16 @@ var ARTICLES = [
   '<ol class="steps">' +
   '<li>בדף הבית של הפורטל, פתחו את <strong>WorkDesk</strong> (או בחרו <strong>דיווח שעות</strong>). ‏WorkDesk נפתח ב<strong>יומן השעות</strong>.</li>' +
   '<li>מלאו את הטופס מלמעלה למטה, שדה מתחת לשדה. אם אתם מדווחים גם עבור אחרים, בחרו קודם את האדם בשדה <strong>עבור</strong>.</li>' +
-  '<li>בחרו <strong>תאריך</strong> (<strong>היום</strong> שלידו מחזיר להיום), <strong>סוג</strong> — <em>עבודה</em> לשעות — ושעת <strong>התחלה</strong> ו<strong>סיום</strong>.</li>' +
+  '<li>בחרו <strong>תאריך</strong> (<strong>היום</strong> שלידו מחזיר להיום), <strong>סוג</strong> — <em>עבודה</em> לשעות — ושעת <strong>התחלה</strong> ו<strong>סיום</strong>. רישום חדש מתחיל ב-09:00–18:00.</li>' +
   '<li>בחרו <strong>סוג שעות</strong>: <strong>אדום</strong> לזמן חברה, <strong>צהוב</strong> לעבודה ללקוח, <strong>כחול</strong> לניהול פרויקטים של לקוח (מנהלים).</li>' +
+  '<li>בחרו <strong>מקום העבודה</strong>: <strong>בית</strong>, <strong>משרד</strong> או <strong>לקוח</strong> (אתר הלקוח). זו חובה — בחרו אחד, או שניים אם היום התחלק בין מקומות.</li>' +
   '<li>בחרו <strong>לקוח</strong>, <strong>פרויקט</strong> ו<strong>הזמנת עבודה</strong>. אפשר גם לבחור את <strong>המשימה ב-Taskana</strong> שהזמן הוקדש לה.</li>' +
   '<li>כתבו במה עבדתם ב<strong>תיאור</strong> (התיבה הגדולה), הוסיפו <strong>הערות</strong> אם צריך, ולחצו <strong>הוספת רישום</strong> — הכפתור הגדול נשאר גלוי בתחתית הטופס. הרישום נרשם — או נשלח לאישור אם הוא חורג מבנק השעות שלכם או מהתקציב.</li>' +
   '</ol>' +
   '<p>הכפתור שמתחת לטופס מראה אם הנתונים שלכם נשמרו ב-GitHub; לחיצה עליו מציגה פרטים.</p>' +
+  '<figure><img src="../handbook/img/he/11-emp-timelog-form.png" alt="טופס דיווח השעות: ברירת המחדל 09:00–18:00, סוג השעות וכפתורי מקום העבודה שחובה לבחור."><figcaption>טופס דיווח השעות: ברירת המחדל 09:00–18:00, סוג השעות וכפתורי מקום העבודה שחובה לבחור.</figcaption></figure>' +
+  '<h2>הטיימר</h2>' +
+  '<p>בראש הטופס, <strong><i class="ui-ic" data-ic="play"></i> הפעלת הטיימר</strong> מפעיל שעון; <strong><i class="ui-ic" data-ic="square"></i> עצירה ודיווח</strong> ממלא את הטופס בתאריך ובשעות ההתחלה והסיום, מעוגלות לחמש דקות. בטלפון, התחילו את היום ב<a href="#/qr-time">דיווח שעות ב-QR</a> בדף הבית של הפורטל — הוא רץ על אותו טיימר.</p>' +
   '<h2>כשרישום צריך אישור</h2>' +
   '<p>הוא מגיע למאשר/ת שלכם בלשונית <strong>אישורים</strong>, שבה הבקשות מוצגות כאריחים זה לצד זה. אפשר <strong>לאשר</strong>, <strong>לדחות</strong> עם סיבה, או לבחור <strong>בקשת מידע</strong> — הרישום נשאר <em>ממתין</em>, ואתם עונים על השאלה בתגובה עליו.</p>' +
   '<h2>קיצורי דרך שימושיים</h2>' +
@@ -620,12 +723,13 @@ var ARTICLES = [
   '<li><strong>שכפלו</strong> רישום עם הכפתור <i class="ui-ic" data-ic="copy"></i> — ליום או לשבוע הקודם או הבא, למספר ימים אחורה או קדימה (ואפשר לכל יום עבודה שביניהם), או לתאריך מסוים.</li>' +
   '<li>לחיצה על קוד הזמנת עבודה בכל טבלה מעתיקה אותו.</li>' +
   '<li>לחצו על כותרת עמודה למיון, גררו כותרת להזזה או גררו את הקצה לשינוי הרוחב — הטבלה נשארת ברוחב מלא, והעמודה הראשית תופסת את המקום. <strong>＋ שמירה</strong> מעל הטבלה שומר את הפריסה כתצוגה.</li>' +
-  '<li>בטלפון, השתמשו בטיימר שבתצוגת הטלפון. מתחתיו, <strong>‹ ›</strong> מחליפים חודש ו<strong><i class="ui-ic" data-ic="sliders"></i> סינון ומיון</strong> מצמצם וממיין את הרישומים; מנהלים יכולים לעבור ל<strong>אני והצוות שלי</strong> כדי לראות את השעות של מי שכפוף להם.</li></ul>' +
+  '<li>בקובץ האקסל יש עמודת <strong>מקום העבודה</strong>.</li>' +
+  '<li>בטלפון, השתמשו בטיימר שבתצוגת הטלפון — גם גיליון דיווח השעות שואל <strong>מקום העבודה</strong>. משכו את הדף למטה מלמעלה כדי לרענן. מתחת לטיימר, <strong>‹ ›</strong> מחליפים חודש ו<strong><i class="ui-ic" data-ic="sliders"></i> סינון ומיון</strong> מצמצם וממיין את הרישומים; מנהלים יכולים לעבור ל<strong>אני והצוות שלי</strong> כדי לראות את השעות של מי שכפוף להם.</li></ul>' +
   '<div class="callout note"><b>נגמרה המכסה?</b> השתמשו ב<strong>בקשת שעות</strong> תחת <i class="ui-ic" data-ic="assignments"></i> השיבוצים והמכסות שלי — ראש הצוות או מנהל/ת הפרויקט מאשרים או דוחים.</div>' +
   '<p>כל שדה ואפשרות מתוארים במדריך — ראו <a href="../handbook/he.html#ch-time">יומן השעות</a> ו<a href="../handbook/he.html#ch-approvals">אישורים</a>.</p>'
   } },
 
-{ id: "workdesk-plan", cat: "training", updated: "16 Oct 2026",
+{ id: "workdesk-plan", cat: "training", updated: "30 Oct 2026",
   title: { en: "Planning your week in WorkDesk", he: "תכנון השבוע ב-WorkDesk" },
   summary: { en: "Use the Week Planner to plan next week's hours.", he: "תכנון שעות השבוע הבא במתכנן השבועי." },
   body: {
@@ -633,18 +737,20 @@ var ARTICLES = [
   '<ol class="steps">' +
   '<li>Open the <strong>Week Planner</strong> tab and move to next week with the arrows.</li>' +
   '<li>Your open Taskana tasks with a due date appear as suggestions above the week — drag one onto a day to plan it.</li>' +
-  '<li>Or click <strong>+ plan</strong> on a day and add planned hours against your assigned project and work order.</li>' +
+  '<li>Or click <strong>+ plan</strong> on a day and add planned hours against your assigned project and work order. A block starts at 09:00–18:00; <strong>Worked from</strong> — Home, Office or Client — is optional here.</li>' +
   '<li>Planning to be away? Request the days as vacation in the Time Log — see <a href="#/workdesk-leave">Requesting sick and vacation days</a>.</li>' +
   '</ol>' +
-  '<p>Plans save automatically. Finish next week\'s plan by Thursday.</p>',
+  '<p>Plans save automatically. Finish next week\'s plan by Thursday.</p>' +
+  '<figure><img src="../handbook/img/14-emp-plan-editor.png" alt="Planning a block: Worked from is optional in the Week Planner."><figcaption>Planning a block: Worked from is optional in the Week Planner.</figcaption></figure>',
   he:
   '<ol class="steps">' +
   '<li>פתחו את לשונית <strong>המתכנן השבועי</strong> ועברו לשבוע הבא עם החצים.</li>' +
   '<li>המשימות הפתוחות שלכם ב-Taskana עם תאריך יעד מופיעות כהצעות מעל השבוע — גררו אחת ליום כדי לתכנן אותה.</li>' +
-  '<li>או לחצו <strong>+ תכנון</strong> ביום מסוים והוסיפו שעות מתוכננות על הפרויקט והזמנת העבודה שלכם.</li>' +
+  '<li>או לחצו <strong>+ תכנון</strong> ביום מסוים והוסיפו שעות מתוכננות על הפרויקט והזמנת העבודה שלכם. בלוק מתחיל ב-09:00–18:00; <strong>מקום העבודה</strong> — בית, משרד או לקוח — כאן רשות.</li>' +
   '<li>מתכננים להיעדר? בקשו את הימים כחופשה ביומן השעות — ראו <a href="#/workdesk-leave">בקשת ימי מחלה וחופשה</a>.</li>' +
   '</ol>' +
-  '<p>התכנון נשמר אוטומטית. סיימו את תכנון השבוע הבא עד יום חמישי.</p>'
+  '<p>התכנון נשמר אוטומטית. סיימו את תכנון השבוע הבא עד יום חמישי.</p>' +
+  '<figure><img src="../handbook/img/he/14-emp-plan-editor.png" alt="תכנון בלוק: במתכנן השבועי מקום העבודה הוא רשות."><figcaption>תכנון בלוק: במתכנן השבועי מקום העבודה הוא רשות.</figcaption></figure>'
   } },
 
 { id: "workdesk-dashboard", cat: "training", updated: "18 Oct 2026",

@@ -97,6 +97,36 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <h3>Light and dark</h3>
     <p>The <i class="ui-ic" data-ic="moon"></i> / <i class="ui-ic" data-ic="sun"></i> button switches the theme. Like the language, it is one setting for the whole portal on this device.</p>
 
+    <h3 id="h-refresh">Refreshing the portal</h3>
+    <p>When the portal is updated, a browser — and above all a phone with the portal installed — can keep showing the version it already has for a few minutes. Two ways load the latest version, and the latest data with it, without signing out:</p>
+    <ul>
+      <li><strong><i class="ui-ic" data-ic="refresh"></i> Refresh</strong> — the round-arrow button in the top bar of the home page and of WorkDesk, on a computer and on a phone. You stay on the same tab.</li>
+      <li><strong>Pull down</strong> — on a phone or tablet, drag the page down from the very top. A circle drops in; it turns orange once you have pulled far enough, and the portal refreshes when you let go. A short pull does nothing. Pulling down inside an open window or sheet, or while the list is scrolled down, only scrolls.</li>
+    </ul>
+
+    <h3 id="h-qr-time">QR time reporting (phones)</h3>
+    <p>For a working day measured at the desk, GALIL prints one <strong>shift QR code</strong> — the same code for everyone — and puts it on a desk (an administrator prints it from <a href="#h-shift-qr">Management → Shift QR code</a>). On a phone, the home page opens with a large <strong>QR time reporting</strong> button for everyone who reports time; computers don't show it.</p>
+    <ol class="steps">
+      <li>When you arrive, tap <strong>QR time reporting</strong>. The camera opens; point it at the code on the desk. Your shift starts, rounded to the nearest five minutes, and you stay on the home page.</li>
+      <li>While the shift runs, the button turns red and reads <strong>Scan to end your shift</strong>, with the time it started and how long it has been running. The same running shift shows on WorkDesk's Time tab.</li>
+      <li>When you leave, tap <strong>Scan to end your shift</strong> and scan the code again. WorkDesk opens on its Time tab with <strong>Report time</strong> filled in with the date and the start and end times. Choose <strong>Worked from</strong>, the client, project, work order and task, describe the work, and save — the entry then goes through the same rules as any other (see <a href="#ch-time">Time Log</a>).</li>
+    </ol>
+    <figure class="fig-narrow">
+      <img src="img/p05-qr-time.png" alt="The portal home page on a phone, during a shift: a red Scan to end your shift button, with the shift's start time and running clock beneath it, above the birthday reminders and the WorkDesk tile.">
+      <figcaption><span class="fno">Fig 1.2</span><span>QR time reporting on a phone, during a shift. Before the shift starts, the button is orange and reads <b>QR time reporting</b>.</span></figcaption>
+    </figure>
+    <div class="note">
+      <span class="tag">The camera</span>
+      <p>The first time, the phone asks to let the portal use the camera. On Android it remembers the answer. On an iPhone, to stop being asked: in Safari tap <strong>aA → Website Settings → Camera → Allow</strong>, or set <strong>Settings → Apps → Safari → Camera → Allow</strong>. An iPhone's own Camera app opens the code in Safari, not in the installed portal, so on an iPhone always scan from <strong>QR time reporting</strong>. The shift is kept on the phone that started it, so end it on the same phone.</p>
+    </div>
+
+    <h3 id="h-hr-admin">HR, for HR admins</h3>
+    <p>HR admins — the CEO, Operations Managers and the office by default; anyone else once their portal access sets HR to <strong>Admin</strong> (see <a href="#ch-access">Portal access</a>) — see an <strong>HR admin — create</strong> panel on HR's home page: <strong>New survey</strong>, <strong>New review cycle</strong>, <strong>New post</strong> and <strong>New event</strong>. Each review cycle carries its own form: the competencies to rate, and the written questions of the self-assessment and of the manager review, one per line. Answers already given stay with their questions when the list changes, and the cycle's CSV includes them. The Knowledge Base article <a href="../kb/index.html#/hr-admin">HR for HR admins</a> walks through it.</p>
+    <figure>
+      <img src="img/h01-hr-create.png" alt="HR's home page, the HR admin — create panel: New survey, New review cycle, New post and New event buttons, and a line explaining that a review cycle carries its own form.">
+      <figcaption><span class="fno">Fig 1.3</span><span>The HR admin panel on HR's home page.</span></figcaption>
+    </figure>
+
     <h3>Where the data is kept</h3>
     <p>The portal has no server. It is a set of web pages, and its data lives in two files — one for WorkDesk, one for Taskana — wherever <code>config.js</code> says:</p>
     <dl class="kv">
@@ -532,12 +562,13 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <div class="tw"><table>
       <thead><tr><th style="width:120px">Bottom tab</th><th>What it holds</th></tr></thead>
       <tbody>
-        <tr><td><strong>Time</strong></td><td>A running <strong>timer</strong> — <strong><i class="ui-ic" data-ic="play"></i> Start the timer</strong>, then <strong><i class="ui-ic" data-ic="square"></i> Stop and report</strong> when you're done, which opens the entry form pre-filled with the start and end times. <strong>Report without the timer</strong> skips straight to that form. Below it, <strong>‹ ›</strong> move between months; <strong>Mine</strong> shows your own entries and, for managers, <strong>Me and my team</strong> adds the people who report to you (directly or through your teams) — each card then names who reported it. <strong><i class="ui-ic" data-ic="settings"></i> Filter &amp; sort</strong> narrows the list by person, type, status and project and sorts it newest first, oldest first or by most hours. Each entry can be edited, duplicated with <strong><i class="ui-ic" data-ic="copy"></i> Duplicate…</strong> (the same choices as on the desktop — see <a href="#ch-time">Duplicating an entry</a>), or deleted, the same as on the desktop Time Log.</td></tr>
+        <tr><td><strong>Time</strong></td><td>A running <strong>timer</strong> — <strong><i class="ui-ic" data-ic="play"></i> Start the timer</strong>, then <strong><i class="ui-ic" data-ic="square"></i> Stop and report</strong> when you're done, which opens the entry form pre-filled with the start and end times. <strong>Report without the timer</strong> skips straight to that form. A shift started with <a href="#h-qr-time">QR time reporting</a> on the portal home runs on the same timer. The form asks <strong>Worked from</strong> — Home, Office or Client — like the desktop one. Below it, <strong>‹ ›</strong> move between months; <strong>Mine</strong> shows your own entries and, for managers, <strong>Me and my team</strong> adds the people who report to you (directly or through your teams) — each card then names who reported it. <strong><i class="ui-ic" data-ic="settings"></i> Filter &amp; sort</strong> narrows the list by person, type, status and project and sorts it newest first, oldest first or by most hours. Each entry can be edited, duplicated with <strong><i class="ui-ic" data-ic="copy"></i> Duplicate…</strong> (the same choices as on the desktop — see <a href="#ch-time">Duplicating an entry</a>), or deleted, the same as on the desktop Time Log.</td></tr>
         <tr><td><strong>Plan</strong></td><td>The Week Planner, one day at a time.</td></tr>
         <tr><td><strong>Expenses</strong></td><td><strong>+ Report an expense</strong> opens a bottom sheet with the same fields — and the same evidence attachment control — as the desktop form.</td></tr>
         <tr><td><strong>More</strong></td><td>Approvals (if you approve anything), My assignments and allowances, My profile, <strong>Library in Taskana</strong>, the portal home, Taskana, the Handbook and the Knowledge Base.</td></tr>
       </tbody>
     </table></div>
+    <p>Pull the page down from the top to refresh it — see <a href="#h-refresh">Refreshing the portal</a>.</p>
     <div class="fig-pair">
       <figure>
         <img src="img/98-mobile-timelog.png" alt="WorkDesk's mobile Time tab: a large timer card with Start the timer, followed by a scrollable list of this month's entries as cards.">
@@ -568,12 +599,13 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     </figure>
 
     <h3>Reporting time</h3>
-    <p>The form lists one field under another, in the order you fill them: <strong>Assignee</strong> (only for those who report for others), <strong>Date</strong> with <strong>Today</strong>, <strong>Type</strong>, <strong>Start</strong> and <strong>End</strong>, <strong>Hour type</strong>, <strong>Client</strong>, <strong>Project</strong>, <strong>Work order</strong>, <strong>Taskana task</strong>, <strong>Description</strong> and <strong>Notes</strong>, with a large <strong>Add entry</strong> button at the foot that stays in view while the column scrolls. On a desktop the <em>Connected to GitHub</em> sync pill sits under the form, the width of the column.</p>
+    <p>The form lists one field under another, in the order you fill them: <strong>Assignee</strong> (only for those who report for others), <strong>Date</strong> with <strong>Today</strong>, <strong>Type</strong>, <strong>Start</strong> and <strong>End</strong> (09:00–18:00 to begin with), <strong>Hour type</strong>, <strong>Worked from</strong>, <strong>Client</strong>, <strong>Project</strong>, <strong>Work order</strong>, <strong>Taskana task</strong>, <strong>Description</strong> and <strong>Notes</strong>, with a large <strong>Add entry</strong> button at the foot that stays in view while the column scrolls. On a desktop the <em>Connected to GitHub</em> sync pill sits under the form, the width of the column.</p>
     <ol class="steps">
       <li>Set the <strong>Date</strong>, or click <strong>Today</strong>. Future dates are refused — plan those in the Week Planner instead.</li>
       <li>Choose the <strong>Type</strong>: <em>Work</em>, <em>Sick</em> or <em>Vacation</em>. Sick and Vacation hide the time fields — see <a href="#h-leave">Sick and vacation days</a> below.</li>
       <li>Set <strong>Start</strong> and <strong>End</strong> from the hour and minute dropdowns. <strong>Hours</strong> fills itself, rounded to the nearest half hour.</li>
       <li>Pick the <strong>Hour type</strong> — <span class="swatch" style="background:var(--red)"></span> Red · Company, <span class="swatch" style="background:var(--yellow)"></span> Yellow · Client, or — if you manage clients' projects and tasks — <span class="swatch" style="background:var(--blue)"></span> Blue · Management.</li>
+      <li>Choose <strong>Worked from</strong> — <strong>Home</strong>, <strong>Office</strong> (GALIL's) or <strong>Client</strong> (the client's site). It is required, and one or two can be chosen, for a day split between two places; a third is refused. Click a chosen one again to clear it.</li>
       <li>For Yellow or Blue, choose <strong>Client</strong>, <strong>Project</strong>, and <strong>Work order</strong> if the project is work-order tracked. Optionally pick the <strong>Taskana task</strong> the time went to.</li>
       <li>Write a <strong>Description</strong> — it is required. <strong>Notes</strong> are optional.</li>
       <li>Click <strong>Add entry</strong>.</li>
@@ -581,7 +613,14 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
     <figure>
       <img src="img/11-emp-timelog-form.png" alt="The Report time form column: date with Today, type, start and end with the derived hours, the Red/Yellow/Blue toggle, client, project, work order, Taskana task, a large description box, notes and the Add entry button.">
-      <figcaption><span class="fno">Fig 8.2</span><span>The report form, seen by a Team Lead — one field per row; note the Blue option, only offered to roles that manage clients' projects. The dropdowns list only what you are assigned to — if a project is missing, you are not assigned to it yet.</span></figcaption>
+      <figcaption><span class="fno">Fig 8.2</span><span>The report form — one field per row: a new entry starts at 09:00–18:00, and <b>Worked from</b> sits under the hour type. The Blue option is only offered to roles that manage clients' projects. The dropdowns list only what you are assigned to — if a project is missing, you are not assigned to it yet.</span></figcaption>
+    </figure>
+
+    <h4>The timer</h4>
+    <p>At the top of the form, <strong><i class="ui-ic" data-ic="play"></i> Start the timer</strong> starts a clock. While it runs, the strip shows the running time and when it started; <strong><i class="ui-ic" data-ic="square"></i> Stop and report</strong> stops it and fills the form with the date, the start time and now, both rounded to the nearest five minutes — add the rest and save. <strong>Discard</strong> throws the timer away. It is the same timer as the phone's Time tab and as <a href="#h-qr-time">QR time reporting</a>, so a shift started on the phone shows here on the same browser — but each device keeps its own.</p>
+    <figure class="fig-narrow">
+      <img src="img/13-emp-timer-strip.png" alt="The top of the Report time form with the timer running: a clock reading 02:17:01, since 20:05, a Stop and report button and Discard.">
+      <figcaption><span class="fno">Fig 8.3</span><span>The timer, running. Stopped, it reads <b>Start the timer</b> again.</span></figcaption>
     </figure>
 
     <div class="note">
@@ -604,6 +643,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <ul>
       <li>End time not later than start time.</li>
       <li>An empty description.</li>
+      <li>A Work entry with no <strong>Worked from</strong> — <em>"Choose where you worked: Home, Office or Client."</em> (Sick and Vacation don't ask.)</li>
       <li>Yellow or Blue time with no client, or no project. Switch to Red if it is internal.</li>
       <li>No work order on a project that is tracked by work order.</li>
       <li>An overlap with another entry you already reported that day — the message names the clashing times.</li>
@@ -664,13 +704,13 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <li><strong>Custom</strong> — type a number of days and choose <strong>days back</strong> or <strong>days forward</strong>. On its own this makes one copy that many days away. Tick <strong>Copy to every working day in between</strong> to copy the entry onto every Sunday-to-Thursday in that range instead — for example 5 days back copies it onto each working day of the past five days. The line under the field shows the date, or how many days, before you click <strong>Duplicate</strong>.</li>
       <li><strong>Specific date</strong> — pick any date up to today and click <strong>Duplicate</strong>.</li>
     </ul>
-    <p>Every copy takes the entry's client, project, work order, Taskana task, hour type, times and description, and goes through the entitlement engine as a fresh entry — it can land Pending even if the original was Registered, for example if the copy would now exceed an allowance. Dates that can't take a copy are skipped and named in the message: dates after today (plan those in the Week Planner), closed months, and days where the copy would overlap an entry already there or repeat it exactly.</p>
+    <p>Every copy takes the entry's client, project, work order, Taskana task, hour type, <strong>Worked from</strong>, times and description, and goes through the entitlement engine as a fresh entry — it can land Pending even if the original was Registered, for example if the copy would now exceed an allowance. Dates that can't take a copy are skipped and named in the message: dates after today (plan those in the Week Planner), closed months, and days where the copy would overlap an entry already there or repeat it exactly.</p>
 
     <h3>Filtering and totals</h3>
     <p>The month navigator moves one month at a time; <strong>Today</strong> returns to the current one. Below it, filter by employee, client, project, work order, Taskana task, entry type, project status and entry status. <strong>Clear</strong> resets every filter at once. Totals always describe the filtered view. To sort the entries, rearrange or resize columns, or save the layout as a view, see <a href="#h-tables">Working with tables</a>.</p>
 
     <h3>Exporting</h3>
-    <p><strong><i class="ui-ic" data-ic="download"></i> This view</strong> exports the filtered month. <strong><i class="ui-ic" data-ic="download"></i> Everything</strong> exports everything within your permission scope — which for an Employee, Senior Employee or External Contractor means their own records only. Pending entries are moved to a second worksheet so they can never be mistaken for reported time. See <a href="#ch-export">Excel exports</a>.</p>
+    <p><strong><i class="ui-ic" data-ic="download"></i> This view</strong> exports the filtered month. <strong><i class="ui-ic" data-ic="download"></i> Everything</strong> exports everything within your permission scope — which for an Employee, Senior Employee or External Contractor means their own records only. Pending entries are moved to a second worksheet so they can never be mistaken for reported time. The export has a <strong>Worked from</strong> column (for example <em>Home + Client</em>); the same text shows under <em>Work</em> in the table's Type column. See <a href="#ch-export">Excel exports</a>.</p>
   </section>
 
   <!-- ============ 7 ============ -->
@@ -690,9 +730,14 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <ol class="steps">
       <li>Choose <strong>Day</strong>, <strong>Week</strong> or <strong>Month</strong> (a four-week grid), and move with <strong>‹ ›</strong> or <strong>This week</strong>.</li>
       <li>Click <strong>+ plan</strong> in a day column.</li>
-      <li>Set start and end — derived hours appear beneath — then hour type, client, project, work order, Taskana task and a description.</li>
+      <li>Set start and end — 09:00–18:00 to begin with; derived hours appear beneath. Optionally choose <strong>Worked from</strong> — Home, Office or Client, one or two — then hour type, client, project, work order, Taskana task and a description. Unlike the Time Log, Worked from is optional here; a planned block shows it when it has one.</li>
       <li><strong>Save</strong>. Drag the card to another day at any time.</li>
     </ol>
+
+    <figure class="fig-narrow">
+      <img src="img/14-emp-plan-editor.png" alt="The New planned entry window: date, start 09:00 and end 18:00, derived hours 9, Worked from (optional) with Office chosen, hour type, client, project, work order, Taskana task and description.">
+      <figcaption><span class="fno">Fig 9.2</span><span>Planning a block. <b>Worked from (optional)</b> uses the same buttons as the Time Log.</span></figcaption>
+    </figure>
 
     <h3>Suggestions from your Taskana tasks</h3>
     <p>Your Taskana tasks that have a due date and are not yet Done appear as teal chips above the grid. Drag one onto a day and the planned entry is created pre-filled with that task's project, work order and title.</p>
@@ -862,6 +907,21 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <div class="note warn">
       <span class="tag">Side effect worth knowing</span>
       <p>Creating the first work order on a project marks that project <strong>WO tracked</strong>. From then on, every Yellow or Blue entry on it must name a work order.</p>
+    </div>
+
+    <h3 id="h-shift-qr">Shift QR code</h3>
+    <p>The <strong><i class="ui-ic" data-ic="qr"></i> Shift QR code</strong> button, at the right of the Management sections, opens the one code the whole company uses for <a href="#h-qr-time">QR time reporting</a>. It is a link to WorkDesk's Time Log, the same for every employee — each phone records the shift of whoever is signed in on it.</p>
+    <ul>
+      <li><strong>Print</strong> makes a desk sign: GALIL, <em>WorkDesk — start and end your shift</em>, the code, and how to use it, in the portal's current language.</li>
+      <li><strong>Download image</strong> saves the code as <code>GALIL-WorkDesk-shift-QR.png</code>, for a sticker or a document.</li>
+    </ul>
+    <figure class="fig-narrow">
+      <img src="img/64-shift-qr.png" alt="The Shift QR code window: a short explanation, the QR code with GALIL WorkDesk and Scan to start or end your shift beneath it, and Download image and Print buttons.">
+      <figcaption><span class="fno">Fig 11.6</span><span>The shift QR code, ready to print.</span></figcaption>
+    </figure>
+    <div class="note warn">
+      <span class="tag">Print it from the live portal</span>
+      <p>The code holds the address of the page it was made on. Print it from the portal's web address, not from a copy opened as a file on a computer — a code made from a file can't be opened by phones, and the window says so.</p>
     </div>
 
     <h3>People</h3>
@@ -1757,6 +1817,9 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
         <tr><td>Daily hard limit</td><td class="num">12 h</td><td>Company settings</td></tr>
         <tr><td>Weekly hours</td><td class="num">42 h</td><td>Company settings, or per person</td></tr>
         <tr><td>Hour rounding</td><td class="num">0.5 h</td><td>Fixed</td></tr>
+        <tr><td>A new Time Log entry or planned block</td><td class="num">09:00–18:00</td><td>Fixed — 9 hours, changed on the entry</td></tr>
+        <tr><td>Worked from, per entry</td><td class="num">1–2</td><td>Fixed — Home, Office, Client; required on a work entry, optional on a planned block</td></tr>
+        <tr><td>Timer and QR time reporting</td><td class="num">5 min</td><td>Fixed — start and end rounded to the nearest five minutes</td></tr>
         <tr><td>Session lifetime</td><td class="num">12 h</td><td>Fixed — inactivity</td></tr>
         <tr><td>Failed sign-ins before lockout</td><td class="num">5</td><td>Fixed — locked for 15 minutes</td></tr>
         <tr><td>Password reset link validity</td><td class="num">30 min</td><td>Fixed</td></tr>
@@ -1809,13 +1872,13 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
   <h3>Keeping this handbook current</h3>
   <p>This handbook describes the <strong>GALIL Employee Portal</strong>: the portal home page and sign-in, WorkDesk and Taskana. The permission matrices are generated from two tables in <code>handbook.js</code>, so a permission change there is a one-line edit that updates the matrices, the chips and the role filter together — in both languages.</p>
   <p>Questions this handbook doesn't answer: <a href="mailto:info@galiltc.co.il">info@galiltc.co.il</a>.</p>
-  <p class="stampline"><span>Application <b>GALIL Employee Portal</b></span> · <span>Covers <b>Portal · WorkDesk · Taskana</b></span> · <span>Handbook revised <b>18/10/2026</b></span> · <span>Language <b>English · עברית</b></span></p>
+  <p class="stampline"><span>Application <b>GALIL Employee Portal</b></span> · <span>Covers <b>Portal · WorkDesk · Taskana</b></span> · <span>Handbook revised <b>30/10/2026</b></span> · <span>Language <b>English · עברית</b></span></p>
 </footer>
 
 <script src="../config.js"></script>
 <script src="../shared/portal.js"></script>
 <script src="../shared/films.js?v=1"></script>
 <script src="../shared/toc.js?v=1"></script>
-<script src="handbook.js?v=23"></script>
+<script src="handbook.js?v=24"></script>
 </body>
 </html>
