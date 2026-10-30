@@ -19,6 +19,25 @@ var DEFAULT_COMPETENCIES = [
   { en: "Quality of work", he: "איכות העבודה" }, { en: "Communication", he: "תקשורת" }, { en: "Teamwork", he: "עבודת צוות" },
   { en: "Ownership and reliability", he: "אחריות ואמינות" }, { en: "Client focus", he: "שירותיות ומיקוד בלקוח" }, { en: "Learning and growth", he: "למידה והתפתחות" }];
 
+/* the written questions of each part — set per cycle by HR; these are the ones a cycle starts with.
+   An answer is kept on the review under its question's id. */
+var DEFAULT_SELF_Q = [
+  { id: "achievements", name: { en: "What went well this period — achievements you're proud of", he: "מה הלך טוב בתקופה — הישגים שאת/ה גאה בהם" } },
+  { id: "goals", name: { en: "What you'd like to learn or take on next", he: "מה היית רוצה ללמוד או לקחת על עצמך בהמשך" } }];
+var DEFAULT_MGR_Q = [
+  { id: "strengths", name: { en: "Strengths", he: "חוזקות" } },
+  { id: "develop", name: { en: "Areas to develop", he: "תחומים לפיתוח" } },
+  { id: "goals", name: { en: "Goals agreed for the next period", he: "היעדים שסוכמו לתקופה הבאה" } }];
+function selfQuestions(c) { return c.selfQuestions || DEFAULT_SELF_Q; }
+function mgrQuestions(c) { return c.mgrQuestions || DEFAULT_MGR_Q; }
+/* lines typed in the cycle editor → questions; a line that stays keeps its id, so its answers stay with it */
+function linesToQuestions(text, old) {
+  return text.split("\n").map(function (s) { return s.trim(); }).filter(Boolean).map(function (n) {
+    var o = old.filter(function (q) { return L(q.name) === n; })[0];
+    return o || { id: uid("q"), name: n };
+  });
+}
+
 function reviewRow(r, as) {
   var c = byId(db.cycles, r.cycleId);
   var who = as === "mine" ? tr("Reviewer: {name}", { name: nameOf(r.managerId) }) : nameOf(r.employeeId);
@@ -99,11 +118,14 @@ function pageCycle(id) {
 }
 function cycleCsv(c) {
   var comps = c.competencies || [];
-  var head = ["Employee", "Email", "Reviewer", "Step"].concat(comps.map(function (k) { return "Self: " + L(k.name); }), comps.map(function (k) { return "Manager: " + L(k.name); }), ["Overall", "Acknowledged"]);
+  var sq = selfQuestions(c), mq = mgrQuestions(c);
+  var head = ["Employee", "Email", "Reviewer", "Step"].concat(comps.map(function (k) { return "Self: " + L(k.name); }), sq.map(function (q) { return "Self: " + L(q.name); }),
+    comps.map(function (k) { return "Manager: " + L(k.name); }), mq.map(function (q) { return "Manager: " + L(q.name); }), ["Overall", "Acknowledged"]);
   var rows = reviewsOf(c.id).map(function (r) {
     var u = person(r.employeeId), s = r.status !== "self" ? (r.self || {}) : {}, m = r.status === "shared" || r.status === "done" ? (r.mgr || {}) : {};
     return [u ? u.fullName : r.employeeId, u ? u.email : "", r.managerId ? (person(r.managerId) || {}).fullName : "", STEP_LABEL[r.status]]
-      .concat(comps.map(function (k) { return (s.ratings || {})[k.id] || ""; }), comps.map(function (k) { return (m.ratings || {})[k.id] || ""; }),
+      .concat(comps.map(function (k) { return (s.ratings || {})[k.id] || ""; }), sq.map(function (q) { return s[q.id] || ""; }),
+        comps.map(function (k) { return (m.ratings || {})[k.id] || ""; }), mq.map(function (q) { return m[q.id] || ""; }),
         [m.overall ? RATING[m.overall - 1] : "", r.ack ? r.ack.at.slice(0, 10) : ""]);
   });
   return "﻿" + [head].concat(rows).map(function (r) { return r.map(csvCell).join(","); }).join("\n");
@@ -119,6 +141,9 @@ function editCycle(c) {
   var from = input({ type: "date", value: c.from, id: "cy-from" }), to = input({ type: "date", value: c.to, id: "cy-to" });
   var selfDue = input({ type: "date", value: c.selfDue || "", id: "cy-self" }), mgrDue = input({ type: "date", value: c.managerDue || "", id: "cy-mgr" });
   var comps = textarea({ rows: 6, id: "cy-comps", value: c.competencies.map(function (k) { return L(k.name); }).join("\n") });
+  var oldSelf = selfQuestions(c), oldMgr = mgrQuestions(c);
+  var selfQ = textarea({ rows: 3, id: "cy-self-q", value: oldSelf.map(function (q) { return L(q.name); }).join("\n") });
+  var mgrQ = textarea({ rows: 4, id: "cy-mgr-q", value: oldMgr.map(function (q) { return L(q.name); }).join("\n") });
   var picks = [];
   var who = isNew ? h("div", { class: "field" }, h("label", null, tr("People in the cycle")),
     h("div", { class: "picklist" }, cycleCandidates().map(function (u) {
@@ -130,6 +155,8 @@ function editCycle(c) {
     h("div", { class: "row2" }, field(tr("Period from"), from), field(tr("Period to"), to)),
     h("div", { class: "row2" }, field(tr("Self-assessments due"), selfDue), field(tr("Manager reviews due"), mgrDue)),
     field(tr("Competencies — one per line"), comps, isNew ? null : tr("Ratings already given stay with the competencies they were given for.")),
+    field(tr("Self-assessment questions — one per line"), selfQ, tr("Each one is answered in writing. Answers already given stay with their questions.")),
+    field(tr("Manager review questions — one per line"), mgrQ, tr("Written answers, before the overall rating.")),
     who), [
     btn(tr("Cancel"), { onclick: function () { m.close(); } }),
     btn(isNew ? tr("Start the cycle") : tr("Save"), { kind: "primary", id: "cy-save", onclick: function () {
@@ -139,6 +166,7 @@ function editCycle(c) {
       if (!names.length) { toast(tr("Add at least one competency."), "err"); comps.focus(); return; }
       /* keep the ids of the competencies that stay, so their ratings stay with them */
       c.competencies = names.map(function (n) { var old = c.competencies.filter(function (k) { return L(k.name) === n; })[0]; return old || { id: uid("k"), name: n }; });
+      c.selfQuestions = linesToQuestions(selfQ.value, oldSelf); c.mgrQuestions = linesToQuestions(mgrQ.value, oldMgr);
       c.title = title.value.trim(); c.from = from.value; c.to = to.value; c.selfDue = selfDue.value || null; c.managerDue = mgrDue.value || null;
       put("cycles", c);
       if (isNew) picks.filter(function (p) { return p.checked; }).forEach(function (p) { put("reviews", newReview(c, person(p.value))); });
@@ -207,8 +235,7 @@ function pageReview(id) {
     h("div", { class: "sec-h" }, h("h2", null, tr("Self-assessment")), r.selfAt ? h("span", { class: "muted" }, tr("sent {d}", { d: shortDate(r.selfAt.slice(0, 10)) })) : null),
     editSelf ? h("p", { class: "muted" }, tr("Only you see this until you send it to {name}.", { name: nameOf(r.managerId) })) : null,
     ratingsBlock(r.self, editSelf, "self"),
-    longText(tr("What went well this period — achievements you're proud of"), r.self, "achievements", editSelf, "self-achievements"),
-    longText(tr("What you'd like to learn or take on next"), r.self, "goals", editSelf, "self-goals"),
+    selfQuestions(c).map(function (q) { return longText(L(q.name), r.self, q.id, editSelf, "self-" + q.id); }),
     editSelf ? h("div", { class: "form-f" },
       btn(tr("Save draft"), { id: "self-save", onclick: function () { save(tr("Draft saved.")); } }),
       btn(tr("Send to my manager"), { kind: "primary", id: "self-submit", onclick: function () {
@@ -220,11 +247,9 @@ function pageReview(id) {
     h("div", { class: "sec-h" }, h("h2", null, tr("Manager review")), h("span", { class: "muted" }, nameOf(r.managerId), r.sharedAt ? " · " + tr("shared {d}", { d: shortDate(r.sharedAt.slice(0, 10)) }) : "")),
     editMgr ? h("p", { class: "muted" }, tr("{name} sees this once you share it.", { name: firstName(r.employeeId) })) : null,
     ratingsBlock(r.mgr, editMgr, "mgr"),
-    longText(tr("Strengths"), r.mgr, "strengths", editMgr, "mgr-strengths"),
-    longText(tr("Areas to develop"), r.mgr, "develop", editMgr, "mgr-develop"),
+    mgrQuestions(c).map(function (q) { return longText(L(q.name), r.mgr, q.id, editMgr, "mgr-" + q.id); }),
     h("div", { class: "field" }, h("label", null, tr("Overall rating")), scale(tr("Overall rating"), r.mgr.overall || null, RATING.map(tr), function (v) { r.mgr.overall = v; }, !editMgr),
       !editMgr ? h("div", { class: "hint" }, ratingLabel(r.mgr.overall)) : null),
-    longText(tr("Goals agreed for the next period"), r.mgr, "goals", editMgr, "mgr-goals"),
     editMgr ? h("div", { class: "form-f" },
       btn(tr("Save draft"), { id: "mgr-save", onclick: function () { save(tr("Draft saved.")); } }),
       btn(tr("Share with {name}", { name: firstName(r.employeeId) }), { kind: "primary", id: "mgr-share", onclick: function () {
