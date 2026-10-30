@@ -18435,6 +18435,12 @@ var CSS = [
 ".eform.stack .timefld select{flex:1 1 0;min-width:0}",
 ".eform.stack .fld.htype{flex:1 1 0!important}",
 ".eform.stack .seg{display:flex;width:100%}",
+".seg.wf button{color:var(--ink)}",
+".seg.wf button.on{background:var(--deep);color:var(--deepfg)}",
+".seg.wf button .ico{margin:0}",
+".fld.wfrom{flex:0 0 auto}",
+".modal .fld.wfrom .seg,.sheet .fld.wfrom .seg{display:flex}.modal .fld.wfrom .seg button,.sheet .fld.wfrom .seg button{flex:1;justify-content:center}",
+".wfcell{font-size:11.5px;font-weight:600;color:var(--deep);white-space:nowrap}",
 ".eform.stack .seg button{flex:1;justify-content:center}",
 ".eform.stack textarea{display:block;line-height:1.4}",
 ".eform.stack>.band:has(>.banner){flex-wrap:wrap}",
@@ -19961,7 +19967,7 @@ function PendingActivation(p) {
 
 function blankEntry(userId) {
   return {
-    id: null, date: todayStr(), type: "Work", start: "09:00", end: "18:00",
+    id: null, date: todayStr(), type: "Work", start: "09:00", end: "18:00", workFrom: [],
     red: 0, yellow: 0, blue: 0, day: 0, assignee: userId,
     clientId: "", projectId: "", workOrderId: "", taskId: "",
     client: "", project: "", workOrder: "", task: "",
@@ -20006,6 +20012,26 @@ function optionsFor(db, form, viewer) {
   };
 }
 
+/* where the work was done — Home, Office (the company's), Client (the client's site); one or two per entry */
+var WORK_FROM = [{ k: "home", label: "Home" }, { k: "office", label: "Office" }, { k: "client", label: "Client" }];
+function workFromOf(e) { return WORK_FROM.map(function (w) { return w.k; }).filter(function (k) { return (e.workFrom || []).indexOf(k) >= 0; }); }
+function workFromText(e) { return workFromOf(e).map(function (k) { return tr(WORK_FROM.filter(function (w) { return w.k === k; })[0].label); }).join(" + "); }
+function WorkFromPicker(p) {
+  var val = p.value || [];
+  var toggle = function (k) {
+    if (val.indexOf(k) >= 0) { p.onChange(val.filter(function (x) { return x !== k; })); return; }
+    if (val.length >= 2) { toast("Choose one or two places.", "error"); return; }
+    p.onChange(val.concat([k]));
+  };
+  return h(Field, { label: p.optional ? "Worked from (optional)" : "Worked from", req: !p.optional, err: p.err, cls: "wfrom" },
+    h("div", { className: "seg wf", role: "group", "aria-label": "Worked from", style: p.style },
+      WORK_FROM.map(function (w) {
+        var on = val.indexOf(w.k) >= 0;
+        return h("button", { key: w.k, type: "button", id: (p.idPrefix || "wf-") + w.k, "aria-pressed": on ? "true" : "false", className: on ? "on" : "",
+          onClick: function () { toggle(w.k); } }, on ? h(Icon, { n: "check", size: 14 }) : null, w.label);
+      })));
+}
+
 /* §7.3 validation */
 function validateEntry(db, f, viewer) {
   var e = {};
@@ -20014,6 +20040,7 @@ function validateEntry(db, f, viewer) {
     if (!f.start || !f.end || hrs <= 0) e.end = "End time must be later than start time.";
   }
   if (!String(f.description || "").trim()) e.description = "Add a short description of the work.";
+  if (f.type === "Work" && !workFromOf(f).length) e.workFrom = "Choose where you worked: Home, Office or Client.";
   if (f.type === "Work" && (f.hourType === "yellow" || f.hourType === "blue")) {
     if (!f.clientId && !(f.freeClient && f.client)) e.client = "Select a client, or switch this entry to Red · Company.";
     if (!f.projectId && !(f.freeProject && f.project)) e.project = "Select a project.";
@@ -20078,6 +20105,7 @@ function formToEntry(db, f) {
     taskId: f.type === "Work" ? (f.taskId || null) : null,
     client: f.freeClient ? f.client : "", project: f.freeProject ? f.project : "", workOrder: f.freeWO ? f.workOrder : "", task: "",
     projectStatus: f.projectStatus || "", description: f.description, notes: f.notes || "",
+    workFrom: f.type === "Work" ? workFromOf(f) : [],
     status: f.status || "registered", statusReason: f.statusReason || "", submittedAt: f.submittedAt || null,
     approvedBy: f.approvedBy || null, approvedAt: f.approvedAt || null, decisionNote: f.decisionNote || "",
     softFlag: false, migrated: false
@@ -20210,6 +20238,7 @@ function EntryForm(p) {
       onFreeToggle: function (v) { set(Object.assign({}, f, { freeWO: v, workOrderId: "", workOrder: "" })); },
       onChange: function (v) { up("workOrderId", v); }, onFreeChange: function (v) { up("workOrder", v); }
     }),
+    workFrom: h(WorkFromPicker, { key: "wf", value: f.workFrom, err: errs.workFrom, onChange: function (v) { up("workFrom", v); } }),
     task: h(Sel, { key: "tk", label: "Taskana task (optional)", cls: "grow", value: f.taskId, placeholder: opts.tasks.length ? "— none —" : "— no open Taskana task —", options: opts.tasks, onChange: function (e) { up("taskId", e.target.value); } }),
     leave: isDayType ? h(LeaveBand, { key: "lv", db: db, viewer: viewer, form: f, up: up }) : null
   };
@@ -20228,6 +20257,7 @@ function EntryForm(p) {
       line(el.type, isDayType ? el.days : el.hours),
       isDayType ? null : line(el.start, el.end),
       isDayType ? null : line(el.hourType),
+      isDayType ? null : line(el.workFrom),
       el.leave,
       isDayType ? null : [line(el.client), line(el.project), line(el.workOrder), line(el.task)].map(function (x, i) { return React.cloneElement(x, { key: "l" + i }); }),
       h(Field, { label: "Description", req: true, err: errs.description },
@@ -20243,7 +20273,7 @@ function EntryForm(p) {
     warnEl,
     h("div", { className: "band" },
       el.assignee, el.date, el.today, el.dateTo, el.type,
-      isDayType ? el.days : [el.start, el.end, el.hours, el.hourType]
+      isDayType ? el.days : [el.start, el.end, el.hours, el.hourType, el.workFrom]
     ),
     el.leave,
     isDayType ? null : h("div", { className: "band" }, el.client, el.project, el.workOrder, el.task),
@@ -20334,7 +20364,9 @@ function duplicateEntry(db, user, mutate, e, dates, after) {
       id: null, date: nd, status: "registered", statusReason: "", submittedAt: null,
       approvedBy: null, approvedAt: null, decisionNote: "", softFlag: false
     }));
-    var bad = validateEntry(db, form, user), keys = Object.keys(bad);
+    var bad = validateEntry(db, form, user);
+    delete bad.workFrom;   /* a copy keeps the original's place, and entries from before the field existed have none */
+    var keys = Object.keys(bad);
     if (keys.length) { skipped.push(il(nd) + ": " + bad[keys[0]]); return; }
     ok.push(form);
   });
@@ -20584,7 +20616,7 @@ function TimeLogTab(p) {
         client: e.clientId ? nameOf(db.clients, e.clientId) : (e.client || ""),
         project: e.projectId ? nameOf(db.projects, e.projectId) : (e.project || ""),
         workOrder: e.workOrderId ? nameOf(db.workOrders, e.workOrderId, "code") : (e.workOrder || ""),
-        task: e.task || "",
+        task: e.task || "", workFrom: workFromText(e),
         projectStatus: entryProjectStatus(db, e), status: ENTRY_STATUS_LABEL[e.status] || e.status,
         reason: e.statusReason, description: e.description, notes: e.notes
       };
@@ -20597,7 +20629,7 @@ function TimeLogTab(p) {
       { key: "blue", label: "Blue h", type: "number", total: true, width: 10 },
       { key: "day", label: "Days", type: "number", total: true, width: 8 },
       { key: "client", label: "Client" }, { key: "project", label: "Project" },
-      { key: "workOrder", label: "Work order", width: 18 }, { key: "task", label: "Taskana task" },
+      { key: "workOrder", label: "Work order", width: 18 }, { key: "task", label: "Taskana task" }, { key: "workFrom", label: "Worked from", width: 16 },
       { key: "projectStatus", label: "Project status", width: 17 },
       { key: "status", label: "Entry status", width: 14 }, { key: "reason", label: "Reason", width: 18 },
       { key: "description", label: "Description", width: 44 }, { key: "notes", label: "Notes", width: 26 }
@@ -20666,7 +20698,7 @@ function TimeLogTab(p) {
                   h("div", { className: "tnum" }, il(e.date)),
                   h("div", { className: "cap" }, DOW[s2d(e.date).getDay()])),
                 h("td", null, userName(db, e.assignee)),
-                h("td", null, e.type === "Work" ? h("span", { className: "cap" }, "Work") : h(Chip, { k: "mut", style: { background: e.type === "Sick" ? "var(--sickbg)" : "var(--vacbg)", color: e.type === "Sick" ? "var(--sicktx)" : "var(--vactx)", borderColor: e.type === "Sick" ? "var(--sickline)" : "var(--vacline)" } }, e.type)),
+                h("td", null, e.type === "Work" ? h("span", { className: "cap" }, "Work", workFromOf(e).length ? h("div", { className: "wfcell" }, workFromText(e)) : null) : h(Chip, { k: "mut", style: { background: e.type === "Sick" ? "var(--sickbg)" : "var(--vacbg)", color: e.type === "Sick" ? "var(--sicktx)" : "var(--vactx)", borderColor: e.type === "Sick" ? "var(--sickline)" : "var(--vacline)" } }, e.type)),
                 h("td", { className: "tnum", style: { whiteSpace: "nowrap" }, "data-sort": e.start || "" }, e.start ? [e.start + "–", h("br", { key: "b" }), e.end] : "—"),
                 h("td", { className: "hrs", "data-sort": (Number(e.red) || 0) + (Number(e.yellow) || 0) + (Number(e.blue) || 0) + (Number(e.day) || 0) }, hoursChips(e)),
                 h("td", null, e.clientId ? nameOf(db.clients, e.clientId) : e.client ? h("span", { title: "Typed by the employee — not in the master list" }, e.client, " ", h(Chip, { k: "amber" }, "new")) : "—"),
@@ -20897,7 +20929,8 @@ function PlannerTab(p) {
                   h("div", { className: "mono", style: { fontWeight: 700 } }, x.start, "–", x.end),
                   h("div", null, x.projectId ? nameOf(db.projects, x.projectId) : "—"),
                   x.task ? h("div", { className: "cap" }, x.task) : null,
-                  h("div", { className: "cap" }, x.description));
+                  h("div", { className: "cap" }, x.description),
+                  workFromOf(x).length ? h("div", { className: "wfcell" }, workFromText(x)) : null);
               }),
               h("button", { className: "btn t sm", style: { minHeight: 32 }, onClick: function () { addPlan(ds2); } }, "+ plan"))
           );
@@ -20918,7 +20951,8 @@ function savePlanned(mutate, user, f) {
       yellow: f.hourType === "yellow" ? hrs : 0,
       blue: f.hourType === "blue" ? hrs : 0,
       clientId: f.clientId || null, projectId: f.projectId || null, workOrderId: f.workOrderId || null,
-      taskId: f.taskId || null, task: f.taskId ? (taskanaTaskLabel(f.taskId) || f.task || "") : "", description: f.description
+      taskId: f.taskId || null, task: f.taskId ? (taskanaTaskLabel(f.taskId) || f.task || "") : "", description: f.description,
+      workFrom: workFromOf(f)
     };
     var i = d.planned.findIndex(function (x) { return x.id === rec.id; });
     if (i >= 0) d.planned[i] = rec; else d.planned.push(rec);
@@ -20953,6 +20987,7 @@ function PlanEditor(p) {
         h(Inp, { label: "End", type: "time", step: 300, value: f.end, onChange: function (e) { up("end", e.target.value); } })),
       h("div", { className: "row" },
         h("span", { className: "cap" }, "Derived hours"), h("b", { className: "mono" }, num(derivedHours(f.start, f.end)))),
+      h(WorkFromPicker, { optional: true, idPrefix: "pwf-", value: f.workFrom, style: { width: "100%" }, onChange: function (v) { up("workFrom", v); } }),
       h(Sel, { label: "Hour type", value: f.hourType, options: [{ value: "yellow", label: "Yellow · Client" }, { value: "red", label: "Red · Company" }].concat(can(p.user, "reportBlueTime") ? [{ value: "blue", label: "Blue · Management" }] : []), onChange: function (e) { up("hourType", e.target.value); } }),
       h(Sel, { label: "Client", value: f.clientId || "", placeholder: "—", options: db.clients.map(function (c) { return { value: c.id, label: c.name }; }), onChange: function (e) { up("clientId", e.target.value); } }),
       h(Sel, { label: "Project", value: f.projectId || "", placeholder: "—", options: projects.map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { up("projectId", e.target.value); } }),
@@ -24537,6 +24572,7 @@ function MobileEntrySheet(p) {
         can(user, "reportBlueTime") ? h("button", { type: "button", role: "radio", "aria-checked": f.hourType === "blue" ? "true" : "false", style: { flex: 1, justifyContent: "center" },
           className: f.hourType === "blue" ? "on b" : "", onClick: function () { up("hourType", "blue"); } },
           h("span", { className: "dot", style: { background: f.hourType === "blue" ? "#fff" : C.blue } }), "Blue") : null)),
+    day ? null : h(WorkFromPicker, { value: f.workFrom, err: errs.workFrom, idPrefix: "mwf-", style: { height: 46, width: "100%" }, onChange: function (v) { up("workFrom", v); } }),
     day ? null : h(Sel, { label: "Client", req: f.hourType !== "red", err: errs.client, value: f.clientId, placeholder: "Select…", options: opts.clients, onChange: function (e) { up("clientId", e.target.value); } }),
     day ? null : h(Sel, { label: "Project", req: f.hourType !== "red", err: errs.project, value: f.projectId, placeholder: "Select…", options: opts.projects, onChange: function (e) { up("projectId", e.target.value); } }),
     day ? null : h(Sel, { label: "Work order", err: errs.workOrder, value: f.workOrderId, placeholder: opts.workOrders.length ? "Select…" : "— none on this project —", options: opts.workOrders, disabled: !f.projectId, onChange: function (e) { up("workOrderId", e.target.value); } }),
@@ -24639,6 +24675,7 @@ function MobileTime(p) {
         h("div", { className: "mrow" },
           h("span", { className: "tnum" }, il(e.date)), h("span", null, DOW[s2d(e.date).getDay()]),
           e.start ? h("span", { className: "tnum" }, e.start, "–", e.end) : null,
+          workFromOf(e).length ? h("span", { className: "wfcell" }, workFromText(e)) : null,
           statusBadge(e)),
         (e.clientId || e.projectId || e.workOrderId) ? h("div", { className: "mrow" },
           e.clientId ? h("span", null, nameOf(db.clients, e.clientId)) : null,
@@ -24779,7 +24816,8 @@ function MobilePlanner(p) {
           h("span", { className: "tnum" }, num(hrsOf(x)), " h")),
         h("div", { className: "mrow" },
           h("span", { className: "tnum" }, x.start, "–", x.end),
-          x.projectId ? h("span", null, nameOf(db.projects, x.projectId)) : null)));
+          x.projectId ? h("span", null, nameOf(db.projects, x.projectId)) : null,
+          workFromOf(x).length ? h("span", { className: "wfcell" }, workFromText(x)) : null)));
   }
   function dayBlock(ds) {
     var dayPlans = mine.filter(function (x) { return x.date === ds; });

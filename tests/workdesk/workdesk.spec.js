@@ -931,7 +931,7 @@ test.describe("the shift QR code", () => {
       await scan(page);
       const sheet = page.getByRole("dialog", { name: "Report time" });
       await expect(sheet).toBeVisible();
-      await expect(sheet.getByText("Client")).toBeVisible();
+      await expect(sheet.getByText("Worked from")).toBeVisible();
       expect(await timer(page)).toBeNull();
       expect(errors).toEqual([]);
     });
@@ -1003,6 +1003,82 @@ test.describe("refresh", () => {
       await drag(page, context, 195, box.y + 60, box.y + 300);
       await page.waitForTimeout(400);
       expect(await page.evaluate(() => window.__before)).toBe(1);
+      expect(errors).toEqual([]);
+    });
+  });
+});
+
+/* ---------- where the work was done: Home / Office / Client ---------- */
+test.describe("worked from", () => {
+  test("a work entry must say where it was done — one or two places — and the list shows it", async ({ page }) => {
+    const errors = await served(page);
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    const d = await data(page);
+    const proj = d.projects.find(p => d.assignments.some(a => a.userId === "u-eitan" && a.projectId === p.id));
+    const form = page.locator(".tlform");
+    /* a day with nothing reported yet, so the default 09:00–18:00 clashes with nothing */
+    await form.locator('input[type="date"]').fill(await page.evaluate(() => { const db = JSON.parse(localStorage.getItem("galil-workdesk-v1")).data, x = new Date(); x.setDate(x.getDate() - 1);
+      while (db.entries.some(e => e.assignee === "u-eitan" && e.date === d2s(x))) x.setDate(x.getDate() - 1); return d2s(x); }));
+    await form.getByRole("radio", { name: "Red" }).click();
+    await form.locator("textarea").first().fill("Style guide review");
+    const before = (await data(page)).entries.length;
+    await form.getByRole("button", { name: "Add entry" }).click();
+    await expect(form.getByText("Choose where you worked: Home, Office or Client.")).toBeVisible();
+    expect((await data(page)).entries.length).toBe(before);
+    await page.click("#wf-home"); await page.click("#wf-client");
+    await page.click("#wf-office");
+    await expect(page.getByText("Choose one or two places.")).toBeVisible();
+    await expect(page.locator("#wf-office")).toHaveAttribute("aria-pressed", "false");
+    await form.getByRole("button", { name: "Add entry" }).click();
+    await expect.poll(async () => (await data(page)).entries.length).toBe(before + 1);
+    const saved = (await data(page)).entries.find(e => e.description === "Style guide review");
+    expect(saved.workFrom).toEqual(["home", "client"]);
+    if (saved.date.slice(0, 7) === new Date().toISOString().slice(0, 7)) await expect(page.locator("table.tlt")).toContainText("Home + Client");
+    expect(errors).toEqual([]);
+  });
+
+  test("the Week Planner offers it too, but doesn't require it", async ({ page }) => {
+    const errors = await served(page);
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await page.getByRole("tab", { name: "Week Planner" }).click();
+    const count = async () => (await data(page)).planned.length;
+    const before = await count();
+    await page.getByRole("button", { name: "+ plan" }).first().click();
+    const dlg = page.getByRole("dialog");
+    await expect(dlg.getByText("Worked from (optional)")).toBeVisible();
+    await dlg.getByRole("button", { name: "Save" }).click();
+    await expect.poll(count).toBe(before + 1);
+    await page.getByRole("button", { name: "+ plan" }).nth(1).click();
+    await page.click("#pwf-home");
+    await page.getByRole("dialog").getByRole("button", { name: "Save" }).click();
+    await expect.poll(count).toBe(before + 2);
+    const pl = (await data(page)).planned;
+    expect(pl[pl.length - 2].workFrom).toEqual([]);
+    expect(pl[pl.length - 1].workFrom).toEqual(["home"]);
+    expect(errors).toEqual([]);
+  });
+
+  test.describe("on a phone", () => {
+    test.use({ viewport: { width: 390, height: 844 } });
+    test("the Report time sheet asks where too", async ({ page }) => {
+      const errors = await served(page);
+      await signIn(page, "eitan.f@galiltc.co.il");
+      await page.click("#tile-workdesk");
+      await page.getByRole("button", { name: "Report without the timer" }).click();
+      const sheet = page.getByRole("dialog", { name: "Report time" });
+      await sheet.locator('input[type="date"]').fill(await page.evaluate(() => { const db = JSON.parse(localStorage.getItem("galil-workdesk-v1")).data, x = new Date(); x.setDate(x.getDate() - 1);
+      while (db.entries.some(e => e.assignee === "u-eitan" && e.date === d2s(x))) x.setDate(x.getDate() - 1); return d2s(x); }));
+      await sheet.getByRole("radio", { name: "Red" }).click();
+      await sheet.getByPlaceholder("What did you work on?").fill("Team meeting");
+      await page.getByRole("button", { name: "Save entry" }).click();
+      await expect(sheet.getByText("Choose where you worked: Home, Office or Client.")).toBeVisible();
+      await page.click("#mwf-office");
+      await page.getByRole("button", { name: "Save entry" }).click();
+      await expect(sheet).toHaveCount(0);
+      const saved = (await data(page)).entries.find(e => e.description === "Team meeting");
+      expect(saved.workFrom).toEqual(["office"]);
       expect(errors).toEqual([]);
     });
   });
