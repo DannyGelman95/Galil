@@ -57,8 +57,12 @@ var PORTAL_CSS = [
 ".hubfoot{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}",
 ".hubfoot a{color:var(--muted)}",
 /* language switch */
-".langsw{display:inline-flex;border:1px solid rgba(255,255,255,.25);border-radius:999px;overflow:hidden}",
-".langsw button{border:0;background:transparent;color:var(--chromedim);font:700 12px var(--font);padding:6px 11px;cursor:pointer;min-height:32px}",
+".langsw{display:inline-flex;flex:0 0 auto;border:1px solid rgba(255,255,255,.25);border-radius:999px;overflow:hidden}",
+".langsw button{flex:0 0 auto;white-space:nowrap;border:0;background:transparent;color:var(--chromedim);font:700 12px var(--font);padding:6px 11px;cursor:pointer;min-height:32px}",
+/* the top bar's controls keep their size on a narrow phone; the brand gives way */
+".hubtop>*:not(.brand):not(.spacer){flex-shrink:0}",
+".hubtop .brand{min-width:0;overflow:hidden}",
+"@media(max-width:380px){.hubtop .brand>div{display:none}}",
 ".langsw button.on{background:var(--green);color:var(--onlight)}",
 ".langsw.light{border-color:var(--line)}",
 ".langsw.light button{color:var(--muted)}",
@@ -81,7 +85,7 @@ var PORTAL_CSS = [
 ".tile.wide .tgo{text-decoration:none;align-self:flex-start}",
 ".tile.wide .tgo:hover{text-decoration:underline}",
 "@media(max-width:600px){.tile.wide{grid-column:auto}.heads .hm{display:none}}",
-"@media(max-width:680px){.hubwrap{padding:18px max(16px,env(safe-area-inset-right)) calc(70px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}.hubtop{padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left))}.tile{min-height:0}.hubtop .brand small{display:none}}"
+"@media(max-width:680px){.hubwrap{padding:18px max(16px,env(safe-area-inset-right)) calc(70px + env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}.hubtop{padding:max(8px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) 8px max(12px,env(safe-area-inset-left))}.tile{min-height:0}.hubtop .brand small{display:none}.hubtop{gap:6px}.hubtop .brand{letter-spacing:.1em}}"
 ].join("\n");
 
 /* Hebrew: the layout mirrors. Most of the stylesheet already lays out with flex and
