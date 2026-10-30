@@ -57,6 +57,8 @@ var PORTAL_CSS = [
 ".hubfoot{display:flex;flex-wrap:wrap;gap:10px 18px;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);border-top:1px solid var(--line);padding-top:16px}",
 ".hubfoot a{color:var(--muted)}",
 /* language switch */
+".qrtime{margin:0}",
+".qrtime .bigbtn .ico{margin-inline-end:4px}",
 ".langsw{display:inline-flex;flex:0 0 auto;border:1px solid rgba(255,255,255,.25);border-radius:999px;overflow:hidden}",
 ".langsw button{flex:0 0 auto;white-space:nowrap;border:0;background:transparent;color:var(--chromedim);font:700 12px var(--font);padding:6px 11px;cursor:pointer;min-height:32px}",
 /* the top bar's controls keep their size on a narrow phone; the brand gives way */
@@ -299,6 +301,9 @@ function PortalHome(p) {
           h("h1", null, tr(greet, { name: firstName(user) })),
           h("div", { className: "cap" }, ilLong(todayStr()), " · ", "Where would you like to start?")),
         h(Btn, { kind: "t", onClick: p.onSignOut }, "Sign out")),
+
+      /* phones: QR time reporting — scan the shift code on the desk */
+      acc.workdesk && can(user, "reportOwnTime") && GalilPortal.isMobileDevice() ? h(QRTimeCard, { db: db, user: user }) : null,
 
       /* birthday reminders: colleagues' birthdays this week (people may keep theirs private) */
       h(BirthdayBanner, { db: db, days: 7, id: "home-birthdays", title: "Birthdays this week", mb: 0 }),

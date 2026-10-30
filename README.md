@@ -32,7 +32,7 @@ home page, and see a tile for each product their access includes:
 
 | Product | What it is for | Folder |
 |---|---|---|
-| **WorkDesk** | Time (work, sick, vacation) and expense reporting, with a shift QR code for the desk — the first scan starts the timer, the second ends the shift and asks what the time was for (Management → Shift QR code prints it; scanned in the app, or with the phone camera, which opens the installed app on Android). The ⟳ button in the header, or pulling the page down on a phone, loads the latest version; budgets against recorded hours; people, clients, projects, work orders, assignments and approvals | `index.html`, `workdesk/` |
+| **WorkDesk** | Time (work, sick, vacation) and expense reporting, with a shift QR code for the desk — the first scan starts the timer, the second ends the shift and asks what the time was for (Management → Shift QR code prints it; employees scan it with QR time reporting on the portal home, on their phone). The ⟳ button in the header, or pulling the page down on a phone, loads the latest version; budgets against recorded hours; people, clients, projects, work orders, assignments and approvals | `index.html`, `workdesk/` |
 | **Taskana** | Tasks only — boards, lists, reviews, comments. People, clients, projects and work orders come from WorkDesk; budget and hours-bank indicators show WorkDesk's figures | `taskana/` |
 | **Handbook** | The user guide to the portal, WorkDesk and Taskana, role by role | `handbook/` (`index.html` English, `he.html` Hebrew) |
 | **Knowledge Base** | Onboarding, company rules, security and training articles | `kb/` |
