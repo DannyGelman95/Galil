@@ -18771,6 +18771,11 @@ var CSS = [
 ".bigbtn.go:active{background:var(--deep);color:var(--deepfg)}",
 ".bigbtn.stop{background:var(--err);color:#fff}",
 ".bigbtn.gh{background:var(--surface);border:1px solid var(--line);color:var(--ink)}",
+/* refresh: the pull-down indicator on touch screens */
+".ptr{position:fixed;top:calc(env(safe-area-inset-top) + 6px);left:50%;z-index:300;width:42px;height:42px;margin-left:-21px;border-radius:50%;background:var(--surface);color:var(--deep);border:1px solid var(--line);box-shadow:0 3px 12px var(--shadow);display:grid;place-items:center;pointer-events:none;opacity:0;transform:translateY(-60px)}",
+".ptr.ready{background:var(--green);color:var(--onlight);border-color:var(--green)}",
+".ptr.spin svg{animation:ptrspin .8s linear infinite}",
+"@keyframes ptrspin{to{transform:rotate(360deg)}}",
 /* QR codes: the scanner's camera, the desktop timer strip and the printable codes */
 ".qrcam{position:relative;border-radius:14px;overflow:hidden;background:#000;aspect-ratio:1/1;max-height:60vh;margin:0 auto;width:100%}",
 ".qrcam video{width:100%;height:100%;object-fit:cover;display:block}",
@@ -18957,6 +18962,7 @@ var ICONS = {
   clip: ["M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"],
   play: ["M6 3l14 9-14 9z"],
   square: [{ r: [5, 5, 14, 14, 2] }],
+  refresh: ["M21 12a9 9 0 1 1-2.64-6.36L21 8", "M21 3v5h-5"],
   qr: [{ r: [3, 3, 7, 7, 1] }, { r: [14, 3, 7, 7, 1] }, { r: [3, 14, 7, 7, 1] }, "M14 14h3v3h-3zM21 14v.01M14 21h.01M17 17h4v4h-4z"],
   sliders: ["M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"],
   widths: ["M8 7l-5 5 5 5M16 7l5 5-5 5M3 12h18"],
@@ -25075,6 +25081,7 @@ function MobileApp(p) {
         h("div", { style: { fontSize: 10, color: "var(--chromesoft)" } }, "WorkDesk")),
       WDCloud.remote ? h("span", { className: "syncdock", ref: dockSync }) : null,
       h("div", { className: "grow" }),
+      h(RefreshBtn, null),
       h("button", {
         className: "iconbtn", onClick: function () { p.setTheme(p.theme === "dark" ? "light" : "dark"); },
         "aria-label": p.theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme"
@@ -25106,6 +25113,76 @@ function MobileApp(p) {
 /* =====================================================================
    Application shell — §14.3 tab bar, §6.4 session, §8.3 my assignments
    ===================================================================== */
+
+/* ---------- Refresh: load the latest version of the portal ----------
+   The portal's own files are fetched again past the browser's cache (GitHub
+   Pages lets a browser keep them for ten minutes), then the page reloads —
+   with the latest data too. On a touch screen, pulling the page down from the
+   top does the same; everywhere, the ⟳ button in the header. */
+var REFRESH_FILES = ["index.html", "config.js", "shared/portal.js", "workdesk/workdesk-cloud.js", "workdesk/i18n.js", "workdesk/he.js",
+  "workdesk/workdesk-seed.js", "workdesk/portal-home.js", "manifest.webmanifest", "vendor/jsQR.js", "install/vendor/qrcode.js"];
+var _refreshing = false;
+function refreshApp() {
+  if (_refreshing) return;
+  _refreshing = true;
+  var ind = pullIndicator(); ind.style.opacity = "1"; ind.style.transform = "translateY(0)"; ind.className = "ptr spin";
+  var go = function () { location.reload(); };
+  if (location.protocol === "file:" || !window.fetch) { setTimeout(go, 150); return; }
+  var urls = [location.href.split("#")[0]].concat(REFRESH_FILES);
+  Promise.all(urls.map(function (u) { return fetch(u, { cache: "reload" }).catch(function () {}); })).then(go, go);
+  setTimeout(go, 6000);
+}
+function RefreshBtn(p) {
+  return h("button", { className: "iconbtn", id: p.id || "refresh-btn", title: "Refresh — load the latest version", "aria-label": "Refresh", onClick: refreshApp, style: p.style },
+    h(Icon, { n: "refresh", size: p.size || 19 }));
+}
+var _ptrEl = null;
+function pullIndicator() {
+  if (_ptrEl) return _ptrEl;
+  _ptrEl = document.createElement("div");
+  _ptrEl.className = "ptr"; _ptrEl.id = "ptr"; _ptrEl.setAttribute("aria-hidden", "true");
+  _ptrEl.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36L21 8"/><path d="M21 3v5h-5"/></svg>';
+  document.body.appendChild(_ptrEl);
+  return _ptrEl;
+}
+/* pull down from the top of the page to refresh — not inside an open window or
+   sheet, and not when anything under the finger is scrolled away from its top */
+function installPullToRefresh() {
+  var PULL = 70, st = null;
+  var scrolled = function (el) {
+    for (; el && el !== document.body && el !== document.documentElement; el = el.parentElement) if (el.scrollTop > 0) return true;
+    return (document.scrollingElement || document.documentElement).scrollTop > 0;
+  };
+  var show = function (d) {
+    var ind = pullIndicator(), k = Math.min(1, d / PULL);
+    ind.className = "ptr" + (d >= PULL ? " ready" : "");
+    ind.style.opacity = String(k);
+    ind.style.transform = "translateY(" + Math.round(-60 + Math.min(d, PULL + 30)) + "px) rotate(" + Math.round(k * 270) + "deg)";
+  };
+  var reset = function () { if (_ptrEl && !_refreshing) { _ptrEl.style.opacity = "0"; _ptrEl.style.transform = "translateY(-60px)"; _ptrEl.className = "ptr"; } };
+  document.addEventListener("touchstart", function (e) {
+    st = null;
+    if (_refreshing || e.touches.length !== 1) return;
+    var t = e.target;
+    if (t.closest && t.closest(".sheet,.ovl,[role=dialog],.qrcam,input,textarea,select")) return;
+    if (scrolled(t)) return;
+    st = { x: e.touches[0].clientX, y: e.touches[0].clientY, d: 0, lock: null };
+  }, { passive: true });
+  document.addEventListener("touchmove", function (e) {
+    if (!st || e.touches.length !== 1) return;
+    var dx = e.touches[0].clientX - st.x, dy = e.touches[0].clientY - st.y;
+    if (st.lock === null && Math.abs(dx) + Math.abs(dy) > 10) st.lock = dy > 0 && dy > Math.abs(dx) ? "pull" : "no";
+    if (st.lock !== "pull") return;
+    st.d = Math.max(0, dy * 0.6);
+    show(st.d);
+  }, { passive: true });
+  var end = function () {
+    var s0 = st; st = null;
+    if (s0 && s0.lock === "pull" && s0.d >= PULL) refreshApp(); else reset();
+  };
+  document.addEventListener("touchend", end, { passive: true });
+  document.addEventListener("touchcancel", function () { st = null; reset(); }, { passive: true });
+}
 
 var TABS = [
   { k: "time",     label: "Time Log",    need: null },
@@ -25475,6 +25552,7 @@ function App() {
           : h(Chip, { k: "gr", style: { background: "rgba(255,255,255,.1)", color: "#C5D3EA", borderColor: "rgba(255,255,255,.2)" } }, "Standalone")),
       isOnline ? null : h(Chip, { k: "amber" }, "Offline — changes cached locally"),
       h("div", { className: "spacer" }),
+      h(RefreshBtn, null),
       h("button", {
         className: "iconbtn", onClick: function () { setTheme(theme === "dark" ? "light" : "dark"); },
         title: theme === "dark" ? "Switch to the light theme" : "Switch to the dark theme",
@@ -25520,6 +25598,7 @@ function App() {
 /* ---- boot ---- */
 (function () {
   applyTheme(readTheme());
+  installPullToRefresh();
   var style = document.createElement("style");
   style.textContent = CSS + "\n" + PORTAL_CSS + "\n" + RTL_CSS;
   document.head.appendChild(style);
