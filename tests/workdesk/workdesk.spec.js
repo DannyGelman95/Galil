@@ -892,3 +892,73 @@ test.describe("the shift QR code", () => {
     });
   });
 });
+
+/* ---------- refresh: the ⟳ button, and pulling the page down on a touch screen ---------- */
+test.describe("refresh", () => {
+  const mark = page => page.evaluate(() => { window.__before = 1; });
+  const reloaded = page => page.waitForFunction(() => !window.__before && document.querySelector("#refresh-btn"));
+
+  test("the refresh button fetches the portal's files again and reloads, staying on the same tab", async ({ page }) => {
+    const errors = await served(page);
+    const fetched = [];
+    page.on("request", r => fetched.push(r.url()));
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await expect(page.locator("#portal-home #refresh-btn, .hubtop #refresh-btn")).toHaveCount(1);
+    await page.click("#tile-workdesk");
+    await page.getByRole("tab", { name: "Expenses" }).click();
+    await mark(page);
+    fetched.length = 0;
+    await page.click("#refresh-btn");
+    await reloaded(page);
+    for (const f of ["workdesk/he.js", "workdesk/portal-home.js", "config.js"]) expect(fetched.filter(u => u.endsWith(f)).length).toBeGreaterThan(1);
+    await expect(page.getByRole("tab", { name: "Expenses" })).toHaveAttribute("aria-selected", "true");
+    expect(errors).toEqual([]);
+  });
+
+  test.describe("on a phone", () => {
+    test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
+    const drag = async (page, context, x, y0, y1) => {
+      const cdp = await context.newCDPSession(page);
+      const touch = (type, pts) => cdp.send("Input.dispatchTouchEvent", { type, touchPoints: pts.map((p, i) => ({ x: p[0], y: p[1], id: i })) });
+      await touch("touchStart", [[x, y0]]);
+      for (let i = 1; i <= 10; i++) await touch("touchMove", [[x, y0 + (y1 - y0) * i / 10]]);
+      await touch("touchEnd", []);
+    };
+
+    test("pulling the page down from the top refreshes; a short pull does not", async ({ page, context }) => {
+      const errors = await served(page);
+      await signIn(page, "eitan.f@galiltc.co.il");
+      await page.click("#tile-workdesk");
+      await expect(page.locator(".mob #refresh-btn")).toBeVisible();
+      await mark(page);
+      await drag(page, context, 195, 300, 340);
+      await page.waitForTimeout(400);
+      expect(await page.evaluate(() => window.__before)).toBe(1);
+      await expect(page.locator("#ptr")).toHaveCSS("opacity", "0");
+      await drag(page, context, 195, 300, 520);
+      await reloaded(page);
+      await expect(page.locator(".mob")).toBeVisible();
+      expect(errors).toEqual([]);
+    });
+
+    test("a pull inside an open sheet, or when the list is scrolled down, does not refresh", async ({ page, context }) => {
+      const errors = await served(page);
+      await signIn(page, "eitan.f@galiltc.co.il");
+      await page.click("#tile-workdesk");
+      await mark(page);
+      await page.evaluate(() => { document.querySelector(".mbody").scrollTop = 400; });
+      await drag(page, context, 195, 400, 650);
+      await page.waitForTimeout(400);
+      expect(await page.evaluate(() => window.__before)).toBe(1);
+      await page.evaluate(() => { document.querySelector(".mbody").scrollTop = 0; });
+      await page.getByRole("button", { name: "Report without the timer" }).click();
+      const sheet = page.getByRole("dialog", { name: "Report time" });
+      await expect(sheet).toBeVisible();
+      const box = await sheet.boundingBox();
+      await drag(page, context, 195, box.y + 60, box.y + 300);
+      await page.waitForTimeout(400);
+      expect(await page.evaluate(() => window.__before)).toBe(1);
+      expect(errors).toEqual([]);
+    });
+  });
+});

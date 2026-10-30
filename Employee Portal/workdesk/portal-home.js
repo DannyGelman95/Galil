@@ -276,6 +276,7 @@ function PortalHome(p) {
       h("div", { className: "brand" }, h(Mark, null), h("div", null, "GALIL", h("small", null, tr("Employee Portal"))),
         WDCloud.remote ? h("span", { className: "syncdock", ref: dockSync }) : null),
       h("div", { className: "spacer" }),
+      h(RefreshBtn, null),
       h(LangSwitch, null),
       h("button", {
         className: "iconbtn", onClick: function () { p.setTheme(p.theme === "dark" ? "light" : "dark"); },

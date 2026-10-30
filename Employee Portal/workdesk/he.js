@@ -1504,5 +1504,9 @@ WDI18N.add({
 "One code for everyone with WorkDesk. Print it and put it on a desk. Employees scan it in the GALIL Portal app (Time → Scan a QR code), or with the phone's camera — on Android that opens the installed app; on an iPhone the camera opens Safari, so iPhone users scan from inside the app. The first scan starts the shift; the next ends it and asks what they worked on: client, project, work order, task and description.": "קוד אחד לכל מי שיש לו WorkDesk. הדפיסו אותו והניחו אותו על שולחן. העובדים סורקים אותו באפליקציית פורטל GALIL (זמן ← סריקת קוד QR), או במצלמת הטלפון — באנדרואיד היא פותחת את האפליקציה המותקנת; באייפון המצלמה פותחת את Safari, ולכן משתמשי אייפון סורקים מתוך האפליקציה. הסריקה הראשונה מתחילה את המשמרת; הבאה מסיימת אותה ושואלת על מה עבדו: לקוח, פרויקט, הזמנת עבודה, משימה ותיאור.",
 "Preparing the QR code…": "מכינים את קוד ה-QR…",
 "QR code downloaded.": "קוד ה-QR הורד.",
-"The QR code library did not load.": "ספריית קודי ה-QR לא נטענה."
+"The QR code library did not load.": "ספריית קודי ה-QR לא נטענה.",
+
+/* ---------------- refresh ---------------- */
+"Refresh": "רענון",
+"Refresh — load the latest version": "רענון — טעינת הגרסה העדכנית"
 });
