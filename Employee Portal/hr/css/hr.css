@@ -59,9 +59,12 @@ p{margin:0 0 10px}
 
 /* ---------- top bar extras ---------- */
 .topbar .who .chip{margin-inline-start:6px}
-.sync{display:inline-flex; align-items:center; gap:5px; font-size:12px; color:var(--chrome-fg-soft); border:1px solid rgba(255,255,255,.16); border-radius:999px; padding:2px 9px 2px 7px; white-space:nowrap}
-.sync.saving .ic, .sync.loading .ic{animation:spin 1.2s linear infinite}
-.sync.offline, .sync.error, .sync.token{color:#FFB4A8; border-color:#FFB4A8}
+.sync{display:inline-flex; align-items:center; gap:5px; font-size:12px; line-height:18px; color:var(--chrome-fg-soft); border:1px solid rgba(255,255,255,.16); border-radius:999px; padding:2px 9px 2px 7px; white-space:nowrap; flex:0 0 auto; align-self:center; max-width:220px; overflow:hidden; text-overflow:ellipsis}
+.sync span:not(.ic){overflow:hidden; text-overflow:ellipsis}
+.sync.st-saving .ic, .sync.st-loading .ic{animation:spin 1.2s linear infinite}
+.sync.st-offline, .sync.st-error, .sync.st-token{color:#FFB4A8; border-color:#FFB4A8}
+/* on a phone the badge is its icon alone; the words stay in its tooltip and for screen readers */
+@media (max-width:600px){.sync{padding:4px; border-color:transparent}.sync span:not(.ic){display:none}}
 @keyframes spin{to{transform:rotate(360deg)}}
 
 /* ---------- section tabs ---------- */

@@ -58,7 +58,7 @@ function paintSync() {
   var st = Store.state, label = !REMOTE ? tr("Data: this browser (demo)")
     : st === "saving" ? tr("Saving…") : st === "loading" ? tr("Loading…") : st === "offline" ? tr("Offline — changes are kept and sent later")
     : st === "error" ? tr("Not saved: {m}", { m: Store.error }) : st === "token" ? tr("GitHub token needed") : tr("Saved to {w}", { w: Store.label() });
-  el.className = "sync " + (REMOTE ? st : "local"); el.title = label; el.setAttribute("aria-label", label);
+  el.className = "sync st-" + (REMOTE ? st : "local"); el.title = label; el.setAttribute("aria-label", label);
   el.innerHTML = ""; el.appendChild(icon("sync", 15)); el.appendChild(h("span", null, REMOTE ? (st === "saved" ? Store.label() : label) : tr("Demo")));
 }
 

@@ -403,9 +403,9 @@ test.describe("GitHub storage", () => {
       failed = true; return json(r, 500, { message: "Server Error" });
     });
     await page.reload();
-    await expect(page.locator("#sync")).toHaveClass(/error/);
+    await expect(page.locator("#sync")).toHaveClass(/st-error/);
     await expect(page.locator("#sync")).toContainText("GitHub", { timeout: 15000 });
-    await expect(page.locator("#sync")).toHaveClass(/saved/);
+    await expect(page.locator("#sync")).toHaveClass(/st-saved/);
   });
 
   test("asks for a GitHub token when this device has none", async ({ page }) => {
