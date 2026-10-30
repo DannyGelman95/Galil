@@ -201,6 +201,9 @@ figcaption .fno{
 }
 figcaption b{color:var(--ink); font-weight:600}
 .fig-narrow{max-width:480px}
+/* phone screenshots: the size of a phone, not the width of the page */
+.fig-phone{max-width:280px; margin-inline:auto}
+.fig-pair.phones{grid-template-columns:repeat(auto-fit,minmax(220px,280px)); justify-content:center}
 .fig-pair{display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; margin:26px 0 30px}
 .fig-pair figure{margin:0}
 

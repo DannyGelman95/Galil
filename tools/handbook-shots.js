@@ -2,6 +2,7 @@
 // Run from tests/workdesk (for Playwright):  node ../../tools/handbook-shots.js [en|he]
 // Taskana's board, task and budget screenshots (t01–t03), the expense-attachment close-up (16b) and the
 // Library's (t10–t16) are taken here too.
+// Model Studio, HR's pages and Defense News are shot by handbook-shots-apps.js (they need an HTTP server).
 // So are HR's admin screenshots (h01–h02), which the Knowledge Base uses too. Shots run from files, so a QR code in them
 // points to a file; the Shift QR code window's note about that is left out.
 const { chromium } = require(require.resolve("playwright", { paths: [process.cwd()] }));
@@ -60,7 +61,7 @@ const SCENES = [
   ["p03-signup", {}, async ({ page, T }, f) => { await page.getByRole("button", { name: await T("Create an account") }).click(); await page.waitForTimeout(400); await shot(page, f); }],
   ["p04-access", { user: "u-tamir", hash: wd("management") }, async ({ page, T }, f) => {
     await page.locator('[aria-label="' + await T("Change portal access for {n}").catch(() => "") + '"]').count();
-    await page.locator('button[aria-label*="Eitan Fisch"], button[aria-label*="איתן פיש"]').first().click(); await modal(page, f); }],
+    await page.locator('button[title="' + await T("Change portal access") + '"]').nth(await page.evaluate(() => { const r = [...document.querySelectorAll("tbody tr")]; return Math.max(0, r.filter(x => x.querySelector('button[title]')).findIndex(x => /Eitan Fisch|איתן פיש/.test(x.textContent))); })).click(); await modal(page, f); }],
   ["58-admin-roles", { user: "u-tamir", hash: wd("time") }, async ({ page, T }, f) => { await page.getByRole("button", { name: await T("System administration") }).click(); await modal(page, f); }],
   ["60-admin-settings", { user: "u-tamir", hash: wd("time") }, async ({ page, T }, f) => { await page.getByRole("button", { name: await T("System administration") }).click(); await section(page, T, "Company settings").catch(async () => { await page.locator(".modal button", { hasText: await T("Company settings") }).first().click(); }); await modal(page, f); }],
   ["61-admin-backup", { user: "u-tamir", hash: wd("time") }, async ({ page, T }, f) => { await page.getByRole("button", { name: await T("System administration") }).click(); await page.locator(".modal button", { hasText: await T("Backup & restore") }).first().click(); await modal(page, f); }],
