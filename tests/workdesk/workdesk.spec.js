@@ -812,51 +812,85 @@ test.describe("the shift QR code", () => {
     expect(errors).toEqual([]);
   });
 
-  test("the in-app scanner reads the shift code from the camera", async ({ page }) => {
-    await page.addInitScript(() => {
-      window.__scan = null;
-      window.BarcodeDetector = class { detect() { return Promise.resolve(window.__scan ? [{ rawValue: window.__scan }] : []); } };
-      if (navigator.mediaDevices) navigator.mediaDevices.getUserMedia = () => {
-        const c = document.createElement("canvas"); c.width = c.height = 64; c.getContext("2d").fillRect(0, 0, 64, 64);
-        return Promise.resolve(c.captureStream(5));
-      };
-    });
+  test("on a computer there is no QR button — not on the portal home, not in WorkDesk; a new entry runs 09:00–18:00", async ({ page }) => {
     const errors = await served(page);
     await signIn(page, "eitan.f@galiltc.co.il");
+    await expect(page.locator("#portal-home")).toBeVisible();
+    await expect(page.locator("#qr-time")).toHaveCount(0);
     await page.click("#tile-workdesk");
-    await page.click("#timer-scan");
-    await expect(page.locator(".qrcam video")).toBeVisible();
-    await page.evaluate(u => { window.__scan = u; }, ORIGIN + "/index.html#/workdesk/time?scan=shift");
-    await expect(page.locator(".qrcam")).toHaveCount(0);
-    expect(await timer(page)).not.toBeNull();
+    await expect(page.locator("#timer-strip")).toBeVisible();
+    await expect(page.locator("#timer-scan")).toHaveCount(0);
+    const v = await page.locator(".tlform select").evaluateAll(s => s.map(x => x.value));
+    expect(v.slice(1, 5).join(" ")).toBe("09 00 18 00");
+    expect(await page.evaluate(() => { const e = blankEntry("u-eitan"); return [e.start, e.end, derivedHours(e.start, e.end)]; })).toEqual(["09:00", "18:00", 9]);
     expect(errors).toEqual([]);
   });
 
-  test("without the browser's own detector (as on an iPhone), the scanner decodes the real code with jsQR", async ({ page }) => {
-    await page.addInitScript(() => {
-      delete window.BarcodeDetector;
-      window.__stream = null;
-      if (navigator.mediaDevices) navigator.mediaDevices.getUserMedia = () => new Promise(ok => {
-        const go = () => window.__stream ? ok(window.__stream) : setTimeout(go, 50); go();
+  test.describe("QR time reporting on the portal home, on a phone", () => {
+    test.use({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true,
+      userAgent: "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1" });
+
+    test("the first scan starts the shift on the home page; the second ends it in WorkDesk with the report open", async ({ page }) => {
+      await page.addInitScript(() => {
+        window.__scan = null;
+        window.BarcodeDetector = class { detect() { return Promise.resolve(window.__scan ? [{ rawValue: window.__scan }] : []); } };
+        if (navigator.mediaDevices) navigator.mediaDevices.getUserMedia = () => {
+          const c = document.createElement("canvas"); c.width = c.height = 64; c.getContext("2d").fillRect(0, 0, 64, 64);
+          return Promise.resolve(c.captureStream(5));
+        };
       });
+      const errors = await served(page);
+      await signIn(page, "eitan.f@galiltc.co.il");
+      await expect(page.locator("#portal-home")).toBeVisible();
+      await expect(page.locator("#qr-time")).toHaveText("QR time reporting");
+      await page.click("#qr-time");
+      await expect(page.locator(".qrcam video")).toBeVisible();
+      await page.evaluate(u => { window.__scan = u; }, ORIGIN + "/index.html#/workdesk/time?scan=shift");
+      await expect(page.locator(".qrcam")).toHaveCount(0);
+      expect(await timer(page)).not.toBeNull();
+      await expect(page.locator("#portal-home")).toBeVisible();
+      await expect(page.locator("#qr-time")).toHaveText("Scan to end your shift");
+      await expect(page.locator("#qr-time-running")).toContainText("Shift running since");
+      /* WorkDesk has no scan button of its own */
+      await page.click("#tile-workdesk");
+      await expect(page.locator(".timer .clock")).toHaveText(/^\d\d:\d\d:\d\d$/);
+      await expect(page.locator("#timer-scan")).toHaveCount(0);
+      await page.click("#to-portal");
+      /* the second scan */
+      await page.evaluate(() => { window.__scan = null; });
+      await page.click("#qr-time");
+      await page.evaluate(u => { window.__scan = u; }, ORIGIN + "/index.html#/workdesk/time?scan=shift");
+      await expect(page.getByRole("dialog", { name: "Report time" })).toBeVisible();
+      expect(await timer(page)).toBeNull();
+      expect(errors).toEqual([]);
     });
-    const errors = await served(page);
-    await signIn(page, "eitan.f@galiltc.co.il");
-    await page.click("#tile-workdesk");
-    /* the camera sees the printed shift code */
-    await page.evaluate(() => loadQR().then(() => {
-      const q = qrMake(shiftLink()), n = q.getModuleCount(), cell = 8, m = 32, size = n * cell + m * 2;
-      const c = document.createElement("canvas"); c.width = c.height = size;
-      const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, size, size); g.fillStyle = "#000";
-      for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (q.isDark(r, k)) g.fillRect(m + k * cell, m + r * cell, cell, cell);
-      window.__stream = c.captureStream(10);
-      setInterval(() => { g.fillRect(0, 0, 1, 1); }, 100);
-    }));
-    await page.click("#timer-scan");
-    await expect(page.locator(".qrcam")).toHaveCount(0, { timeout: 15000 });
-    expect(await timer(page)).not.toBeNull();
-    expect(await page.evaluate(() => typeof window.jsQR)).toBe("function");
-    expect(errors).toEqual([]);
+
+    test("without the browser's own detector (as on an iPhone), the scanner decodes the real code with jsQR", async ({ page }) => {
+      await page.addInitScript(() => {
+        delete window.BarcodeDetector;
+        window.__stream = null;
+        if (navigator.mediaDevices) navigator.mediaDevices.getUserMedia = () => new Promise(ok => {
+          const go = () => window.__stream ? ok(window.__stream) : setTimeout(go, 50); go();
+        });
+      });
+      const errors = await served(page);
+      await signIn(page, "eitan.f@galiltc.co.il");
+      await expect(page.locator("#portal-home")).toBeVisible();
+      /* the camera sees the printed shift code */
+      await page.evaluate(() => loadQR().then(() => {
+        const q = qrMake(shiftLink()), n = q.getModuleCount(), cell = 8, m = 32, size = n * cell + m * 2;
+        const c = document.createElement("canvas"); c.width = c.height = size;
+        const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, size, size); g.fillStyle = "#000";
+        for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (q.isDark(r, k)) g.fillRect(m + k * cell, m + r * cell, cell, cell);
+        window.__stream = c.captureStream(10);
+        setInterval(() => { g.fillRect(0, 0, 1, 1); }, 100);
+      }));
+      await page.click("#qr-time");
+      await expect(page.locator(".qrcam")).toHaveCount(0, { timeout: 15000 });
+      expect(await timer(page)).not.toBeNull();
+      expect(await page.evaluate(() => typeof window.jsQR)).toBe("function");
+      expect(errors).toEqual([]);
+    });
   });
 
   test("Management shows the one shift QR code, a link to the Time Log, to print or download", async ({ page }) => {
