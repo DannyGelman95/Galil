@@ -273,6 +273,35 @@ test("an HR admin starts a review cycle for everyone with a manager", async ({ p
   expect((await dl).suggestedFilename()).toBe("Mid-year check-in.csv");
 });
 
+test("an HR admin sets a cycle's own review form; the employee answers its questions", async ({ page }) => {
+  await open(page, "", "u-office");
+  await expect(page.locator("#home-create")).toBeVisible();
+  await page.click("#create-cycle");
+  await page.fill("#cy-title", "Q4 check-in");
+  await page.fill("#cy-comps", "Documentation quality\nDeadlines");
+  await page.fill("#cy-self-q", "Your biggest win this quarter\nWhere you need support");
+  await page.fill("#cy-mgr-q", "What to keep doing\nWhat to change");
+  await page.click("#cy-save");
+  await expect(page.locator("#main h1")).toHaveText("Q4 check-in");
+  const c = (await hr(page)).cycles.find(x => x.title === "Q4 check-in");
+  expect(c.selfQuestions.map(q => q.name)).toEqual(["Your biggest win this quarter", "Where you need support"]);
+  const rv = (await hr(page)).reviews.find(r => r.cycleId === c.id && r.employeeId === "u-eitan");
+
+  await as(page, "u-eitan", "reviews/" + rv.id);
+  const self = page.locator("#self-section");
+  await expect(self.locator(".comp")).toHaveCount(2);
+  await expect(self).toContainText("Your biggest win this quarter");
+  await expect(self).not.toContainText("What went well this period");
+  await page.fill("#self-" + c.selfQuestions[0].id, "The new style guide.");
+  await page.click("#self-save");
+  const saved = (await hr(page)).reviews.find(r => r.id === rv.id);
+  expect(saved.self[c.selfQuestions[0].id]).toBe("The new style guide.");
+
+  /* members get no Create panel */
+  await as(page, "u-eitan", "");
+  await expect(page.locator("#home-create")).toHaveCount(0);
+});
+
 test("people, celebrations and kudos", async ({ page }) => {
   await open(page, "people", "u-danny");
   await expect(page.locator("#people-grid .pcard")).toHaveCount(22);
@@ -355,6 +384,28 @@ test.describe("GitHub storage", () => {
     const saved = JSON.parse(state.text);
     expect(saved.kudos.some(k => k.id === "kd-other")).toBe(true);
     await expect(page.locator("#kudos-list")).toContainText("From another device");
+  });
+
+  test("a first load that fails doesn't leave the badge stuck: HR checks again and shows it's in step", async ({ page }) => {
+    const state = { text: null, sha: null, puts: [] };
+    await mock(page, state);
+    await serve(page, CFG);
+    await page.goto(ORIGIN + "/index.html");
+    await page.evaluate(() => { localStorage.setItem("galil-workdesk-session", "u-eitan"); localStorage.setItem("galil-portal-github-token", "github_pat_test"); });
+    await page.goto(ORIGIN + "/index.html");
+    await page.goto(ORIGIN + "/hr/index.html#/");
+    await expect(page.locator("#sync")).toContainText("GitHub");
+    await expect.poll(() => state.puts.length).toBeGreaterThan(0);
+    /* next visit: GitHub answers the first call with an error, then works again */
+    let failed = false;
+    await page.route("https://api.github.com/repos/o/r", r => {
+      if (failed || r.request().method() === "OPTIONS") return r.fallback();
+      failed = true; return json(r, 500, { message: "Server Error" });
+    });
+    await page.reload();
+    await expect(page.locator("#sync")).toHaveClass(/error/);
+    await expect(page.locator("#sync")).toContainText("GitHub", { timeout: 15000 });
+    await expect(page.locator("#sync")).toHaveClass(/saved/);
   });
 
   test("asks for a GitHub token when this device has none", async ({ page }) => {

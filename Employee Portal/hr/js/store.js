@@ -36,6 +36,12 @@ function httpError(res, fb) {
     var e2 = new Error((j && (j.error && j.error.message || j.message)) || fb || ("HTTP " + res.status)); e2.status = res.status; return e2;
   });
 }
+/* fetch, given up after 20 seconds — a request that never answers would leave HR "Loading…" for good */
+function tfetch(url, opts) {
+  var ac = window.AbortController ? new AbortController() : null, t = ac ? setTimeout(function () { ac.abort(); }, 20000) : 0;
+  return fetch(url, Object.assign({}, opts, ac ? { signal: ac.signal } : {}))
+    .then(function (r) { clearTimeout(t); return r; }, function (e) { clearTimeout(t); throw e; });
+}
 function netError(w) { var e = new Error(tr("Can't reach {w}. Check the connection.", { w: w })); e.network = true; return e; }
 function utf8ToB64(text) { var b = new TextEncoder().encode(text), s = ""; for (var i = 0; i < b.length; i += 0x8000) s += String.fromCharCode.apply(null, b.subarray(i, i + 0x8000)); return btoa(s); }
 function b64ToUtf8(b64) { var bin = atob(b64.replace(/\s+/g, "")), u = new Uint8Array(bin.length); for (var i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); return new TextDecoder().decode(u); }
@@ -66,7 +72,7 @@ function ghPath() { return ghRepo() + "/contents/" + ghFile().split("/").map(enc
 function ghFetch(method, path, body, accept) {
   var tok = ghToken();
   if (!tok) { var e0 = new Error(tr("HR needs a GitHub access token on this device.")); e0.token = true; return Promise.reject(e0); }
-  return fetch(GITHUB_API + path, { method: method, cache: "no-store", headers: { Authorization: "Bearer " + tok, Accept: accept || "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined })
+  return tfetch(GITHUB_API + path, { method: method, cache: "no-store", headers: { Authorization: "Bearer " + tok, Accept: accept || "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28", "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined })
     .then(function (res) {
       if (res.status === 401) { var e = new Error(tr("GitHub refused the access token — it may have expired or been revoked.")); e.token = true; throw e; }
       return res;
@@ -129,7 +135,7 @@ function graphToken(force) {
 function graphFetch(method, path, opts, tries) {
   opts = opts || {}; tries = tries || 0;
   return graphToken(tries > 0).then(function (token) {
-    return fetch(/^https:/.test(path) ? path : GRAPH + path, { method: method, cache: "no-store", headers: Object.assign({ Authorization: "Bearer " + token }, opts.headers || {}), body: opts.body });
+    return tfetch(/^https:/.test(path) ? path : GRAPH + path, { method: method, cache: "no-store", headers: Object.assign({ Authorization: "Bearer " + token }, opts.headers || {}), body: opts.body });
   }).then(function (res) {
     if ((res.status === 429 || res.status === 503) && tries < 3) return wait(Math.pow(2, tries + 1) * 1000).then(function () { return graphFetch(method, path, opts, tries + 1); });
     if (res.status === 401 && tries < 1) return graphFetch(method, path, opts, tries + 1);
@@ -162,7 +168,7 @@ var ONEDRIVE = {
   read: function () {
     return graphJSON("GET", odItem()).then(function (meta) {
       var url = meta["@microsoft.graph.downloadUrl"];
-      return (url ? fetch(url, { cache: "no-store" }) : graphFetch("GET", odItem() + "/content")).then(function (res) {
+      return (url ? tfetch(url, { cache: "no-store" }) : graphFetch("GET", odItem() + "/content")).then(function (res) {
         if (!res.ok) return httpError(res).then(function (e) { throw e; });
         return res.text().then(function (t) { return { text: t, etag: meta.eTag }; });
       });
@@ -202,6 +208,7 @@ function storeInit() {
     if (e.token) { setState("token", e.message); return; }
     setState(e.network ? "offline" : "error", e.message);
     if (!db.seededAt && !c) seedDemo(db);
+    setTimeout(poll, 5000);
   });
   startPolling();
   /* with a copy in this browser, open at once and catch up in the background */
@@ -240,7 +247,8 @@ function push() {
 function poll() {
   if (!REMOTE || Store.busy || Store.state === "token" || document.hidden) return;
   backend().read().then(function (r) {
-    if (!r || r.etag === Store.etag) return;
+    /* nothing new — but the connection works, so whatever the badge said (loading, offline, an error), it's in step now */
+    if (!r || r.etag === Store.etag) { if (Store.state !== "saved" && !Store.dirty) setState("saved"); return; }
     adopt(r); writeCache(); Store.lastSync = new Date(); setState("saved");
     if (window.refresh) refresh();
     if (Store.dirty) push();

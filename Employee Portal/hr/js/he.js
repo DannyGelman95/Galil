@@ -202,5 +202,12 @@ var HR_HE = {
 "This month": "החודש", "kudos given this month": "מילים טובות החודש",
 "Choose a colleague": "בחרו עמית/ה", "Choose a colleague.": "בחרו עמית/ה.",
 "What did they do, and how did it help?": "מה הם עשו, ואיך זה עזר?", "To": "אל", "For": "על", "Message": "הודעה",
-"Write a short message.": "כתבו הודעה קצרה.", "Kudos sent to {name}.": "המילה הטובה נשלחה ל-{name}."
+"Write a short message.": "כתבו הודעה קצרה.", "Kudos sent to {name}.": "המילה הטובה נשלחה ל-{name}.",
+/* HR admin: create, and the review form */
+"HR admin — create": "מנהל/ת משאבי אנוש — יצירה",
+"A review cycle carries its own form: the competencies to rate and the written questions for the self-assessment and the manager review.": "לכל סבב הערכה טופס משלו: הכישורים לדירוג והשאלות הכתובות של ההערכה העצמית ושל הערכת המנהל/ת.",
+"Self-assessment questions — one per line": "שאלות ההערכה העצמית — אחת בכל שורה",
+"Manager review questions — one per line": "שאלות הערכת המנהל/ת — אחת בכל שורה",
+"Each one is answered in writing. Answers already given stay with their questions.": "על כל אחת עונים בכתב. תשובות שכבר ניתנו נשארות עם השאלות שלהן.",
+"Written answers, before the overall rating.": "תשובות בכתב, לפני הדירוג הכללי."
 };
