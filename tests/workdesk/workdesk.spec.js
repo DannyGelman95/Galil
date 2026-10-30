@@ -1083,3 +1083,21 @@ test.describe("worked from", () => {
     });
   });
 });
+
+test("projects can be Final Draft or Blocked, in English and Hebrew", async ({ page }) => {
+  const errors = await local(page);
+  await signIn(page, "tamir@galiltc.co.il");
+  const r = await page.evaluate(() => [PROJECT_STATUSES, PS_COLOR["Final Draft"], PS_COLOR["Blocked"]]);
+  expect(r[0]).toEqual(["Active", "WIP", "Draft A", "Draft B", "Final Draft", "Pending Information", "Pending Review", "Blocked", "On hold", "Done"]);
+  expect(r[1]).toBeTruthy(); expect(r[2]).toBeTruthy();
+  await page.click("#tile-workdesk");
+  await page.getByRole("tab", { name: /Management/ }).click();
+  await page.getByRole("button", { name: "Projects", exact: true }).click();
+  const opts = await page.locator(".band select").nth(1).evaluate(s => [...s.options].map(o => o.textContent));
+  expect(opts).toEqual(expect.arrayContaining(["Final Draft", "Blocked"]));
+  /* the Hebrew names */
+  const he = require("fs").readFileSync(path.join(SITE, "workdesk/he.js"), "utf8");
+  expect(he).toContain('"Final Draft": "טיוטה סופית"');
+  expect(he).toContain('"Blocked": "חסום"');
+  expect(errors).toEqual([]);
+});

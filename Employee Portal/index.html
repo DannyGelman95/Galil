@@ -18004,10 +18004,10 @@ function openApprovalsFor(db, user) {
 }
 
 /* ================= §14.1 status chips ================= */
-var PROJECT_STATUSES = ["Active", "WIP", "Draft A", "Draft B", "Pending Information", "Pending Review", "On hold", "Done"];
+var PROJECT_STATUSES = ["Active", "WIP", "Draft A", "Draft B", "Final Draft", "Pending Information", "Pending Review", "Blocked", "On hold", "Done"];
 var PS_COLOR = {
-  "Active": "#3FA97E", "WIP": "#17A3B8", "Draft A": "#8CC63E", "Draft B": "#5C8B22",
-  "Pending Information": "#F0A32C", "Pending Review": "#9C8CE8", "On hold": "#5B6B57", "Done": "#1B2A18"
+  "Active": "#3FA97E", "WIP": "#17A3B8", "Draft A": "#8CC63E", "Draft B": "#5C8B22", "Final Draft": "#2563EB",
+  "Pending Information": "#F0A32C", "Pending Review": "#9C8CE8", "Blocked": "#C0392B", "On hold": "#5B6B57", "Done": "#1B2A18"
 };
 var ENTRY_STATUS_LABEL = { draft: "Draft", pending: "Pending", registered: "Registered", cancelled: "Cancelled", locked: "Locked" };
 </script>

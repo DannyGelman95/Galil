@@ -697,7 +697,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
     <ul>
       <li><strong><i class="ui-ic" data-ic="edit"></i></strong> טוען רישום בחזרה לטופס. שמירת רישום ממתין מריצה את המנוע מחדש; שמירת רישום שנרשם בידי מאשר/ת משאירה אותו רשום.</li>
       <li><strong><i class="ui-ic" data-ic="trash"></i></strong> מוחק אותו ומבטל כל אישור ממתין שקשור אליו. ההודעה מציעה <strong>ביטול הפעולה</strong>.</li>
-      <li>העמודה <strong>סטטוס פרויקט</strong> מציגה את הסטטוס הנוכחי של הפרויקט כפי שנקבע ב<a href="#ch-budgets">ניהול ← פרויקטים</a>. כאן היא לקריאה בלבד; מסנן סטטוס הפרויקט משתמש באותו ערך.</li>
+      <li>העמודה <strong>סטטוס פרויקט</strong> מציגה את הסטטוס הנוכחי של הפרויקט כפי שנקבע ב<a href="#h-project-status">ניהול ← פרויקטים</a>. כאן היא לקריאה בלבד; מסנן סטטוס הפרויקט משתמש באותו ערך.</li>
       <li>את הרישומים שלכם מותר לערוך תמיד. עריכת רישומים של אחרים מחייבת <code>editOthersTime</code> — ראש צוות בתוך הצוות, מנהל/ת פרויקט בתוך הפרויקטים שלו, מנהל/ת תפעול והמנכ"ל בכל מקום.</li>
       <li>פתיחת <strong>דיווח שעות על המשימה ב-WorkDesk</strong> ממשימה ב-Taskana מביאה אתכם לכאן כשהטופס כבר מכוון ללקוח, לפרויקט, להזמנת העבודה ולמשימה.</li>
       <li>לחיצה על קוד <strong>הזמנת עבודה</strong> בכל מקום בטבלה מעתיקה אותו ללוח — שימושי להדבקה בדוא״ל או במערכת אחרת. הודעה קטנה מציינת מה הועתק.</li>
@@ -1004,6 +1004,22 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
 
     <h3>לקוחות, פרויקטים וסוגי הוצאות</h3>
     <p>כל אחד הוא טבלה עם טופס הוספה מעליה. שינוי שם עם <strong><i class="ui-ic" data-ic="edit"></i></strong>, הסרה עם <strong><i class="ui-ic" data-ic="trash"></i></strong>.</p>
+    <p id="h-project-status"><strong>סטטוס</strong> הפרויקט נקבע כשמוסיפים אותו ומשתנה בעורך שלו. הוא מוצג כתג צבעוני בטבלת הפרויקטים ובעמודה <strong>סטטוס פרויקט</strong> ביומן השעות, שבה אפשר גם לסנן לפיו:</p>
+    <div class="tw"><table>
+      <thead><tr><th style="width:190px">סטטוס</th><th>משמעות</th></tr></thead>
+      <tbody>
+        <tr><td><strong>פעיל</strong></td><td>רץ; אפשר להתחיל לעבוד.</td></tr>
+        <tr><td><strong>בעבודה</strong></td><td>העבודה בעיצומה.</td></tr>
+        <tr><td><strong>טיוטה א׳</strong> · <strong>טיוטה ב׳</strong></td><td>הטיוטה הראשונה והשנייה נמסרו.</td></tr>
+        <tr><td><strong>טיוטה סופית</strong></td><td>הטיוטה הסופית נמסרה, לקראת אישור.</td></tr>
+        <tr><td><strong>ממתין למידע</strong></td><td>ממתינים למידע מהלקוח.</td></tr>
+        <tr><td><strong>ממתין לסקירה</strong></td><td>ממתינים להערות של הלקוח או של סוקר/ת.</td></tr>
+        <tr><td><strong>חסום</strong></td><td>תקוע — העבודה לא יכולה להמשיך עד שמשהו מחוץ לצוות ייפתר.</td></tr>
+        <tr><td><strong>בהמתנה</strong></td><td>הושהה במכוון.</td></tr>
+        <tr><td><strong>הושלם</strong></td><td>נמסר ונסגר.</td></tr>
+      </tbody>
+    </table></div>
+    <p>הסטטוס מתאר את הפרויקט; הוא אף פעם לא מונע דיווח שעות עליו.</p>
     <div class="note stop">
       <span class="tag">דבר שבשימוש לא נמחק</span>
       <p>העמודה <strong>בשימוש</strong> סופרת את הרשומות השמורות שמפנות לפריט. אם היא מעל אפס, ההסרה נדחית. השביתו או סגרו אותו במקום.</p>
@@ -2061,7 +2077,7 @@ document.documentElement.setAttribute("data-theme",v);}catch(e){}})();
       <thead><tr><th style="width:160px">קבוצה</th><th>ערכים</th></tr></thead>
       <tbody>
         <tr><td><strong>סטטוס רישום</strong></td><td>נרשם · ממתין · בוטל · נעול</td></tr>
-        <tr><td><strong>סטטוס פרויקט</strong></td><td>פעיל · בעבודה · טיוטה א׳ · טיוטה ב׳ · ממתין למידע · ממתין לסקירה · בהמתנה · הושלם</td></tr>
+        <tr><td><strong>סטטוס פרויקט</strong></td><td>פעיל · בעבודה · טיוטה א׳ · טיוטה ב׳ · טיוטה סופית · ממתין למידע · ממתין לסקירה · חסום · בהמתנה · הושלם</td></tr>
         <tr><td><strong>סטטוס משימה ב-Taskana</strong></td><td>מאגר · לביצוע · כתיבה · סקירת עמיתים · סקירת מומחה · הושלם</td></tr>
         <tr><td><strong>עדיפות ב-Taskana</strong></td><td>קריטית · גבוהה · בינונית · נמוכה</td></tr>
         <tr><td><strong>תפקיד ב-Taskana</strong></td><td>מנהל מערכת · מנהל · חבר צוות · חיצוני · צופה</td></tr>
