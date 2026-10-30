@@ -832,6 +832,33 @@ test.describe("the shift QR code", () => {
     expect(errors).toEqual([]);
   });
 
+  test("without the browser's own detector (as on an iPhone), the scanner decodes the real code with jsQR", async ({ page }) => {
+    await page.addInitScript(() => {
+      delete window.BarcodeDetector;
+      window.__stream = null;
+      if (navigator.mediaDevices) navigator.mediaDevices.getUserMedia = () => new Promise(ok => {
+        const go = () => window.__stream ? ok(window.__stream) : setTimeout(go, 50); go();
+      });
+    });
+    const errors = await served(page);
+    await signIn(page, "eitan.f@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    /* the camera sees the printed shift code */
+    await page.evaluate(() => loadQR().then(() => {
+      const q = qrMake(shiftLink()), n = q.getModuleCount(), cell = 8, m = 32, size = n * cell + m * 2;
+      const c = document.createElement("canvas"); c.width = c.height = size;
+      const g = c.getContext("2d"); g.fillStyle = "#fff"; g.fillRect(0, 0, size, size); g.fillStyle = "#000";
+      for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (q.isDark(r, k)) g.fillRect(m + k * cell, m + r * cell, cell, cell);
+      window.__stream = c.captureStream(10);
+      setInterval(() => { g.fillRect(0, 0, 1, 1); }, 100);
+    }));
+    await page.click("#timer-scan");
+    await expect(page.locator(".qrcam")).toHaveCount(0, { timeout: 15000 });
+    expect(await timer(page)).not.toBeNull();
+    expect(await page.evaluate(() => typeof window.jsQR)).toBe("function");
+    expect(errors).toEqual([]);
+  });
+
   test("Management shows the one shift QR code, a link to the Time Log, to print or download", async ({ page }) => {
     const errors = await local(page);
     await signIn(page, "tamir@galiltc.co.il");
