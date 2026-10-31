@@ -97,7 +97,7 @@ def kick(big=False):
     n = int(SR * (0.6 if big else 0.4)); t = np.arange(n) / SR
     f = 44 + 120 * np.exp(-t * 28)
     body = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * (5 if big else 8.5))
-    click = rng.standard_normal(n) * np.exp(-t * 400) * 0.35
+    click = rng.standard_normal(n) * np.exp(-t * 250) * 0.8
     return np.tanh((body + click) * 1.6)
 
 def snare():
@@ -157,7 +157,7 @@ def reverse_cymbal(secs):
 def bass_note(m, dur):
     n = int(SR * (dur + 0.05)); t = np.arange(n) / SR
     f = hz(m)
-    s = np.sin(2 * np.pi * f * t) + 0.45 * saw_harm(f, n, 8)
+    s = 0.7 * np.sin(2 * np.pi * f * t) + 1.0 * saw_harm(f, n, 14)
     env = np.minimum(1, t / 0.004) * np.clip((dur + 0.05 - t) / 0.05, 0, 1) * (0.8 + 0.2 * np.exp(-t * 6))
     return np.tanh(s * env * 1.8)
 
@@ -180,15 +180,15 @@ E, G, A, C, D = 40, 43, 45, 48, 50
 
 def gtr_chord(root, t, dur, mute=False, gain=1.0):
     for take, pan in ((0, -0.85), (1, 0.85)):
-        gtr.add(chord(root, dur, mute, take), t + take * 0.007, pan=pan, gain=gain * (0.62 if mute else 0.58))
+        gtr.add(chord(root, dur, mute, take), t + take * 0.007, pan=pan, gain=gain * (1.0 if mute else 0.95))
 
-def bass_line(root, t, dur): bas.add(bass_note(root - 12, dur), t, gain=0.3)
+def bass_line(root, t, dur): bas.add(bass_note(root - 12, dur), t, gain=0.24)
 
 # intro: a low E swell, heartbeat booms, a reverse cymbal into the hit
 swell = chord(E, 2 * BAR - 0.1)
 tt = np.arange(len(swell)) / SR
 swell *= (tt / (2 * BAR)) ** 1.6
-for take, pan in ((0, -0.7), (1, 0.7)): gtr.add(swell, take * 0.01, pan=pan, gain=0.22)
+for take, pan in ((0, -0.7), (1, 0.7)): gtr.add(swell, take * 0.01, pan=pan, gain=0.75)
 for b in (0, 1):
     for x in (0, 2):
         drm.add(kick(True), bt(b, x), gain=0.85); drm.add(kick(True), bt(b, x + 0.35), gain=0.5)
@@ -196,7 +196,7 @@ fx.add(reverse_cymbal(2 * BAR * 0.5), bt(1, 2) - 0.02, gain=0.55)
 fx.add(riser(BAR), bt(1), gain=0.35)
 
 def hit(t, big=True):
-    fx.add(boom(3.5 if big else 2.0), t, gain=0.55 if big else 0.4)
+    fx.add(boom(3.5 if big else 2.0), t, gain=0.3 if big else 0.22)
     drm.add(crash(3.2), t, pan=-0.3, gain=0.42); drm.add(crash(3.0), t + 0.004, pan=0.35, gain=0.32)
 
 hit(bt(2))
@@ -204,9 +204,9 @@ hit(bt(2))
 def groove(bar, dense=False, half=False):
     """one bar of drums: kick on 1 and 3 (plus pickups), snare on 2 and 4, hats"""
     for x in (0, 2) if not dense else (0, 1.5, 2, 2.75):
-        drm.add(kick(), bt(bar, x), gain=0.5)
+        drm.add(kick(), bt(bar, x), gain=0.42)
     if not half:
-        for x in (1, 3): drm.add(snare(), bt(bar, x), gain=0.62); rev_send.add(snare(), bt(bar, x), gain=0.55)
+        for x in (1, 3): drm.add(snare(), bt(bar, x), gain=0.9); rev_send.add(snare(), bt(bar, x), gain=0.6)
     else:
         drm.add(snare(), bt(bar, 2), gain=0.66); rev_send.add(snare(), bt(bar, 2), gain=0.6)
     step = 0.5 if not dense else 0.25
@@ -255,7 +255,7 @@ def chorus(bars, octave=0, dense=False):
         if i % 2 == 0:
             for (o, m, l, sl) in HOOK[(i // 2) % 2]:
                 tt = bt(bar, o)
-                lead.add(lead_note(m + octave, l * BEAT - 0.03, None if sl is None else sl + octave), tt, pan=0.1, gain=0.28)
+                lead.add(lead_note(m + octave, l * BEAT - 0.03, None if sl is None else sl + octave), tt, pan=0.1, gain=0.42)
 
 chorus(range(10, 18))
 
@@ -279,18 +279,18 @@ hit(bt(28))
 drm.add(kick(True), bt(28), gain=0.9); drm.add(snare(), bt(28), gain=0.7); rev_send.add(snare(), bt(28), gain=0.9)
 for take, pan in ((0, -0.85), (1, 0.85)):
     c = chord(E, 2.5 * BAR); tt = np.arange(len(c)) / SR; c *= np.exp(-tt * 0.55)
-    gtr.add(c, bt(28) + take * 0.007, pan=pan, gain=0.34)
+    gtr.add(c, bt(28) + take * 0.007, pan=pan, gain=0.9)
 bas.add(bass_note(E - 12, 2 * BAR) * np.exp(-np.arange(int(SR * (2 * BAR + 0.05))) / SR * 0.8), bt(28), gain=0.5)
-lead.add(lead_note(88, 2.2 * BAR, 86), bt(28), gain=0.12)
+lead.add(lead_note(88, 2.2 * BAR, 86), bt(28), gain=0.3)
 
 # ---------------------------------------------------------------- the mix
 def stereo_filter(bus, fn): bus.L = fft_filter(bus.L, fn); bus.R = fft_filter(bus.R, fn)
 
 # guitar cabinet: no fizz, no mud, a presence bump
-stereo_filter(gtr, lambda f: hp(f, 90) * lp(f, 5200, 3) * peak(f, 2200, 6, 1.0) * peak(f, 900, 3, 1.0) * peak(f, 450, -4, 1.0))
+stereo_filter(gtr, lambda f: hp(f, 110) * lp(f, 6500, 3) * peak(f, 2600, 8, 1.0) * peak(f, 1100, 4, 1.0) * peak(f, 400, -3, 1.0))
 stereo_filter(lead, lambda f: hp(f, 250) * lp(f, 5500, 2) * peak(f, 1800, 3))
-stereo_filter(bas, lambda f: lp(f, 1600, 2) * hp(f, 35))
-stereo_filter(drm, lambda f: hp(f, 35) * lp(f, 13000, 1) * peak(f, 220, 3, 1.0))
+stereo_filter(bas, lambda f: lp(f, 2500, 2) * hp(f, 45) * peak(f, 800, 6, 1.0))
+stereo_filter(drm, lambda f: hp(f, 45) * lp(f, 13000, 1) * peak(f, 220, 3, 1.0) * peak(f, 3500, 5, 1.0))
 stereo_filter(fx, lambda f: lp(f, 7000, 2))
 
 # a room for the drums, a hall for the lead, a slapback delay on the lead
@@ -304,6 +304,8 @@ fxroom = reverb(fx.L + fx.R, 2.5, 9, damp=4000) * 0.25
 
 L = gtr.L * 1.0 + bas.L + drm.L * 1.0 + room * 0.38 + leadL + hallL * 0.25 + gtr_room + fx.L + fxroom
 R = gtr.R + bas.R + drm.R * 1.0 + room * 0.38 + leadR + hallR * 0.25 + gtr_room + fx.R + fxroom
+
+L = fft_filter(L, lambda f: hp(f, 40, 2)); R = fft_filter(R, lambda f: hp(f, 40, 2))
 
 # master: a slow compressor, a soft clip, -1 dB peaks
 def envelope(x, att, rel):

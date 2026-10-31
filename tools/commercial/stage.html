@@ -107,7 +107,7 @@ function words(t, x, y, text, o = {}) {
   /* text: "PLAN THE|*WEEK.*" — words in * are orange */
   const size = o.size || 150, start = o.at, d = el("txt");
   d.style.fontSize = size + "px";
-  if (o.heb) { d.style.fontFamily = "NotoHeb"; d.style.fontStyle = "normal"; }
+  if (o.heb) { d.style.fontFamily = "NotoHeb"; d.style.fontStyle = "normal"; d.style.direction = "rtl"; }
   const parts = text.split(" ");
   d.innerHTML = parts.map(w => { const hot = /^\*.*\*$/.test(w); return '<span class="w' + (hot ? " o" : "") + '">' + w.replace(/\*/g, "") + "</span>"; }).join(" ");
   world.appendChild(d);
