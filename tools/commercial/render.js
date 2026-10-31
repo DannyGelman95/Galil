@@ -4,16 +4,19 @@
 //   node tools/commercial/render.js              the whole film → docs/films/GALIL-Employee-Portal-Commercial.mp4
 //   FROM=20 TO=24 node tools/commercial/render.js   a part of it, for checking → build/preview.mp4
 //   STILLS=5,12.3 node tools/commercial/render.js   single frames → build/still-<t>.jpg
+//   STAGE=stage-day.html MUSIC=music-day.wav OUT=GALIL-Employee-Portal-A-Day-at-GALIL.mp4 node tools/commercial/render.js   the second film
 // Run shoot.js (the clips) and music.py (the soundtrack, build/music.wav) first.
 const { chromium } = require("playwright");
 const http = require("http"), fs = require("fs"), path = require("path"), { execFileSync } = require("child_process");
 
 const HERE = __dirname, BUILD = path.join(HERE, "build"), PORTAL = path.resolve(HERE, "../../Employee Portal");
 const FPS = 30, PORT = 4196;
+/* the second film: STAGE=stage-day.html MUSIC=music-day.wav OUT=GALIL-Employee-Portal-A-Day-at-GALIL.mp4 */
+const STAGE = process.env.STAGE || "stage.html", MUSIC = process.env.MUSIC || "music.wav", OUTNAME = process.env.OUT || "GALIL-Employee-Portal-Commercial.mp4";
 const TYPES = { ".html": "text/html", ".js": "text/javascript", ".jpg": "image/jpeg", ".woff2": "font/woff2", ".css": "text/css" };
 const server = http.createServer((req, res) => {
   const p = decodeURIComponent(req.url.split("?")[0]);
-  const file = p === "/" ? path.join(HERE, "stage.html") : p.startsWith("/shots/") ? path.join(BUILD, p) : p.startsWith("/portal/") ? path.join(PORTAL, p.slice(8)) : null;
+  const file = p === "/" ? path.join(HERE, STAGE) : p.startsWith("/shots/") ? path.join(BUILD, p) : p.startsWith("/portal/") ? path.join(PORTAL, p.slice(8)) : null;
   if (!file) { res.writeHead(404); return res.end(); }
   fs.readFile(file, (e, d) => { if (e) { res.writeHead(404); return res.end(); } res.writeHead(200, { "Content-Type": TYPES[path.extname(file)] || "application/octet-stream", "Cache-Control": "max-age=3600" }); res.end(d); });
 });
@@ -51,9 +54,9 @@ const server = http.createServer((req, res) => {
   await browser.close(); server.close();
 
   const full = !process.env.FROM && !process.env.TO;
-  const out = full ? path.resolve(HERE, "../../docs/films/GALIL-Employee-Portal-Commercial.mp4") : path.join(BUILD, "preview.mp4");
+  const out = full ? path.resolve(HERE, "../../docs/films/" + OUTNAME) : path.join(BUILD, "preview.mp4");
   execFileSync("ffmpeg", ["-v", "error", "-y", "-framerate", String(FPS), "-i", path.join(frames, "%05d.jpg"),
-    "-ss", String(from), "-i", path.join(BUILD, "music.wav"),
+    "-ss", String(from), "-i", path.join(BUILD, MUSIC),
     "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-preset", "slow", "-crf", "22", "-pix_fmt", "yuv420p",
     "-c:a", "aac", "-b:a", "256k", "-shortest", "-movflags", "+faststart", out]);
   console.log("wrote", path.relative(path.resolve(HERE, "../.."), out), (fs.statSync(out).size / 1048576).toFixed(1), "MB");

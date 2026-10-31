@@ -1,0 +1,254 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>A day at GALIL — commercial stage</title>
+<!-- The second commercial, "A day at GALIL": one working day, 08:00 to 18:00, an app for each hour.
+     Calm and editorial. render.js calls window.seek(t) for every frame. Cut to music-day.py: 90 bpm, a bar is 8/3 s. -->
+<style>
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#F3F1EC;font-family:"Inter Display","Inter",sans-serif;color:#14284A}
+#grid{position:absolute;inset:-200px;background-image:linear-gradient(#E6E2DA 1px,transparent 1px),linear-gradient(90deg,#E6E2DA 1px,transparent 1px);background-size:120px 120px;opacity:.55}
+#glow{position:absolute;inset:0;background:radial-gradient(900px 700px at 78% 45%,rgba(255,255,255,.95),rgba(255,255,255,0) 70%),radial-gradient(700px 500px at 10% 100%,rgba(240,138,36,.08),rgba(240,138,36,0) 70%)}
+#world{position:absolute;inset:0}
+.layer{position:absolute;left:0;top:0;transform-origin:50% 50%}
+.screen{width:1600px;height:900px;border-radius:16px;overflow:hidden;background:#fff;box-shadow:0 40px 90px rgba(20,40,74,.22),0 8px 24px rgba(20,40,74,.10),0 0 0 1px rgba(20,40,74,.08)}
+.screen img,.full img{display:block;width:100%;height:100%;object-fit:cover;object-position:top left}
+.full{width:1920px;height:1080px;overflow:hidden}
+.phone{width:430px;height:900px;border-radius:64px;background:#14161c;padding:15px;box-sizing:border-box;box-shadow:0 40px 90px rgba(20,40,74,.28),inset 0 0 0 2px #3a4050}
+.phone .in{width:100%;height:100%;border-radius:50px;overflow:hidden;background:#fff;position:relative}
+.phone .in img{width:100%;height:100%;object-fit:cover;object-position:top}
+.phone .notch{position:absolute;left:50%;top:12px;width:116px;height:32px;margin-left:-58px;background:#14161c;border-radius:20px;z-index:2}
+.t{position:absolute;white-space:nowrap}
+.line{display:block;overflow:hidden;padding-bottom:.08em}
+.line>span{display:inline-block;will-change:transform}
+.clock{position:absolute;font-weight:200;font-size:190px;letter-spacing:-.04em;color:#14284A;font-variant-numeric:tabular-nums;line-height:1}
+.clock .d{display:inline-block;overflow:hidden;height:1em;vertical-align:top;position:relative}
+.clock .d span{display:block;height:1em}
+.lab{position:absolute;font-family:"Inter",sans-serif;font-weight:600;font-size:21px;letter-spacing:.28em;text-transform:uppercase;color:#D9761A;white-space:nowrap}
+.h{position:absolute;font-weight:500;font-size:74px;letter-spacing:-.025em;line-height:1.04;color:#14284A}
+.sub{position:absolute;font-family:"Inter",sans-serif;font-weight:400;font-size:27px;line-height:1.4;color:#5B6578;white-space:nowrap}
+.rule{position:absolute;height:3px;background:#F08A24}
+#day{position:absolute;left:0;top:0;width:1920px;height:1080px;pointer-events:none}
+#panel{position:absolute;left:0;width:1920px;background:#0E1D38;overflow:hidden}
+#fade{position:absolute;inset:0;background:#000;opacity:0}
+</style></head>
+<body><div id="stage"><div id="grid"></div><div id="glow"></div><div id="world"></div><div id="day"></div><div id="panel"></div><div id="fade"></div></div>
+<script>
+"use strict";
+const W = 1920, H = 1080, BEAT = 2 / 3, BAR = 8 / 3;
+const SHOTS = window.SHOTS || {};
+const world = document.getElementById("world"), panel = document.getElementById("panel"), day = document.getElementById("day");
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+const eOut = k => 1 - Math.pow(1 - clamp(k), 4);
+const eIn = k => Math.pow(clamp(k), 3);
+const eIO = k => { k = clamp(k); return k < .5 ? 8 * k * k * k * k : 1 - Math.pow(-2 * k + 2, 4) / 2; };
+const at = (bar, beat = 0) => bar * BAR + beat * BEAT;
+
+function frameSrc(name, local, from = 0, speed = 1) {
+  const s = SHOTS[name]; if (!s) return "";
+  const i = Math.max(0, Math.min(s.frames - 1, Math.round((from + Math.max(0, local) * speed) * 30)));
+  return "/shots/" + name + "/" + String(i).padStart(5, "0") + ".jpg";
+}
+let pool = [];
+function el(cls, html, parent) { const d = document.createElement("div"); d.className = cls; if (html != null) d.innerHTML = html; (parent || world).appendChild(d); pool.push(d); return d; }
+function img(parent, src) { const i = document.createElement("img"); i.src = src; parent.appendChild(i); return i; }
+function put(d, x, y, w, h, o = {}) {
+  d.style.left = (x - w / 2) + "px"; d.style.top = (y - h / 2) + "px";
+  d.style.transform = "perspective(2600px) rotateX(" + (o.rx || 0) + "deg) rotateY(" + (o.ry || 0) + "deg) scale(" + (o.s == null ? 1 : o.s) + ")";
+  d.style.opacity = o.op == null ? 1 : o.op;
+  if (o.clip != null) d.style.clipPath = "inset(" + (o.clip * 100).toFixed(2) + "% 0 0 0 round 16px)";
+  if (o.blur) d.style.filter = "blur(" + o.blur.toFixed(1) + "px)";
+}
+
+/* a segment's life: in over the first 0.8 s, out over the last 0.6 s (they overlap at the cut) */
+const IN = 0.8, OUT = 0.55;
+function life(t, s) { return { kin: eOut(prog(t, s.t0, s.t0 + IN)), kout: eIn(prog(t, s.t1 - OUT * .3, s.t1 + OUT * .7)), L: t - s.t0, D: s.t1 - s.t0 }; }
+
+/* text lines that rise out of a mask, one after another */
+function lines(t, cls, x, y, list, start, o = {}) {
+  const d = el("t " + cls); d.style.left = x + "px"; d.style.top = y + "px";
+  if (o.center) { d.style.left = "0"; d.style.width = W + "px"; d.style.textAlign = "center"; }
+  d.innerHTML = list.map(s => '<span class="line"><span>' + s + "</span></span>").join("");
+  d.querySelectorAll(".line>span").forEach((s, i) => {
+    const k = eOut(prog(t, start + i * (o.stagger || .12), start + i * (o.stagger || .12) + (o.dur || .9)));
+    s.style.transform = "translateY(" + ((1 - k) * 110) + "%)";
+  });
+  if (o.until != null) { const k = eIn(prog(t, o.until - .35, o.until + .25)); d.style.opacity = 1 - k; d.style.transform = "translateY(" + (-k * 30) + "px)"; }
+  return d;
+}
+/* the clock: its digits roll from the time before */
+function clock(t, x, y, from, to, start, until) {
+  const d = el("clock"); d.style.left = x + "px"; d.style.top = y + "px";
+  const k = eIO(prog(t, start, start + .9));
+  let html = "";
+  for (let i = 0; i < to.length; i++) {
+    const a = from[i] || to[i], b = to[i];
+    if (b === ":") { html += '<span class="d" style="width:.3em;text-align:center"><span>:</span></span>'; continue; }
+    const delay = (to.length - 1 - i) * .06, kk = a === b ? 1 : eIO(prog(t, start + delay, start + delay + .8));
+    html += '<span class="d"><span style="transform:translateY(' + (-kk * 100) + '%)">' + a + '</span><span style="transform:translateY(' + (-kk * 100) + '%)">' + b + "</span></span>";
+  }
+  d.innerHTML = html;
+  if (until != null) d.style.opacity = 1 - eIn(prog(t, until - .3, until + .25));
+  return d;
+}
+function rule(t, x, y, w, start, until) {
+  const d = el("rule"); d.style.left = x + "px"; d.style.top = y + "px";
+  d.style.width = (w * eOut(prog(t, start, start + .8)) * (until == null ? 1 : 1 - eIn(prog(t, until - .3, until + .2)))) + "px";
+}
+const MARK = '<svg viewBox="0 7 40 34" width="100%" height="100%"><path d="M3 24 C 9 12, 15 12, 20 24 S 32 36, 37 24" fill="none" stroke="#F08A24" stroke-width="3.4" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="DASH"/></svg>';
+function mark(t, parent, x, y, size, start) {
+  const d = el("layer", MARK.replace("DASH", (1 - eIO(prog(t, start, start + 1.2))).toFixed(3)), parent);
+  d.style.width = size + "px"; d.style.height = size * .85 + "px"; d.style.left = (x - size / 2) + "px"; d.style.top = (y - size * .425) + "px";
+}
+
+/* ---------- the layouts ---------- */
+function screen(t, s, clip, o) {
+  const { kin, kout, L, D } = life(t, s), k = L / D;
+  const d = el("layer screen"); img(d, frameSrc(clip, L, o.from || 0, o.speed || 1));
+  put(d, (o.x || 1250) + (o.dx || 0) * (1 - k), (o.y || 520) + (1 - kin) * 160 - kout * 60, 1600, 900,
+    { s: lerp(o.s0 || .6, o.s1 || .64, k) * (1 - kout * .06), ry: lerp(o.ry0 == null ? -9 : o.ry0, o.ry1 == null ? -4 : o.ry1, eIO(k)), rx: o.rx || 3, clip: 1 - kin, op: 1 - kout, blur: kout * 10 });
+}
+function phone(t, s, clip, o) {
+  const { kin, kout, L, D } = life(t, s), k = L / D;
+  const d = el("layer phone", '<div class="in"><div class="notch"></div></div>'); img(d.firstChild, frameSrc(clip, L, o.from || 0, o.speed || 1));
+  put(d, o.x || 1300, (o.y || 530) + (1 - kin) * 260 - kout * 60, 430, 900, { s: lerp(.86, .9, k), ry: lerp(-12, -6, eIO(k)), rx: 4, op: (1 - kout) * clamp(kin * 2), blur: kout * 10 });
+}
+function full(t, s, clip, o) {
+  const { kin, kout, L, D } = life(t, s), k = L / D;
+  const d = el("layer full"); img(d, frameSrc(clip, L, o.from || 0, o.speed || 1));
+  d.style.transformOrigin = (o.ox || "50%") + " " + (o.oy || "50%");
+  put(d, 960, 540, 1920, 1080, { s: lerp(o.s0 || 1.0, o.s1 || 1.06, k), op: o.noFade ? 1 : 1 - kout });
+  d.style.clipPath = "inset(" + ((1 - kin) * 100).toFixed(2) + "% 0 0 0)";
+}
+/* the words of a chapter, on the left */
+function words(t, s, time, prev, label, head, sub, o = {}) {
+  const x = o.x || 140, y0 = o.y || 230, start = s.t0 + .25, until = s.t1;
+  clock(t, x - 10, y0, prev, time, s.t0 + .05, until);
+  rule(t, x, y0 + 228, 64, start + .2, until);
+  lines(t, "lab", x, y0 + 252, [label], start + .3, { until });
+  lines(t, "h", x, y0 + 300, head.split("|"), start + .4, { until, stagger: .14 });
+  lines(t, "sub", x, y0 + 300 + head.split("|").length * 78 + 34, sub.split("|"), start + .75, { until });
+}
+
+/* ---------- the timeline ---------- */
+const SEGS = [];
+function seg(t0, t1, draw) { SEGS.push({ t0, t1, draw }); }
+
+/* intro: four lines, one a bar */
+const INTRO = ["Every working day", "is made of a thousand small things.", "Hours. Plans. Receipts. Approvals. People.", "What if they all lived in one place?"];
+INTRO.forEach((txt, i) => seg(at(i), at(i + 1), (t, s) => {
+  const d = lines(t, "h", 0, 470, [txt], s.t0 + .1, { center: true, dur: 1.1, until: s.t1 });
+  d.style.fontWeight = i === 3 ? "500" : "300"; d.style.fontSize = (i === 3 ? 84 : 76) + "px";
+}));
+
+/* the title, on the navy panel (drawn in seek) */
+function title(t, a, b) {
+  const L = t - a;
+  mark(t, panel, 960, 360, 190, a + .3);
+  const g = lines(t, "h", 0, 450, ["GALIL"], a + .5, { center: true, dur: 1.2, until: b });
+  g.style.color = "#fff"; g.style.fontWeight = "600"; g.style.fontSize = "150px"; g.style.letterSpacing = (0.3 - 0.05 * clamp(L / 5)) + "em"; panel.appendChild(g);
+  const e = lines(t, "h", 0, 630, ["Employee Portal"], a + .9, { center: true, dur: 1.1, until: b });
+  e.style.color = "#C9D4E8"; e.style.fontWeight = "300"; e.style.fontSize = "64px"; panel.appendChild(e);
+  const r = el("rule", null, panel); const w = 260 * eOut(prog(t, a + 1.4, a + 2.4)) * (1 - eIn(prog(t, b - .4, b))); r.style.left = (960 - w / 2) + "px"; r.style.top = "740px"; r.style.width = w + "px";
+  const sub = lines(t, "sub", 0, 775, ["One place for the working day."], a + 1.8, { center: true, until: b });
+  sub.style.color = "#8FA3C6"; panel.appendChild(sub);
+}
+
+/* the chapters: [bar, time, clip, label, headline, sub, layout options] */
+const CH = [
+  [6, "08:00", "home", "Employee Portal", "Good morning.|Everything starts here.", "Every app and every shortcut,|behind one sign-in.", { speed: .8 }],
+  [8, "08:05", "phone-home", "On your phone", "Start the day|from your phone.", "Install the portal like an app.|Scan the shift QR code.", { phone: true, speed: .55 }],
+  [10, "09:00", "timelog", "WorkDesk · Time Log", "Report time|in a few clicks.", "Client, project, hours —|and where you worked from.", { from: .5, speed: 2.3 }],
+  [12, "10:30", "planner", "WorkDesk · Week Planner", "Plan the week|ahead.", "Drag blocks between days.|Compare the plan with the actual.", { speed: .75 }],
+  [14, "12:15", "expenses", "WorkDesk · Expenses", "Expenses, filed|on the spot.", "Amount, project, receipt —|ready for approval.", { from: .5, speed: 2.0 }],
+  [16, "13:30", "approvals", "WorkDesk · Approvals", "Approvals|in one click.", "Managers see the budget|before they decide.", { speed: .9 }],
+  [18, "14:00", "board", "Taskana", "Every task,|on one board.", "Boards, budgets and reviews|for every client project.", { speed: .8 }],
+  [20, "15:30", "studio", "Model Studio", "From CAD model|to manual.", "Assemblies, procedures and|parts catalogues — in 3D.", { speed: 1.1, wide: true }],
+  [22, "16:00", "hr", "HR", "The whole company,|in one place.", "News, events, surveys|and performance reviews.", { speed: .55 }],
+  [24, "16:45", "kudos", "HR · Recognition", "Say thank you.", "Recognise a colleague —|everyone sees it.", { speed: .55 }],
+  [26, "17:15", "trio", "Handbook · Knowledge Base · News", "Answers,|always to hand.", "Every screen explained,|every rule written down.", {}],
+  [28, "17:40", "dashboard", "WorkDesk · Dashboard", "See the whole|picture.", "Hours, budgets and|utilisation — live.", { speed: .7 }]
+];
+CH.forEach(([bar, time, clip, label, head, sub, o], i) => {
+  const prev = i ? CH[i - 1][1] : "07:55";
+  seg(at(bar), at(bar + 2), (t, s) => {
+    if (o.phone) {
+      screen(t, s, "home", { x: 1180, s0: .5, s1: .52, from: 3, speed: 0, ry0: -12, ry1: -10, y: 560 });
+      phone(t, s, clip, Object.assign({ x: 1500 }, o));
+    } else if (clip === "trio") {
+      const sh = (c, x, y, d, ry) => screen(t, Object.assign({}, s, { t0: s.t0 + d }), c, { x, y, s0: .4, s1: .43, ry0: ry, ry1: ry * .6, speed: .5, from: .2 });
+      sh("news", 1460, 330, .3, -10); sh("kb", 1300, 560, .15, -10); sh("handbook", 1140, 790, 0, -10);
+    } else if (o.wide) {
+      screen(t, s, clip, Object.assign({ x: 1330, y: 540, s0: .64, s1: .7, ry0: -6, ry1: -2 }, o));
+    } else screen(t, s, clip, o);
+    words(t, s, time, prev, label, head, sub);
+  });
+});
+
+/* evening: the portal turns dark */
+seg(at(30), at(32), (t, s) => {
+  full(t, s, "theme", { from: 0, speed: .42, s0: 1.0, s1: 1.05, ox: "50%", oy: "30%", noFade: true });
+  const sh = el("layer"); sh.style.width = W + "px"; sh.style.height = H + "px";
+  sh.style.background = "linear-gradient(90deg,rgba(243,241,236,.97) 0%,rgba(243,241,236,.9) 38%,rgba(243,241,236,0) 62%)";
+  sh.style.clipPath = "inset(" + ((1 - eOut(prog(t, s.t0, s.t0 + IN))) * 100).toFixed(2) + "% 0 0 0)";
+  words(t, s, "18:00", "17:40", "End of the day", "Day done.|Everything in its place.", "In English and Hebrew.|In light and in dark.");
+});
+
+/* ---------- the day line along the bottom ---------- */
+const DAY0 = at(6), DAY1 = at(32);
+function toMin(s) { const [h, m] = s.split(":").map(Number); return h * 60 + m; }
+const STOPS = CH.map(c => [at(c[0]), toMin(c[1])]).concat([[at(30), toMin("18:00")]]);
+function dayline(t) {
+  if (t < DAY0 - .5 || t > DAY1 + .6) return;
+  const vis = eOut(prog(t, DAY0, DAY0 + 1)) * (1 - eIn(prog(t, DAY1 - .2, DAY1 + .5)));
+  const x0 = 140, x1 = 1780, y = 1006;
+  let min = toMin("08:00");
+  for (const [tt, m] of STOPS) { if (t >= tt) { const prevM = min; min = lerp(prevM, m, eIO(prog(t, tt, tt + 1))); } }
+  const xm = x0 + (x1 - x0) * (min - 480) / 600;
+  const line = el("layer", null, day); line.style.left = x0 + "px"; line.style.top = y + "px"; line.style.height = "2px"; line.style.width = ((x1 - x0) * vis) + "px"; line.style.background = "#D6D1C6";
+  const done = el("layer", null, day); done.style.left = x0 + "px"; done.style.top = y + "px"; done.style.height = "2px"; done.style.width = Math.max(0, (xm - x0) * vis) + "px"; done.style.background = "#F08A24";
+  for (let h = 8; h <= 18; h++) {
+    const x = x0 + (x1 - x0) * (h - 8) / 10, lab = el("layer", (h < 10 ? "0" : "") + h + ":00", day);
+    lab.style.left = (x - 30) + "px"; lab.style.width = "60px"; lab.style.textAlign = "center"; lab.style.top = (y + 16) + "px";
+    lab.style.font = "500 15px Inter, sans-serif"; lab.style.letterSpacing = ".08em"; lab.style.color = min >= h * 60 - 1 ? "#14284A" : "#A6AEBB"; lab.style.opacity = vis;
+    const tk = el("layer", null, day); tk.style.left = x + "px"; tk.style.top = (y - 5) + "px"; tk.style.width = "1px"; tk.style.height = "12px"; tk.style.background = "#C9C3B6"; tk.style.opacity = vis;
+  }
+  const dot = el("layer", null, day); dot.style.left = (xm - 9) + "px"; dot.style.top = (y - 8) + "px"; dot.style.width = dot.style.height = "18px"; dot.style.borderRadius = "50%";
+  dot.style.background = "#F08A24"; dot.style.boxShadow = "0 0 0 6px rgba(240,138,36,.18)"; dot.style.opacity = vis;
+}
+
+/* ---------- the end card ---------- */
+function endcard(t, a) {
+  mark(t, panel, 960, 330, 170, a + .4);
+  const g = lines(t, "h", 0, 410, ["GALIL"], a + .6, { center: true, dur: 1.3 }); g.style.color = "#fff"; g.style.fontWeight = "600"; g.style.fontSize = "132px"; g.style.letterSpacing = ".25em"; panel.appendChild(g);
+  const e = lines(t, "h", 0, 575, ["Employee Portal"], a + 1.0, { center: true, dur: 1.2 }); e.style.color = "#C9D4E8"; e.style.fontWeight = "300"; e.style.fontSize = "60px"; panel.appendChild(e);
+  const r = el("rule", null, panel); const w = 220 * eOut(prog(t, a + 1.5, a + 2.5)); r.style.left = (960 - w / 2) + "px"; r.style.top = "675px"; r.style.width = w + "px";
+  const s1 = lines(t, "h", 0, 705, ["One place for the working day."], a + 1.9, { center: true, dur: 1.2 }); s1.style.color = "#fff"; s1.style.fontWeight = "400"; s1.style.fontSize = "44px"; panel.appendChild(s1);
+  const apps = lines(t, "lab", 0, 860, ["WorkDesk · Taskana · HR · Model Studio · Handbook · Knowledge Base · Defense News"], a + 3.0, { center: true, dur: 1.4 });
+  apps.style.color = "#8FA3C6"; apps.style.fontSize = "18px"; apps.style.letterSpacing = ".22em"; panel.appendChild(apps);
+}
+
+window.seek = function (t) {
+  pool.forEach(d => d.remove()); pool = [];
+  document.getElementById("grid").style.transform = "translate(" + (-(t * 6) % 120) + "px," + (-(t * 3) % 120) + "px)";
+  for (const s of SEGS) if (t >= s.t0 - .05 && t < s.t1 + .6) s.draw(t, s);
+  dayline(t);
+  /* the navy panel: up for the title (bars 4–6), again for the end (bar 32 on) */
+  let top = H, hgt = 0;
+  const T0 = at(4), T1 = at(6), E0 = at(32);
+  if (t >= T0 - .1 && t < T1 + 1) {
+    const kin = eIO(prog(t, T0 - .1, T0 + .7)), kout = eIO(prog(t, T1 - .5, T1 + .4));
+    top = H * (1 - kin); hgt = H * kin - H * kout; if (kout > 0) { top = 0; hgt = H * (1 - kout); }
+    title(t, T0, T1 - .3);
+  } else if (t >= E0 - .1) {
+    const kin = eIO(prog(t, E0 - .1, E0 + .8)); top = H * (1 - kin); hgt = H * kin;
+    endcard(t, E0);
+  }
+  panel.style.top = top + "px"; panel.style.height = Math.max(0, hgt) + "px";
+  /* the panel's content is laid out for the full screen: keep it still while the panel moves */
+  [...panel.children].forEach(c => { c.style.marginTop = (-top) + "px"; });
+  document.getElementById("fade").style.opacity = prog(t, window.DURATION - 2.2, window.DURATION - .2);
+  return Promise.all([...document.images].map(i => i.complete ? Promise.resolve() : i.decode().catch(() => {})));
+};
+window.DURATION = 36 * BAR + 1.0;
+</script></body></html>

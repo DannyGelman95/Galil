@@ -15,4 +15,17 @@ node tools/commercial/render.js           # 3. draws stage.html frame by frame a
 - `stage.html` — the edit: the timeline (`seg(...)`), the words, the layouts and transitions. Times are in bars and beats (`at(bar, beat)`).
 - `render.js` — `STILLS=5,12.3` renders single frames, `FROM=20 TO=24` a short preview (`build/preview.mp4`).
 
+## The second film: A day at GALIL
+
+Calm and serious: one working day from 08:00 to 18:00, an app for each hour, a rolling clock and a
+day line along the bottom, on a light editorial backdrop. Piano, strings and a ticking-clock pulse at 90 bpm.
+Output: `docs/films/GALIL-Employee-Portal-A-Day-at-GALIL.mp4` (97 s).
+
+```bash
+python3 tools/commercial/music-day.py tools/commercial/build/music-day.wav
+STAGE=stage-day.html MUSIC=music-day.wav OUT=GALIL-Employee-Portal-A-Day-at-GALIL.mp4 node tools/commercial/render.js
+```
+
+It uses the same clips as the first film (`shoot.js`).
+
 Needs Playwright (Chromium), ffmpeg and python3 with numpy. `build/` is not committed.
