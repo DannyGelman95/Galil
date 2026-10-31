@@ -1,0 +1,367 @@
+<!doctype html>
+<html><head><meta charset="utf-8"><title>GALIL Employee Portal — commercial stage</title>
+<!-- The commercial, drawn frame by frame: render.js calls window.seek(t) for every frame and takes a picture.
+     The timeline below is cut to the soundtrack (music.py): 120 bpm, a beat is 0.5 s, a bar 2 s. -->
+<style>
+@font-face{font-family:"NotoHeb";src:url("/portal/shared/fonts/noto-sans-hebrew-hebrew.woff2") format("woff2");font-weight:100 900}
+html,body{margin:0;background:#000;overflow:hidden}
+#stage{position:relative;width:1920px;height:1080px;overflow:hidden;background:#060c1a;font-family:"Inter Display","Inter",sans-serif;color:#fff}
+#bg{position:absolute;inset:0;background:radial-gradient(1400px 900px at 70% 40%,#183463 0%,#0b1730 45%,#050a16 100%)}
+.streak{position:absolute;height:3px;border-radius:3px;background:linear-gradient(90deg,rgba(240,138,36,0),rgba(240,138,36,.95),rgba(255,214,160,1));filter:blur(1px);box-shadow:0 0 18px rgba(240,138,36,.8)}
+#world{position:absolute;inset:0;transform-origin:50% 50%}
+.layer{position:absolute;left:0;top:0;transform-origin:50% 50%;will-change:transform}
+.screen{width:1600px;height:900px;border-radius:18px;overflow:hidden;background:#fff;box-shadow:0 60px 140px rgba(0,0,0,.6),0 0 0 2px rgba(255,255,255,.08)}
+.screen img,.full img,.tile img{display:block;width:100%;height:100%;object-fit:cover;object-position:top left}
+.full{width:1920px;height:1080px;overflow:hidden}
+.phone{width:430px;height:900px;border-radius:64px;background:#0b0d12;padding:16px;box-sizing:border-box;box-shadow:0 60px 120px rgba(0,0,0,.65),inset 0 0 0 3px #2b3140,0 0 0 2px #454c5c}
+.phone .in{width:100%;height:100%;border-radius:50px;overflow:hidden;background:#fff;position:relative}
+.phone .in img{width:100%;height:100%;object-fit:cover;object-position:top}
+.phone .notch{position:absolute;left:50%;top:12px;width:120px;height:34px;margin-left:-60px;background:#0b0d12;border-radius:20px;z-index:2}
+.tile{position:absolute;border-radius:10px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.55);background:#fff}
+.txt{position:absolute;left:0;top:0;white-space:nowrap;font-weight:900;font-style:italic;text-transform:uppercase;letter-spacing:-.02em;line-height:.9;text-shadow:0 10px 40px rgba(0,0,0,.55)}
+.txt .w{display:inline-block;will-change:transform}
+.txt .o{color:#F08A24}
+.kick{position:absolute;font-weight:700;letter-spacing:.32em;text-transform:uppercase;font-size:24px;color:#F6B26B;font-style:normal}
+.bar{position:absolute;background:#F08A24}
+#flash{position:absolute;inset:0;background:#fff;opacity:0;mix-blend-mode:screen;pointer-events:none}
+#leak{position:absolute;inset:-20%;opacity:0;background:radial-gradient(600px 500px at 20% 30%,rgba(255,150,40,.9),rgba(255,90,0,0) 70%),radial-gradient(700px 600px at 85% 75%,rgba(255,190,90,.7),rgba(255,120,0,0) 70%);mix-blend-mode:screen;pointer-events:none}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,rgba(0,0,0,0) 55%,rgba(0,0,0,.55) 100%);pointer-events:none}
+#grain{position:absolute;inset:-50px;opacity:.07;pointer-events:none;mix-blend-mode:overlay}
+#bars{position:absolute;inset:0;pointer-events:none}
+#bars .lb{position:absolute;left:0;right:0;height:0;background:#000}
+</style></head>
+<body><div id="stage"><div id="bg"></div><div id="streaks"></div><div id="world"></div><div id="leak"></div><div id="flash"></div><div id="vig"></div><canvas id="grain" width="1020" height="590"></canvas>
+<div id="bars"><div class="lb" id="lbt" style="top:0"></div><div class="lb" id="lbb" style="bottom:0"></div></div></div>
+<script>
+"use strict";
+const W = 1920, H = 1080, B = 0.5, BAR = 2;               // a beat, a bar (seconds)
+const SHOTS = window.SHOTS || {};                         // name → { frames, phone } — set by render.js
+const world = document.getElementById("world");
+
+/* ---------- easing and helpers ---------- */
+const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
+const lerp = (a, b, k) => a + (b - a) * k;
+const eOut = k => 1 - Math.pow(1 - clamp(k), 3);
+const eIn = k => Math.pow(clamp(k), 3);
+const eIO = k => { k = clamp(k); return k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; };
+const eBack = k => { k = clamp(k); const c = 1.9; return 1 + (c + 1) * Math.pow(k - 1, 3) + c * Math.pow(k - 1, 2); };
+const prog = (t, a, b) => clamp((t - a) / (b - a));
+function rnd(i) { const x = Math.sin(i * 127.1 + 311.7) * 43758.5453; return x - Math.floor(x); }
+
+/* ---------- the clips ---------- */
+function frameSrc(name, local, from = 0, speed = 1) {
+  const s = SHOTS[name]; if (!s) return "";
+  const i = Math.max(0, Math.min(s.frames - 1, Math.round((from + local * speed) * 30)));
+  return "/shots/" + name + "/" + String(i).padStart(5, "0") + ".jpg";
+}
+
+/* ---------- the pool of elements, rebuilt for every frame ---------- */
+let pool = [];
+function el(cls, html) { const d = document.createElement("div"); d.className = cls; if (html != null) d.innerHTML = html; world.appendChild(d); pool.push(d); return d; }
+function img(parent, src) { const i = document.createElement("img"); i.src = src; parent.appendChild(i); return i; }
+function place(d, x, y, w, h, o = {}) {
+  const s = o.s == null ? 1 : o.s;
+  d.style.left = (x - w / 2) + "px"; d.style.top = (y - h / 2) + "px";
+  d.style.transform = "perspective(2400px) translateZ(0) rotateX(" + (o.rx || 0) + "deg) rotateY(" + (o.ry || 0) + "deg) rotateZ(" + (o.rz || 0) + "deg) scale(" + s + ") skewX(" + (o.sk || 0) + "deg)";
+  d.style.opacity = o.op == null ? 1 : o.op;
+  d.style.filter = o.blur ? "blur(" + o.blur.toFixed(1) + "px)" : "";
+}
+
+/* the in and out moves of a segment around its cut, centred on the beat */
+const X = 0.14;                                            // half the length of a transition
+function moveIn(kind, k) {                                 // k: 0 → 1 over the transition
+  const e = eOut(k), r = 1 - e;
+  switch (kind) {
+    case "whipL": return { dx: r * 2200, blur: r * 40, sk: -r * 10 };
+    case "whipR": return { dx: -r * 2200, blur: r * 40, sk: r * 10 };
+    case "up": return { dy: r * 1200, blur: r * 30 };
+    case "down": return { dy: -r * 1200, blur: r * 30 };
+    case "zoom": return { s: 1 + r * 1.4, blur: r * 30, op: clamp(k * 3) };
+    case "punch": return { s: 0.6 + 0.4 * eBack(k), op: clamp(k * 4) };
+    case "spin": return { rz: r * -14, s: 1 + r * .6, blur: r * 25, op: clamp(k * 3) };
+    default: return {};
+  }
+}
+function moveOut(kind, k) {
+  const e = eIn(k);
+  switch (kind) {
+    case "whipL": return { dx: -e * 2200, blur: e * 40, sk: e * 10 };
+    case "whipR": return { dx: e * 2200, blur: e * 40, sk: -e * 10 };
+    case "up": return { dy: -e * 1200, blur: e * 30 };
+    case "down": return { dy: e * 1200, blur: e * 30 };
+    case "zoom": return { s: 1 + e * 2, blur: e * 30, op: 1 - clamp(k * 1.6) };
+    case "fade": return { op: 1 - k };
+    default: return { op: k < .5 ? 1 : 0 };
+  }
+}
+function combine(t, seg) {
+  const a = seg.t0, b = seg.t1, m = { dx: 0, dy: 0, s: 1, blur: 0, sk: 0, rz: 0, op: 1 };
+  const add = o => { m.dx += o.dx || 0; m.dy += o.dy || 0; m.s *= o.s == null ? 1 : o.s; m.blur += o.blur || 0; m.sk += o.sk || 0; m.rz += o.rz || 0; m.op *= o.op == null ? 1 : o.op; };
+  if (t < a + X) add(moveIn(seg.in || "whipL", prog(t, a - X, a + X)));
+  if (t > b - X) add(moveOut(seg.out || "whipL", prog(t, b - X, b + X)));
+  return m;
+}
+
+/* ---------- the words ---------- */
+function words(t, x, y, text, o = {}) {
+  /* text: "PLAN THE|*WEEK.*" — words in * are orange */
+  const size = o.size || 150, start = o.at, d = el("txt");
+  d.style.fontSize = size + "px";
+  if (o.heb) { d.style.fontFamily = "NotoHeb"; d.style.fontStyle = "normal"; }
+  const parts = text.split(" ");
+  d.innerHTML = parts.map(w => { const hot = /^\*.*\*$/.test(w); return '<span class="w' + (hot ? " o" : "") + '">' + w.replace(/\*/g, "") + "</span>"; }).join(" ");
+  world.appendChild(d);
+  const spans = d.querySelectorAll(".w");
+  spans.forEach((s, i) => {
+    const k = prog(t, start + i * (o.stagger == null ? 0.07 : o.stagger), start + i * (o.stagger == null ? 0.07 : o.stagger) + (o.dur || 0.22));
+    if (o.style === "slam") { const e = eOut(k); s.style.transform = "scale(" + lerp(2.2, 1, e) + ")"; s.style.opacity = clamp(k * 2.5); s.style.filter = "blur(" + ((1 - e) * 14).toFixed(1) + "px)"; }
+    else { const e = eOut(k); s.style.transform = "translateY(" + ((1 - e) * size * 0.9) + "px) skewX(" + ((1 - e) * -12) + "deg)"; s.style.opacity = clamp(k * 2); }
+  });
+  const w = d.offsetWidth, h = d.offsetHeight;
+  const ax = o.align === "right" ? w : o.align === "center" ? w / 2 : 0;
+  const drift = (t - start) * (o.drift == null ? 14 : o.drift);
+  let out = 1, ox = 0, blur = 0;
+  if (o.until != null) { const k = prog(t, o.until - 0.14, o.until + 0.1); out = 1 - k; ox = -eIn(k) * 500 * (o.exit || 1); blur = k * 20; }
+  d.style.left = (x - ax + ox + drift) + "px"; d.style.top = (y - h / 2) + "px";
+  d.style.opacity = out; if (blur) d.style.filter = "blur(" + blur.toFixed(1) + "px)";
+  if (o.align === "right") d.style.textAlign = "right";
+  return d;
+}
+function kicker(t, x, y, text, at, until, right) {
+  const d = el("kick", text); const k = eOut(prog(t, at, at + .3)), out = until == null ? 1 : 1 - prog(t, until - .12, until + .05);
+  d.style.whiteSpace = "nowrap"; d.style.letterSpacing = ".32em";
+  if (right) x = x - d.offsetWidth;
+  d.style.left = x + "px"; d.style.top = y + "px"; d.style.opacity = k * out; d.style.letterSpacing = lerp(.8, .32, k) + "em";
+  const bar = el("bar"); bar.style.left = x + "px"; bar.style.top = (y - 18) + "px"; bar.style.height = "6px"; bar.style.width = (k * 90 * out) + "px";
+}
+
+/* ---------- the GALIL mark ---------- */
+const MARK = '<svg viewBox="0 7 40 34" width="100%" height="100%"><path d="M3 24 C 9 12, 15 12, 20 24 S 32 36, 37 24" fill="none" stroke="#F08A24" stroke-width="4.2" stroke-linecap="round" pathLength="1" stroke-dasharray="1" stroke-dashoffset="DASH"/></svg>';
+function mark(t, x, y, size, at) {
+  const d = el("layer", MARK.replace("DASH", (1 - eIO(prog(t, at, at + .5))).toFixed(3)));
+  d.style.width = size + "px"; d.style.height = size * 0.85 + "px"; d.style.left = (x - size / 2) + "px"; d.style.top = (y - size * .425) + "px";
+  d.style.filter = "drop-shadow(0 0 30px rgba(240,138,36,.7))";
+}
+
+/* ---------- the layouts ---------- */
+function scrim(t, seg, side, strength = .88) {
+  const m = combine(t, seg), d = el("layer");
+  d.style.width = W + "px"; d.style.height = H + "px";
+  d.style.background = "linear-gradient(" + (side === "left" ? 90 : 270) + "deg,rgba(5,10,22," + strength + ") 0%,rgba(5,10,22," + (strength * .75) + ") 38%,rgba(5,10,22,0) 62%)";
+  d.style.opacity = m.op * (1 - Math.min(1, Math.abs(m.dx) / 1600));
+}
+function dim(t, seg, a = .45) { const m = combine(t, seg), d = el("layer"); d.style.width = W + "px"; d.style.height = H + "px"; d.style.background = "radial-gradient(ellipse at center,rgba(5,10,22," + a + ") 0%,rgba(5,10,22," + (a * .7) + ") 100%)"; d.style.opacity = m.op; }
+function screen(t, seg, clip, o) {
+  const m = combine(t, seg), L = t - seg.t0, D = seg.t1 - seg.t0, k = L / D;
+  const d = el("layer screen"); img(d, frameSrc(clip, L, o.from || 0, o.speed || 1));
+  const s = lerp(o.s0 || .8, o.s1 || .86, eIO(k)) * m.s;
+  place(d, (o.x || 960) + lerp(o.dx0 || 0, o.dx1 || 0, eIO(k)) + m.dx, (o.y || 540) + m.dy, 1600, 900,
+    { s, rx: lerp(o.rx0 || 0, o.rx1 || 0, eIO(k)), ry: lerp(o.ry0 || 0, o.ry1 || 0, eIO(k)), rz: (o.rz || 0) + m.rz, blur: m.blur, sk: m.sk, op: m.op * (o.op == null ? 1 : o.op) });
+  return d;
+}
+function full(t, seg, clip, o) {
+  const m = combine(t, seg), L = t - seg.t0, D = seg.t1 - seg.t0, k = L / D;
+  const d = el("layer full"); img(d, frameSrc(clip, L, o.from || 0, o.speed || 1));
+  const s = lerp(o.s0 || 1.0, o.s1 || 1.12, k) * m.s;
+  d.style.transformOrigin = (o.ox || "50%") + " " + (o.oy || "50%");
+  place(d, 960 + m.dx, 540 + m.dy, 1920, 1080, { s, blur: m.blur, sk: m.sk, op: m.op, rz: m.rz });
+  return d;
+}
+function phone(t, seg, clip, o) {
+  const m = combine(t, seg), L = t - seg.t0, D = seg.t1 - seg.t0, k = L / D;
+  const d = el("layer phone", '<div class="in"><div class="notch"></div></div>'); img(d.firstChild, frameSrc(clip, L, o.from || 0, o.speed || 1));
+  place(d, (o.x || 1300) + m.dx, (o.y || 560) + lerp(o.dy0 || 40, o.dy1 || -20, eIO(k)) + m.dy, 430, 900,
+    { s: lerp(o.s0 || 1, o.s1 || 1.05, eIO(k)) * m.s, ry: lerp(o.ry0 || -18, o.ry1 || -8, eIO(k)), rx: o.rx || 6, rz: (o.rz || 0) + m.rz, blur: m.blur, sk: m.sk, op: m.op });
+  return d;
+}
+function grid(t, seg, clips, o) {
+  const m = combine(t, seg), L = t - seg.t0, D = seg.t1 - seg.t0, k = L / D;
+  const cols = o.cols || 4, rows = Math.ceil(clips.length / cols), tw = 560, th = 315, gap = 34;
+  const z = lerp(o.z0 || 2.6, o.z1 || 1, eIO(prog(L, 0, D * .75)));
+  const box = el("layer"); box.style.width = W + "px"; box.style.height = H + "px";
+  clips.forEach((c, i) => {
+    const r = Math.floor(i / cols), col = i % cols;
+    const tile = document.createElement("div"); tile.className = "tile"; box.appendChild(tile);
+    img(tile, frameSrc(c, L + i * .1, 0.5));
+    const x = W / 2 + (col - (cols - 1) / 2) * (tw + gap) + (r % 2 ? 60 : -60) * (1 - k), y = H / 2 + (r - (rows - 1) / 2) * (th + gap);
+    const pop = eBack(prog(L, i * .035, i * .035 + .35));
+    tile.style.left = (x - tw / 2) + "px"; tile.style.top = (y - th / 2) + "px"; tile.style.width = tw + "px"; tile.style.height = th + "px";
+    tile.style.transform = "scale(" + (0.4 + 0.6 * pop) + ")"; tile.style.opacity = clamp(pop * 2);
+  });
+  place(box, 960 + m.dx, 540 + m.dy, W, H, { s: z * m.s, rx: o.rx || 14, rz: (o.rz || -6) + m.rz, blur: m.blur, op: m.op });
+}
+
+/* ---------- the timeline ---------- */
+const at = (bar, beat = 0) => bar * BAR + beat * B;
+const HITS = [at(2), at(10), at(20), at(28)];                  // the big hits in the music
+const SEGS = [];
+function seg(t0, t1, draw, opts = {}) { SEGS.push(Object.assign({ t0, t1, draw }, opts)); }
+
+/* intro: four words on the heartbeat */
+const INTRO = [["EVERY *DAY.*", 0], ["EVERY *HOUR.*", 1], ["EVERY *TEAM.*", 2], ["ONE *PLACE.*", 3]];
+INTRO.forEach(([w, i], n) => seg(at(0, i), at(0, i + 1), (t, s) => {
+  words(t, 960, 540, w, { at: s.t0, size: n === 3 ? 230 : 190, style: "slam", stagger: .05, align: "center", drift: 0 });
+}, { in: "cut", out: "cut", shake: true }));
+
+/* the title */
+seg(at(2), at(3), (t, s) => {
+  mark(t, 960, 380, 260, s.t0 + .05);
+  words(t, 960, 590, "GALIL", { at: s.t0, size: 250, style: "slam", align: "center", drift: 0, stagger: 0 });
+  words(t, 960, 760, "EMPLOYEE *PORTAL*", { at: s.t0 + .25, size: 96, align: "center", drift: 0, stagger: .1 });
+}, { in: "punch", out: "zoom" });
+
+/* verse: one screen a bar, the words beside it */
+const V = [
+  ["home", "ALL YOUR APPS.|*ONE SIGN-IN.*", "The Employee Portal", { s0: .62, s1: .7, ry0: -24, ry1: -14, x: 1180, rx0: 6 }, "whipL"],
+  ["home-tiles", "SEVEN APPS.|*ZERO HASSLE.*", "WorkDesk · Taskana · HR · Studio", { s0: .9, s1: 1.05, from: .4, x: 860, ry0: 18, ry1: 10, rx0: 8, rx1: 4 }, "up"],
+  ["timelog", "REPORT TIME|*IN SECONDS.*", "WorkDesk · Time Log", { s0: 1.0, s1: 1.18, from: 1.0, speed: 2.4, x: 1150, ry0: -14, ry1: -6 }, "whipL"],
+  ["timer", "START THE|*CLOCK.*", "One click, the timer runs", { s0: .78, s1: .92, from: .3, speed: 1.6, x: 860, ry0: 16, ry1: 8 }, "whipR"],
+  ["planner", "PLAN THE|*WEEK.*", "WorkDesk · Week Planner", { s0: .8, s1: .92, from: .2, speed: 1.4, x: 1130, ry0: -16, ry1: -8, rx0: 10, rx1: 4 }, "zoom"],
+  ["expenses", "EXPENSES.|*DONE.*", "Receipts, amounts, approvals", { s0: .9, s1: 1.04, from: 1.2, speed: 3.6, x: 860, ry0: 14, ry1: 6 }, "whipL"],
+  ["approvals", "APPROVE|*ON THE SPOT.*", "Managers decide in one click", { s0: 1.05, s1: 1.25, from: .6, speed: 1.6, x: 1180, ry0: -12, ry1: -4 }, "up"]
+];
+V.forEach(([clip, line, kick, o, tin], i) => {
+  const t0 = at(3 + i), t1 = at(4 + i), left = o.x > 960;
+  const o2 = Object.assign({}, o, { s0: .66, s1: .76, x: left ? 1560 : 360, dx0: left ? 60 : -60, dx1: 0 });
+  seg(t0, t1, (t, s) => {
+    screen(t, s, clip, o2);
+    scrim(t, s, left ? "left" : "right");
+    const tx = left ? 110 : 1810, al = left ? "left" : "right", [a, b] = line.split("|");
+    kicker(t, left ? 116 : 1810, 330, kick, s.t0 + .05, s.t1, !left);
+    words(t, tx, 470, a, { at: s.t0 + .02, size: 112, align: al, until: s.t1, exit: left ? 1 : -1 });
+    words(t, tx, 585, b, { at: s.t0 + .12, size: 112, align: al, until: s.t1, exit: left ? 1 : -1 });
+  }, { in: tin, out: (V[i + 1] || [0, 0, 0, 0, "zoom"])[4] });
+});
+
+/* chorus: bigger moves, the phone, the other apps */
+seg(at(10), at(12), (t, s) => {
+  screen(t, s, "timelog", { s0: .5, s1: .56, x: 700, y: 540, ry0: 20, ry1: 14, rx0: 4, from: 4, speed: 1, op: .5 });
+  phone(t, s, "phone-time", { x: 1380, from: .2, speed: 2.4, ry0: -22, ry1: -10 });
+  scrim(t, s, "left", .8);
+  kicker(t, 110, 250, "On your phone", s.t0 + .05, s.t1);
+  words(t, 110, 410, "THE WHOLE", { at: s.t0 + .05, size: 128, until: s.t1 });
+  words(t, 110, 530, "OFFICE IN", { at: s.t0 + .15, size: 128, until: s.t1 });
+  words(t, 110, 650, "*YOUR POCKET.*", { at: s.t0 + .25, size: 128, until: s.t1 });
+}, { in: "punch", out: "whipL" });
+seg(at(12), at(13), (t, s) => {
+  phone(t, s, "phone-home", { x: 520, from: .3, speed: 1, ry0: 22, ry1: 12, s0: 1.05, s1: 1.12 });
+  words(t, 1820, 400, "*SCAN.*", { at: s.t0, size: 170, align: "right", style: "slam", until: s.t1 + .1 });
+  words(t, 1820, 560, "START.", { at: s.t0 + B, size: 170, align: "right", style: "slam", until: s.t1 + .1 });
+  words(t, 1820, 720, "*GO.*", { at: s.t0 + B * 1.5, size: 170, align: "right", style: "slam", until: s.t1 + .1 });
+  kicker(t, 1810, 860, "QR time reporting", s.t0 + .1, s.t1, true);
+}, { in: "whipL", out: "whipL" });
+const C = [
+  [at(13), at(14), "dashboard", "KNOW YOUR", "*NUMBERS.*", "WorkDesk · Dashboard", { s0: .82, s1: .98, from: .3, speed: 1.2, ry0: -18, ry1: -8, x: 1180 }, "whipL"],
+  [at(14), at(15), "board", "MOVE WORK", "*FORWARD.*", "Taskana · Board", { s0: 1.0, s1: 1.14, from: .3, speed: 1.4, ry0: 18, ry1: 8, x: 820 }, "up"],
+  [at(15), at(16), "studio", "BUILD *3D*", "*MANUALS.*", "Model Studio", { s0: .95, s1: 1.15, from: .2, speed: 1.6, ry0: -16, ry1: -6, x: 1120 }, "zoom"],
+  [at(16), at(17), "hr", "YOUR", "*PEOPLE.*", "HR · News · Events · Reviews", { s0: .85, s1: .98, from: .2, speed: 1.0, ry0: 16, ry1: 6, x: 840 }, "whipR"],
+  [at(17), at(17, 2), "kudos", "SAY", "*THANKS.*", "HR · Recognition", { s0: .9, s1: 1.0, from: 1.0, speed: 1.4, ry0: -12, ry1: -6, x: 1160 }, "whipL"],
+  [at(17, 2), at(18), "news", "STAY", "*INFORMED.*", "Defense News", { s0: .9, s1: 1.0, from: .4, speed: 1.4, ry0: 12, ry1: 6, x: 820 }, "whipL"]
+];
+C.forEach(([t0, t1, clip, a, b, kick, o, tin], i) => {
+  const left = o.x > 960;
+  const o2 = Object.assign({}, o, { s0: .7, s1: .8, x: left ? 1540 : 380 });
+  seg(t0, t1, (t, s) => {
+    screen(t, s, clip, o2);
+    scrim(t, s, left ? "left" : "right");
+    const tx = left ? 110 : 1810, al = left ? "left" : "right";
+    kicker(t, left ? 116 : 1810, 330, kick, s.t0 + .04, s.t1, !left);
+    words(t, tx, 480, a, { at: s.t0, size: 128, align: al, until: s.t1, exit: left ? 1 : -1 });
+    words(t, tx, 605, b, { at: s.t0 + .1, size: 128, align: al, until: s.t1, exit: left ? 1 : -1 });
+  }, { in: tin, out: (C[i + 1] || [0, 0, 0, 0, 0, 0, 0, "zoom"])[7] });
+});
+
+/* breakdown: day and night, two languages */
+seg(at(18), at(19), (t, s) => {
+  full(t, s, "theme", { from: 0.7, speed: 1.15, s0: 1.02, s1: 1.1, ox: "88%", oy: "8%" }); dim(t, s, .5);
+  words(t, 960, 540, t < s.t0 + 1.25 ? "DAY." : "*NIGHT.*", { at: t < s.t0 + 1.25 ? s.t0 + .05 : s.t0 + 1.25, size: 260, style: "slam", align: "center", drift: 0 });
+}, { in: "zoom", out: "cut" });
+seg(at(19), at(20), (t, s) => {
+  full(t, s, "hebrew", { from: 0.7, speed: 1.2, s0: 1.02, s1: 1.1, ox: "15%", oy: "8%" }); dim(t, s, .5);
+  const he = t >= s.t0 + 1.0;
+  words(t, 960, 540, he ? "עברית." : "ENGLISH.", { at: he ? s.t0 + 1.0 : s.t0 + .05, size: he ? 250 : 230, style: "slam", align: "center", drift: 0, heb: he });
+}, { in: "cut", out: "zoom" });
+
+/* final chorus: a cut on every beat, then the wall, then the guides */
+const RAPID = ["timelog", "planner", "board", "studio", "dashboard", "approvals", "hr", "expenses", "home-tiles", "kudos", "timer", "news", "kb", "phone-time", "theme", "handbook"];
+const STAMP = ["TIME.", "PLANS.", "TASKS.", "MODELS.", "NUMBERS.", "APPROVALS.", "PEOPLE.", "EXPENSES.", "APPS.", "THANKS.", "CLOCK.", "NEWS.", "ANSWERS.", "MOBILE.", "DARK MODE.", "GUIDES."];
+RAPID.forEach((clip, i) => {
+  const t0 = at(20, i), t1 = t0 + B;
+  seg(t0, t1, (t, s) => {
+    if (SHOTS[clip] && SHOTS[clip].phone) phone(t, s, clip, { x: 960, from: 2.5, s0: 1.0, s1: 1.08, ry0: (i % 2 ? 14 : -14), ry1: 0 });
+    else full(t, s, clip, { from: 1.0 + (i % 3) * .5, speed: 1.6, s0: 1.18, s1: 1.3, ox: (i % 2 ? "20%" : "80%"), oy: (i % 3 ? "30%" : "60%") });
+    dim(t, s, .5);
+    words(t, 960, 540, (i % 2 ? "*" + STAMP[i] + "*" : STAMP[i]), { at: s.t0, size: 210, style: "slam", align: "center", drift: 0, stagger: 0, dur: .12 });
+  }, { in: ["whipL", "up", "whipR", "down"][i % 4], out: ["up", "whipR", "down", "whipL"][i % 4] });
+});
+/* rapid cuts above fill bars 20–23 (16 beats = 8 s) */
+seg(at(24), at(26), (t, s) => {
+  grid(t, s, ["home", "timelog", "planner", "expenses", "approvals", "dashboard", "board", "studio", "hr", "kudos", "news", "kb"], { cols: 4 });
+  const k = prog(t, s.t0 + 1.0, s.t0 + 1.3);
+  if (t > s.t0 + .8) { const dd = el("layer"); dd.style.width = W + "px"; dd.style.height = H + "px"; dd.style.background = "rgba(5,10,22,.55)"; dd.style.opacity = eOut(prog(t, s.t0 + .8, s.t0 + 1.1)); }
+  if (t > s.t0 + .9) words(t, 960, 540, "EVERYTHING. *ONE PORTAL.*", { at: s.t0 + .95, size: 128, style: "slam", align: "center", drift: 0, stagger: .12 });
+}, { in: "zoom", out: "whipL" });
+seg(at(26), at(28), (t, s) => {
+  screen(t, s, "handbook", { s0: .55, s1: .6, x: 600, y: 520, ry0: 22, ry1: 14, from: .3, speed: 1.2 });
+  screen(t, s, "kb", { s0: .55, s1: .6, x: 1320, y: 580, ry0: -22, ry1: -14, from: .4, speed: 1.1 });
+  kicker(t, 960 + 330, 150, "Handbook + Knowledge Base", s.t0 + .1, s.t1, true);
+  words(t, 960, 920, "LEARN IT. *LIVE IT.*", { at: s.t0 + .2, size: 140, align: "center", until: s.t1, drift: 0 });
+}, { in: "whipL", out: "zoom" });
+
+/* the end card */
+seg(at(28), 63.5, (t, s) => {
+  const L = t - s.t0;
+  mark(t, 960, 330, 230, s.t0 + .05);
+  words(t, 960, 520, "GALIL", { at: s.t0, size: 230, style: "slam", align: "center", drift: 0, stagger: 0 });
+  words(t, 960, 680, "EMPLOYEE *PORTAL*", { at: s.t0 + .2, size: 96, align: "center", drift: 0, stagger: .1 });
+  words(t, 960, 800, "*BUILT TO WORK.*", { at: s.t0 + 1.0, size: 64, align: "center", drift: 0, stagger: .12 });
+  const k = eOut(prog(t, s.t0 + 1.6, s.t0 + 2.2));
+  const line = el("kick", "WorkDesk · Taskana · HR · Model Studio · Handbook · Knowledge Base · Defense News");
+  line.style.fontSize = "22px"; line.style.letterSpacing = ".2em"; line.style.color = "#9fb3d6"; line.style.left = "0"; line.style.width = W + "px"; line.style.textAlign = "center"; line.style.top = "905px"; line.style.opacity = k;
+  const fade = prog(t, 62.0, 63.4); world.style.opacity = 1 - fade;
+}, { in: "punch", out: "cut" });
+
+/* ---------- the backdrop: headlight streaks, grain, flashes, shake ---------- */
+const streaks = document.getElementById("streaks");
+const S = Array.from({ length: 22 }, (_, i) => { const d = document.createElement("div"); d.className = "streak"; streaks.appendChild(d); return d; });
+const gctx = document.getElementById("grain").getContext("2d");
+const gimg = gctx.createImageData(1020, 590);
+function grain(seed) {
+  let x = seed * 9301 + 49297;
+  for (let i = 0; i < gimg.data.length; i += 4) { x = (x * 1103515245 + 12345) & 0x7fffffff; const v = (x >> 16) & 255; gimg.data[i] = gimg.data[i + 1] = gimg.data[i + 2] = v; gimg.data[i + 3] = 255; }
+  gctx.putImageData(gimg, 0, 0);
+}
+function hitAmount(t, list, decay) { let a = 0; for (const h of list) if (t >= h) a = Math.max(a, Math.exp(-(t - h) * decay)); return a; }
+
+window.seek = function (t) {
+  pool.forEach(d => d.remove()); pool = [];
+  world.style.opacity = 1;
+  /* streaks race across faster in the choruses */
+  const speed = t < at(2) ? 300 : t < at(10) ? 1100 : t < at(18) ? 1700 : t < at(20) ? 500 : 2300;
+  S.forEach((d, i) => {
+    const len = 200 + rnd(i) * 600, y = 60 + rnd(i + 7) * 960, v = speed * (0.6 + rnd(i + 3));
+    const x = ((rnd(i + 11) * 4000 + t * v) % 4000) - 1000;
+    d.style.left = x + "px"; d.style.top = y + "px"; d.style.width = len + "px"; d.style.opacity = (0.15 + rnd(i + 5) * .5) * (t < at(2) ? .4 : 1);
+  });
+  for (const s of SEGS) {
+    const a = s.t0 - ((s.in === "cut" || s.in === "punch") ? 0 : X), b = s.t1 + (s.out === "cut" ? 0 : X);
+    if (t >= a && t < b) s.draw(t, s);
+  }
+  /* flashes on the big hits and on every beat of the intro and the rapid cuts */
+  const beats = [];
+  for (let i = 0; i < 4; i++) beats.push(at(0, i));
+  for (let i = 0; i < 16; i++) beats.push(at(20, i));
+  const f = Math.max(hitAmount(t, HITS, 7) * .95, hitAmount(t, beats, 14) * .35);
+  document.getElementById("flash").style.opacity = f;
+  document.getElementById("leak").style.opacity = Math.max(hitAmount(t, HITS, 2) * .5, t > at(10) && t < at(18) ? .12 + .08 * Math.sin(t * 2) : 0);
+  /* a shake on the hits and on the intro words */
+  const sh = Math.max(hitAmount(t, HITS, 6) * 22, t < at(2) ? hitAmount(t, beats.slice(0, 4), 10) * 14 : 0, t >= at(20) && t < at(24) ? hitAmount(t, beats.slice(4), 14) * 8 : 0);
+  world.style.transform = "translate(" + ((rnd(Math.floor(t * 60)) - .5) * sh).toFixed(1) + "px," + ((rnd(Math.floor(t * 60) + 99) - .5) * sh).toFixed(1) + "px) scale(" + (1 + hitAmount(t, HITS, 5) * .04) + ")";
+  /* letterbox bars close in for the intro and the end */
+  const lb = t < at(2) ? 120 : t >= at(28) ? 120 * eOut(prog(t, at(28), at(28) + .6)) : 120 * (1 - eOut(prog(t, at(2), at(2) + .5)));
+  document.getElementById("lbt").style.height = lb + "px"; document.getElementById("lbb").style.height = lb + "px";
+  grain(Math.floor(t * 30));
+  return Promise.all([...document.images].map(i => i.complete ? Promise.resolve() : i.decode().catch(() => {})));
+};
+window.DURATION = 63.5;
+</script></body></html>

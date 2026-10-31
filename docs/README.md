@@ -10,6 +10,9 @@
   Hebrew and English subtitles are inside the file (choose them in the
   player) and beside it as `.srt` files.
 
+- `films/GALIL-Employee-Portal-Commercial.mp4` — a one-minute commercial for the Employee Portal
+  and all its apps, cut to a generated rock anthem. Made with `tools/commercial/`.
+
 - Tutorial films of the Employee Portal — every screen, on a computer and on a phone — live
   beside the Handbook in `Employee Portal/handbook/films/` and play inside its chapters and
   the matching Knowledge Base articles. They are made with `tools/tutorials/`.

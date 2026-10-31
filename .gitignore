@@ -12,3 +12,4 @@ tests/hr/test-results/
 tests/hr/playwright-report/
 tests/hr/node_modules/
 Employee Portal/news/feed.json
+tools/commercial/build/
