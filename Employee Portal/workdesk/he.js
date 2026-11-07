@@ -1545,3 +1545,31 @@ WDI18N.add({
 "People and allowances on {name}": "אנשים ומכסות ב־{name}",
 "Save the work order first; then assign people and their allowance hours here.": "שמרו קודם את הזמנת העבודה; לאחר מכן שבצו כאן אנשים ואת מכסת השעות שלהם."
 });
+WDI18N.add({
+/* ---------------- people on new projects and work orders; link hours ---------------- */
+"Choose who will work on it and each person's allowance. Blank allowance means unlimited; 0 sends every entry to approval.": "בחרו מי יעבוד על כך ואת המכסה של כל אחד. מכסה ריקה פירושה ללא הגבלה; 0 מעביר כל דיווח לאישור.",
+"Choose who will work on this work order and each person's allowance on it. They are assigned when you save. Blank allowance means unlimited; 0 sends every entry to approval.": "בחרו מי יעבוד על הזמנת העבודה ואת המכסה של כל אחד בה. השיבוץ נעשה בשמירה. מכסה ריקה פירושה ללא הגבלה; 0 מעביר כל דיווח לאישור.",
+"Choose who will work on this project and each person's allowance. They are assigned when you add the project. Blank allowance means unlimited; 0 sends every entry to approval.": "בחרו מי יעבוד על הפרויקט ואת המכסה של כל אחד. השיבוץ נעשה בהוספת הפרויקט. מכסה ריקה פירושה ללא הגבלה; 0 מעביר כל דיווח לאישור.",
+"Link hours": "שיוך שעות",
+"Hours reported on a project without a work order. Link them to the work order that funds them; only then do they count against that work order's budget.": "שעות שדווחו על פרויקט ללא הזמנת עבודה. שייכו אותן להזמנת העבודה שמממנת אותן; רק אז הן נספרות בתקציב שלה.",
+"Link to work order": "שיוך להזמנת עבודה",
+"Select hours on one project first": "בחרו קודם שעות בפרויקט אחד",
+"— no work order on this project —": "— אין הזמנת עבודה בפרויקט זה —",
+"All projects ({n})": "כל הפרויקטים ({n})",
+"Link {n} entries ({h} h)": "שיוך {n} דיווחים ({h} ש׳)",
+"{h} h left": "נותרו {h} ש׳",
+"Select the hours to link.": "בחרו את השעות לשיוך.",
+"The selected hours are on different projects. Pick one project.": "השעות שנבחרו שייכות לפרויקטים שונים. בחרו פרויקט אחד.",
+"Choose the work order that funds these hours.": "בחרו את הזמנת העבודה שמממנת את השעות.",
+"{n} entries ({h} h) linked to {code}.": "{n} דיווחים ({h} ש׳) שויכו ל־{code}.",
+"{code} is now {h} h over its budget.": "{code} חורגת כעת ב־{h} ש׳ מהתקציב.",
+"Select {name} on {date}": "בחירת {name} בתאריך {date}",
+"{n} entries · {h} h not linked to a work order": "{n} דיווחים · {h} ש׳ שאינן משויכות להזמנת עבודה",
+"Every Yellow and Blue hour in your projects is linked to a work order.": "כל השעות הצהובות והכחולות בפרויקטים שלכם משויכות להזמנת עבודה.",
+"— not linked yet —": "— טרם שויך —",
+"Select the work order this budget funds.": "בחרו את הזמנת העבודה שהתקציב מממן.",
+"That work order already has a budget. Edit it instead.": "להזמנת עבודה זו כבר יש תקציב. ערכו אותו.",
+"A project is funded by its work orders, so every budget belongs to one work order.": "פרויקט ממומן על ידי הזמנות העבודה שלו, ולכן כל תקציב שייך להזמנת עבודה אחת.",
+"registered": "נרשם",
+"pending": "ממתין"
+});

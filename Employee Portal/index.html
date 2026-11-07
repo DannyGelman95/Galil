@@ -17787,7 +17787,7 @@ function entitlementCheck(db, entry) {
     if (consumedOn(db, entry.assignee, asg, entry.id) + hrs > Number(allow)) return no("Allowance exceeded");
   }
 
-  /* 7 — project / work order total budgeted hours; escalates to the project owner */
+  /* 7 — the work order's budgeted hours (no work order yet: no budget to check); escalates to the project owner */
   var bud = budgetFor(db, entry.projectId, entry.workOrderId);
   if (bud && bud.hours) {
     if (budgetConsumed(db, bud, entry.id) + hrs > Number(bud.hours)) return no("Budget exceeded", "owner");
@@ -17830,16 +17830,12 @@ function pendingOn(db, userId, asg) {
     return true;
   }).reduce(function (a, e) { return a + allowanceHrs(e); }, 0);
 }
+/* A project is funded by its work orders, so a budget belongs to a work order.
+   Hours on a project with no work order yet have no budget to check until a
+   Project Manager links them to one (Management → Link hours). */
 function budgetFor(db, projectId, workOrderId) {
-  if (workOrderId) {
-    var w = db.budgets.filter(function (b) { return b.workOrderId === workOrderId; })[0];
-    if (w) return w;
-  }
-  if (projectId) {
-    var p = db.budgets.filter(function (b) { return b.projectId === projectId && !b.workOrderId; })[0];
-    if (p) return p;
-  }
-  return null;
+  if (!workOrderId) return null;
+  return db.budgets.filter(function (b) { return b.workOrderId === workOrderId; })[0] || null;
 }
 function budgetScopeEntries(db, b, status) {
   return db.entries.filter(function (e) {
@@ -20044,11 +20040,7 @@ function validateEntry(db, f, viewer) {
   if (f.type === "Work" && (f.hourType === "yellow" || f.hourType === "blue")) {
     if (!f.clientId && !(f.freeClient && f.client)) e.client = "Select a client, or switch this entry to Red · Company.";
     if (!f.projectId && !(f.freeProject && f.project)) e.project = "Select a project.";
-    var proj = byId(db.projects, f.projectId);
-    if (proj && proj.isWoTracked && db.workOrders.some(function (w) { return w.projectId === proj.id; })
-        && !f.workOrderId && !(f.freeWO && f.workOrder)) {
-      e.workOrder = "This project is tracked by work order. Select one.";
-    }
+    /* the work order is optional: a Project Manager links the hours to one later */
   }
   /* overlap on the same day */
   if (f.type === "Work" && hrs > 0) {
@@ -20234,7 +20226,7 @@ function EntryForm(p) {
       key: "wo", label: "Work order", cls: "grow", err: errs.workOrder,
       free: f.freeWO, value: f.workOrderId, freeValue: f.workOrder, options: opts.workOrders,
       disabled: !f.projectId,
-      placeholder: opts.workOrders.length ? "Select…" : "— none on this project —",
+      placeholder: opts.workOrders.length ? "— not linked yet —" : "— none on this project —",
       onFreeToggle: function (v) { set(Object.assign({}, f, { freeWO: v, workOrderId: "", workOrder: "" })); },
       onChange: function (v) { up("workOrderId", v); }, onFreeChange: function (v) { up("workOrder", v); }
     }),
@@ -21603,6 +21595,7 @@ function ManagementTab(p) {
     p.mutate(function (d) {
       var rec = {
         id: f.id || uid("b"), clientId: f.clientId, projectId: f.projectId || null, workOrderId: f.workOrderId || null,
+
         basis: f.basis, currency: f.currency, amount: f.amount === "" ? null : Number(f.amount),
         rate: f.rate === "" ? null : Number(f.rate), hours: f.hours === "" ? null : Number(f.hours),
         units: f.units === "" ? null : Number(f.units), unitName: f.unitName || "", produced: Number(f.produced) || 0,
@@ -21610,6 +21603,9 @@ function ManagementTab(p) {
         createdAt: f.createdAt || nowISO(), createdBy: f.createdBy || user.id
       };
       if (rec.basis === "Money" && rec.amount && rec.rate) rec.hours = Math.round(rec.amount / rec.rate);
+      var bw = byId(d.workOrders, rec.workOrderId), bp = bw ? byId(d.projects, bw.projectId) : null;
+      if (bw) rec.projectId = bw.projectId;
+      if (bp) rec.clientId = bp.clientId;
       var i = d.budgets.findIndex(function (x) { return x.id === rec.id; });
       if (i >= 0) {
         var before = d.budgets[i];
@@ -21640,6 +21636,7 @@ function ManagementTab(p) {
         d.workOrders.push(rec);
         var pr = byId(d.projects, rec.projectId); if (pr) pr.isWoTracked = true;
         audit(d, user.id, "Work order created " + rec.code, "work_orders", rec.id, null, rec);
+        if (canAssignPeople(user)) applyNewPeople(d, f.newPeople, rec.projectId, rec.id, user);
       }
       if (f.budgetHours) {
         var b = d.budgets.filter(function (x) { return x.workOrderId === rec.id; })[0];
@@ -21849,13 +21846,17 @@ function BudgetEditor(p) {
     title: f.id ? "Edit budget" : "New budget", size: "md", onClose: p.onClose,
     footer: [f.id ? h(Btn, { key: "d", kind: "d", onClick: function () { p.onDelete(f); } }, "Delete") : null,
              h("div", { key: "g", className: "grow" }), h(Btn, { key: "c", onClick: p.onClose }, "Cancel"),
-             h(Btn, { key: "s", kind: "p", onClick: function () { if (!f.clientId) { toast("Select a client.", "error"); return; } p.onSave(f); } }, "Save budget")]
+             h(Btn, { key: "s", kind: "p", onClick: function () {
+               if (!f.workOrderId) { toast("Select the work order this budget funds.", "error"); return; }
+               if (p.db.budgets.some(function (x) { return x.workOrderId === f.workOrderId && x.id !== f.id; })) { toast("That work order already has a budget. Edit it instead.", "error"); return; }
+               p.onSave(f); } }, "Save budget")]
   },
     h("div", { className: "col", style: { gap: 10 } },
       h("div", { className: "grid3" },
         h(Sel, { label: "Client", req: true, value: f.clientId, placeholder: "Select…", options: db.clients.map(function (c) { return { value: c.id, label: c.name }; }), onChange: function (e) { up("clientId", e.target.value); } }),
-        h(Sel, { label: "Project", value: f.projectId, placeholder: "All projects for this client", options: db.projects.filter(function (x) { return x.clientId === f.clientId; }).map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { up("projectId", e.target.value); } }),
-        h(Sel, { label: "Work order", value: f.workOrderId, placeholder: "— project level —", options: db.workOrders.filter(function (w) { return w.projectId === f.projectId; }).map(function (w) { return { value: w.id, label: w.code }; }), onChange: function (e) { up("workOrderId", e.target.value); } })),
+        h(Sel, { label: "Project", req: true, value: f.projectId, placeholder: "Select…", options: db.projects.filter(function (x) { return x.clientId === f.clientId; }).map(function (x) { return { value: x.id, label: x.name }; }), onChange: function (e) { up("projectId", e.target.value); } }),
+        h(Sel, { label: "Work order", req: true, value: f.workOrderId, disabled: !f.projectId, placeholder: "Select…", options: db.workOrders.filter(function (w) { return w.projectId === f.projectId; }).map(function (w) { return { value: w.id, label: w.code }; }), onChange: function (e) { up("workOrderId", e.target.value); } })),
+      h("div", { className: "cap" }, "A project is funded by its work orders, so every budget belongs to one work order."),
       h("div", { className: "grid4" },
         h(Sel, { label: "Pricing basis", value: f.basis, options: BASES, onChange: function (e) { up("basis", e.target.value); } }),
         f.basis === "Money" ? h(Sel, { label: "Currency", value: f.currency, options: CURRENCIES, onChange: function (e) { up("currency", e.target.value); } }) : null,
@@ -21897,6 +21898,7 @@ function WOEditor(p) {
     if (!f.projectId) { toast("Select a project.", "error"); return false; }
     if (!/^WO-[A-Z]{2,5}-\d{6,7}$/.test(f.code)) { toast("Code must be WO-[client initials]-[6 or 7 digits], e.g. WO-IAI-004182.", "error"); return false; }
     if (!f.title.trim()) { toast("Give the work order a title.", "error"); return false; }
+    if (!newPeopleValid(f.newPeople)) return false;
     return true;
   };
   return h(Modal, {
@@ -21943,7 +21945,7 @@ function WOEditor(p) {
       canAssignPeople(p.user) ? h("div", { className: "wosec" }, "People and allowances") : null,
       canAssignPeople(p.user) ? (f.id && byId(db.workOrders, f.id)
         ? h(AssignmentsManager, { db: db, user: p.user, mutate: p.mutate, workOrderId: f.id })
-        : h("div", { className: "cap" }, "Save the work order first; then assign people and their allowance hours here.")) : null,
+        : h(NewPeoplePicker, { db: db, value: f.newPeople || [], note: "Choose who will work on this work order and each person's allowance on it. They are assigned when you save. Blank allowance means unlimited; 0 sends every entry to approval.", onChange: function (v) { up("newPeople", v); } })) : null,
 
       h("div", { className: "wosec" }, "Signatures"),
       h("div", { className: "grid3" },
@@ -23289,7 +23291,8 @@ function RecordEditor(p) {
         ? h(Field, { label: " " }, h("label", { className: "row", style: { gap: 7, minHeight: 38 } }, h("input", { id: id, type: "checkbox", checked: !!f[fd.key], onChange: function (e) { up(fd.key, e.target.checked); } }), fd.label))
         : h(Inp, { id: id, label: fd.label, req: fd.req, err: errs[fd.key], type: fd.type || "text", value: v, placeholder: fd.placeholder, dir: fd.ltr ? "ltr" : null, onChange: function (e) { up(fd.key, e.target.value); } });
       return h("div", { key: fd.key, style: st }, el);
-    })));
+    })),
+    p.extra ? h("div", { className: "col", style: { gap: 8, marginTop: 12 } }, p.extra(f, up)) : null);
 }
 
 /* ---------- shared master-list editor ---------- */
@@ -23306,9 +23309,17 @@ function ListEditor(pp) {
   var rs = useState(null), rec = rs[0], setRec = rs[1];
   var ps = useState(null), peopleOn = ps[0], setPeopleOn = ps[1];
   var actions = pp.canEdit || !!pp.people;
-  function addItem(obj) { pp.mutate(function (d) { d[kind].push(obj); audit(d, user.id, "Added to " + kind, kind, obj.id, null, obj); }); }
+  function addItem(obj, people) {
+    pp.mutate(function (d) {
+      d[kind].push(obj); audit(d, user.id, "Added to " + kind, kind, obj.id, null, obj);
+      if (pp.people && people && people.length) applyNewPeople(d, people, obj.id, null, user);
+    });
+  }
   function saveRecord(f) {
-    if (!f.id) { var o = pp.make(f); if (!o) return; addItem(o); setDraft({}); setRec(null); toast("Added.", "ok"); return; }
+    if (!f.id) {
+      if (!newPeopleValid(f.newPeople)) return;
+      var o = pp.make(f); if (!o) return; addItem(o, f.newPeople); setDraft({}); setRec(null); toast("Added.", "ok"); return;
+    }
     pp.mutate(function (d) {
       var o = byId(d[kind], f.id); if (!o) return;
       var before = Object.assign({}, o);
@@ -23334,12 +23345,16 @@ function ListEditor(pp) {
           ? h(Sel, { key: f.key, label: f.label, value: draft[f.key] || "", placeholder: "—", options: f.options(db), onChange: function (e) { var n = Object.assign({}, draft); n[f.key] = e.target.value; setDraft(n); } })
           : h(Inp, { key: f.key, label: f.label, type: f.type || "text", value: draft[f.key] || "", onChange: function (e) { var n = Object.assign({}, draft); n[f.key] = e.target.value; setDraft(n); } });
       }),
+      pp.people ? h("div", { style: { minWidth: 180, flex: "1 1 180px" } },
+        h(MultiSelect, { label: "People", value: (draft.newPeople || []).map(function (x) { return x.userId; }), allLabel: "Select people…", avatars: true,
+          options: db.users.filter(function (u) { return u.isActive && !u.pendingActivation; }).map(function (u) { return { value: u.id, label: u.fullName }; }),
+          onChange: function (ids) { var n = Object.assign({}, draft); n.newPeople = ids.map(function (id) { return (draft.newPeople || []).filter(function (x) { return x.userId === id; })[0] || { userId: id, hours: "" }; }); setDraft(n); } })) : null,
       h("div", { className: "fld", style: { flex: "0 0 auto" } }, h("label", null, " "),
         h("div", { className: "row", style: { gap: 6, flexWrap: "nowrap" } },
           editFields ? h(Btn, { onClick: function () { setRec(Object.assign({ id: null }, draft)); } }, "More details…") : null,
           h(Btn, { kind: "p", onClick: function () {
             var o = pp.make(draft); if (!o) return;
-            addItem(o); setDraft({}); toast("Added.", "ok");
+            addItem(o, draft.newPeople); setDraft({}); toast("Added.", "ok");
           } }, "+ Add")))) : null,
     h("div", { style: { overflowX: "auto" } },
       h(STable, { id: "mgmt-" + kind, grow: pp.cols[0], center: LIST_CENTER_COLS, className: "tbl mid" },
@@ -23361,6 +23376,10 @@ function ListEditor(pp) {
               pp.canEdit ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove", onClick: function () { removeItem(o.id); } }, h(Icon, { n: "trash", size: 16 })) : null) : null);
         })))),
     rec && editFields ? h(RecordEditor, { db: db, value: rec, fields: editFields, onSave: saveRecord, onClose: function () { setRec(null); },
+      extra: pp.people && !rec.id ? function (f, up) {
+        return [h("div", { key: "sec", className: "wosec" }, "People and allowances"),
+          h(NewPeoplePicker, { key: "pk", db: db, value: f.newPeople || [], note: "Choose who will work on this project and each person's allowance. They are assigned when you add the project. Blank allowance means unlimited; 0 sends every entry to approval.", onChange: function (v) { up("newPeople", v); } })];
+      } : null,
       title: rec.id ? tr("Edit {item}", { item: tr(pp.itemLabel || "item") }) : tr("New {item}", { item: tr(pp.itemLabel || "item") }),
       saveLabel: rec.id ? "Save" : "+ Add" }) : null,
     peopleOn ? h(AssignmentsModal, { db: db, user: user, mutate: pp.mutate, projectId: peopleOn, onClose: function () { setPeopleOn(null); } }) : null);
@@ -23373,6 +23392,7 @@ var MGMT_SECTIONS = [
   { k: "clients",      label: "Clients",                  show: function (u) { return can(u, "assignPeople") || can(u, "manageClientsProjects") || can(u, "viewBudgets"); } },
   { k: "projects",     label: "Projects",                 show: function (u) { return can(u, "assignPeople") || can(u, "manageClientsProjects") || can(u, "viewBudgets"); } },
   { k: "wos",          label: "Work Orders",              show: function (u) { return can(u, "viewBudgets") || can(u, "createWorkOrders") || can(u, "manageClientsProjects"); } },
+  { k: "linkHours",    label: "Link hours",               show: function (u) { return can(u, "createWorkOrders"); } },
   { k: "budgets",      label: "Budgets",                  show: function (u) { return can(u, "viewBudgets"); } },
   { k: "assignments",  label: "Assignments & Allowances", show: function (u) { return can(u, "assignPeople") || can(u, "manageClientsProjects"); } },
   { k: "expenseTypes", label: "Expense Types",            show: function (u) { return can(u, "manageClientsProjects") || can(u, "manageEmployeesRoles") || can(u, "approveExpenses"); } },
@@ -23382,6 +23402,7 @@ var MGMT_SECTIONS = [
 function mgmtSectionsFor(user) { return MGMT_SECTIONS.filter(function (s) { return s.show(user); }); }
 function canOpenManagement(user) { return mgmtSectionsFor(user).length > 0; }
 function mgmtBadge(db, user, k) {
+  if (k === "linkHours") return unlinkedEntries(db, user).length;
   if (k === "activation") return db.users.filter(function (u) { return u.pendingActivation; }).length;
   if (k === "verify") return db.clients.filter(function (c) { return !c.isVerified; }).length + db.projects.filter(function (x) { return !x.isVerified; }).length;
   return 0;
@@ -24004,10 +24025,133 @@ function AssignmentsModal(p) {
     h(AssignmentsManager, { db: p.db, user: p.user, mutate: p.mutate, projectId: p.projectId, workOrderId: p.workOrderId }));
 }
 
+/* People chosen while a project or a work order is being created: each with an
+   allowance (blank = unlimited). The assignments are made when the record is saved. */
+function NewPeoplePicker(p) {
+  var db = p.db, list = p.value || [];
+  var people = db.users.filter(function (u) { return u.isActive && !u.pendingActivation; }).map(function (u) { return { value: u.id, label: u.fullName }; });
+  var setIds = function (ids) {
+    p.onChange(ids.map(function (id) { var o = list.filter(function (x) { return x.userId === id; })[0]; return o || { userId: id, hours: "" }; }));
+  };
+  var setHours = function (id, v) { p.onChange(list.map(function (x) { return x.userId === id ? { userId: id, hours: v } : x; })); };
+  return h("div", { className: "col", style: { gap: 8 } },
+    h("div", { className: "cap" }, p.note || "Choose who will work on it and each person's allowance. Blank allowance means unlimited; 0 sends every entry to approval."),
+    h("div", { style: { maxWidth: 420 } },
+      h(MultiSelect, { label: "People", value: list.map(function (x) { return x.userId; }), options: people, allLabel: "Select people…", avatars: true, onChange: setIds })),
+    list.length ? h("div", { className: "col", style: { gap: 6 } }, list.map(function (x) {
+      return h("div", { key: x.userId, className: "row", style: { gap: 8, flexWrap: "nowrap", alignItems: "center" } },
+        h("span", { className: "avatar", style: { width: 26, height: 26, fontSize: 10 } }, initialsOf(userName(db, x.userId))),
+        h("span", { className: "grow", style: { minWidth: 0 } }, userName(db, x.userId)),
+        h("input", { type: "number", min: 0, className: "miniinp", style: { width: 110 }, value: x.hours, placeholder: "∞ h",
+          "aria-label": tr("Allowance for {name}", { name: userName(db, x.userId) }), onChange: function (e) { setHours(x.userId, e.target.value); } }),
+        h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove", "aria-label": tr("Remove the assignment of {name}", { name: userName(db, x.userId) }), onClick: function () { p.onChange(list.filter(function (y) { return y.userId !== x.userId; })); } }, h(Icon, { n: "trash", size: 16 })));
+    })) : null);
+}
+function newPeopleValid(list) {
+  var bad = (list || []).some(function (x) { return x.hours !== "" && x.hours != null && (isNaN(Number(x.hours)) || Number(x.hours) < 0); });
+  if (bad) toast("Allowance must be a number of hours, 0 or more.", "error");
+  return !bad;
+}
+/* inside a mutate(): make the chosen people's assignments on a new project or work order */
+function applyNewPeople(d, list, projectId, workOrderId, actor) {
+  (list || []).forEach(function (x) {
+    if (d.assignments.some(function (a) { return a.userId === x.userId && a.projectId === projectId && (a.workOrderId || null) === (workOrderId || null) && !a.until; })) return;
+    d.assignments.push({ id: uid("a"), userId: x.userId, projectId: projectId, workOrderId: workOrderId || null,
+      allowanceHours: x.hours === "" || x.hours == null ? null : Number(x.hours), grantedBy: actor.id, grantedAt: nowISO() });
+    audit(d, actor.id, "Assignment granted: " + userName(d, x.userId) + " → " + nameOf(d.projects, projectId) + (workOrderId ? " / " + nameOf(d.workOrders, workOrderId, "code") : ""), "assignments", "-", null, null);
+  });
+}
+
+/* ---------- Management → Link hours ----------
+   A project is funded by its work orders; the budget lives on a work order.
+   People may report Yellow and Blue hours on a project without naming a work
+   order. A Project Manager (their own projects), Operations or the CEO then
+   links those hours to the work order that funds them, and only then do the
+   hours count against that work order's budget. */
+function unlinkedEntries(db, user) {
+  var scope = scopeOf(user.role, "createWorkOrders");
+  var pids = scope === "P" ? ownedProjectIds(db, user) : null;
+  return db.entries.filter(function (e) {
+    return e.type === "Work" && e.projectId && !e.workOrderId && !e.workOrder && allowanceHrs(e) > 0
+      && (e.status === "registered" || e.status === "pending") && (!pids || pids.indexOf(e.projectId) >= 0);
+  });
+}
+function LinkHoursPanel(p) {
+  var db = p.db, user = p.user;
+  var all = unlinkedEntries(db, user);
+  var projIds = all.map(function (e) { return e.projectId; }).filter(function (v, i, a) { return a.indexOf(v) === i; });
+  var fs = useState(""), proj = fs[0], setProj = fs[1];
+  if (proj && projIds.indexOf(proj) < 0) proj = "";
+  var ps = useState([]), picked = ps[0], setPicked = ps[1];
+  var ws = useState(""), wo = ws[0], setWo = ws[1];
+  var rows = all.filter(function (e) { return !proj || e.projectId === proj; }).sort(function (a, b) { return a.date < b.date ? 1 : a.date > b.date ? -1 : 0; });
+  picked = picked.filter(function (id) { return rows.some(function (e) { return e.id === id; }); });
+  var pickedRows = rows.filter(function (e) { return picked.indexOf(e.id) >= 0; });
+  var pickedProj = pickedRows.map(function (e) { return e.projectId; }).filter(function (v, i, a) { return a.indexOf(v) === i; });
+  var oneProj = pickedProj.length === 1 ? pickedProj[0] : (proj || null);
+  var woOpts = oneProj ? db.workOrders.filter(function (w) { return w.projectId === oneProj; }).map(function (w) {
+    var b = budgetFor(db, w.projectId, w.id), left = b && b.hours ? Number(b.hours) - budgetConsumed(db, b) : null;
+    return { value: w.id, label: w.code + (w.title ? " · " + w.title : "") + (left == null ? "" : " — " + tr("{h} h left", { h: num(left) })) };
+  }) : [];
+  if (wo && !woOpts.some(function (o) { return o.value === wo; })) wo = "";
+  var pickedHrs = pickedRows.reduce(function (a, e) { return a + allowanceHrs(e); }, 0);
+  var totalHrs = rows.reduce(function (a, e) { return a + allowanceHrs(e); }, 0);
+  var allOn = rows.length > 0 && picked.length === rows.length;
+
+  function link() {
+    if (!pickedRows.length) { toast("Select the hours to link.", "error"); return; }
+    if (pickedProj.length > 1) { toast("The selected hours are on different projects. Pick one project.", "error"); return; }
+    if (!wo) { toast("Choose the work order that funds these hours.", "error"); return; }
+    var w = byId(db.workOrders, wo), b = budgetFor(db, w.projectId, w.id);
+    var over = b && b.hours ? budgetConsumed(db, b) + pickedRows.filter(function (e) { return e.status === "registered"; }).reduce(function (a, e) { return a + allowanceHrs(e); }, 0) - Number(b.hours) : 0;
+    var n = pickedRows.length;
+    p.mutate(function (d) {
+      pickedRows.forEach(function (e0) {
+        var e = byId(d.entries, e0.id); if (!e) return;
+        var before = { workOrderId: e.workOrderId || null, workOrder: e.workOrder || "" };
+        e.workOrderId = w.id; e.workOrder = w.code; e.linkedBy = user.id; e.linkedAt = nowISO();
+        audit(d, user.id, "Hours linked to " + w.code, "entries", e.id, before, { workOrderId: w.id });
+      });
+    });
+    setPicked([]);
+    toast(tr("{n} entries ({h} h) linked to {code}.", { n: n, h: num(pickedHrs), code: w.code }), "ok");
+    if (over > 0) toast(tr("{code} is now {h} h over its budget.", { code: w.code, h: num(over) }), "error");
+  }
+
+  return h("div", { className: "col", style: { gap: 9 } },
+    h("div", { className: "cap" }, "Hours reported on a project without a work order. Link them to the work order that funds them; only then do they count against that work order's budget."),
+    h("div", { className: "band" },
+      h(Sel, { label: "Project", id: "lh-p", value: proj, placeholder: tr("All projects ({n})", { n: projIds.length }), options: projIds.map(function (id) { var x = byId(db.projects, id) || {}; return { value: id, label: nameOf(db.clients, x.clientId) + " — " + (x.name || "") }; }), onChange: function (e) { setProj(e.target.value); setPicked([]); setWo(""); } }),
+      h(Sel, { label: "Link to work order", id: "lh-w", value: wo, disabled: !oneProj, placeholder: !oneProj ? "Select hours on one project first" : woOpts.length ? "Select…" : "— no work order on this project —", options: woOpts, onChange: function (e) { setWo(e.target.value); } }),
+      h("div", { className: "fld", style: { flex: "0 0 auto" } }, h("label", null, " "),
+        h(Btn, { kind: "p", disabled: !pickedRows.length || !wo, onClick: link }, pickedRows.length ? tr("Link {n} entries ({h} h)", { n: pickedRows.length, h: num(pickedHrs) }) : "Link hours"))),
+    rows.length ? h("div", { style: { overflowX: "auto" } },
+      h(STable, { id: "mgmt-linkhours", grow: "Description", center: ["Hours", "Status"], className: "tbl mid" },
+        h("thead", null, h("tr", null,
+          h("th", null, h("input", { type: "checkbox", "aria-label": "Select all", checked: allOn, onChange: function () { setPicked(allOn ? [] : rows.map(function (e) { return e.id; })); } })),
+          ["Date", "Person", "Client", "Project", "Hours", "Status", "Description"].map(function (c, i) { return h("th", { key: i, className: c === "Hours" ? "num" : "" }, c); }))),
+        h("tbody", null, rows.map(function (e) {
+          var on = picked.indexOf(e.id) >= 0, pr = byId(db.projects, e.projectId) || {};
+          return h("tr", { key: e.id },
+            h("td", null, h("input", { type: "checkbox", checked: on, "aria-label": tr("Select {name} on {date}", { name: userName(db, e.assignee), date: il(e.date) }), onChange: function () { var n = picked.slice(), i = n.indexOf(e.id); if (i >= 0) n.splice(i, 1); else n.push(e.id); setPicked(n); } })),
+            h("td", { className: "tnum", "data-sort": e.date, style: { whiteSpace: "nowrap" } }, il(e.date)),
+            h("td", { style: { whiteSpace: "nowrap" } }, userName(db, e.assignee)),
+            h("td", { style: { whiteSpace: "nowrap" } }, nameOf(db.clients, pr.clientId)),
+            h("td", { style: { whiteSpace: "nowrap" } }, pr.name || "—"),
+            h("td", { className: "num" }, num(allowanceHrs(e))),
+            h("td", null, e.status === "pending" ? h(Chip, { k: "amber" }, "pending") : h(Chip, { k: "gr" }, "registered")),
+            h("td", null, e.description || ""));
+        }))),
+      h("div", { className: "cap", style: { marginTop: 6 } }, tr("{n} entries · {h} h not linked to a work order", { n: rows.length, h: num(totalHrs) })))
+      : h("div", { className: "empty" }, "Every Yellow and Blue hour in your projects is linked to a work order."));
+}
+
 function MgmtPanel(p) {
   var db = p.db, user = p.user, section = p.section;
   var isAdmin = can(user, "manageEmployeesRoles");
   var canLists = can(user, "manageClientsProjects");
+
+  if (section === "linkHours") return h(LinkHoursPanel, { db: db, user: user, mutate: p.mutate });
 
   if (section === "teams") return h(TeamsPanel, { db: db, user: user, mutate: p.mutate });
 
@@ -24662,7 +24806,7 @@ function MobileEntrySheet(p) {
     day ? null : h(WorkFromPicker, { value: f.workFrom, err: errs.workFrom, idPrefix: "mwf-", style: { height: 46, width: "100%" }, onChange: function (v) { up("workFrom", v); } }),
     day ? null : h(Sel, { label: "Client", req: f.hourType !== "red", err: errs.client, value: f.clientId, placeholder: "Select…", options: opts.clients, onChange: function (e) { up("clientId", e.target.value); } }),
     day ? null : h(Sel, { label: "Project", req: f.hourType !== "red", err: errs.project, value: f.projectId, placeholder: "Select…", options: opts.projects, onChange: function (e) { up("projectId", e.target.value); } }),
-    day ? null : h(Sel, { label: "Work order", err: errs.workOrder, value: f.workOrderId, placeholder: opts.workOrders.length ? "Select…" : "— none on this project —", options: opts.workOrders, disabled: !f.projectId, onChange: function (e) { up("workOrderId", e.target.value); } }),
+    day ? null : h(Sel, { label: "Work order", err: errs.workOrder, value: f.workOrderId, placeholder: opts.workOrders.length ? "— not linked yet —" : "— none on this project —", options: opts.workOrders, disabled: !f.projectId, onChange: function (e) { up("workOrderId", e.target.value); } }),
     day ? null : h(Sel, { label: "Taskana task (optional)", value: f.taskId, placeholder: opts.tasks.length ? "— none —" : "— no open Taskana task —", options: opts.tasks, onChange: function (e) { up("taskId", e.target.value); } }),
     h(Inp, { label: "Description", req: true, err: errs.description, value: f.description, placeholder: f.type === "Work" ? "What did you work on?" : "Optional note", onChange: function (e) { up("description", e.target.value); } }),
     h(Inp, { label: "Notes", value: f.notes, placeholder: "Optional", onChange: function (e) { up("notes", e.target.value); } }),
