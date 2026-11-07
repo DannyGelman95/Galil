@@ -1275,9 +1275,9 @@ test.describe("work-order funding and people on new records", () => {
       const b = d.budgets.find(x => x.workOrderId === wo.id);
       const used = budgetConsumed(d, b);
       b.hours = used + 1;  /* one hour left on the work order */
-      const asg = { id: "a-t", userId: "u-eitan", projectId: wo.projectId, workOrderId: null, allowanceHours: null };
+      const asg = { id: "a-t", userId: "u-budget-test", projectId: wo.projectId, workOrderId: null, allowanceHours: null };
       d.assignments.push(asg);
-      const e = { id: "e-t", type: "Work", assignee: "u-eitan", date: "2026-01-04", projectId: wo.projectId, workOrderId: null, yellow: 3, red: 0, blue: 0, status: "registered" };
+      const e = { id: "e-t", type: "Work", assignee: "u-budget-test", date: "2026-01-04", projectId: wo.projectId, workOrderId: null, yellow: 3, red: 0, blue: 0, status: "registered" };
       return {
         noWo: entitlementCheck(d, e).status,
         withWo: entitlementCheck(d, Object.assign({}, e, { workOrderId: wo.id })).reason,
@@ -1292,18 +1292,20 @@ test.describe("work-order funding and people on new records", () => {
 
   test("Link hours ties a project's unlinked hours to one of its work orders", async ({ page }) => {
     const errors = await local(page);
-    await openMgmt(page);
+    await signIn(page, "tamir@galiltc.co.il");
+    await page.click("#tile-workdesk");
     const pr = await page.evaluate(() => {
       const raw = JSON.parse(localStorage.getItem("galil-workdesk-v1"));
-      const d = raw.data, wo = d.workOrders[0];
-      ["e-u1", "e-u2"].forEach((id, i) => d.entries.push({ id, type: "Work", assignee: "u-eitan", date: "2026-03-0" + (i + 1), start: "09:00", end: "11:00",
+      const d = raw.data, wo = d.workOrders[0], who = d.users.find(u => u.isActive).id;
+      ["e-u1", "e-u2"].forEach((id, i) => d.entries.push({ id, type: "Work", assignee: who, date: "2026-03-0" + (i + 1), start: "09:00", end: "11:00",
         projectId: wo.projectId, clientId: (d.projects.find(p => p.id === wo.projectId) || {}).clientId, workOrderId: null, workOrder: "",
         yellow: 2, red: 0, blue: 0, day: 0, status: "registered", description: "Unlinked work " + i, workFrom: ["Office"] }));
       localStorage.setItem("galil-workdesk-v1", JSON.stringify(raw));
       return { pid: wo.projectId, wid: wo.id, code: wo.code };
     });
     await page.reload();
-    await page.getByRole("tab", { name: /Management/ }).click();
+    if (await page.locator("#tile-workdesk").isVisible()) await page.click("#tile-workdesk");
+    await page.getByRole("tab", { name: /Management/ }).click({ timeout: 20000 });
     await page.getByRole("button", { name: /^Link hours/ }).click();
     await page.locator("#lh-p").selectOption(pr.pid);
     await page.locator("tr", { hasText: "Unlinked work 0" }).locator("input[type=checkbox]").check();
