@@ -1101,3 +1101,111 @@ test("projects can be Final Draft or Blocked, in English and Hebrew", async ({ p
   expect(he).toContain('"Blocked": "חסום"');
   expect(errors).toEqual([]);
 });
+
+/* ---------- assignments and allowances from three screens ---------- */
+test.describe("assignments from projects, work orders and Assignments & Allowances", () => {
+  const openMgmt = async (page, section) => {
+    await signIn(page, "tamir@galiltc.co.il");
+    await page.click("#tile-workdesk");
+    await page.getByRole("tab", { name: /Management/ }).click();
+    if (section) await page.getByRole("button", { name: section, exact: true }).click();
+  };
+  const pickPeople = async (scope, names) => {
+    await scope.getByRole("button", { name: "Select people…" }).click();
+    for (const n of names) await scope.locator(".ms-list .ms-opt", { hasText: n }).click();
+    await scope.getByRole("button", { name: /selected$|^[A-Z][a-z]+ /, expanded: true }).first().click();
+  };
+
+  test("a work order's People window assigns several people with an allowance on that work order", async ({ page }) => {
+    const errors = await local(page);
+    await openMgmt(page, "Work Orders");
+    const d0 = await data(page);
+    const wo = d0.workOrders[0];
+    const free = d0.users.filter(u => u.isActive && !u.pendingActivation && !d0.assignments.some(a => a.userId === u.id && a.workOrderId === wo.id)).slice(0, 2);
+    await page.getByRole("button", { name: "People and allowances on " + wo.code }).click();
+    const dlg = page.getByRole("dialog", { name: "People on " + wo.code });
+    await pickPeople(dlg, free.map(u => u.fullName));
+    await dlg.locator("input[type=number]").first().fill("25");
+    await dlg.getByRole("button", { name: "+ Assign" }).click();
+    await expect(page.getByText("2 assignments created.")).toBeVisible();
+    let d = await data(page);
+    for (const u of free) {
+      const a = d.assignments.find(x => x.userId === u.id && x.workOrderId === wo.id);
+      expect(a.projectId).toBe(wo.projectId);
+      expect(a.allowanceHours).toBe(25);
+    }
+    /* the same person on the same work order is not assigned twice */
+    await pickPeople(dlg, [free[0].fullName]);
+    await dlg.getByRole("button", { name: "+ Assign" }).click();
+    await expect(page.getByText("Already assigned here: " + free[0].fullName)).toBeVisible();
+    /* the allowance is edited in place */
+    const inp = dlg.getByRole("spinbutton", { name: "Allowance for " + free[1].fullName });
+    await inp.fill("40"); await inp.press("Enter");
+    await expect(page.getByText("Allowance saved.")).toBeVisible();
+    d = await data(page);
+    expect(d.assignments.find(x => x.userId === free[1].id && x.workOrderId === wo.id).allowanceHours).toBe(40);
+    expect(d.assignments.filter(x => x.workOrderId === wo.id && free.some(u => u.id === x.userId)).length).toBe(2);
+    expect(errors).toEqual([]);
+  });
+
+  test("the work order editor lists and assigns its people", async ({ page }) => {
+    const errors = await local(page);
+    await openMgmt(page, "Work Orders");
+    const d0 = await data(page);
+    const wo = d0.workOrders[1];
+    const u = d0.users.find(x => x.isActive && !x.pendingActivation && x.id !== "u-tamir" && !d0.assignments.some(a => a.userId === x.id && a.workOrderId === wo.id));
+    await page.locator("tr", { hasText: wo.code }).getByRole("button", { name: "Edit", exact: true }).click();
+    const dlg = page.getByRole("dialog", { name: "Edit work order" });
+    await expect(dlg.getByText("People and allowances")).toBeVisible();
+    await pickPeople(dlg, [u.fullName]);
+    await dlg.getByRole("button", { name: "+ Assign" }).click();
+    await expect(page.getByText("Assignment created.")).toBeVisible();
+    await expect(dlg.locator("tr", { hasText: u.fullName })).toBeVisible();
+    const d = await data(page);
+    const a = d.assignments.find(x => x.userId === u.id && x.workOrderId === wo.id);
+    expect(a.allowanceHours).toBe(null);
+    expect(errors).toEqual([]);
+  });
+
+  test("a project's People window assigns at project level or on one of its work orders", async ({ page }) => {
+    const errors = await local(page);
+    await openMgmt(page, "Projects");
+    const d0 = await data(page);
+    const pr = d0.projects.find(p => d0.workOrders.some(w => w.projectId === p.id));
+    const wo = d0.workOrders.find(w => w.projectId === pr.id);
+    const avail = d0.users.filter(x => x.isActive && !x.pendingActivation && !d0.assignments.some(a => a.userId === x.id && a.projectId === pr.id));
+    await page.getByRole("button", { name: "People and allowances on " + pr.name }).click();
+    const dlg = page.getByRole("dialog", { name: "People on " + pr.name });
+    await pickPeople(dlg, [avail[0].fullName]);
+    await dlg.locator("input[type=number]").first().fill("10");
+    await dlg.getByRole("button", { name: "+ Assign" }).click();
+    await expect(page.getByText("Assignment created.")).toBeVisible();
+    await pickPeople(dlg, [avail[1].fullName]);
+    await dlg.locator("select").first().selectOption(wo.id);
+    await dlg.getByRole("button", { name: "+ Assign" }).click();
+    const d = await data(page);
+    const a1 = d.assignments.find(x => x.userId === avail[0].id && x.projectId === pr.id);
+    const a2 = d.assignments.find(x => x.userId === avail[1].id && x.projectId === pr.id);
+    expect(a1.workOrderId).toBe(null); expect(a1.allowanceHours).toBe(10);
+    expect(a2.workOrderId).toBe(wo.id);
+    /* both show in Assignments & Allowances, and removing one there removes it everywhere */
+    await dlg.locator("footer").getByRole("button", { name: "Close", exact: true }).click();
+    await page.getByRole("button", { name: "Assignments & Allowances", exact: true }).click();
+    await expect(page.locator("#mgmt-assignments tr, table tr", { hasText: avail[1].fullName }).filter({ hasText: wo.code }).first()).toBeVisible();
+    await page.getByRole("button", { name: "Remove the assignment of " + avail[0].fullName }).first().click();
+    const d2 = await data(page);
+    expect(d2.assignments.some(x => x.id === a1.id)).toBe(false);
+    expect(errors).toEqual([]);
+  });
+
+  test("Assignments & Allowances offers only the chosen project's work orders", async ({ page }) => {
+    const errors = await local(page);
+    await openMgmt(page, "Assignments & Allowances");
+    const d0 = await data(page);
+    const pr = d0.projects.find(p => d0.workOrders.some(w => w.projectId === p.id));
+    await page.locator("#asg-p").selectOption(pr.id);
+    const opts = await page.locator("#asg-w option").evaluateAll(os => os.map(o => o.value).filter(Boolean));
+    expect(opts.sort()).toEqual(d0.workOrders.filter(w => w.projectId === pr.id).map(w => w.id).sort());
+    expect(errors).toEqual([]);
+  });
+});

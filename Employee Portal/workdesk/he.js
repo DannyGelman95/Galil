@@ -1522,3 +1522,26 @@ WDI18N.add({
 "Refresh": "רענון",
 "Refresh — load the latest version": "רענון — טעינת הגרסה העדכנית"
 });
+WDI18N.add({
+/* ---------------- assignments from projects and work orders ---------------- */
+"Select people…": "בחירת אנשים…",
+"Pick at least one person.": "בחרו לפחות אדם אחד.",
+"Pick a project.": "בחרו פרויקט.",
+"Allowance must be a number of hours, 0 or more.": "המכסה חייבת להיות מספר שעות, 0 ומעלה.",
+"{n} assignments created.": "נוצרו {n} שיבוצים.",
+"Already assigned here: {names}": "כבר משובצים כאן: {names}",
+"Allowance saved.": "המכסה נשמרה.",
+"Allowance for {name}": "מכסה עבור {name}",
+"Remove the assignment of {name}": "הסרת השיבוץ של {name}",
+"project level": "ברמת הפרויקט",
+"People assigned to this work order and their allowance on it. Blank allowance means unlimited within the budget; 0 sends every entry to approval.": "האנשים המשובצים להזמנת עבודה זו והמכסה שלהם בה. מכסה ריקה פירושה ללא הגבלה בתוך התקציב; 0 מעביר כל דיווח לאישור.",
+"No one is assigned to this work order yet.": "עדיין אין אף אחד משובץ להזמנת עבודה זו.",
+"No one is assigned to this project yet.": "עדיין אין אף אחד משובץ לפרויקט זה.",
+"No assignments yet.": "עדיין אין שיבוצים.",
+"Also allowed here through a project-level assignment: {names}": "מורשים לדווח כאן גם דרך שיבוץ ברמת הפרויקט: {names}",
+"People on {code}": "אנשים ב־{code}",
+"People on {project}": "אנשים בפרויקט {project}",
+"People and allowances": "אנשים ומכסות",
+"People and allowances on {name}": "אנשים ומכסות ב־{name}",
+"Save the work order first; then assign people and their allowance hours here.": "שמרו קודם את הזמנת העבודה; לאחר מכן שבצו כאן אנשים ואת מכסת השעות שלהם."
+});

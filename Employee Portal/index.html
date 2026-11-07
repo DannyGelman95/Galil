@@ -21589,6 +21589,7 @@ function ManagementTab(p) {
   var ws = useState(null), woEdit = ws[0], setWoEdit = ws[1];
   var hs = useState(null), history = hs[0], setHistory = hs[1];
   var dcs = useState(null), docWO = dcs[0], setDocWO = dcs[1];
+  var aws = useState(null), asgWO = aws[0], setAsgWO = aws[1];
   var BF0 = { q: "", clientId: "", projectId: "", basis: "", level: "" };
   var bfs = useState(BF0), bf = bfs[0], setBf = bfs[1];
 
@@ -21733,6 +21734,8 @@ function ManagementTab(p) {
               tk && tk.total ? h("span", { style: { whiteSpace: "nowrap" } }, h("b", { className: "tnum" }, tk.total), h("span", { className: "cap" }, " \u00b7 ", tr("{n} open", { n: tk.open }))) : h("span", { className: "cap" }, tk ? "0" : "—")),
             h("td", { "data-sort": w.createdAt || "", className: "tnum", title: w.createdBy ? tr("by {name}", { name: userName(db, w.createdBy) }) : null }, createdDay(w)),
             h("td", { style: { whiteSpace: "nowrap" } },
+              canAssignPeople(user) ? h(Btn, { title: "People and allowances", "aria-label": tr("People and allowances on {name}", { name: w.code }), sm: true, kind: "t", className: "tap", onClick: function () { setAsgWO(w.id); } },
+                h(Icon, { n: "assignments", size: 16 }), h("span", { className: "tnum", style: { marginInlineStart: 3 } }, assignedPeopleCount(db, w.projectId, w.id))) : null,
               h(Btn, { title: "Work order document (PDF)", "aria-label": "Work order document (PDF)", sm: true, kind: "t", className: "tap", onClick: function () { setDocWO(Object.assign({ budgetHours: b ? b.hours : "" }, w)); } }, h(Icon, { n: "file", size: 16 })),
               can(user, "createWorkOrders") ? h(Btn, { title: "Edit", "aria-label": "Edit", sm: true, kind: "t", className: "tap", onClick: function () { setWoEdit(Object.assign({ budgetHours: b ? b.hours : "" }, w)); } }, h(Icon, { n: "edit", size: 16 })) : null));
         })))) : null,
@@ -21743,7 +21746,8 @@ function ManagementTab(p) {
 
     editing ? h(BudgetEditor, { db: db, value: editing, onSave: saveBudget, onClose: function () { setEditing(null); },
       onDelete: function (f) { p.mutate(function (d) { d.budgets = d.budgets.filter(function (x) { return x.id !== f.id; }); audit(d, user.id, "Budget deleted", "budgets", f.id, f, null); }); setEditing(null); } }) : null,
-    woEdit ? h(WOEditor, { db: db, user: user, value: woEdit, nextCode: nextCode, onSave: saveWO, onClose: function () { setWoEdit(null); },
+    asgWO ? h(AssignmentsModal, { db: db, user: user, mutate: p.mutate, workOrderId: asgWO, onClose: function () { setAsgWO(null); } }) : null,
+    woEdit ? h(WOEditor, { db: db, user: user, mutate: p.mutate, value: woEdit, nextCode: nextCode, onSave: saveWO, onClose: function () { setWoEdit(null); },
       onDocument: function (f) { setDocWO(f); } }) : null,
     docWO ? h(WODocModal, { db: db, user: user, wo: docWO, onClose: function () { setDocWO(null); } }) : null,
     history ? h(Modal, { title: "Budget change history", size: "md", onClose: function () { setHistory(null); } },
@@ -21935,6 +21939,11 @@ function WOEditor(p) {
       h("div", { className: "grid2" },
         h(Sel, { label: "Project lead", value: f.galilLeadId || "", placeholder: "—", options: staff, onChange: function (e) { up("galilLeadId", e.target.value); } }),
         h(MultiSelect, { label: "Team members", value: f.galilTeam || [], options: staff.filter(function (o) { return o.value !== f.galilLeadId; }), allLabel: "From the assignments", avatars: true, onChange: function (v) { up("galilTeam", v); } })),
+
+      canAssignPeople(p.user) ? h("div", { className: "wosec" }, "People and allowances") : null,
+      canAssignPeople(p.user) ? (f.id && byId(db.workOrders, f.id)
+        ? h(AssignmentsManager, { db: db, user: p.user, mutate: p.mutate, workOrderId: f.id })
+        : h("div", { className: "cap" }, "Save the work order first; then assign people and their allowance hours here.")) : null,
 
       h("div", { className: "wosec" }, "Signatures"),
       h("div", { className: "grid3" },
@@ -23295,6 +23304,8 @@ function ListEditor(pp) {
   var db = pp.db, user = pp.user, kind = pp.kind, fields = pp.fields || [], editFields = pp.editFields || null;
   var ns = useState({}), draft = ns[0], setDraft = ns[1];
   var rs = useState(null), rec = rs[0], setRec = rs[1];
+  var ps = useState(null), peopleOn = ps[0], setPeopleOn = ps[1];
+  var actions = pp.canEdit || !!pp.people;
   function addItem(obj) { pp.mutate(function (d) { d[kind].push(obj); audit(d, user.id, "Added to " + kind, kind, obj.id, null, obj); }); }
   function saveRecord(f) {
     if (!f.id) { var o = pp.make(f); if (!o) return; addItem(o); setDraft({}); setRec(null); toast("Added.", "ok"); return; }
@@ -23332,24 +23343,27 @@ function ListEditor(pp) {
           } }, "+ Add")))) : null,
     h("div", { style: { overflowX: "auto" } },
       h(STable, { id: "mgmt-" + kind, grow: pp.cols[0], center: LIST_CENTER_COLS, className: "tbl mid" },
-        h("thead", null, h("tr", null, pp.cols.map(function (c, i) { return h("th", { key: i }, c); }), h("th", null, "Used by"), pp.canEdit ? h("th", null, "") : null)),
+        h("thead", null, h("tr", null, pp.cols.map(function (c, i) { return h("th", { key: i }, c); }), h("th", null, "Used by"), actions ? h("th", null, "") : null)),
         h("tbody", null, (db[kind] || []).map(function (o) {
           return h("tr", { key: o.id },
             pp.row(o).map(listCell),
             h("td", { className: "num" }, h(Chip, { k: "mut" }, usageCount(db, kind, o.id), " records")),
-            pp.canEdit ? h("td", { style: { whiteSpace: "nowrap" } },
-              editFields ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit", "aria-label": "Edit " + (o[pp.nameField || "name"] || ""), onClick: function () { setRec(Object.assign({}, o)); } }, h(Icon, { n: "edit", size: 16 })) :
+            actions ? h("td", { style: { whiteSpace: "nowrap" } },
+              pp.people ? h(Btn, { sm: true, kind: "t", className: "tap", title: "People and allowances", "aria-label": tr("People and allowances on {name}", { name: o[pp.nameField || "name"] || "" }), onClick: function () { setPeopleOn(o.id); } },
+                h(Icon, { n: "assignments", size: 16 }), h("span", { className: "tnum", style: { marginInlineStart: 3 } }, assignedPeopleCount(db, o.id, null))) : null,
+              !pp.canEdit ? null : editFields ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Edit", "aria-label": "Edit " + (o[pp.nameField || "name"] || ""), onClick: function () { setRec(Object.assign({}, o)); } }, h(Icon, { n: "edit", size: 16 })) :
               h(Btn, { sm: true, kind: "t", className: "tap", title: "Rename", onClick: function () {
                 var field = pp.nameField || "name", old = o[field];
                 ask({ title: "Rename " + (pp.itemLabel || "item"), input: true, label: "New name", value: old, okLabel: "Rename" }).then(function (v) {
                   if (v && v !== old) { renameItem(o.id, field, v); toast("Renamed to \u201c" + v + "\u201d.", "ok"); }
                 });
               } }, h(Icon, { n: "edit", size: 16 })),
-              h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove", onClick: function () { removeItem(o.id); } }, h(Icon, { n: "trash", size: 16 }))) : null);
+              pp.canEdit ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove", onClick: function () { removeItem(o.id); } }, h(Icon, { n: "trash", size: 16 })) : null) : null);
         })))),
     rec && editFields ? h(RecordEditor, { db: db, value: rec, fields: editFields, onSave: saveRecord, onClose: function () { setRec(null); },
       title: rec.id ? tr("Edit {item}", { item: tr(pp.itemLabel || "item") }) : tr("New {item}", { item: tr(pp.itemLabel || "item") }),
-      saveLabel: rec.id ? "Save" : "+ Add" }) : null);
+      saveLabel: rec.id ? "Save" : "+ Add" }) : null,
+    peopleOn ? h(AssignmentsModal, { db: db, user: user, mutate: pp.mutate, projectId: peopleOn, onClose: function () { setPeopleOn(null); } }) : null);
 }
 
 /* ---------- the Management sections ---------- */
@@ -23858,6 +23872,138 @@ function PeoplePanel(p) {
     details ? h(RecordEditor, { db: db, value: details, fields: PERSON_FIELDS, title: tr("Details — {name}", { name: details.fullName }), onSave: saveDetails, onClose: function () { setDetails(null); } }) : null);
 }
 
+/* ---------- Assignments & allowances, from three places ----------
+   One panel assigns people and sets their allowance hours. It is opened from
+   Management → Assignments & Allowances (every assignment), from a project's
+   People window (that project and its work orders) and from a work order's
+   People window and editor (that work order only). All three read and write
+   the same db.assignments, so a change made in one shows in the others. */
+function asgUnlimited(a) { return a.allowanceHours === null || a.allowanceHours === undefined || a.allowanceHours === ""; }
+function canAssignPeople(user) { return can(user, "manageClientsProjects") || can(user, "assignPeople"); }
+function assignedPeopleCount(db, projectId, workOrderId) {
+  return db.assignments.filter(function (a) {
+    return workOrderId ? a.workOrderId === workOrderId : a.projectId === projectId;
+  }).map(function (a) { return a.userId; }).filter(function (v, i, arr) { return arr.indexOf(v) === i; }).length;
+}
+function AssignmentsManager(p) {
+  var db = p.db, user = p.user;
+  var fixedW = p.workOrderId || null, wo = fixedW ? byId(db.workOrders, fixedW) : null;
+  var fixedP = wo ? wo.projectId : (p.projectId || null);
+  var canEdit = canAssignPeople(user);
+  var idp = "asg" + (fixedW ? "-w-" + fixedW : fixedP ? "-p-" + fixedP : "");
+  var blank = { userIds: [], projectId: fixedP || "", workOrderId: fixedW || "", hours: "" };
+  var fs = useState(blank), f = fs[0], setF = fs[1];
+  var up = function (k, v) { var n = Object.assign({}, f); n[k] = v; if (k === "projectId") n.workOrderId = ""; setF(n); };
+
+  var people = db.users.filter(function (u) { return u.isActive && !u.pendingActivation; }).map(function (u) { return { value: u.id, label: u.fullName }; });
+  var projectOpts = db.projects.map(function (x) { return { value: x.id, label: nameOf(db.clients, x.clientId) + " — " + x.name }; });
+  var woOpts = db.workOrders.filter(function (w) { return w.projectId === f.projectId; }).map(function (w) { return { value: w.id, label: w.code + (w.title ? " · " + w.title : "") }; });
+
+  function assign() {
+    if (!f.userIds.length) { toast("Pick at least one person.", "error"); return; }
+    if (!f.projectId) { toast("Pick a project.", "error"); return; }
+    if (f.hours !== "" && (isNaN(Number(f.hours)) || Number(f.hours) < 0)) { toast("Allowance must be a number of hours, 0 or more.", "error"); return; }
+    var wid = f.workOrderId || null, added = 0, skipped = [];
+    p.mutate(function (d) {
+      f.userIds.forEach(function (uid0) {
+        var dup = d.assignments.some(function (a) { return a.userId === uid0 && a.projectId === f.projectId && (a.workOrderId || null) === wid && !a.until; });
+        if (dup) { skipped.push(userName(d, uid0)); return; }
+        d.assignments.push({ id: uid("a"), userId: uid0, projectId: f.projectId, workOrderId: wid, allowanceHours: f.hours === "" ? null : Number(f.hours), grantedBy: user.id, grantedAt: nowISO() });
+        audit(d, user.id, "Assignment granted: " + userName(d, uid0) + " → " + nameOf(d.projects, f.projectId) + (wid ? " / " + nameOf(d.workOrders, wid, "code") : ""), "assignments", "-", null, null);
+        added++;
+      });
+    });
+    if (added) toast(added === 1 ? "Assignment created." : tr("{n} assignments created.", { n: added }), "ok");
+    if (skipped.length) toast(tr("Already assigned here: {names}", { names: skipped.join(", ") }), added ? "" : "error");
+    setF(Object.assign({}, blank, { projectId: f.projectId, workOrderId: f.workOrderId }));
+  }
+
+  var rows = db.assignments.filter(function (a) {
+    if (fixedW) return a.workOrderId === fixedW;
+    if (fixedP) return a.projectId === fixedP;
+    return true;
+  });
+  /* people who may log on this work order through a project-level assignment */
+  var viaProject = fixedW ? db.assignments.filter(function (a) {
+    return a.projectId === fixedP && !a.workOrderId && !rows.some(function (r) { return r.userId === a.userId; });
+  }) : [];
+
+  var showProject = !fixedP, showWO = !fixedW;
+  var cols = ["Person"].concat(showProject ? ["Client", "Project"] : [], ["Tasks"], showWO ? ["Work order"] : [], ["Allowance", "Consumed", "In approval", "Remaining", ""]);
+
+  return h("div", { className: "col", style: { gap: 9 } },
+    h("div", { className: "cap" }, fixedW
+      ? "People assigned to this work order and their allowance on it. Blank allowance means unlimited within the budget; 0 sends every entry to approval."
+      : "Allowance is set per assignment, not per person. Zero means “assigned but not yet funded” — every entry goes to approval. Blank means unlimited within the project budget."),
+    canEdit ? h("div", { className: "band" },
+      h("div", { style: { minWidth: 200, flex: "1 1 200px" } },
+        h(MultiSelect, { label: "People", value: f.userIds, options: people, allLabel: "Select people…", avatars: true, onChange: function (v) { up("userIds", v); } })),
+      fixedP ? null : h(Sel, { label: "Project", id: idp + "-p", value: f.projectId, placeholder: "Select…", options: projectOpts, onChange: function (e) { up("projectId", e.target.value); } }),
+      fixedW ? null : h(Sel, { label: "Work order", id: idp + "-w", value: f.workOrderId, disabled: !f.projectId, placeholder: woOpts.length || !f.projectId ? "— project level —" : "— none on this project —", options: woOpts, onChange: function (e) { up("workOrderId", e.target.value); } }),
+      h(Inp, { label: "Allowance (h)", id: idp + "-h", type: "number", min: 0, value: f.hours, placeholder: "blank = unlimited", style: { width: 160 }, onChange: function (e) { up("hours", e.target.value); } }),
+      h("div", { className: "fld", style: { flex: "0 0 auto" } }, h("label", null, " "),
+        h(Btn, { kind: "p", onClick: assign }, "+ Assign"))) : null,
+    h("div", { style: { overflowX: "auto" } },
+      h(STable, { id: "mgmt-assignments" + (fixedW ? "-wo" : fixedP ? "-proj" : ""), grow: showProject ? "Project" : "Person", center: ["Allowance", "Consumed", "In approval", "Remaining"], className: "tbl mid" },
+        h("thead", null, h("tr", null, cols.map(function (c, i) { return h("th", { key: i, className: ["Allowance", "Consumed", "In approval"].indexOf(c) >= 0 ? "num" : "" }, c); }))),
+        h("tbody", null, rows.map(function (a) {
+          var used = consumedOn(db, a.userId, a), pend = pendingOn(db, a.userId, a);
+          var pr = byId(db.projects, a.projectId), tasks = taskanaTasksOn(a);
+          var unlimited = asgUnlimited(a);
+          var pct = unlimited ? 0 : (used / (Number(a.allowanceHours) || 1)) * 100;
+          var loan = a.until ? h("div", { className: "cap" }, "team loan · ", il(a.from), " – ", il(a.until)) : null;
+          return h("tr", { key: a.id },
+            h("td", { style: { whiteSpace: "nowrap" } }, userName(db, a.userId), showProject ? null : loan),
+            showProject ? h("td", { style: { whiteSpace: "nowrap" } }, pr ? nameOf(db.clients, pr.clientId) : "—") : null,
+            showProject ? h("td", { style: { whiteSpace: "nowrap" } }, nameOf(db.projects, a.projectId), loan) : null,
+            h("td", { "data-sort": tasks.length }, tasks.length ? h("div", { className: "row", style: { gap: 4, flexWrap: "nowrap" } },
+              tasks.slice(0, 3).map(function (t) {
+                return h("a", { key: t.id, className: "chip gr", href: "taskana/index.html#/task/" + encodeURIComponent(t.key), title: t.label, style: { textDecoration: "none", whiteSpace: "nowrap" } }, t.key);
+              }),
+              tasks.length > 3 ? h("span", { className: "cap", title: tasks.slice(3).map(function (t) { return t.label; }).join("\n") }, "+" + (tasks.length - 3)) : null)
+              : h("span", { className: "cap" }, "—")),
+            showWO ? h("td", null, a.workOrderId ? h(CopyCell, { value: nameOf(db.workOrders, a.workOrderId, "code") }) : h("span", { className: "cap" }, "project level")) : null,
+            h("td", { className: "num", "data-sort": unlimited ? "" : Number(a.allowanceHours) }, a.userId === user.id || !canEdit
+              ? h("span", { className: "tnum", title: a.userId === user.id ? "Your own allowance is raised through My assignments → Request hours" : null }, unlimited ? "∞" : num(a.allowanceHours))
+              : h("input", {
+              key: a.id + ":" + (unlimited ? "" : a.allowanceHours),
+              type: "number", min: 0, defaultValue: unlimited ? "" : a.allowanceHours, placeholder: "∞", className: "miniinp", style: { width: 78 },
+              "aria-label": tr("Allowance for {name}", { name: userName(db, a.userId) }),
+              onKeyDown: function (e) { if (e.key === "Enter") e.target.blur(); },
+              onBlur: function (e) {
+                var v = e.target.value === "" ? null : Number(e.target.value);
+                if (v !== null && (isNaN(v) || v < 0)) { toast("Allowance must be a number of hours, 0 or more.", "error"); e.target.value = unlimited ? "" : a.allowanceHours; return; }
+                if (v === (unlimited ? null : Number(a.allowanceHours))) return;
+                p.mutate(function (d) { var t = byId(d.assignments, a.id); if (t) { var b = t.allowanceHours; t.allowanceHours = v; audit(d, user.id, "Allowance " + b + " → " + v, "assignments", a.id, null, null); } });
+                toast("Allowance saved.", "ok");
+              }
+            })),
+            h("td", { className: "num" }, num(used)),
+            h("td", { className: "num", style: { color: C.amber } }, num(pend)),
+            h("td", { style: { whiteSpace: "nowrap" } }, unlimited ? h("span", { className: "cap" }, "∞")
+              : h("div", { className: "row", style: { gap: 8, flexWrap: "nowrap" } },
+                  h("span", { className: "tnum", style: { minWidth: 42, textAlign: "end" } }, num(Number(a.allowanceHours) - used), " h"),
+                  h(Bar, { used: used, pending: pend, total: a.allowanceHours, style: { width: 84 } }),
+                  h("span", { style: { minWidth: 54, display: "inline-flex", justifyContent: "flex-end" } },
+                    pct >= 75 ? h(Chip, { k: pct >= 100 ? "err" : pct >= 90 ? "amber" : "gr" }, num(pct, 0), "%") : null))),
+            h("td", null, canEdit ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove assignment", "aria-label": tr("Remove the assignment of {name}", { name: userName(db, a.userId) }), onClick: function () {
+              p.mutate(function (d) { d.assignments = d.assignments.filter(function (x) { return x.id !== a.id; }); audit(d, user.id, "Assignment removed", "assignments", a.id, null, null); });
+            } }, h(Icon, { n: "trash", size: 16 })) : null));
+        }))),
+      rows.length ? null : h("div", { className: "cap", style: { padding: "10px 2px" } }, fixedW ? "No one is assigned to this work order yet." : fixedP ? "No one is assigned to this project yet." : "No assignments yet.")),
+    viaProject.length ? h("div", { className: "cap" },
+      tr("Also allowed here through a project-level assignment: {names}", { names: viaProject.map(function (a) { return userName(db, a.userId); }).filter(function (v, i, arr) { return arr.indexOf(v) === i; }).join(", ") })) : null);
+}
+/* the People window opened from a project row or a work-order row */
+function AssignmentsModal(p) {
+  var wo = p.workOrderId ? byId(p.db.workOrders, p.workOrderId) : null;
+  var pr = byId(p.db.projects, wo ? wo.projectId : p.projectId);
+  var title = wo ? tr("People on {code}", { code: wo.code }) : tr("People on {project}", { project: pr ? pr.name : "" });
+  return h(Modal, { title: title, size: "lg", onClose: p.onClose, footer: [h("div", { key: "g", className: "grow" }), h(Btn, { key: "c", onClick: p.onClose }, "Close")] },
+    pr ? h("div", { className: "cap", style: { marginBottom: 8 } }, nameOf(p.db.clients, pr.clientId), " · ", pr.name, wo && wo.title ? " · " + wo.title : "") : null,
+    h(AssignmentsManager, { db: p.db, user: p.user, mutate: p.mutate, projectId: p.projectId, workOrderId: p.workOrderId }));
+}
+
 function MgmtPanel(p) {
   var db = p.db, user = p.user, section = p.section;
   var isAdmin = can(user, "manageEmployeesRoles");
@@ -23906,66 +24052,7 @@ function MgmtPanel(p) {
               } }, "Reject")))));
     }));
 
-  if (section === "assignments") return h("div", { className: "col", style: { gap: 9 } },
-    h("div", { className: "cap" }, "Allowance is set per assignment, not per person. Zero means “assigned but not yet funded” — every entry goes to approval. Blank means unlimited within the project budget."),
-    canLists || can(user, "assignPeople") ? h("div", { className: "band" },
-      h(Sel, { label: "Person", id: "asg-u", options: db.users.filter(function (u) { return u.isActive; }).map(function (u) { return { value: u.id, label: u.fullName }; }), onChange: function () {} }),
-      h(Sel, { label: "Project", id: "asg-p", options: db.projects.map(function (x) { return { value: x.id, label: nameOf(db.clients, x.clientId) + " — " + x.name }; }), onChange: function () {} }),
-      h(Sel, { label: "Work order", id: "asg-w", placeholder: "— project level —", options: db.workOrders.map(function (w) { return { value: w.id, label: w.code }; }), onChange: function () {} }),
-      h(Inp, { label: "Allowance (h)", id: "asg-h", type: "number", placeholder: "blank = unlimited", onChange: function () {} }),
-      h("div", { className: "fld", style: { flex: "0 0 auto" } }, h("label", null, " "),
-        h(Btn, { kind: "p", onClick: function () {
-          var u = (document.getElementById("asg-u") || {}).value, pr = (document.getElementById("asg-p") || {}).value;
-          var w = (document.getElementById("asg-w") || {}).value, hh = (document.getElementById("asg-h") || {}).value;
-          if (!u || !pr) { toast("Pick a person and a project.", "error"); return; }
-          p.mutate(function (d) {
-            d.assignments.push({ id: uid("a"), userId: u, projectId: pr, workOrderId: w || null, allowanceHours: hh === "" ? null : Number(hh), grantedBy: user.id, grantedAt: nowISO() });
-            audit(d, user.id, "Assignment granted", "assignments", "-", null, null);
-          });
-          toast("Assignment created.", "ok");
-        } }, "+ Assign"))) : null,
-    h("div", { style: { overflowX: "auto" } },
-      h(STable, { id: "mgmt-assignments", grow: "Project", center: ["Allowance", "Consumed", "In approval", "Remaining"], className: "tbl mid" },
-        h("thead", null, h("tr", null, ["Person", "Client", "Project", "Tasks", "Work order", "Allowance", "Consumed", "In approval", "Remaining", ""].map(function (c, i) { return h("th", { key: i, className: ["Allowance", "Consumed", "In approval"].indexOf(c) >= 0 ? "num" : "" }, c); }))),
-        h("tbody", null, db.assignments.map(function (a) {
-          var used = consumedOn(db, a.userId, a), pend = pendingOn(db, a.userId, a);
-          var pr = byId(db.projects, a.projectId), tasks = taskanaTasksOn(a);
-          var unlimited = a.allowanceHours === null || a.allowanceHours === undefined || a.allowanceHours === "";
-          var pct = unlimited ? 0 : (used / (Number(a.allowanceHours) || 1)) * 100;
-          return h("tr", { key: a.id },
-            h("td", { style: { whiteSpace: "nowrap" } }, userName(db, a.userId)),
-            h("td", { style: { whiteSpace: "nowrap" } }, pr ? nameOf(db.clients, pr.clientId) : "—"),
-            h("td", { style: { whiteSpace: "nowrap" } }, nameOf(db.projects, a.projectId),
-              a.until ? h("div", { className: "cap" }, "team loan \u00b7 ", il(a.from), " \u2013 ", il(a.until)) : null),
-            h("td", { "data-sort": tasks.length }, tasks.length ? h("div", { className: "row", style: { gap: 4, flexWrap: "nowrap" } },
-              tasks.slice(0, 3).map(function (t) {
-                return h("a", { key: t.id, className: "chip gr", href: "taskana/index.html#/task/" + encodeURIComponent(t.key), title: t.label, style: { textDecoration: "none", whiteSpace: "nowrap" } }, t.key);
-              }),
-              tasks.length > 3 ? h("span", { className: "cap", title: tasks.slice(3).map(function (t) { return t.label; }).join("\n") }, "+" + (tasks.length - 3)) : null)
-              : h("span", { className: "cap" }, "—")),
-            h("td", null, h(CopyCell, { value: a.workOrderId ? nameOf(db.workOrders, a.workOrderId, "code") : "" })),
-            h("td", { className: "num", "data-sort": unlimited ? "" : Number(a.allowanceHours) }, a.userId === user.id
-              ? h("span", { className: "tnum", title: "Your own allowance is raised through My assignments → Request hours" }, unlimited ? "∞" : num(a.allowanceHours))
-              : h("input", {
-              type: "number", defaultValue: unlimited ? "" : a.allowanceHours, placeholder: "∞", className: "miniinp", style: { width: 78 },
-              onBlur: function (e) {
-                var v = e.target.value === "" ? null : Number(e.target.value);
-                if (v === (unlimited ? null : Number(a.allowanceHours))) return;
-                p.mutate(function (d) { var t = byId(d.assignments, a.id); if (t) { var b = t.allowanceHours; t.allowanceHours = v; audit(d, user.id, "Allowance " + b + " → " + v, "assignments", a.id, null, null); } });
-              }
-            })),
-            h("td", { className: "num" }, num(used)),
-            h("td", { className: "num", style: { color: C.amber } }, num(pend)),
-            h("td", { style: { whiteSpace: "nowrap" } }, unlimited ? h("span", { className: "cap" }, "∞")
-              : h("div", { className: "row", style: { gap: 8, flexWrap: "nowrap" } },
-                  h("span", { className: "tnum", style: { minWidth: 42, textAlign: "end" } }, num(Number(a.allowanceHours) - used), " h"),
-                  h(Bar, { used: used, pending: pend, total: a.allowanceHours, style: { width: 84 } }),
-                  h("span", { style: { minWidth: 54, display: "inline-flex", justifyContent: "flex-end" } },
-                    pct >= 75 ? h(Chip, { k: pct >= 100 ? "err" : pct >= 90 ? "amber" : "gr" }, num(pct, 0), "%") : null))),
-            h("td", null, canLists || can(user, "assignPeople") ? h(Btn, { sm: true, kind: "t", className: "tap", title: "Remove assignment", onClick: function () {
-              p.mutate(function (d) { d.assignments = d.assignments.filter(function (x) { return x.id !== a.id; }); audit(d, user.id, "Assignment removed", "assignments", a.id, null, null); });
-            } }, h(Icon, { n: "trash", size: 16 })) : null));
-        })))));
+  if (section === "assignments") return h(AssignmentsManager, { db: db, user: user, mutate: p.mutate });
 
   if (section === "clients") return h(ListEditor, { itemLabel: "client",
     db: db, user: user, mutate: p.mutate, kind: "clients", canEdit: canLists, nameField: "name",
@@ -24003,7 +24090,7 @@ function MgmtPanel(p) {
   });
 
   if (section === "projects") return h(ListEditor, { itemLabel: "project",
-    db: db, user: user, mutate: p.mutate, kind: "projects", canEdit: canLists, nameField: "name",
+    db: db, user: user, mutate: p.mutate, kind: "projects", canEdit: canLists, nameField: "name", people: canAssignPeople(user),
     cols: ["Project", "Client", "Status", "Owner", "Dates", "Work orders", "Tasks", "WO tracked", "Created"],
     row: function (x) {
       var tk = taskanaCount(x.id, null), nWo = db.workOrders.filter(function (w) { return w.projectId === x.id; }).length;
